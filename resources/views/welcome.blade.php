@@ -31,8 +31,8 @@
     <body style="background-image: url('/images/background.png'); background-position: 'center'; background-repeat: none; background-size: cover;">
         <x-topbar></x-topbar>
 
-        <section class="h-screen min-w-screen flex flex-col items-center justify-center text-white">
-            <p class="text-4xl font-bold uppercase"><span class="text-primary">Queres</span> mesmo ir a <span class="text-primary">recurso</span>?</p>
+        <section class="h-screen min-w-screen flex flex-col items-center justify-center text-center text-white">
+            <p class="text-4xl font-bold uppercase px-10 md:px-0"><span class="text-primary">Queres</span> mesmo ir a <span class="text-primary">recurso</span>?</p>
             <p class="mt-5 text-lg">Para quê fazer isso quando tens o <span class="text-primary">Anti</span>recurso?</p>
 
             <form action="{{ route('exams.index') }}" class="mt-10">

@@ -1,8 +1,8 @@
 @extends('layouts.general')
 
 @section('content')
-    <section class="h-screen flex flex-col items-center justify-center">
-        <p class="text-xl font-bold uppercase"><span class="text-primary">Escolhe</span> uma disciplina para fazer <span class="text-primary">o exame</span></p>
+    <section class="h-screen flex flex-col items-center justify-center text-center">
+        <p class="text-xl font-bold uppercase text-center"><span class="text-primary">Escolhe</span> uma disciplina para fazer <span class="text-primary">o exame</span></p>
 
         <section class="grid md:grid-cols-4 gap-y-10 md:gap-x-10 mt-10 md:px-16">
             @foreach (App\Models\Subject::all() as $subject)
