@@ -5,6 +5,7 @@ use App\Http\Controllers\Admins\QuestionController;
 use App\Http\Controllers\Admins\QuestionTypeController;
 use App\Http\Controllers\Admins\SubjectController;
 use App\Http\Controllers\ExamController;
+use App\Http\Controllers\PenguinController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ScoreboardController;
 use Illuminate\Support\Facades\Route;
@@ -27,6 +28,8 @@ Route::get('/', function () {
 Route::get('/documents', function () {
     return view('documents.index');
 })->name('documents');
+
+Route::get('/penguin', [PenguinController::class, 'index'])->name('penguin.index');
 
 Route::prefix('/exams')->group(function () {
     Route::get('/', [ExamController::class, 'index'])->name('exams.index');
