@@ -20,6 +20,12 @@
             @yield('content')
         </section>
 
+        @if (Illuminate\Support\Facades\Cache::get('penguin'))
+            <div class="absolute bottom-5 right-5 w-20 h-20">
+                <img src="/images/penguin.gif" />
+            </div>
+        @endif
+
         @livewireScripts
 
         <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>

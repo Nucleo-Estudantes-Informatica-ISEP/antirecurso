@@ -3,9 +3,9 @@
 @section('content')
     <section class="flex flex-col items-center mt-16">
         <p class="text-xl font-semibold">Boas vindas, <span class="font-bold text-primary">{{ $user->name }}</span>!</p>
-        <p class="mt-5">Hoje é dia {{ \Carbon\Carbon::now()->format('d/m/Y') }}. Tens algum exame perto?</p>
+        <p class="mt-5 px-5 text-center">Hoje é dia {{ \Carbon\Carbon::now()->format('d/m/Y') }}. Tens algum exame perto?</p>
 
-        <p class="text-xl font-bold uppercase mt-16">O teu <span class="text-primary">score</span> ao longo das disciplinas</p>
+        <p class="text-xl font-bold uppercase mt-16 text-center">O teu <span class="text-primary">score</span> ao longo das disciplinas</p>
 
         <section class="mt-5 md:px-16 w-full grid place-items-center">
             <table class="w-1/2 text-sm text-center">
@@ -48,16 +48,22 @@
                         <th scope="col" class="px-6 py-3">
                             Pontuação para ranking
                         </th>
+                        <th scope="col" class="px-6 py-3">
+                            Data
+                        </th>
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach (App\Models\Answer::where(['user_id' => $user->id])->get() as $answer)
+                    @foreach (App\Models\Answer::where(['user_id' => $user->id])->get()->sortByDesc('created_at') as $answer)
                         <tr class="bg-white border-b">
                             <td class="px-6 py-4">
                                 <a href="{{ route('exams.checkPrevious', ['slug' => $subject->slug, 'answer' => $answer]) }}" class="underline hover:text-primary transition ease-in-out">{{ $answer->subject->name }}</a>
                             </td>
                             <td class="px-6 py-4">
                                 {{ $answer->score }}
+                            </td>
+                            <td class="px-6 py-4">
+                                {{ $answer->created_at->format('d/m/Y') }}
                             </td>
                         </tr>
                     @endforeach
