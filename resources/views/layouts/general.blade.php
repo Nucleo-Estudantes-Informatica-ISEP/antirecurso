@@ -20,7 +20,7 @@
             @yield('content')
         </section>
 
-        @if (Illuminate\Support\Facades\Cache::get('penguin'))
+        @if (Illuminate\Support\Facades\Session::get('penguin'))
             <div class="absolute bottom-5 right-5 w-20 h-20">
                 <img src="/images/penguin.gif" />
             </div>

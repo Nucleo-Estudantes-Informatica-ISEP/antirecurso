@@ -2,6 +2,7 @@
 
 namespace App\Http\Livewire\Penguin;
 
+use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Cache;
 use Livewire\Component;
 
@@ -9,10 +10,10 @@ class Index extends Component
 {
 
     public function changePenguinState() {
-        if(!Cache::get('penguin')) {
-            Cache::set('penguin', true);
+        if(!Session::get('penguin')) {
+            Session::put('penguin', true);
         } else {
-            Cache::clear('penguin');
+            Session::remove('penguin');
         }
 
         return redirect()->route('exams.index');
