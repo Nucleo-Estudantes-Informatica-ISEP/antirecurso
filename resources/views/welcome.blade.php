@@ -28,7 +28,7 @@
         <!-- Scripts -->
         <script src="{{ asset('js/init-alpine.js') }}"></script>
     </head>
-    <body style="background-image: url('/images/background.png'); background-position: 'center'; background-repeat: none; background-size: cover;">
+    <body style="background-image: url('/images/background.png'); background-position: 'center'; background-repeat: none; background-size: cover;" class="overflow-x-hidden">
         <x-topbar></x-topbar>
 
         <section class="h-screen min-w-screen flex flex-col items-center justify-center text-center text-white">
@@ -40,6 +40,8 @@
                     Resolver exames
                 </x-primary-button>
             </form>
+
+            <p class="text-xs mt-5 mx-5">Não te esqueças que podes criar uma conta para guardar o teu progresso clicando <a href="{{ route('register') }}" class="underline">aqui</a>.</p>
         </section>
     </body>
 </html>

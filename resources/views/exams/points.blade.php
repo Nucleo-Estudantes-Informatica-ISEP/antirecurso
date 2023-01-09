@@ -25,6 +25,8 @@
         <form class="mt-20" action="{{ route('exams.check', ['slug' => $subject->slug]) }}">
             <x-primary-button>Verificar respostas</x-primary-button>
         </form>
+
+        <p class="text-xs mt-5 mx-5">Não te esqueças que podes criar uma conta para guardar o teu progresso clicando <a href="{{ route('register') }}" class="underline">aqui</a>.</p>
     </section>
 </section>
 @stop
