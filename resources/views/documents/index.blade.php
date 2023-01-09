@@ -16,5 +16,11 @@
             <p class="text-xl font-semibold uppercase">Sponsored by</p>
             <p class="text-primary font-semibold">NEI ISEP</p>
         </div>
+
+        <div class="space-y-3">
+            <p class="text-xl font-semibold uppercase">Git repository </p>
+            <p class="text-primary font-semibold"><a href="https://github.com/Nucleo-Estudantes-Informatica-ISEP/antirecurso" target="_blank" >https://github.com/Nucleo-Estudantes-Informatica-ISEP/antirecurso</a></p>
+        </div>
+
     </section>
 @stop
