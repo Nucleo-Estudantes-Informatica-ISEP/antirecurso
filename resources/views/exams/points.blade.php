@@ -10,7 +10,7 @@
     </div>
 
     <section class="mt-10 px-4 flex text-center flex-col items-center justify-center">
-        @if(Illuminate\Support\Facades\Session::get('points') > 10)
+        @if(Illuminate\Support\Facades\Session::get('points') > 50)
             <p class="font-semibold text-xl"><span class="text-primary">Parabéns!</span> Passaste no exame! 🎉</p>
             <p class="mt-5">Contudo, tens de saber que o caminho para o sucesso é feito de pequenos avanços e, como tal, não te deves focar
                 apenas neste exame e sim em tentar fazer o máximo possível.</p>
