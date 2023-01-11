@@ -3,8 +3,16 @@
         @for ($i = 1; $i <= 10; $i++)
             <div wire:click="change_question({{ $i - 1 }})"
                 class="
-            @if ($this->is_correct_option($answer_questions[$i - 1]->option->order)) bg-primary @else bg-red-700 @endif
-            h-10 w-10 p-5 flex items-center justify-center text-white @if ($current + 1 == $i) brightness-125 @else brightness-110 @endif  rounded-full hover:cursor-pointer">
+            @if ($this->is_correct_option($answer_questions[$i - 1]->option->order)) border border-primary text-primary
+            @if ($current + 1 == $i) bg-gray-200
+             @else bg-white @endif
+@else
+bg-red-600 text-white
+                @if ($current + 1 == $i) bg-red-800
+                @else bg-red-600 @endif
+             @endif
+            h-10 w-10 p-5 flex items-center justify-center
+              rounded-full hover:cursor-pointer">
                 <p>{{ $i }}</p>
             </div>
         @endfor
