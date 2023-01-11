@@ -9,7 +9,7 @@
         <p class="text-xl font-bold uppercase">erradas</p>
     </div>
 
-    <section class="mt-10 flex flex-col items-center justify-center">
+    <section class="mt-10 px-4 flex text-center flex-col items-center justify-center">
         @if(Illuminate\Support\Facades\Session::get('points') > 10)
             <p class="font-semibold text-xl"><span class="text-primary">Parabéns!</span> Passaste no exame! 🎉</p>
             <p class="mt-5">Contudo, tens de saber que o caminho para o sucesso é feito de pequenos avanços e, como tal, não te deves focar
@@ -22,7 +22,7 @@
             <p class="semibold">Continua!</p>
         @endif
 
-        <form class="mt-20" action="{{ route('exams.check', ['slug' => $subject->slug]) }}">
+        <form class="mt-16" action="{{ route('exams.check', ['slug' => $subject->slug]) }}">
             <x-primary-button>Verificar respostas</x-primary-button>
         </form>
 
