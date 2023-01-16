@@ -42,8 +42,13 @@
             </div>
         </div>
 
-        <form action="{{ route('admins.subjects.create') }}" class="mt-5">
-            <x-primary-button>Criar cadeira</x-primary-button>
-        </form>
+        <div class="flex space-x-5">
+            <form action="{{ route('admins.subjects.create') }}" class="mt-5">
+                <x-primary-button>Criar cadeira</x-primary-button>
+            </form>
+            <form action="{{ route('admins.subjects.questions-parser') }}" class="mt-5">
+                <x-primary-button>Parser de perguntas</x-primary-button>
+            </form>
+        </div>
     </div>
 </x-app-layout>

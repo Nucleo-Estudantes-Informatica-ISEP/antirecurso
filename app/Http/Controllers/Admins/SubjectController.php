@@ -21,4 +21,8 @@ class SubjectController extends Controller
     public function edit(Subject $subject) {
         return view('admins.subjects.edit', compact('subject'));
     }
+
+    public function questionsParser() {
+        return view('admins.subjects.questions-parser');
+    }
 }
