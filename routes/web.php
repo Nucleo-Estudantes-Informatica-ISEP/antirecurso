@@ -63,6 +63,7 @@ Route::middleware(['auth', 'is_admin'])->prefix('/admins')->group(function () {
     Route::prefix('/subjects')->group(function () {
         Route::get('/', [SubjectController::class, 'index'])->name('admins.subjects.index');
         Route::get('/create', [SubjectController::class, 'create'])->name('admins.subjects.create');
+        Route::get('/questions-parser', [SubjectController::class, 'questionsParser'])->name('admins.subjects.questions-parser');
         Route::get('/{subject}/edit', [SubjectController::class, 'edit'])->name('admins.subjects.edit');
     });
 

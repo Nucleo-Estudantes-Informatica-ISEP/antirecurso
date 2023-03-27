@@ -4,6 +4,7 @@ namespace App\Http\Livewire\Exams;
 
 use App\Models\Answer;
 use App\Models\AnswerQuestion;
+use App\Models\Comment;
 use App\Models\Question;
 use App\Models\Subject;
 use Illuminate\Support\Collection;
@@ -19,6 +20,8 @@ class Check extends Component
     public AnswerQuestion $current_question;
     public int $current = 0;
     public string $selected = "";
+
+    public string $comment = "";
 
     public function mount(Subject $subject, Answer $answer) {
         $this->subject = $subject;
@@ -54,6 +57,20 @@ class Check extends Component
         $correct_option = $this->current_question->question->correct_option;
 
         return $correct_option == $option;
+    }
+
+    public function comment() {
+        $this->validate([
+            'comment' => 'required|min:1'
+        ]);
+
+        Comment::create([
+            'comment' => $this->comment,
+            'user_id' => auth()->user()->id,
+            'question_id' => $this->current_question->question->id
+        ]);
+
+        $this->comment = "";
     }
 
     public function render()

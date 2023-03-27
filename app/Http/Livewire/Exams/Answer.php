@@ -139,12 +139,16 @@ class Answer extends Component
     private function update_score(Score $score, int $points) : void {
         $currentScore = $score->score;
 
-        /**
-         * Don't forget to turn the points we just calculated
-         * into it's absolute as if the number is negative
-         * the final score will get all f*cked up
-         */
-        $temporaryScore = $currentScore - abs($points);
+        $temporaryScore = $points;
+
+        if($currentScore > 0) {
+            /**
+             * Don't forget to turn the points we just calculated
+             * into it's absolute as if the number is negative
+             * the final score will get all f*cked up
+             */
+            $temporaryScore = $currentScore - abs($points);
+        }
 
         $score->update([
             'score' => $temporaryScore > 0 ? $temporaryScore : 0

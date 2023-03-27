@@ -13,7 +13,7 @@
 
             @livewireStyles
     </head>
-    <body>
+    <body class="overflow-x-clip">
         <x-topbar></x-topbar>
 
         <section>
