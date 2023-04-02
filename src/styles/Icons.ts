@@ -1,3 +1,3 @@
-import { FiMenu as Menu } from 'react-icons/fi';
+import { FiCheck as Check, FiMenu as Menu } from 'react-icons/fi';
 
-export { Menu };
+export { Menu, Check };
