@@ -37,7 +37,7 @@ export const mockQuestions: Question[] = [
     ]
   },
   {
-    question: 'Which of the following is not a type of inheritance?',
+    question: 'What is the default value of byte variable?',
     exam: 'Java',
     question_type: {
       name: 'Multiple Choice'
@@ -45,21 +45,21 @@ export const mockQuestions: Question[] = [
     options: [
       {
         order: 1,
-        name: 'Single'
+        name: '0'
       },
       {
         order: 2,
 
-        name: 'Multiple'
+        name: '1'
       },
       {
         order: 3,
-        name: 'Multilevel'
+        name: '2'
       },
       {
         order: 4,
 
-        name: 'Hierarchical'
+        name: '3'
       }
     ]
   }

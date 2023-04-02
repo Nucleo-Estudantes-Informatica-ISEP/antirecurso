@@ -1,11 +1,11 @@
 'use client';
 
 import Image from 'next/image';
+import { useEffect, useState } from 'react';
 
 import PrimaryButton from '@/components/PrimaryButton';
 import { Check } from '@/styles/Icons';
-import { useState } from 'react';
-import { Question, mockQuestions } from 'src/mock/mockQuestions';
+import { mockQuestions, Question } from 'src/mock/mockQuestions';
 
 interface ExamPageProps {
   params: {
@@ -14,11 +14,10 @@ interface ExamPageProps {
 }
 
 const Exam: React.FC<ExamPageProps> = ({ params }) => {
-  const [currentQuestion, setCurrentQuestion] = useState(0);
+  const [currentQuestionIndex, setCurrentQuestion] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState(0);
-  const N_QUESTIONS = 10;
 
-  const question: Question = mockQuestions[0]; // TODO
+  let currentQuestion: Question = mockQuestions[currentQuestionIndex];
 
   function changeQuestion(i: number) {
     setCurrentQuestion(i);
@@ -38,14 +37,20 @@ const Exam: React.FC<ExamPageProps> = ({ params }) => {
     return false;
   }
 
+  useEffect(() => {
+    currentQuestion = mockQuestions[currentQuestionIndex];
+  }, [currentQuestionIndex]);
+
   return (
     <div>
       <div className="w-screen flex items-center md:justify-center space-x-10 overflow-x-scroll md:overflow-auto mt-5 px-5">
-        {Array.from(Array(N_QUESTIONS).keys()).map((i) => (
+        {mockQuestions.map((_, i) => (
           <div
             onClick={() => changeQuestion(i)}
             className={`h-10 w-10 p-5 flex items-center justify-center ${
-              currentQuestion === i ? 'bg-primary text-white' : 'border border-primary text-primary'
+              currentQuestionIndex === i
+                ? 'bg-primary text-white'
+                : 'border border-primary text-primary'
             } ${
               wasAnswered(i) && 'bg-primary bg-opacity-70 text-white'
             } rounded-full hover:cursor-pointer`}>
@@ -64,12 +69,13 @@ const Exam: React.FC<ExamPageProps> = ({ params }) => {
         </div>
 
         <section className="mb-10">
-          <p className="text-lg font-bold mt-5">{question.question}</p>
+          <p className="text-lg font-bold mt-5">{currentQuestion.question}</p>
           <p className="text-sm text-gray-600 mt-2">
-            Tipo de pergunta '{question.question_type.name}' do exame '{question.exam}'
+            Tipo de pergunta '{currentQuestion.question_type.name}' do exame '{currentQuestion.exam}
+            '
           </p>
           <div className="mt-5 space-y-5">
-            {question.options.map((option) => (
+            {currentQuestion.options.map((option) => (
               <div
                 onClick={() => selectAnswer(option.order)}
                 className={`w-full flex items-center px-5 py-3 border border-gray-100 h-20 rounded hover:cursor-pointer hover:bg-primary hover:text-white transition ease-in-out ${
@@ -82,7 +88,7 @@ const Exam: React.FC<ExamPageProps> = ({ params }) => {
           </div>
         </section>
 
-        {currentQuestion === N_QUESTIONS - 1 && (
+        {currentQuestionIndex === mockQuestions.length - 1 && (
           <div className="w-full flex justify-end">
             <form onSubmit={handleSubmit}>
               <PrimaryButton>Terminar</PrimaryButton>
