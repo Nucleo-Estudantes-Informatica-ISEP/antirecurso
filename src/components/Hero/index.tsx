@@ -1,10 +1,8 @@
 'use client';
 
-import PrimaryButton from '../PrimaryButton';
+import Link from 'next/link';
 
-function handleClick() {
-  console.log('Clicked');
-}
+import PrimaryButton from '../PrimaryButton';
 
 const Hero: React.FC = () => {
   return (
@@ -18,9 +16,9 @@ const Hero: React.FC = () => {
           Para quê fazer isso quando tens o <span className="text-primary">Anti</span>recurso?
         </p>
 
-        <form onClick={handleClick} className="mt-10">
+        <Link href="/exams" className="mt-10">
           <PrimaryButton>Resolver exames</PrimaryButton>
-        </form>
+        </Link>
       </section>
     </div>
   );

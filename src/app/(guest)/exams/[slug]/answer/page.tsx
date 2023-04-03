@@ -15,7 +15,7 @@ interface ExamPageProps {
 
 const Exam: React.FC<ExamPageProps> = ({ params }) => {
   const [currentQuestionIndex, setCurrentQuestion] = useState(0);
-  const [selectedAnswer, setSelectedAnswer] = useState(0);
+  const [answers, setAnswers] = useState<Map<number, number>>(new Map<number, number>());
 
   let currentQuestion: Question = mockQuestions[currentQuestionIndex];
 
@@ -23,13 +23,18 @@ const Exam: React.FC<ExamPageProps> = ({ params }) => {
     setCurrentQuestion(i);
   }
 
-  function handleSubmit() {
-    // TODO
-    console.log('submit');
+  function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+
+    console.log(answers);
   }
 
-  function selectAnswer(order: number) {
-    setSelectedAnswer(order);
+  function selectAnswer(question: number, order: number) {
+    setAnswers((prev) => {
+      const newAnswers = new Map(prev);
+      newAnswers.set(question, order);
+      return newAnswers;
+    });
   }
 
   function wasAnswered(i: number) {
@@ -42,7 +47,7 @@ const Exam: React.FC<ExamPageProps> = ({ params }) => {
   }, [currentQuestionIndex]);
 
   return (
-    <div>
+    <div className="mb-12">
       <div className="w-screen flex items-center md:justify-center space-x-10 overflow-x-scroll md:overflow-auto mt-5 px-5">
         {mockQuestions.map((_, i) => (
           <div
@@ -77,12 +82,12 @@ const Exam: React.FC<ExamPageProps> = ({ params }) => {
           <div className="mt-5 space-y-5">
             {currentQuestion.options.map((option) => (
               <div
-                onClick={() => selectAnswer(option.order)}
+                onClick={() => selectAnswer(currentQuestionIndex, option.order)}
                 className={`w-full flex items-center px-5 py-3 border border-gray-100 h-20 rounded hover:cursor-pointer hover:bg-primary hover:text-white transition ease-in-out ${
-                  selectedAnswer === option.order && 'bg-primary text-white'
+                  answers.get(currentQuestionIndex) === option.order && 'bg-primary text-white'
                 }`}>
                 <p>{option.name}</p>
-                {selectedAnswer === option.order && <Check className="ml-5" />}
+                {answers.get(currentQuestionIndex) === option.order && <Check className="ml-5" />}
               </div>
             ))}
           </div>
