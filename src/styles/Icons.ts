@@ -1,3 +1,8 @@
-import { FiCheck as Check, FiMenu as Menu } from 'react-icons/fi';
+import {
+  FiCheck as Check,
+  FiAlertCircle as Danger,
+  FiMenu as Menu,
+  FiX as X
+} from 'react-icons/fi';
 
-export { Menu, Check };
+export { Menu, Check, X, Danger };

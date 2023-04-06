@@ -1,16 +1,16 @@
 {
-    "env": {
-        "browser": true,
-        "es2021": true
-    },
-    "plugins": ["@typescript-eslint"],
-    "extends": [
-        "next/core-web-vitals",
-        "plugin:@typescript-eslint/recommended",
-        "plugin:prettier/recommended"
-    ],
-    "rules": {
-        // I suggest you add those two rules:
-        "@typescript-eslint/no-explicit-any": "error"
-    }
+  "env": {
+    "browser": true,
+    "es2021": true
+  },
+  "plugins": ["@typescript-eslint"],
+  "extends": [
+    "next/core-web-vitals",
+    "plugin:@typescript-eslint/recommended",
+    "plugin:prettier/recommended"
+  ],
+  "rules": {
+    // I suggest you add those two rules:
+    "@typescript-eslint/no-explicit-any": "error"
+  }
 }
