@@ -7,8 +7,8 @@ import { useRouter } from 'next/navigation';
 
 import Skeleton from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css';
+import swal from 'sweetalert';
 
-import Alert from '@/components/Alert';
 import PrimaryButton from '@/components/PrimaryButton';
 import { Check } from '@/styles/Icons';
 import generateExam from 'src/services/generateExam';
@@ -33,20 +33,25 @@ const Exam: React.FC<ExamPageProps> = ({ params }) => {
   const [currentQuestion, setCurrentQuestion] = useState<Question | null>(null);
   const [answers, setAnswers] = useState<Map<number, number>>(new Map<number, number>());
 
-  const [isModalOpen, setIsModalOpen] = useState(false);
-
   function changeQuestion(i: number) {
     if (i >= 0 && i < questions.length) setCurrentQuestionIndex(i);
   }
 
-  function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
 
-    setIsModalOpen(true);
+    const confirmed = await swal({
+      title: 'Tem a certeza que quer terminar o exame?',
+      icon: 'warning',
+      buttons: ['Não', 'Sim']
+    });
+
+    if (!confirmed) return;
+
+    handleConfirm();
   }
 
   function handleConfirm() {
-    setIsModalOpen(false);
     router.push(`/exams/${params.id}/points`);
   }
 
@@ -89,15 +94,6 @@ const Exam: React.FC<ExamPageProps> = ({ params }) => {
         Exame de <span className="text-primary">{subjectName}</span>
       </p>
       <div className="mb-12">
-        {isModalOpen && (
-          <Alert
-            text="Tens a certeza que queres terminar o exame?"
-            onCancel={() => setIsModalOpen(false)}
-            onConfirm={handleConfirm}
-            confirmText="Sim"
-            cancelText="Não"
-          />
-        )}
         {questions[0] ? (
           <div className="w-screen flex items-center md:justify-center space-x-10 overflow-x-scroll md:overflow-auto mt-5 px-5">
             {questions.map((question, i) => (
@@ -162,7 +158,7 @@ const Exam: React.FC<ExamPageProps> = ({ params }) => {
           )}
 
           {currentQuestionIndex === questions.length - 1 && (
-            <div className="w-full flex justify-end">
+            <div className="w-full mb-6 flex justify-end">
               <form onSubmit={handleSubmit}>
                 <PrimaryButton>Terminar</PrimaryButton>
               </form>
