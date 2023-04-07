@@ -37,7 +37,7 @@ const Topbar: React.FC = () => {
         </div>
         <div className="ml-5">
           {token ? (
-            <form action="/profile">
+            <form action={`/profile/${token}`}>
               <PrimaryButton>Aceder ao perfil</PrimaryButton>
             </form>
           ) : (
@@ -66,7 +66,7 @@ const Topbar: React.FC = () => {
 
             <div className="mt-5">
               {token ? (
-                <form action="/profile">
+                <form action={`/profile/${token}`}>
                   <PrimaryButton className="w-full">Aceder ao perfil</PrimaryButton>
                 </form>
               ) : (

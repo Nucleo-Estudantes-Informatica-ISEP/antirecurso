@@ -10,7 +10,7 @@ export default function Error({ error, reset }: { error: Error; reset: () => voi
 
   return (
     <div className="flex h-full flex-col items-center justify-center gap-4">
-      <h1 className="text-4xl">
+      <h1 className="text-4xl font-bold">
         <span className="text-primary">Oops...</span> Something went{' '}
         <span className="text-primary">wrong!</span>
       </h1>
