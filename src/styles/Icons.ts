@@ -1,8 +1,10 @@
 import {
-  FiCheck as Check,
   FiAlertCircle as Danger,
+  FiCheck as Check,
   FiMenu as Menu,
   FiX as X
 } from 'react-icons/fi';
 
-export { Menu, Check, X, Danger };
+import { FaSpinner as Spinner } from 'react-icons/fa';
+
+export { Menu, Check, X, Danger, Spinner };

@@ -3,10 +3,12 @@
 import { Menu } from '@/styles/Icons';
 import Link from 'next/link';
 import { useState } from 'react';
+import { useToken } from 'src/hooks/useToken';
 import PrimaryButton from '../PrimaryButton';
 
 const Topbar: React.FC = () => {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const { token } = useToken();
+
   const [isOpen, setIsOpen] = useState(false);
 
   function handleClickMenu() {
@@ -34,7 +36,7 @@ const Topbar: React.FC = () => {
           </Link>
         </div>
         <div className="ml-5">
-          {isAuthenticated ? (
+          {token ? (
             <form action="/profile">
               <PrimaryButton>Aceder ao perfil</PrimaryButton>
             </form>
@@ -63,7 +65,7 @@ const Topbar: React.FC = () => {
             </Link>
 
             <div className="mt-5">
-              {isAuthenticated ? (
+              {token ? (
                 <form action="/profile">
                   <PrimaryButton className="w-full">Aceder ao perfil</PrimaryButton>
                 </form>
