@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
@@ -11,6 +11,8 @@ import swal from 'sweetalert';
 
 import PrimaryButton from '@/components/PrimaryButton';
 import { Check } from '@/styles/Icons';
+import { ExamContext } from 'src/contexts/ExamContext';
+import { BASE_URL } from 'src/services/api';
 import generateExam from 'src/services/generateExam';
 import Question from 'src/types/Question';
 
@@ -25,9 +27,9 @@ const N_SKELETON_OPTIONS = 4;
 
 const Exam: React.FC<ExamPageProps> = ({ params }) => {
   const router = useRouter();
+  const { setExamResult, subject, setSubject } = useContext(ExamContext);
 
   const [questions, setQuestions] = useState<Question[]>([]);
-  const [subjectName, setSubjectName] = useState<string>('');
 
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [currentQuestion, setCurrentQuestion] = useState<Question | null>(null);
@@ -37,8 +39,25 @@ const Exam: React.FC<ExamPageProps> = ({ params }) => {
     if (i >= 0 && i < questions.length) setCurrentQuestionIndex(i);
   }
 
+  function hasAnsweredAllQuestions(): boolean {
+    if (answers.size === questions.length) return true;
+
+    return false;
+  }
+
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
+
+    if (!hasAnsweredAllQuestions()) {
+      const confirmed = await swal({
+        title: 'Não respondeu a todas as questões do exame.',
+        text: 'Tem a certeza que quer terminar o exame?',
+        icon: 'warning',
+        buttons: ['Cancelar', 'Continuar']
+      });
+
+      if (!confirmed) return;
+    }
 
     const confirmed = await swal({
       title: 'Tem a certeza que quer terminar o exame?',
@@ -51,8 +70,35 @@ const Exam: React.FC<ExamPageProps> = ({ params }) => {
     handleConfirm();
   }
 
-  function handleConfirm() {
-    router.push(`/exams/${params.id}/points`);
+  function getUserId() {
+    // TODO get user id from token
+    return 1;
+  }
+
+  async function handleConfirm() {
+    const data = {
+      user_id: getUserId(),
+      subject_id: parseInt(params.id),
+      answers: Array.from(answers.entries()).map(([question, answer]) => ({
+        question_id: questions[question].id,
+        selected_option: answer
+      }))
+    };
+
+    console.log(data);
+
+    const res = await fetch(`${BASE_URL}/exams/verify`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(data)
+    });
+
+    if (res.status === 200) {
+      setExamResult(await res.json());
+      router.push(`/exams/${params.id}/points`);
+    } else swal('Ocorreu um erro ao submeter o exame.', 'Por favor tente novamente.', 'error');
   }
 
   function selectAnswer(question: number, order: number) {
@@ -74,9 +120,10 @@ const Exam: React.FC<ExamPageProps> = ({ params }) => {
     setQuestions(exam);
   }
 
-  function getSubjectName(id: number) {
-    // TODO get subject name from id
-    setSubjectName('Princíios da Computação');
+  async function getSubjectName(id: number) {
+    const res = await fetch(`${BASE_URL}/subjects/${id}`);
+    const { name } = await res.json();
+    setSubject(name);
   }
 
   useEffect(() => {
@@ -91,7 +138,7 @@ const Exam: React.FC<ExamPageProps> = ({ params }) => {
   return (
     <section className="h-screen flex flex-col items-center">
       <p className="text-xl font-bold uppercase mt-10 ml-5">
-        Exame de <span className="text-primary">{subjectName}</span>
+        Exame de <span className="text-primary">{subject}</span>
       </p>
       <div className="mb-12">
         {questions[0] ? (

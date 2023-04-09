@@ -2,18 +2,26 @@
 
 import { Menu } from '@/styles/Icons';
 import Link from 'next/link';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useToken } from 'src/hooks/useToken';
 import PrimaryButton from '../PrimaryButton';
 
 const Topbar: React.FC = () => {
-  const { token } = useToken();
-
+  const [token, setToken] = useState<string | null>(null);
   const [isOpen, setIsOpen] = useState(false);
 
   function handleClickMenu() {
     setIsOpen((state) => !state);
   }
+
+  async function getUserToken() {
+    const { token: t } = await useToken();
+    setToken(t);
+  }
+
+  useEffect(() => {
+    getUserToken();
+  }, []);
 
   return (
     <div className="w-screen h-20 flex items-center justify-between py-5 px-10 bg-white shadow border-gray-100 sticky top-0 left-0">

@@ -1,9 +1,14 @@
 'use client';
+import { useContext, useEffect, useState } from 'react';
+
+import Link from 'next/link';
 
 import PrimaryButton from '@/components/PrimaryButton';
-import Link from 'next/link';
-import { useEffect, useState } from 'react';
+import { ExamContext } from 'src/contexts/ExamContext';
+
+import { useRouter } from 'next/navigation';
 import ReactCanvasConfetti from 'react-canvas-confetti';
+import swal from 'sweetalert';
 
 interface ExamPageProps {
   params: {
@@ -12,34 +17,41 @@ interface ExamPageProps {
 }
 
 const points: React.FC<ExamPageProps> = ({ params }) => {
-  function getSubjectName() {
-    setSubjectName('Princípios da Programação');
+  const router = useRouter();
+
+  const { examResult, subject } = useContext(ExamContext);
+
+  if (!examResult) {
+    swal({
+      title: 'Erro',
+      text: 'Não foi possível obter o resultado do exame.',
+      icon: 'error'
+    });
+
+    router.push('/');
+    return <></>;
   }
 
   const [fire, setFire] = useState(false);
-  const [points, setPoints] = useState(100);
-  const [wrongAnswers, setWrongAnswers] = useState(0);
-  const [subjectName, setSubjectName] = useState('');
 
   useEffect(() => {
     setFire(true);
-    getSubjectName();
   }, []);
 
   return (
     <section className="h-screen flex flex-col items-center">
       <p className="text-xl font-bold uppercase md:mt-60 ml-5">
-        Exame de <span className="text-primary">{subjectName}</span>
+        Exame de <span className="text-primary">{subject}</span>
       </p>
       <div className="flex items-center justify-center mt-10 space-x-3">
         <div className="text-white bg-primary p-5 w-8 h-8 flex items-center justify-center rounded-full">
-          {wrongAnswers}
+          {examResult?.score}
         </div>
-        <p className="text-xl font-bold uppercase">erradas</p>
+        <p className="text-xl font-bold uppercase">pontos</p>
       </div>
 
       <section className="mt-10 px-4 flex text-center flex-col items-center justify-center relative">
-        {points > 50 ? (
+        {examResult?.passed ? (
           <>
             <p className="font-semibold text-xl">
               <span className="text-primary">Parabéns!</span> Passaste no exame! 🎉
