@@ -15,6 +15,7 @@ import { ExamContext } from 'src/contexts/ExamContext';
 import { BASE_URL } from 'src/services/api';
 import generateExam from 'src/services/generateExam';
 import Question from 'src/types/Question';
+import getSubjectNameById from 'src/utils/getSubjectNameById';
 
 interface ExamPageProps {
   params: {
@@ -120,15 +121,13 @@ const Exam: React.FC<ExamPageProps> = ({ params }) => {
     setQuestions(exam);
   }
 
-  async function getSubjectName(id: number) {
-    const res = await fetch(`${BASE_URL}/subjects/${id}`);
-    const { name } = await res.json();
-    setSubject(name);
+  async function setSubjectName() {
+    setSubject(await getSubjectNameById(parseInt(params.id)));
   }
 
   useEffect(() => {
     getExam(parseInt(params.id));
-    getSubjectName(parseInt(params.id));
+    setSubjectName();
   }, []);
 
   useEffect(() => {

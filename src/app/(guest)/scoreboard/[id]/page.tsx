@@ -1,30 +1,24 @@
-'use client';
-
-import { useEffect, useState } from 'react';
+import { BASE_URL } from 'src/services/api';
+import Leaderboard from 'src/types/Leaderboard';
+import getSubjectNameById from 'src/utils/getSubjectNameById';
 
 interface ScoreboardPageProps {
   params: {
-    slug: string;
+    id: string;
   };
 }
 
-const ScoreboardPage: React.FC<ScoreboardPageProps> = ({ params }) => {
-  const [leaderboardUsers, setUsers] = useState([]);
-  const [subjectName, setSubjectName] = useState('');
+// @ts-expect-error Server Component
+const ScoreboardPage: React.FC<ScoreboardPageProps> = async ({ params }) => {
+  const subjectName = await getSubjectNameById(parseInt(params.id));
+  const scoreboard = await fetchLeaderboard();
 
-  function fetchScoreboard() {
-    //TODO
+  async function fetchLeaderboard(): Promise<Leaderboard> {
+    const res = await fetch(BASE_URL + '/subjects/' + params.id + '/scoreboard', {
+      cache: 'no-cache'
+    });
+    return res.json();
   }
-
-  function getSubjectName() {
-    //TODO
-    setSubjectName('Princípios da Programação');
-  }
-
-  useEffect(() => {
-    fetchScoreboard();
-    getSubjectName();
-  }, []);
 
   return (
     <section className="h-screen flex flex-col items-center mt-32 px-10">
@@ -33,7 +27,7 @@ const ScoreboardPage: React.FC<ScoreboardPageProps> = ({ params }) => {
       </p>
 
       <section className="mt-10 w-full grid place-items-center">
-        {leaderboardUsers.length === 0 ? (
+        {scoreboard.scores.length === 0 ? (
           <p>Sem nenhum utilizador registado</p>
         ) : (
           <table className="w-1/2 text-sm text-center">
@@ -51,13 +45,13 @@ const ScoreboardPage: React.FC<ScoreboardPageProps> = ({ params }) => {
               </tr>
             </thead>
             <tbody>
-              {leaderboardUsers.map((user, key) => (
+              {scoreboard.scores.map((line, key) => (
                 <tr className="bg-white border-b">
                   <th scope="row" className="px-6 py-4 font-medium text-primary whitespace-nowrap">
                     {key + 1}
                   </th>
-                  {/* <td className="px-6 py-4">{user.name}</td>
-                  <td className="px-6 py-4">{user.score}</td> */}
+                  <td className="px-6 py-4">{line.user_name}</td>
+                  <td className="px-6 py-4">{line.score}</td>
                 </tr>
               ))}
             </tbody>
