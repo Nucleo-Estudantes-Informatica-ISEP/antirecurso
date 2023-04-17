@@ -2,20 +2,23 @@
 
 import { useContext, useEffect, useState } from 'react';
 
-import Image from 'next/image';
 import { useRouter } from 'next/navigation';
+import Image from 'next/image';
 
 import Skeleton from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css';
 import swal from 'sweetalert';
 
 import PrimaryButton from '@/components/PrimaryButton';
-import { Check } from '@/styles/Icons';
+
 import { ExamContext } from 'src/contexts/ExamContext';
+import { useToken } from 'src/hooks/useToken';
 import { BASE_URL } from 'src/services/api';
 import generateExam from 'src/services/generateExam';
 import Question from 'src/types/Question';
 import getSubjectNameById from 'src/utils/getSubjectNameById';
+
+import { Check } from '@/styles/Icons';
 
 interface ExamPageProps {
   params: {
@@ -71,14 +74,8 @@ const Exam: React.FC<ExamPageProps> = ({ params }) => {
     handleConfirm();
   }
 
-  function getUserId() {
-    // TODO get user id from token
-    return 1;
-  }
-
   async function handleConfirm() {
     const data = {
-      user_id: getUserId(),
       subject_id: parseInt(params.id),
       answers: Array.from(answers.entries()).map(([question, answer]) => ({
         question_id: questions[question].id,
@@ -86,12 +83,13 @@ const Exam: React.FC<ExamPageProps> = ({ params }) => {
       }))
     };
 
-    console.log(data);
+    const { token } = await useToken();
 
     const res = await fetch(`${BASE_URL}/exams/verify`, {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`
       },
       body: JSON.stringify(data)
     });
