@@ -38,9 +38,21 @@ const reviewPage: React.FC<ExamPageProps> = ({ params }) => {
     if (i >= 0 && i < examResult!.questions.length) setCurrentQuestionIndex(i);
   }
 
+  function getFirstWrongQuestionIndex() {
+    if (!examResult) return;
+    const wrongAnswer = examResult.questions.find((question) => question.is_wrong);
+    if (!wrongAnswer) return;
+    return examResult.questions.indexOf(wrongAnswer);
+  }
+
   useEffect(() => {
     getExamResult();
   }, []);
+
+  useEffect(() => {
+    const index = getFirstWrongQuestionIndex();
+    if (index) setCurrentQuestionIndex(index);
+  }, [examResult]);
 
   useEffect(() => {
     if (examResult) setCurrentQuestion(examResult.questions[currentQuestionIndex]);
