@@ -16,8 +16,6 @@ import { z } from 'zod';
 const login: React.FC = () => {
   const router = useRouter();
 
-  const { setToken } = useToken();
-
   const emailInputRef = useRef<HTMLInputElement>(null);
   const passwordInputRef = useRef<HTMLInputElement>(null);
 
@@ -62,6 +60,8 @@ const login: React.FC = () => {
 
       if (res.status === 200) {
         const { token } = await res.json();
+
+        const { setToken } = await useToken();
 
         setToken(token);
 
