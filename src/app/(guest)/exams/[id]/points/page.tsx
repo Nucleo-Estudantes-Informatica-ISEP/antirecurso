@@ -32,6 +32,10 @@ const points: React.FC<ExamPageProps> = ({ params }) => {
     return <></>;
   }
 
+  function handleReview() {
+    router.push('/exams/' + examResult!.id + '/review');
+  }
+
   const [fire, setFire] = useState(false);
 
   useEffect(() => {
@@ -82,11 +86,13 @@ const points: React.FC<ExamPageProps> = ({ params }) => {
           </>
         )}
 
-        <PrimaryButton className="mt-16">Verificar respostas</PrimaryButton>
+        <PrimaryButton onClick={handleReview} className="mt-16">
+          Verificar respostas
+        </PrimaryButton>
 
         <p className="text-xs mt-5 mx-5">
           Não te esqueças que podes criar uma conta para guardar o teu progresso clicando{' '}
-          <Link href="/register" className="underline">
+          <Link className="cursor-pointer underline" href="/register">
             aqui
           </Link>
           .
