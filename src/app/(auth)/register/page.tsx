@@ -19,8 +19,6 @@ import swal from 'sweetalert';
 const register: React.FC = () => {
   const router = useRouter();
 
-  const { setToken } = useToken();
-
   const nameInputRef = useRef<HTMLInputElement>(null);
   const emailInputRef = useRef<HTMLInputElement>(null);
   const passwordInputRef = useRef<HTMLInputElement>(null);
@@ -63,8 +61,7 @@ const register: React.FC = () => {
       const res = await fetch(BASE_URL + '/auth/register', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
-          'Access-Control-Allow-Origin': 'no-cors'
+          'Content-Type': 'application/json'
         },
         body: JSON.stringify({
           name,
@@ -74,6 +71,8 @@ const register: React.FC = () => {
       });
 
       if (res.status === 200) {
+        const { setToken } = await useToken();
+
         const { token } = await res.json();
 
         setToken(token);
