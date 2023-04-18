@@ -1,3 +1,4 @@
+import Answer from './Answer';
 import Score from './Score';
 
 export default interface User {
@@ -6,4 +7,5 @@ export default interface User {
   email: string;
   is_admin: number;
   scores: Score[];
+  answers: Answer[];
 }

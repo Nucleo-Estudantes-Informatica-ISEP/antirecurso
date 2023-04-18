@@ -1,4 +1,6 @@
+import Link from 'next/link';
 import { BASE_URL } from 'src/services/api';
+import User from 'src/types/User';
 
 interface ProfileProps {
   params: {
@@ -13,7 +15,7 @@ const profile: React.FC<ProfileProps> = async ({ params }) => {
     },
     cache: 'no-store'
   });
-  const user = await res.json();
+  const user = (await res.json()) as User;
 
   const today = new Date().toLocaleDateString('pt-PT');
 
@@ -71,20 +73,19 @@ const profile: React.FC<ProfileProps> = async ({ params }) => {
             </tr>
           </thead>
           <tbody>
-            <h1>Previous Exams</h1>
-            {/* @foreach (App\Models\Answer::where(['user_id' => $user->id])->get()->sortByDesc('created_at') as $answer)
-                        <tr className="bg-white border-b">
-                            <td className="px-6 py-4">
-                                <a href="{{ route('exams.checkPrevious', ['slug' => $subject->slug, 'answer' => $answer]) }}" className="underline hover:text-primary transition ease-in-out">{{ $answer->subject->name }}</a>
-                            </td>
-                            <td className="px-6 py-4">
-                                {{ $answer->score }}
-                            </td>
-                            <td className="px-6 py-4">
-                                {{ $answer->created_at->format('d/m/Y') }}
-                            </td>
-                        </tr>
-                    @endforeach */}
+            {user.answers.map((answer) => (
+              <tr className="bg-white border-b">
+                <td className="px-6 py-4">
+                  <Link
+                    href={`/exams/${answer.id}/review/`}
+                    className="underline hover:text-primary transition ease-in-out">
+                    {answer.subject_id} {/*TODO get subject name*/}
+                  </Link>
+                </td>
+                <td className="px-6 py-4">{answer.score}</td>
+                <td className="px-6 py-4">{answer.created_at}</td> {/*todo format date*/}
+              </tr>
+            ))}
           </tbody>
         </table>
       </section>
