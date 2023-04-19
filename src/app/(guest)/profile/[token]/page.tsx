@@ -1,4 +1,4 @@
-import Link from 'next/link';
+import PreviousExamsTable from '@/components/PreviousExamsTable';
 import { BASE_URL } from 'src/services/api';
 import User from 'src/types/User';
 
@@ -7,8 +7,8 @@ interface ProfileProps {
     token: string;
   };
 }
-// @ts-expect-error Server Component
-const profile: React.FC<ProfileProps> = async ({ params }) => {
+
+export default async function profile({ params }: ProfileProps) {
   const res = await fetch(`${BASE_URL}/user`, {
     headers: {
       Authorization: `Bearer ${params.token}`
@@ -45,7 +45,7 @@ const profile: React.FC<ProfileProps> = async ({ params }) => {
           <tbody>
             {user.scores.map((score) => (
               <tr className="bg-white border-b">
-                <td className="px-6 py-4">{score.subject}</td>
+                <td className="px-6 py-4">{score.subject.toUpperCase()}</td>
                 <td className="px-6 py-4">{score.score}</td>
               </tr>
             ))}
@@ -57,40 +57,7 @@ const profile: React.FC<ProfileProps> = async ({ params }) => {
         Os teus <span className="text-primary">exames</span>
       </p>
 
-      <section className="my-5 md:px-16 w-full grid place-items-center">
-        <table className="w-1/2 text-sm text-center">
-          <thead className="text-xs text-white uppercase bg-primary">
-            <tr>
-              <th scope="col" className="px-6 py-3">
-                Disciplina
-              </th>
-              <th scope="col" className="px-6 py-3">
-                Pontuação para ranking
-              </th>
-              <th scope="col" className="px-6 py-3">
-                Data
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            {user.answers.map((answer) => (
-              <tr className="bg-white border-b">
-                <td className="px-6 py-4">
-                  <Link
-                    href={`/exams/${answer.id}/review/`}
-                    className="underline hover:text-primary transition ease-in-out">
-                    {answer.subject_id} {/*TODO get subject name*/}
-                  </Link>
-                </td>
-                <td className="px-6 py-4">{answer.score}</td>
-                <td className="px-6 py-4">{answer.created_at}</td> {/*todo format date*/}
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </section>
+      <PreviousExamsTable user={user} />
     </section>
   );
-};
-
-export default profile;
+}
