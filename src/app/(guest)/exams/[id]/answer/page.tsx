@@ -37,7 +37,7 @@ const Exam: React.FC<ExamPageProps> = ({ params }) => {
 
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [currentQuestion, setCurrentQuestion] = useState<Question | null>(null);
-  const [answers, setAnswers] = useState<Map<number, number>>(new Map<number, number>());
+  const [answers, setAnswers] = useState<Map<number, string>>(new Map<number, string>());
 
   function changeQuestion(i: number) {
     if (i >= 0 && i < questions.length) setCurrentQuestionIndex(i);
@@ -100,7 +100,7 @@ const Exam: React.FC<ExamPageProps> = ({ params }) => {
     } else swal('Ocorreu um erro ao submeter o exame.', 'Por favor tente novamente.', 'error');
   }
 
-  function selectAnswer(question: number, order: number) {
+  function selectAnswer(question: number, order: string) {
     setAnswers((prev) => {
       const newAnswers = new Map(prev);
       newAnswers.set(question, order);
