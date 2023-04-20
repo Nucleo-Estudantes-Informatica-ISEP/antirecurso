@@ -1,6 +1,5 @@
 'use client';
 
-import User from 'src/types/User';
 import Pagination from '../Pagination';
 import Link from 'next/link';
 import { formatDateDDStrMonthYYYY } from 'src/utils/Date';
@@ -8,17 +7,19 @@ import { useEffect, useRef, useState } from 'react';
 import Answer from 'src/types/Answer';
 import fetchAnswers from 'src/utils/FetchAnswers';
 import swal from 'sweetalert';
+import Skeleton from 'react-loading-skeleton';
+import 'react-loading-skeleton/dist/skeleton.css';
 
 interface PreviousExamsTableProps {
-  user: User;
+  nTotalAnswers: number;
   token: string;
 }
 
-const PreviousExamsTable: React.FC<PreviousExamsTableProps> = ({ user, token }) => {
+const PreviousExamsTable: React.FC<PreviousExamsTableProps> = ({ nTotalAnswers, token }) => {
   const sectionRef = useRef<HTMLElement>(null);
   const N_ITEMS_PER_PAGE = 10;
 
-  const nPages = Math.ceil(user.answers.length / N_ITEMS_PER_PAGE);
+  const nPages = Math.ceil(nTotalAnswers / N_ITEMS_PER_PAGE);
 
   const [currentPage, setCurrentPage] = useState(1);
   const [answerPerPage, setAnswers] = useState<Answer[]>([]);
@@ -64,21 +65,35 @@ const PreviousExamsTable: React.FC<PreviousExamsTableProps> = ({ user, token }) 
           </tr>
         </thead>
         <tbody>
-          {answerPerPage.map((answer) => {
-            return (
-              <tr className="bg-white border-b">
-                <td className="px-6 py-4">
-                  <Link
-                    href={`/exams/${answer.id}/review/`}
-                    className="hover:text-primary transition ease-in-out">
-                    {answer.subject.toUpperCase()}
-                  </Link>
-                </td>
-                <td className="px-6 py-4">{answer.score}</td>
-                <td className="px-6 py-4">{formatDateDDStrMonthYYYY(answer.created_at)}</td>{' '}
-              </tr>
-            );
-          })}
+          {answerPerPage.length === 0 ? (
+            <tr>
+              <td className="px-6 py-4">
+                <Skeleton className="h-10 my-2" count={N_ITEMS_PER_PAGE} />
+              </td>
+              <td className="px-6 py-4">
+                <Skeleton className="h-10 my-2" count={N_ITEMS_PER_PAGE} />
+              </td>
+              <td className="px-6 py-4">
+                <Skeleton className="h-10 my-2" count={N_ITEMS_PER_PAGE} />
+              </td>
+            </tr>
+          ) : (
+            answerPerPage.map((answer) => {
+              return (
+                <tr className="bg-white border-b">
+                  <td className="px-6 py-4">
+                    <Link
+                      href={`/exams/${answer.id}/review/`}
+                      className="hover:text-primary transition ease-in-out">
+                      {answer.subject.toUpperCase()}
+                    </Link>
+                  </td>
+                  <td className="px-6 py-4">{answer.score}</td>
+                  <td className="px-6 py-4">{formatDateDDStrMonthYYYY(answer.created_at)}</td>
+                </tr>
+              );
+            })
+          )}
         </tbody>
       </table>
       <Pagination

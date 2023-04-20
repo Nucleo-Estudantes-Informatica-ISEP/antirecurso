@@ -3,7 +3,7 @@ import React, { RefObject } from 'react';
 interface PaginationProps {
   currentPage: number;
   totalPages: number;
-  onPageChange: (page: number) => void;
+  onPageChange: (callback: (page: number) => number) => void;
 }
 
 const Pagination: React.FC<PaginationProps> = ({ currentPage, totalPages, onPageChange }) => {
@@ -14,11 +14,11 @@ const Pagination: React.FC<PaginationProps> = ({ currentPage, totalPages, onPage
   }
 
   const handlePrevClick = () => {
-    onPageChange(currentPage - 1);
+    onPageChange((cur) => cur - 1);
   };
 
   const handleNextClick = () => {
-    onPageChange(currentPage + 1);
+    onPageChange((cur) => cur + 1);
   };
 
   return (
@@ -39,7 +39,7 @@ const Pagination: React.FC<PaginationProps> = ({ currentPage, totalPages, onPage
             className={`inline-block px-4 py-2 rounded-md cursor-pointer border-2 ${
               currentPage === number ? 'bg-primary text-white' : 'hover:bg-primary hover:text-white'
             }`}
-            onClick={() => onPageChange(number)}>
+            onClick={() => onPageChange(() => number)}>
             <a className="block">{number}</a>
           </button>
         ))}
