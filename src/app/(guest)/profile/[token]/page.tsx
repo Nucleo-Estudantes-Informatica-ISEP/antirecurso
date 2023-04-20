@@ -7,8 +7,8 @@ interface ProfileProps {
     token: string;
   };
 }
-
-export default async function profile({ params }: ProfileProps) {
+// @ts-expect-error Server Component
+const profile: React.FC<ProfileProps> = async ({ params }) => {
   const res = await fetch(`${BASE_URL}/user`, {
     headers: {
       Authorization: `Bearer ${params.token}`
@@ -57,7 +57,9 @@ export default async function profile({ params }: ProfileProps) {
         Os teus <span className="text-primary">exames</span>
       </p>
 
-      <PreviousExamsTable user={user} />
+      <PreviousExamsTable user={user} token={params.token} />
     </section>
   );
-}
+};
+
+export default profile;

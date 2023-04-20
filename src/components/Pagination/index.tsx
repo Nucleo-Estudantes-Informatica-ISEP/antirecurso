@@ -6,7 +6,7 @@ interface PaginationProps {
   onPageChange: (page: number) => void;
 }
 
-export default function Pagination({ currentPage, totalPages, onPageChange }: PaginationProps) {
+const Pagination: React.FC<PaginationProps> = ({ currentPage, totalPages, onPageChange }) => {
   const pageNumbers = [];
 
   for (let i = 1; i <= totalPages; i++) {
@@ -15,6 +15,10 @@ export default function Pagination({ currentPage, totalPages, onPageChange }: Pa
 
   const handlePrevClick = () => {
     onPageChange(currentPage - 1);
+  };
+
+  const handleNextClick = () => {
+    onPageChange(currentPage + 1);
   };
 
   return (
@@ -44,11 +48,13 @@ export default function Pagination({ currentPage, totalPages, onPageChange }: Pa
           className={`inline-block px-4 py-2 rounded-md cursor-pointer border-2 ${
             currentPage === totalPages ? 'bg-gray-200 text-gray-600' : 'hover:bg-gray-200'
           }`}
-          onClick={() => onPageChange(currentPage + 1)}
+          onClick={handleNextClick}
           disabled={currentPage === totalPages}>
           <a className="block">Next</a>
         </button>
       </ul>
     </nav>
   );
-}
+};
+
+export default Pagination;
