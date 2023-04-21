@@ -57,7 +57,7 @@ const profile: React.FC<ProfileProps> = async ({ params }) => {
         Os teus <span className="text-primary">exames</span>
       </p>
 
-      <PreviousExamsTable nTotalAnswers={user.answers.length} token={params.token} />
+      <PreviousExamsTable token={params.token} />
     </section>
   );
 };

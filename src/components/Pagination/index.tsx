@@ -1,57 +1,26 @@
-import React, { RefObject } from 'react';
+import React, { Dispatch, SetStateAction } from 'react';
+import PreviousExamResponseMetadata from 'src/types/PreviousExamResponseMetadata';
 
 interface PaginationProps {
-  currentPage: number;
-  totalPages: number;
-  onPageChange: (callback: (page: number) => number) => void;
+  metadata: PreviousExamResponseMetadata;
+  setFetchUrl: Dispatch<SetStateAction<string | null>>;
 }
 
-const Pagination: React.FC<PaginationProps> = ({ currentPage, totalPages, onPageChange }) => {
-  const pageNumbers = [];
-
-  for (let i = 1; i <= totalPages; i++) {
-    pageNumbers.push(i);
-  }
-
-  const handlePrevClick = () => {
-    onPageChange((cur) => cur - 1);
-  };
-
-  const handleNextClick = () => {
-    onPageChange((cur) => cur + 1);
-  };
-
+const Pagination: React.FC<PaginationProps> = ({ metadata, setFetchUrl }) => {
   return (
     <nav>
       <ul className="flex justify-center list-none rounded-md bg-white divide-x divide-gray-200 mt-6 gap-2">
-        <button
-          className={`inline-block px-4 py-2 rounded-md cursor-pointer border-2 ${
-            currentPage === 1 ? 'bg-gray-200 text-gray-600' : 'hover:bg-gray-200'
-          }`}
-          onClick={handlePrevClick}
-          disabled={currentPage === 1}>
-          <a className="block">Previous</a>
-        </button>
-
-        {pageNumbers.map((number) => (
+        {metadata.links.map((link) => (
           <button
-            key={number}
-            className={`inline-block px-4 py-2 rounded-md cursor-pointer border-2 ${
-              currentPage === number ? 'bg-primary text-white' : 'hover:bg-primary hover:text-white'
+            disabled={link.url === null}
+            key={link.label}
+            className={`flex items-center justify-center w-1/3 px-4 py-2 rounded-md cursor-pointer border-2 ${
+              link.active ? 'bg-primary text-white' : 'hover:bg-primary hover:text-white'
             }`}
-            onClick={() => onPageChange(() => number)}>
-            <a className="block">{number}</a>
+            onClick={() => setFetchUrl(link.url)}>
+            <a dangerouslySetInnerHTML={{ __html: link.label }} className="w-full"></a>
           </button>
         ))}
-
-        <button
-          className={`inline-block px-4 py-2 rounded-md cursor-pointer border-2 ${
-            currentPage === totalPages ? 'bg-gray-200 text-gray-600' : 'hover:bg-gray-200'
-          }`}
-          onClick={handleNextClick}
-          disabled={currentPage === totalPages}>
-          <a className="block">Next</a>
-        </button>
       </ul>
     </nav>
   );

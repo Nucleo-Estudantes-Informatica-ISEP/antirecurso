@@ -1,14 +1,15 @@
-import { BASE_URL } from "src/services/api";
+import PreviousExamResponse from "src/types/PreviousExamResponse";
 
 interface Props {
   token: string;
-  currentPage: number;
+  fetchUrl: string | null;
 }
 
-const N_ITEMS_PER_PAGE = 10;
-
-export default async function fetchAnswers({ token, currentPage }: Props) {
-  const response = await fetch(`${BASE_URL}/exams?page=${currentPage}&per_page=${N_ITEMS_PER_PAGE}`, {
+export default async function fetchAnswers({ token, fetchUrl }: Props): Promise<PreviousExamResponse> {
+  if (!fetchUrl) {
+    throw new Error("No fetch url provided");
+  }
+  const response = await fetch(fetchUrl, {
     headers: {
       Authorization: `Bearer ${token}`
     },
