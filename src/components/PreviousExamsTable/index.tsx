@@ -14,8 +14,6 @@ interface PreviousExamsTableProps {
   token: string;
 }
 
-const N_ITEMS_PER_PAGE = 10;
-
 const PreviousExamsTable: React.FC<PreviousExamsTableProps> = ({ token }) => {
   const sectionRef = useRef<HTMLElement>(null);
 
