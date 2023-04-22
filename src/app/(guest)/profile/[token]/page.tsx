@@ -1,4 +1,6 @@
+import PreviousExamsTable from '@/components/PreviousExamsTable';
 import { BASE_URL } from 'src/services/api';
+import User from 'src/types/User';
 
 interface ProfileProps {
   params: {
@@ -13,7 +15,7 @@ const profile: React.FC<ProfileProps> = async ({ params }) => {
     },
     cache: 'no-store'
   });
-  const user = await res.json();
+  const user = (await res.json()) as User;
 
   const today = new Date().toLocaleDateString('pt-PT');
 
@@ -43,7 +45,7 @@ const profile: React.FC<ProfileProps> = async ({ params }) => {
           <tbody>
             {user.scores.map((score) => (
               <tr className="bg-white border-b">
-                <td className="px-6 py-4">{score.subject}</td>
+                <td className="px-6 py-4">{score.subject.toUpperCase()}</td>
                 <td className="px-6 py-4">{score.score}</td>
               </tr>
             ))}
@@ -55,39 +57,7 @@ const profile: React.FC<ProfileProps> = async ({ params }) => {
         Os teus <span className="text-primary">exames</span>
       </p>
 
-      <section className="my-5 md:px-16 w-full grid place-items-center">
-        <table className="w-1/2 text-sm text-center">
-          <thead className="text-xs text-white uppercase bg-primary">
-            <tr>
-              <th scope="col" className="px-6 py-3">
-                Disciplina
-              </th>
-              <th scope="col" className="px-6 py-3">
-                Pontuação para ranking
-              </th>
-              <th scope="col" className="px-6 py-3">
-                Data
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            <h1>Previous Exams</h1>
-            {/* @foreach (App\Models\Answer::where(['user_id' => $user->id])->get()->sortByDesc('created_at') as $answer)
-                        <tr className="bg-white border-b">
-                            <td className="px-6 py-4">
-                                <a href="{{ route('exams.checkPrevious', ['slug' => $subject->slug, 'answer' => $answer]) }}" className="underline hover:text-primary transition ease-in-out">{{ $answer->subject->name }}</a>
-                            </td>
-                            <td className="px-6 py-4">
-                                {{ $answer->score }}
-                            </td>
-                            <td className="px-6 py-4">
-                                {{ $answer->created_at->format('d/m/Y') }}
-                            </td>
-                        </tr>
-                    @endforeach */}
-          </tbody>
-        </table>
-      </section>
+      <PreviousExamsTable token={params.token} />
     </section>
   );
 };

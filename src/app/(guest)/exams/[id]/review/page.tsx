@@ -118,7 +118,7 @@ const reviewPage: React.FC<ExamPageProps> = ({ params }) => {
                     }`}>
                     <p>{option.name}</p>
                     {currentQuestion.selected_option_id === option.id &&
-                      currentQuestion.is_wrong && <X className="ml-5" />}
+                      currentQuestion.is_wrong === true && <X className="ml-5" />}
                     {currentQuestion.correct_option === option.order && <Check className="ml-5" />}
                   </div>
                 ))}
