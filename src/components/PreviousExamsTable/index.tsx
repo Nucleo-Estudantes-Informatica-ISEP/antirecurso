@@ -47,9 +47,7 @@ const PreviousExamsTable: React.FC<PreviousExamsTableProps> = ({ token }) => {
   return (
     <section ref={sectionRef} className="my-5 md:px-16 w-full grid place-items-center">
       {previousExamResponse === undefined ? (
-        <>
-          <ExamTableLoading />
-        </>
+        <ExamTableLoading />
       ) : (
         <>
           <ExamsTable previousExamResponse={previousExamResponse} />

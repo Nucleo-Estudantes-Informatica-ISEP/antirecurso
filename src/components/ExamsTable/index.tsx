@@ -15,7 +15,7 @@ const ExamsTable: React.FC<ExamsTableProps> = ({ previousExamResponse }) => {
       <TableHeading />
       <tbody>
         {previousExamResponse.data.map((answer) => (
-          <tr className="bg-white border-b">
+          <tr key={answer.id} className="bg-white border-b">
             <td className="px-6 py-4">
               <Link
                 href={`/exams/${answer.id}/review/`}
