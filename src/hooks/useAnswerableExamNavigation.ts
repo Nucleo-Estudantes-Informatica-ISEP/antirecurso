@@ -39,16 +39,20 @@ export default function useAnswerableExamNavigation({
 
   const optionOrders = currentQuestion?.options.map((option) => option.order);
 
-  function cycleOptions() {
+  function cycleOptions(direction: 'UP' | 'DOWN') {
     if (!optionOrders) return;
 
     const currentOption = answers.get(currentQuestionIndex);
     if (!currentOption) return selectAnswer(currentQuestionIndex, optionOrders[0]);
 
     const currentIndex = optionOrders.indexOf(currentOption);
-    const nextIndex = currentIndex + 1;
+
+    const multiplier = direction === 'UP' ? -1 : 1;
+    const nextIndex = currentIndex + 1 * multiplier;
 
     if (nextIndex >= optionOrders.length) selectAnswer(currentQuestionIndex, optionOrders[0]);
+    else if (nextIndex < 0)
+      selectAnswer(currentQuestionIndex, optionOrders[optionOrders.length - 1]);
     else selectAnswer(currentQuestionIndex, optionOrders[nextIndex]);
   }
 
@@ -98,7 +102,13 @@ export default function useAnswerableExamNavigation({
             selectAnswer(currentQuestionIndex, '4');
           break;
         case ' ':
-          cycleOptions();
+          cycleOptions('DOWN');
+          break;
+        case 'ArrowUp':
+          cycleOptions('UP');
+          break;
+        case 'ArrowDown':
+          cycleOptions('DOWN');
           break;
         case 'Enter':
           if (currentQuestionIndex === questions.length - 1) {
