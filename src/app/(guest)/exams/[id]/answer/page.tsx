@@ -1,13 +1,13 @@
 'use client';
 
-import { useContext, useEffect, useState } from 'react';
+import { useContext, useEffect } from 'react';
 
-import { useRouter } from 'next/navigation';
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
+import swal from 'sweetalert';
 
 import Skeleton from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css';
-import swal from 'sweetalert';
 
 import PrimaryButton from '@/components/PrimaryButton';
 
@@ -15,10 +15,10 @@ import { ExamContext } from 'src/contexts/ExamContext';
 import { useToken } from 'src/hooks/useToken';
 import { BASE_URL } from 'src/services/api';
 import generateExam from 'src/services/generateExam';
-import Question from 'src/types/Question';
 import getSubjectNameById from 'src/utils/getSubjectNameById';
 
 import { Check } from '@/styles/Icons';
+import useAnswerableExamNavigation from 'src/hooks/useAnswerableExamNavigation';
 
 interface ExamPageProps {
   params: {
@@ -32,47 +32,17 @@ const N_SKELETON_OPTIONS = 4;
 const Exam: React.FC<ExamPageProps> = ({ params }) => {
   const router = useRouter();
   const { setExamResult, subject, setSubject } = useContext(ExamContext);
-
-  const [questions, setQuestions] = useState<Question[]>([]);
-
-  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
-  const [currentQuestion, setCurrentQuestion] = useState<Question | null>(null);
-  const [answers, setAnswers] = useState<Map<number, string>>(new Map<number, string>());
-
-  function changeQuestion(i: number) {
-    if (i >= 0 && i < questions.length) setCurrentQuestionIndex(i);
-  }
-
-  function hasAnsweredAllQuestions(): boolean {
-    if (answers.size === questions.length) return true;
-
-    return false;
-  }
-
-  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
-    e.preventDefault();
-
-    if (!hasAnsweredAllQuestions()) {
-      const confirmed = await swal({
-        title: 'Não respondeu a todas as questões do exame.',
-        text: 'Tem a certeza que quer terminar o exame?',
-        icon: 'warning',
-        buttons: ['Cancelar', 'Continuar']
-      });
-
-      if (!confirmed) return;
-    }
-
-    const confirmed = await swal({
-      title: 'Tem a certeza que quer terminar o exame?',
-      icon: 'warning',
-      buttons: ['Não', 'Sim']
-    });
-
-    if (!confirmed) return;
-
-    handleConfirm();
-  }
+  const {
+    answers,
+    submit,
+    setQuestions,
+    questions,
+    wasAnswered,
+    currentQuestionIndex,
+    changeQuestion,
+    currentQuestion,
+    selectAnswer
+  } = useAnswerableExamNavigation({ handleConfirm });
 
   async function handleConfirm() {
     const data = {
@@ -100,20 +70,6 @@ const Exam: React.FC<ExamPageProps> = ({ params }) => {
     } else swal('Ocorreu um erro ao submeter o exame.', 'Por favor tente novamente.', 'error');
   }
 
-  function selectAnswer(question: number, order: string) {
-    setAnswers((prev) => {
-      const newAnswers = new Map(prev);
-      newAnswers.set(question, order);
-      return newAnswers;
-    });
-
-    changeQuestion(currentQuestionIndex + 1);
-  }
-
-  function wasAnswered(i: number) {
-    return answers.has(i);
-  }
-
   async function getExam(id: number) {
     const exam = await generateExam(id);
     setQuestions(exam);
@@ -127,10 +83,6 @@ const Exam: React.FC<ExamPageProps> = ({ params }) => {
     getExam(parseInt(params.id));
     setSubjectName();
   }, []);
-
-  useEffect(() => {
-    setCurrentQuestion(questions[currentQuestionIndex]);
-  }, [questions, currentQuestionIndex]);
 
   return (
     <section className="h-screen flex flex-col items-center">
@@ -203,7 +155,7 @@ const Exam: React.FC<ExamPageProps> = ({ params }) => {
 
           {currentQuestionIndex === questions.length - 1 && (
             <div className="w-full mb-6 flex justify-end">
-              <form onSubmit={handleSubmit}>
+              <form onSubmit={submit}>
                 <PrimaryButton>Terminar</PrimaryButton>
               </form>
             </div>
