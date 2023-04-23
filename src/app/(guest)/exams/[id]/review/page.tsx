@@ -6,12 +6,12 @@ import Image from 'next/image';
 import Skeleton from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css';
 
-import { Check, X } from '@/styles/Icons';
+import PrimaryButton from '@/components/PrimaryButton';
+import QuestionReview from '@/components/QuestionReview';
 import { ExamContext } from 'src/contexts/ExamContext';
+import useExamNavigation from 'src/hooks/useExamNavigation';
 import { BASE_URL } from 'src/services/api';
 import ExamReview from 'src/types/ExamReview';
-import QuestionReview from '@/components/QuestionReview';
-import PrimaryButton from '@/components/PrimaryButton';
 
 interface ExamPageProps {
   params: {
@@ -21,9 +21,22 @@ interface ExamPageProps {
 
 const reviewPage: React.FC<ExamPageProps> = ({ params }) => {
   const { subject } = useContext(ExamContext);
-  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
-  const [currentQuestion, setCurrentQuestion] = useState<ExamReview['questions'][0]>();
   const [examResult, setExamResult] = useState<ExamReview>();
+
+  const {
+    setCurrentQuestionIndex,
+    currentQuestionIndex,
+    currentQuestion,
+    setCurrentQuestion,
+    changeQuestion
+  } = useExamNavigation<ExamReview['questions'][0]>();
+
+  function getFirstWrongQuestionIndex() {
+    if (!examResult) return;
+    const wrongAnswer = examResult.questions.find((question) => question.is_wrong);
+    if (!wrongAnswer) return;
+    return examResult.questions.indexOf(wrongAnswer);
+  }
 
   async function getExamResult() {
     const res = await fetch(BASE_URL + '/exams/' + params.id, {
@@ -34,17 +47,6 @@ const reviewPage: React.FC<ExamPageProps> = ({ params }) => {
     });
 
     setExamResult(await res.json());
-  }
-
-  function changeQuestion(i: number) {
-    if (i >= 0 && i < examResult!.questions.length) setCurrentQuestionIndex(i);
-  }
-
-  function getFirstWrongQuestionIndex() {
-    if (!examResult) return;
-    const wrongAnswer = examResult.questions.find((question) => question.is_wrong);
-    if (!wrongAnswer) return;
-    return examResult.questions.indexOf(wrongAnswer);
   }
 
   useEffect(() => {
