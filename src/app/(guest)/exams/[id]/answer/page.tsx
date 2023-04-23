@@ -184,7 +184,6 @@ const Exam: React.FC<ExamPageProps> = ({ params }) => {
                   className={`mr-4 ${currentQuestionIndex === 0 ? 'opacity-50' : ''}`}
                   onClick={() => changeQuestion(currentQuestionIndex - 1)}
                   disabled={currentQuestionIndex === 0}>
-                  {' '}
                   Anterior
                 </PrimaryButton>
                 <PrimaryButton
