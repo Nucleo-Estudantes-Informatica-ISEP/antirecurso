@@ -10,6 +10,8 @@ import { Check, X } from '@/styles/Icons';
 import { ExamContext } from 'src/contexts/ExamContext';
 import { BASE_URL } from 'src/services/api';
 import ExamReview from 'src/types/ExamReview';
+import QuestionReview from '@/components/QuestionReview';
+import PrimaryButton from '@/components/PrimaryButton';
 
 interface ExamPageProps {
   params: {
@@ -104,24 +106,23 @@ const reviewPage: React.FC<ExamPageProps> = ({ params }) => {
 
           {currentQuestion ? (
             <section className="mb-10">
-              <p className="text-lg font-bold mt-5">{currentQuestion.question.question}</p>
-              <p className="text-sm text-gray-600 mt-2">
-                Tipo de pergunta '{currentQuestion.question.question_type}' do exame '
-                {currentQuestion.question.exam}'
-              </p>
-              <div className="mt-5 space-y-5">
-                {currentQuestion.options.map((option) => (
-                  <div
-                    key={option.name}
-                    className={`w-full flex items-center px-5 py-3 border border-gray-100 h-20 rounded hover:cursor-pointer hover:bg-primary hover:text-white transition ease-in-out ${
-                      currentQuestion.selected_option_id === option.id && 'bg-primary text-white'
-                    }`}>
-                    <p>{option.name}</p>
-                    {currentQuestion.selected_option_id === option.id &&
-                      currentQuestion.is_wrong === true && <X className="ml-5" />}
-                    {currentQuestion.correct_option === option.order && <Check className="ml-5" />}
-                  </div>
-                ))}
+              <QuestionReview currentQuestion={currentQuestion} />
+              <div className="w-full flex justify-center mt-10">
+                <PrimaryButton
+                  className={`mr-4 ${currentQuestionIndex === 0 ? 'opacity-50' : ''}`}
+                  onClick={() => changeQuestion(currentQuestionIndex - 1)}
+                  disabled={currentQuestionIndex === 0}>
+                  {' '}
+                  Anterior
+                </PrimaryButton>
+                <PrimaryButton
+                  className={`${
+                    currentQuestionIndex === examResult!.questions.length - 1 ? 'opacity-50' : ''
+                  }`}
+                  onClick={() => changeQuestion(currentQuestionIndex + 1)}
+                  disabled={currentQuestionIndex === examResult!.questions.length - 1}>
+                  Seguinte
+                </PrimaryButton>
               </div>
             </section>
           ) : (

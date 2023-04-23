@@ -18,7 +18,7 @@ import generateExam from 'src/services/generateExam';
 import Question from 'src/types/Question';
 import getSubjectNameById from 'src/utils/getSubjectNameById';
 
-import { Check } from '@/styles/Icons';
+import QuestionPrompt from '@/components/QuestionPrompt';
 
 interface ExamPageProps {
   params: {
@@ -106,8 +106,6 @@ const Exam: React.FC<ExamPageProps> = ({ params }) => {
       newAnswers.set(question, order);
       return newAnswers;
     });
-
-    changeQuestion(currentQuestionIndex + 1);
   }
 
   function wasAnswered(i: number) {
@@ -175,24 +173,26 @@ const Exam: React.FC<ExamPageProps> = ({ params }) => {
 
           {currentQuestion ? (
             <section className="mb-10">
-              <p className="text-lg font-bold mt-5">{currentQuestion.question}</p>
-              <p className="text-sm text-gray-600 mt-2">
-                Tipo de pergunta '{currentQuestion.question_type}' do exame '{currentQuestion.exam}'
-              </p>
-              <div className="mt-5 space-y-5">
-                {currentQuestion.options.map((option) => (
-                  <div
-                    key={option.name}
-                    onClick={() => selectAnswer(currentQuestionIndex, option.order)}
-                    className={`w-full flex items-center px-5 py-3 border border-gray-100 h-20 rounded hover:cursor-pointer hover:bg-primary hover:text-white transition ease-in-out ${
-                      answers.get(currentQuestionIndex) === option.order && 'bg-primary text-white'
-                    }`}>
-                    <p>{option.name}</p>
-                    {answers.get(currentQuestionIndex) === option.order && (
-                      <Check className="ml-5" />
-                    )}
-                  </div>
-                ))}
+              <QuestionPrompt
+                currentQuestion={currentQuestion}
+                selectAnswer={selectAnswer}
+                currentQuestionIndex={currentQuestionIndex}
+                answers={answers}
+              />
+              <div className="w-full flex justify-center mt-10">
+                <PrimaryButton
+                  className={`mr-4 ${currentQuestionIndex === 0 ? 'opacity-50' : ''}`}
+                  onClick={() => changeQuestion(currentQuestionIndex - 1)}
+                  disabled={currentQuestionIndex === 0}>
+                  {' '}
+                  Anterior
+                </PrimaryButton>
+                <PrimaryButton
+                  className={`${currentQuestionIndex === questions.length - 1 ? 'opacity-50' : ''}`}
+                  onClick={() => changeQuestion(currentQuestionIndex + 1)}
+                  disabled={currentQuestionIndex === questions.length - 1}>
+                  Seguinte
+                </PrimaryButton>
               </div>
             </section>
           ) : (
