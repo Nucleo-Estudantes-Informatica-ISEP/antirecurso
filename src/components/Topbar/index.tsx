@@ -24,7 +24,7 @@ const Topbar: React.FC = () => {
   }, []);
 
   return (
-    <div className="w-screen h-20 flex items-center justify-between py-5 px-10 bg-white shadow border-gray-100 sticky top-0 left-0">
+    <div className="w-screen h-20 flex items-center justify-between py-5 px-10 bg-white shadow border-gray-100 sticky top-0 left-0 z-20">
       <Link href="/" className="w-32 md:w-48">
         <img src="/images/logo.png" alt="Our beautiful logo" className="w-full" />
       </Link>

@@ -1,6 +1,6 @@
 'use client';
 
-import { useContext, useEffect, useState } from 'react';
+import { useContext, useEffect } from 'react';
 
 import Image from 'next/image';
 import Skeleton from 'react-loading-skeleton';
@@ -9,9 +9,8 @@ import 'react-loading-skeleton/dist/skeleton.css';
 import PrimaryButton from '@/components/PrimaryButton';
 import QuestionReview from '@/components/QuestionReview';
 import { ExamContext } from 'src/contexts/ExamContext';
-import useExamNavigation from 'src/hooks/useExamNavigation';
+import useExamReviewNavigation from 'src/hooks/useExamReviewNavigation';
 import { BASE_URL } from 'src/services/api';
-import ExamReview from 'src/types/ExamReview';
 
 interface ExamPageProps {
   params: {
@@ -21,20 +20,16 @@ interface ExamPageProps {
 
 const reviewPage: React.FC<ExamPageProps> = ({ params }) => {
   const { subject } = useContext(ExamContext);
-  const [examResult, setExamResult] = useState<ExamReview>();
 
-  const {
-    setCurrentQuestionIndex,
-    currentQuestionIndex,
-    currentQuestion,
-    setCurrentQuestion,
-    changeQuestion
-  } = useExamNavigation<ExamReview['questions'][0]>();
+  const { currentQuestionIndex, currentQuestion, changeQuestion, setExamResult, examResult } =
+    useExamReviewNavigation();
 
   function getFirstWrongQuestionIndex() {
     if (!examResult) return;
+
     const wrongAnswer = examResult.questions.find((question) => question.is_wrong);
     if (!wrongAnswer) return;
+
     return examResult.questions.indexOf(wrongAnswer);
   }
 
@@ -55,18 +50,14 @@ const reviewPage: React.FC<ExamPageProps> = ({ params }) => {
 
   useEffect(() => {
     const index = getFirstWrongQuestionIndex();
-    if (index) setCurrentQuestionIndex(index);
+    if (index) changeQuestion(index);
   }, [examResult]);
-
-  useEffect(() => {
-    if (examResult) setCurrentQuestion(examResult.questions[currentQuestionIndex]);
-  }, [currentQuestionIndex, examResult]);
 
   const N_SKELETON_QUESTIONS = 10;
   const N_SKELETON_OPTIONS = 4;
 
   return (
-    <section className="h-screen flex flex-col items-center">
+    <section className="h-[90vh] flex flex-col items-center">
       <p className="text-xl font-bold uppercase mt-10 ml-5">
         Exame de <span className="text-primary">{subject}</span>
       </p>
@@ -106,7 +97,7 @@ const reviewPage: React.FC<ExamPageProps> = ({ params }) => {
             />
           </div>
 
-          {currentQuestion ? (
+          {currentQuestion?.question ? (
             <section className="mb-10">
               <QuestionReview currentQuestion={currentQuestion} />
               <div className="w-full flex justify-center mt-10">
