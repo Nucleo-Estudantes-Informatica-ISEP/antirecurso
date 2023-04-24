@@ -1,4 +1,5 @@
 import PreviousExamsTable from '@/components/PreviousExamsTable';
+import Link from 'next/link';
 import { BASE_URL } from 'src/services/api';
 import User from 'src/types/User';
 
@@ -31,26 +32,36 @@ const profile: React.FC<ProfileProps> = async ({ params }) => {
       </p>
 
       <section className="mt-5 md:px-16 w-full grid place-items-center">
-        <table className="w-1/2 text-sm text-center">
-          <thead className="text-xs text-white uppercase bg-primary">
-            <tr>
-              <th scope="col" className="px-6 py-3">
-                Disciplina
-              </th>
-              <th scope="col" className="px-6 py-3">
-                Pontuação
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            {user.scores.map((score) => (
-              <tr className="bg-white border-b">
-                <td className="px-6 py-4">{score.subject.toUpperCase()}</td>
-                <td className="px-6 py-4">{score.score}</td>
+        {user.scores.length ? (
+          <table className="w-1/2 text-sm text-center">
+            <thead className="text-xs text-white uppercase bg-primary">
+              <tr>
+                <th scope="col" className="px-6 py-3">
+                  Disciplina
+                </th>
+                <th scope="col" className="px-6 py-3">
+                  Pontuação
+                </th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {user.scores.map((score) => (
+                <tr className="bg-white border-b">
+                  <td className="px-6 py-4">{score.subject.toUpperCase()}</td>
+                  <td className="px-6 py-4">{score.score}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        ) : (
+          <p>
+            Ainda não realizaste nenhum exame. Resolve o teu primeiro{' '}
+            <Link href={'/exams'} className="underline hover:text-primary transition-colors">
+              aqui
+            </Link>
+            !
+          </p>
+        )}
       </section>
 
       <p className="text-xl font-bold uppercase mt-10">
