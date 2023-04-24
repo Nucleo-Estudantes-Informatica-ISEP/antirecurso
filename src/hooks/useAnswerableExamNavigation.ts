@@ -83,7 +83,7 @@ export default function useAnswerableExamNavigation({
   }
 
   useEffect(() => {
-    function handleKeyDown(e: KeyboardEvent) {
+    async function handleKeyDown(e: KeyboardEvent) {
       switch (e.key) {
         case '1':
         case 'a':
@@ -114,7 +114,7 @@ export default function useAnswerableExamNavigation({
         case 'Enter':
           if (currentQuestionIndex === questions.length - 1) {
             window.removeEventListener('keydown', handleKeyDown);
-            submit();
+            await submit();
           }
           if (wasAnswered(currentQuestionIndex)) changeQuestion(currentQuestionIndex + 1);
         default:
