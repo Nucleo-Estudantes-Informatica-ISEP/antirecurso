@@ -6,6 +6,8 @@ import Image from 'next/image';
 import Skeleton from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css';
 
+import ExamNumeration from '@/components/ExamNumeration';
+import ExamNumerationContainer from '@/components/ExamNumerationContainer';
 import PrimaryButton from '@/components/PrimaryButton';
 import QuestionReview from '@/components/QuestionReview';
 import { ExamContext } from 'src/contexts/ExamContext';
@@ -63,23 +65,33 @@ const reviewPage: React.FC<ExamPageProps> = ({ params }) => {
       </p>
       <div className="mb-12">
         {examResult ? (
-          <div className="w-screen flex items-center md:justify-center space-x-10 overflow-x-scroll md:overflow-auto mt-5 px-5">
+          <ExamNumerationContainer>
+            <PrimaryButton
+              className={`h-10 w-10 p-5 items-center !rounded-full flex justify-center mr-4 ${
+                currentQuestionIndex === 0 ? 'opacity-50' : ''
+              }`}
+              onClick={() => changeQuestion(currentQuestionIndex - 1)}
+              disabled={currentQuestionIndex === 0}>
+              {'<'}
+            </PrimaryButton>
             {examResult.questions.map((question, i) => (
-              <div
+              <ExamNumeration
                 key={question.question.id}
                 onClick={() => changeQuestion(i)}
-                className={`h-10 w-10 p-5 flex items-center justify-center
-                ${question.is_wrong && 'bg-red-500 text-white'}
-                ${
-                  currentQuestionIndex === i
-                    ? 'bg-primary text-white'
-                    : 'border border-primary text-primary'
-                }
-            rounded-full hover:cursor-pointer`}>
-                <p>{i + 1}</p>
-              </div>
+                isWrong={question.is_wrong}
+                active={currentQuestionIndex === i}>
+                {i + 1}
+              </ExamNumeration>
             ))}
-          </div>
+            <PrimaryButton
+              className={`h-10 w-10 p-5 items-center !rounded-full flex justify-center ${
+                currentQuestionIndex === examResult.questions.length - 1 ? 'opacity-50' : ''
+              }`}
+              onClick={() => changeQuestion(currentQuestionIndex + 1)}
+              disabled={currentQuestionIndex === examResult.questions.length - 1}>
+              {'>'}
+            </PrimaryButton>
+          </ExamNumerationContainer>
         ) : (
           <div className="w-screen flex  items-center md:justify-center space-x-10 overflow-x-scroll md:overflow-auto mt-5 px-5">
             {Array.from({ length: N_SKELETON_QUESTIONS }).map((_, i) => (
@@ -98,25 +110,7 @@ const reviewPage: React.FC<ExamPageProps> = ({ params }) => {
           </div>
 
           {currentQuestion?.question ? (
-            <section className="mb-10">
-              <QuestionReview currentQuestion={currentQuestion} />
-              <div className="w-full flex justify-center mt-10">
-                <PrimaryButton
-                  className={`mr-4 ${currentQuestionIndex === 0 ? 'opacity-50' : ''}`}
-                  onClick={() => changeQuestion(currentQuestionIndex - 1)}
-                  disabled={currentQuestionIndex === 0}>
-                  Anterior
-                </PrimaryButton>
-                <PrimaryButton
-                  className={`${
-                    currentQuestionIndex === examResult!.questions.length - 1 ? 'opacity-50' : ''
-                  }`}
-                  onClick={() => changeQuestion(currentQuestionIndex + 1)}
-                  disabled={currentQuestionIndex === examResult!.questions.length - 1}>
-                  Seguinte
-                </PrimaryButton>
-              </div>
-            </section>
+            <QuestionReview currentQuestion={currentQuestion} />
           ) : (
             <div className="mt-12">
               <Skeleton className="h-20 mt-6" count={N_SKELETON_OPTIONS} />

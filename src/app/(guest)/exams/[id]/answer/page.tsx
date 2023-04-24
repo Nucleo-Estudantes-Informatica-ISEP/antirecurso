@@ -9,17 +9,17 @@ import swal from 'sweetalert';
 import Skeleton from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css';
 
-import PrimaryButton from '@/components/PrimaryButton';
-
 import { ExamContext } from 'src/contexts/ExamContext';
 import { useToken } from 'src/hooks/useToken';
 import { BASE_URL } from 'src/services/api';
 import generateExam from 'src/services/generateExam';
 import getSubjectNameById from 'src/utils/getSubjectNameById';
 
+import ExamNumeration from '@/components/ExamNumeration';
+import ExamNumerationContainer from '@/components/ExamNumerationContainer';
+import PrimaryButton from '@/components/PrimaryButton';
 import QuestionPrompt from '@/components/QuestionPrompt';
 import useAnswerableExamNavigation from 'src/hooks/useAnswerableExamNavigation';
-import ExamNumeration from '@/components/ExamNumeration';
 
 interface ExamPageProps {
   params: {
@@ -91,13 +91,48 @@ const Exam: React.FC<ExamPageProps> = ({ params }) => {
         Exame de <span className="text-primary">{subject}</span>
       </p>
       <div className="mb-12">
-        <ExamNumeration
-          questions={questions}
-          currentQuestionIndex={currentQuestionIndex}
-          changeQuestion={changeQuestion}
-          wasAnswered={wasAnswered}
-          submit={submit}
-        />
+        {questions[0] ? (
+          <ExamNumerationContainer>
+            <PrimaryButton
+              className={`h-10 w-10 p-5 items-center !rounded-full flex justify-center mr-4 ${
+                currentQuestionIndex === 0 ? 'opacity-50' : ''
+              }`}
+              onClick={() => changeQuestion(currentQuestionIndex - 1)}
+              disabled={currentQuestionIndex === 0}>
+              {'<'}
+            </PrimaryButton>
+            {questions.map((question, i) => (
+              <ExamNumeration
+                key={question.id}
+                onClick={() => changeQuestion(i)}
+                wasAnswered={wasAnswered(i)}
+                active={currentQuestionIndex === i}>
+                {i + 1}
+              </ExamNumeration>
+            ))}
+            <PrimaryButton
+              className={`h-10 w-10 p-5 items-center !rounded-full flex justify-center ${
+                currentQuestionIndex === questions.length - 1 ? 'opacity-50' : ''
+              }`}
+              onClick={() => changeQuestion(currentQuestionIndex + 1)}
+              disabled={currentQuestionIndex === questions.length - 1}>
+              {'>'}
+            </PrimaryButton>
+            <form onSubmit={(e) => submit(e)}>
+              <PrimaryButton>Terminar</PrimaryButton>
+            </form>
+          </ExamNumerationContainer>
+        ) : (
+          <div className="w-screen flex  items-center md:justify-center space-x-10 overflow-x-scroll md:overflow-auto mt-5 px-5">
+            {Array.from({ length: N_SKELETON_QUESTIONS }).map((_, i) => (
+              <Skeleton
+                key={i}
+                className="h-10 w-10 p-5 flex items-center justify-center "
+                circle={true}
+              />
+            ))}
+          </div>
+        )}
         <section className="mt-5 px-5 md:px-32">
           <div className="relative w-full h-48">
             <Image
