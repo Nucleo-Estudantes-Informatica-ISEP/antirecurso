@@ -17,6 +17,8 @@ import { BASE_URL } from 'src/services/api';
 import generateExam from 'src/services/generateExam';
 import getSubjectNameById from 'src/utils/getSubjectNameById';
 
+import ExamNumeration from '@/components/ExamNumeration';
+import ExamNumerationContainer from '@/components/ExamNumerationContainer';
 import { Check } from '@/styles/Icons';
 import useAnswerableExamNavigation from 'src/hooks/useAnswerableExamNavigation';
 
@@ -91,27 +93,25 @@ const Exam: React.FC<ExamPageProps> = ({ params }) => {
       </p>
       <div className="mb-12">
         {questions[0] ? (
-          <div className="w-screen flex items-center md:justify-center space-x-10 overflow-x-scroll md:overflow-auto mt-5 px-5">
+          <ExamNumerationContainer>
             {questions.map((question, i) => (
-              <div
+              <ExamNumeration
                 key={question.id}
                 onClick={() => changeQuestion(i)}
-                className={`h-10 w-10 p-5 flex items-center justify-center ${
-                  currentQuestionIndex === i
-                    ? 'bg-primary text-white'
-                    : wasAnswered(i)
-                    ? 'bg-primary bg-opacity-70 text-white'
-                    : 'border border-primary text-primary'
-                }
-            rounded-full hover:cursor-pointer`}>
-                <p>{i + 1}</p>
-              </div>
+                wasAnswered={wasAnswered(i)}
+                active={currentQuestionIndex === i}>
+                {i + 1}
+              </ExamNumeration>
             ))}
-          </div>
+          </ExamNumerationContainer>
         ) : (
           <div className="w-screen flex  items-center md:justify-center space-x-10 overflow-x-scroll md:overflow-auto mt-5 px-5">
             {Array.from({ length: N_SKELETON_QUESTIONS }).map((_, i) => (
-              <Skeleton className="h-10 w-10 p-5 flex items-center justify-center " circle={true} />
+              <Skeleton
+                key={i}
+                className="h-10 w-10 p-5 flex items-center justify-center "
+                circle={true}
+              />
             ))}
           </div>
         )}

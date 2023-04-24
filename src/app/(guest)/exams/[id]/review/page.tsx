@@ -6,6 +6,8 @@ import Image from 'next/image';
 import Skeleton from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css';
 
+import ExamNumeration from '@/components/ExamNumeration';
+import ExamNumerationContainer from '@/components/ExamNumerationContainer';
 import { Check, X } from '@/styles/Icons';
 import { ExamContext } from 'src/contexts/ExamContext';
 import useExamReviewNavigation from 'src/hooks/useExamReviewNavigation';
@@ -62,23 +64,17 @@ const reviewPage: React.FC<ExamPageProps> = ({ params }) => {
       </p>
       <div className="mb-12">
         {examResult ? (
-          <div className="w-screen flex items-center md:justify-center space-x-10 overflow-x-scroll md:overflow-auto mt-5 px-5">
+          <ExamNumerationContainer>
             {examResult.questions.map((question, i) => (
-              <div
+              <ExamNumeration
                 key={question.question.id}
                 onClick={() => changeQuestion(i)}
-                className={`h-10 w-10 p-5 flex items-center justify-center
-                ${question.is_wrong && 'bg-red-500 text-white'}
-                ${
-                  currentQuestionIndex === i
-                    ? 'bg-primary text-white'
-                    : 'border border-primary text-primary'
-                }
-            rounded-full hover:cursor-pointer`}>
-                <p>{i + 1}</p>
-              </div>
+                isWrong={question.is_wrong}
+                active={currentQuestionIndex === i}>
+                {i + 1}
+              </ExamNumeration>
             ))}
-          </div>
+          </ExamNumerationContainer>
         ) : (
           <div className="w-screen flex  items-center md:justify-center space-x-10 overflow-x-scroll md:overflow-auto mt-5 px-5">
             {Array.from({ length: N_SKELETON_QUESTIONS }).map((_, i) => (
