@@ -19,6 +19,7 @@ import getSubjectNameById from 'src/utils/getSubjectNameById';
 
 import QuestionPrompt from '@/components/QuestionPrompt';
 import useAnswerableExamNavigation from 'src/hooks/useAnswerableExamNavigation';
+import ExamNumeration from '@/components/ExamNumeration';
 
 interface ExamPageProps {
   params: {
@@ -90,31 +91,13 @@ const Exam: React.FC<ExamPageProps> = ({ params }) => {
         Exame de <span className="text-primary">{subject}</span>
       </p>
       <div className="mb-12">
-        {questions[0] ? (
-          <div className="w-screen flex items-center md:justify-center space-x-10 overflow-x-scroll md:overflow-auto mt-5 px-5">
-            {questions.map((question, i) => (
-              <div
-                key={question.id}
-                onClick={() => changeQuestion(i)}
-                className={`h-10 w-10 p-5 flex items-center justify-center ${
-                  currentQuestionIndex === i
-                    ? 'bg-primary text-white'
-                    : wasAnswered(i)
-                    ? 'bg-primary bg-opacity-70 text-white'
-                    : 'border border-primary text-primary'
-                }
-            rounded-full hover:cursor-pointer`}>
-                <p>{i + 1}</p>
-              </div>
-            ))}
-          </div>
-        ) : (
-          <div className="w-screen flex  items-center md:justify-center space-x-10 overflow-x-scroll md:overflow-auto mt-5 px-5">
-            {Array.from({ length: N_SKELETON_QUESTIONS }).map((_, i) => (
-              <Skeleton className="h-10 w-10 p-5 flex items-center justify-center " circle={true} />
-            ))}
-          </div>
-        )}
+        <ExamNumeration
+          questions={questions}
+          currentQuestionIndex={currentQuestionIndex}
+          changeQuestion={changeQuestion}
+          wasAnswered={wasAnswered}
+          submit={submit}
+        />
         <section className="mt-5 px-5 md:px-32">
           <div className="relative w-full h-48">
             <Image
@@ -133,32 +116,10 @@ const Exam: React.FC<ExamPageProps> = ({ params }) => {
                 currentQuestionIndex={currentQuestionIndex}
                 answers={answers}
               />
-              <div className="w-full flex justify-center mt-10">
-                <PrimaryButton
-                  className={`mr-4 ${currentQuestionIndex === 0 ? 'opacity-50' : ''}`}
-                  onClick={() => changeQuestion(currentQuestionIndex - 1)}
-                  disabled={currentQuestionIndex === 0}>
-                  Anterior
-                </PrimaryButton>
-                <PrimaryButton
-                  className={`${currentQuestionIndex === questions.length - 1 ? 'opacity-50' : ''}`}
-                  onClick={() => changeQuestion(currentQuestionIndex + 1)}
-                  disabled={currentQuestionIndex === questions.length - 1}>
-                  Seguinte
-                </PrimaryButton>
-              </div>
             </section>
           ) : (
             <div className="mt-12">
               <Skeleton className="h-20 mt-6" count={N_SKELETON_OPTIONS} />
-            </div>
-          )}
-
-          {currentQuestionIndex === questions.length - 1 && (
-            <div className="w-full mb-6 flex justify-end">
-              <form onSubmit={submit}>
-                <PrimaryButton>Terminar</PrimaryButton>
-              </form>
             </div>
           )}
         </section>
