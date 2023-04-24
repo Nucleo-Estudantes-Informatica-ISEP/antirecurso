@@ -47,9 +47,9 @@ const Exam: React.FC<ExamPageProps> = ({ params }) => {
   async function handleConfirm() {
     const data = {
       subject_id: parseInt(params.id),
-      answers: Array.from(answers.entries()).map(([question, answer]) => ({
-        question_id: questions[question].id,
-        selected_option: answer
+      answers: [...Array.from({ length: questions.length }, (_, i) => i)].map((i) => ({
+        question_id: questions[i].id,
+        selected_option: answers.get(i) || null
       }))
     };
 
@@ -155,7 +155,7 @@ const Exam: React.FC<ExamPageProps> = ({ params }) => {
 
           {currentQuestionIndex === questions.length - 1 && (
             <div className="w-full mb-6 flex justify-end">
-              <form onSubmit={submit}>
+              <form onSubmit={(e) => submit(e)}>
                 <PrimaryButton>Terminar</PrimaryButton>
               </form>
             </div>
