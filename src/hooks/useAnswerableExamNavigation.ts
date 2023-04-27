@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 import swal from 'sweetalert';
 
@@ -10,23 +10,24 @@ export default function useAnswerableExamNavigation({
 }: {
   handleConfirm: () => Promise<void>;
 }) {
+  const [answers, setAnswers] = useState<Map<number, string>>(new Map<number, string>());
+
   const {
-    wasAnswered,
     changeQuestion,
-    setCurrentQuestion,
     setQuestions,
-    answers,
     questions,
     currentQuestionIndex,
     currentQuestion,
-    setAnswers,
-    setCurrentQuestionIndex
+    setCurrentQuestion
   } = useExamNavigation<Question>();
-
   function hasAnsweredAllQuestions(): boolean {
     if (answers.size === questions.length) return true;
 
     return false;
+  }
+
+  function wasAnswered(i: number) {
+    return answers.has(i);
   }
 
   function selectAnswer(question: number, order: string) {
@@ -82,7 +83,7 @@ export default function useAnswerableExamNavigation({
   }
 
   useEffect(() => {
-    function handleKeyDown(e: KeyboardEvent) {
+    async function handleKeyDown(e: KeyboardEvent) {
       switch (e.key) {
         case '1':
         case 'a':
@@ -113,7 +114,7 @@ export default function useAnswerableExamNavigation({
         case 'Enter':
           if (currentQuestionIndex === questions.length - 1) {
             window.removeEventListener('keydown', handleKeyDown);
-            submit();
+            await submit();
           }
           if (wasAnswered(currentQuestionIndex)) changeQuestion(currentQuestionIndex + 1);
         default:
@@ -133,6 +134,10 @@ export default function useAnswerableExamNavigation({
     cycleOptions
   ]);
 
+  useEffect(() => {
+    setCurrentQuestion(questions[currentQuestionIndex]);
+  }, [questions, currentQuestionIndex, setCurrentQuestion]);
+
   return {
     wasAnswered,
     selectAnswer,
@@ -144,7 +149,6 @@ export default function useAnswerableExamNavigation({
     questions,
     currentQuestionIndex,
     currentQuestion,
-    setCurrentQuestionIndex,
     submit
   };
 }

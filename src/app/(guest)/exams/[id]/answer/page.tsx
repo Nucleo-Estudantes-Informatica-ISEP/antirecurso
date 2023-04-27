@@ -9,15 +9,16 @@ import swal from 'sweetalert';
 import Skeleton from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css';
 
-import PrimaryButton from '@/components/PrimaryButton';
-
 import { ExamContext } from 'src/contexts/ExamContext';
 import { useToken } from 'src/hooks/useToken';
 import { BASE_URL } from 'src/services/api';
 import generateExam from 'src/services/generateExam';
 import getSubjectNameById from 'src/utils/getSubjectNameById';
 
-import { Check } from '@/styles/Icons';
+import ExamNumeration from '@/components/ExamNumeration';
+import ExamNumerationContainer from '@/components/ExamNumerationContainer';
+import PrimaryButton from '@/components/PrimaryButton';
+import QuestionPrompt from '@/components/QuestionPrompt';
 import useAnswerableExamNavigation from 'src/hooks/useAnswerableExamNavigation';
 
 interface ExamPageProps {
@@ -47,9 +48,9 @@ const Exam: React.FC<ExamPageProps> = ({ params }) => {
   async function handleConfirm() {
     const data = {
       subject_id: parseInt(params.id),
-      answers: Array.from(answers.entries()).map(([question, answer]) => ({
-        question_id: questions[question].id,
-        selected_option: answer
+      answers: [...Array.from({ length: questions.length }, (_, i) => i)].map((i) => ({
+        question_id: questions[i].id,
+        selected_option: answers.get(i) || null
       }))
     };
 
@@ -91,27 +92,44 @@ const Exam: React.FC<ExamPageProps> = ({ params }) => {
       </p>
       <div className="mb-12">
         {questions[0] ? (
-          <div className="w-screen flex items-center md:justify-center space-x-10 overflow-x-scroll md:overflow-auto mt-5 px-5">
+          <ExamNumerationContainer>
+            <PrimaryButton
+              className={`h-10 w-10 p-5 items-center !rounded-full flex justify-center mr-4 ${
+                currentQuestionIndex === 0 ? 'opacity-50' : ''
+              }`}
+              onClick={() => changeQuestion(currentQuestionIndex - 1)}
+              disabled={currentQuestionIndex === 0}>
+              {'<'}
+            </PrimaryButton>
             {questions.map((question, i) => (
-              <div
+              <ExamNumeration
                 key={question.id}
                 onClick={() => changeQuestion(i)}
-                className={`h-10 w-10 p-5 flex items-center justify-center ${
-                  currentQuestionIndex === i
-                    ? 'bg-primary text-white'
-                    : wasAnswered(i)
-                    ? 'bg-primary bg-opacity-70 text-white'
-                    : 'border border-primary text-primary'
-                }
-            rounded-full hover:cursor-pointer`}>
-                <p>{i + 1}</p>
-              </div>
+                wasAnswered={wasAnswered(i)}
+                active={currentQuestionIndex === i}>
+                {i + 1}
+              </ExamNumeration>
             ))}
-          </div>
+            <PrimaryButton
+              className={`h-10 w-10 p-5 items-center !rounded-full flex justify-center ${
+                currentQuestionIndex === questions.length - 1 ? 'opacity-50' : ''
+              }`}
+              onClick={() => changeQuestion(currentQuestionIndex + 1)}
+              disabled={currentQuestionIndex === questions.length - 1}>
+              {'>'}
+            </PrimaryButton>
+            <form onSubmit={(e) => submit(e)}>
+              <PrimaryButton>Terminar</PrimaryButton>
+            </form>
+          </ExamNumerationContainer>
         ) : (
           <div className="w-screen flex  items-center md:justify-center space-x-10 overflow-x-scroll md:overflow-auto mt-5 px-5">
             {Array.from({ length: N_SKELETON_QUESTIONS }).map((_, i) => (
-              <Skeleton className="h-10 w-10 p-5 flex items-center justify-center " circle={true} />
+              <Skeleton
+                key={i}
+                className="h-10 w-10 p-5 flex items-center justify-center "
+                circle={true}
+              />
             ))}
           </div>
         )}
@@ -127,37 +145,16 @@ const Exam: React.FC<ExamPageProps> = ({ params }) => {
 
           {currentQuestion ? (
             <section className="mb-10">
-              <p className="text-lg font-bold mt-5">{currentQuestion.question}</p>
-              <p className="text-sm text-gray-600 mt-2">
-                Tipo de pergunta '{currentQuestion.question_type}' do exame '{currentQuestion.exam}'
-              </p>
-              <div className="mt-5 space-y-5">
-                {currentQuestion.options.map((option) => (
-                  <div
-                    key={option.name}
-                    onClick={() => selectAnswer(currentQuestionIndex, option.order)}
-                    className={`w-full flex items-center px-5 py-3 border border-gray-100 h-20 rounded hover:cursor-pointer hover:bg-primary hover:text-white transition ease-in-out ${
-                      answers.get(currentQuestionIndex) === option.order && 'bg-primary text-white'
-                    }`}>
-                    <p>{option.name}</p>
-                    {answers.get(currentQuestionIndex) === option.order && (
-                      <Check className="ml-5" />
-                    )}
-                  </div>
-                ))}
-              </div>
+              <QuestionPrompt
+                currentQuestion={currentQuestion}
+                selectAnswer={selectAnswer}
+                currentQuestionIndex={currentQuestionIndex}
+                answers={answers}
+              />
             </section>
           ) : (
             <div className="mt-12">
               <Skeleton className="h-20 mt-6" count={N_SKELETON_OPTIONS} />
-            </div>
-          )}
-
-          {currentQuestionIndex === questions.length - 1 && (
-            <div className="w-full mb-6 flex justify-end">
-              <form onSubmit={submit}>
-                <PrimaryButton>Terminar</PrimaryButton>
-              </form>
             </div>
           )}
         </section>

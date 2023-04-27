@@ -1,16 +1,18 @@
 'use client';
 
-import { useContext, useEffect, useState } from 'react';
+import { useContext, useEffect } from 'react';
 
 import Image from 'next/image';
 import Skeleton from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css';
 
-import { Check, X } from '@/styles/Icons';
+import ExamNumeration from '@/components/ExamNumeration';
+import ExamNumerationContainer from '@/components/ExamNumerationContainer';
+import PrimaryButton from '@/components/PrimaryButton';
+import QuestionReview from '@/components/QuestionReview';
 import { ExamContext } from 'src/contexts/ExamContext';
-import useExamNavigation from 'src/hooks/useExamNavigation';
+import useExamReviewNavigation from 'src/hooks/useExamReviewNavigation';
 import { BASE_URL } from 'src/services/api';
-import ExamReview from 'src/types/ExamReview';
 
 interface ExamPageProps {
   params: {
@@ -20,20 +22,16 @@ interface ExamPageProps {
 
 const reviewPage: React.FC<ExamPageProps> = ({ params }) => {
   const { subject } = useContext(ExamContext);
-  const [examResult, setExamResult] = useState<ExamReview>();
 
-  const {
-    setCurrentQuestionIndex,
-    currentQuestionIndex,
-    currentQuestion,
-    setCurrentQuestion,
-    changeQuestion
-  } = useExamNavigation<ExamReview['questions'][0]>();
+  const { currentQuestionIndex, currentQuestion, changeQuestion, setExamResult, examResult } =
+    useExamReviewNavigation();
 
   function getFirstWrongQuestionIndex() {
     if (!examResult) return;
+
     const wrongAnswer = examResult.questions.find((question) => question.is_wrong);
     if (!wrongAnswer) return;
+
     return examResult.questions.indexOf(wrongAnswer);
   }
 
@@ -54,40 +52,46 @@ const reviewPage: React.FC<ExamPageProps> = ({ params }) => {
 
   useEffect(() => {
     const index = getFirstWrongQuestionIndex();
-    if (index) setCurrentQuestionIndex(index);
+    if (index) changeQuestion(index);
   }, [examResult]);
-
-  useEffect(() => {
-    if (examResult) setCurrentQuestion(examResult.questions[currentQuestionIndex]);
-  }, [currentQuestionIndex, examResult]);
 
   const N_SKELETON_QUESTIONS = 10;
   const N_SKELETON_OPTIONS = 4;
 
   return (
-    <section className="h-screen flex flex-col items-center">
+    <section className="h-[90vh] flex flex-col items-center">
       <p className="text-xl font-bold uppercase mt-10 ml-5">
         Exame de <span className="text-primary">{subject}</span>
       </p>
       <div className="mb-12">
         {examResult ? (
-          <div className="w-screen flex items-center md:justify-center space-x-10 overflow-x-scroll md:overflow-auto mt-5 px-5">
+          <ExamNumerationContainer>
+            <PrimaryButton
+              className={`h-10 w-10 p-5 items-center !rounded-full flex justify-center mr-4 ${
+                currentQuestionIndex === 0 ? 'opacity-50' : ''
+              }`}
+              onClick={() => changeQuestion(currentQuestionIndex - 1)}
+              disabled={currentQuestionIndex === 0}>
+              {'<'}
+            </PrimaryButton>
             {examResult.questions.map((question, i) => (
-              <div
+              <ExamNumeration
                 key={question.question.id}
                 onClick={() => changeQuestion(i)}
-                className={`h-10 w-10 p-5 flex items-center justify-center
-                ${question.is_wrong && 'bg-red-500 text-white'}
-                ${
-                  currentQuestionIndex === i
-                    ? 'bg-primary text-white'
-                    : 'border border-primary text-primary'
-                }
-            rounded-full hover:cursor-pointer`}>
-                <p>{i + 1}</p>
-              </div>
+                isWrong={question.is_wrong}
+                active={currentQuestionIndex === i}>
+                {i + 1}
+              </ExamNumeration>
             ))}
-          </div>
+            <PrimaryButton
+              className={`h-10 w-10 p-5 items-center !rounded-full flex justify-center ${
+                currentQuestionIndex === examResult.questions.length - 1 ? 'opacity-50' : ''
+              }`}
+              onClick={() => changeQuestion(currentQuestionIndex + 1)}
+              disabled={currentQuestionIndex === examResult.questions.length - 1}>
+              {'>'}
+            </PrimaryButton>
+          </ExamNumerationContainer>
         ) : (
           <div className="w-screen flex  items-center md:justify-center space-x-10 overflow-x-scroll md:overflow-auto mt-5 px-5">
             {Array.from({ length: N_SKELETON_QUESTIONS }).map((_, i) => (
@@ -105,28 +109,8 @@ const reviewPage: React.FC<ExamPageProps> = ({ params }) => {
             />
           </div>
 
-          {currentQuestion ? (
-            <section className="mb-10">
-              <p className="text-lg font-bold mt-5">{currentQuestion.question.question}</p>
-              <p className="text-sm text-gray-600 mt-2">
-                Tipo de pergunta '{currentQuestion.question.question_type}' do exame '
-                {currentQuestion.question.exam}'
-              </p>
-              <div className="mt-5 space-y-5">
-                {currentQuestion.options.map((option) => (
-                  <div
-                    key={option.name}
-                    className={`w-full flex items-center px-5 py-3 border border-gray-100 h-20 rounded hover:cursor-pointer hover:bg-primary hover:text-white transition ease-in-out ${
-                      currentQuestion.selected_option_id === option.id && 'bg-primary text-white'
-                    }`}>
-                    <p>{option.name}</p>
-                    {currentQuestion.selected_option_id === option.id &&
-                      currentQuestion.is_wrong === true && <X className="ml-5" />}
-                    {currentQuestion.correct_option === option.order && <Check className="ml-5" />}
-                  </div>
-                ))}
-              </div>
-            </section>
+          {currentQuestion?.question ? (
+            <QuestionReview currentQuestion={currentQuestion} />
           ) : (
             <div className="mt-12">
               <Skeleton className="h-20 mt-6" count={N_SKELETON_OPTIONS} />
