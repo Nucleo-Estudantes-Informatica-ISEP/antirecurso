@@ -95,7 +95,7 @@ const login: React.FC = () => {
   }, [errors]);
 
   return (
-    <div className="flex items-center justify-center p-6 sm:p-12 md:w-1/2">
+    <div className="flex items-center justify-center py-12 px-4 sm:p-12 md:w-1/2 max-w-md md:h-screen">
       <div className="w-full">
         <h1 className="mb-4 text-xl font-semibold text-gray-700">Entrar</h1>
 
@@ -142,7 +142,7 @@ const login: React.FC = () => {
                   A autenticar...
                 </div>
               ) : (
-                <span>Registar</span>
+                <span>Entrar</span>
               )}
             </PrimaryButton>
           </div>

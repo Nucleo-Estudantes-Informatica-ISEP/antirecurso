@@ -114,12 +114,12 @@ const register: React.FC = () => {
   }, [errors]);
 
   return (
-    <div className="flex items-center justify-center p-6 sm:p-12 md:w-1/2">
-      <div className="w-full">
+    <div className="flex items-center justify-center py-12 px-4 sm:p-12 md:w-1/2 md:h-screen">
+      <div className="w-full max-w-md">
         <h1 className="mb-4 text-xl font-semibold text-gray-700">Criar conta</h1>
 
         <form onSubmit={handleSubmit}>
-          <div className="mt-4">
+          <div className="mt-1">
             <InputLabel htmlFor="name" value="Nome" />
             <TextInput
               disabled={isSubmitting}
@@ -131,7 +131,7 @@ const register: React.FC = () => {
             />
           </div>
 
-          <div className="mt-4">
+          <div className="mt-1">
             <InputLabel htmlFor="email" value="Email" />
             <TextInput
               inputRef={emailInputRef}
@@ -141,7 +141,7 @@ const register: React.FC = () => {
             />
           </div>
 
-          <div className="mt-4">
+          <div className="mt-1">
             <InputLabel htmlFor="password" value="Password" />
             <TextInput
               inputRef={passwordInputRef}
@@ -152,7 +152,7 @@ const register: React.FC = () => {
             />
           </div>
 
-          <div className="mt-4">
+          <div className="mt-1">
             <InputLabel htmlFor="password_confirmation" value="Confirmar Password" />
             <TextInput
               inputRef={passwordConfirmationInputRef}
@@ -163,7 +163,7 @@ const register: React.FC = () => {
             />
           </div>
 
-          <div className="mt-4">
+          <div className="mt-6">
             <PrimaryButton disabled={isSubmitting} type="submit" className="block w-full">
               {isSubmitting ? (
                 <div className="flex flex-row justify-center items-center">
@@ -179,9 +179,9 @@ const register: React.FC = () => {
           </div>
         </form>
 
-        <hr className="my-8" />
+        <hr className="my-5" />
 
-        <p className="mt-4">
+        <p className="mt-2">
           <Link className="text-sm font-medium text-primary-600 hover:underline" href="/login">
             Já tens uma conta?
           </Link>
