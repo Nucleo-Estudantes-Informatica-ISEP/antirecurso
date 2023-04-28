@@ -115,7 +115,7 @@ const register: React.FC = () => {
 
   return (
     <div className="flex items-center justify-center py-12 px-4 sm:p-12 md:w-1/2 md:h-screen">
-      <div className="w-full max-w-md">
+      <div className="w-full">
         <h1 className="mb-4 text-xl font-semibold text-gray-700">Criar conta</h1>
 
         <form onSubmit={handleSubmit}>

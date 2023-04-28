@@ -121,7 +121,7 @@ const login: React.FC = () => {
             />
           </div>
 
-          <div className="flex mt-6 text-sm">
+          <div className="flex mt-8 text-sm">
             <label className="flex items-center dark:text-gray-400">
               <input
                 type="checkbox"
