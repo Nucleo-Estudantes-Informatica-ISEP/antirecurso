@@ -53,7 +53,7 @@ const points: React.FC<ExamPageProps> = ({ params }) => {
   }, []);
 
   return (
-    <section className="h-screen flex flex-col items-center">
+    <section className="h-screen flex flex-col items-center mt-4">
       <p className="text-xl font-bold uppercase md:mt-60 ml-5">
         Exame de <span className="text-primary">{subject}</span>
       </p>
@@ -70,7 +70,7 @@ const points: React.FC<ExamPageProps> = ({ params }) => {
             <p className="font-semibold text-xl">
               <span className="text-primary">Parabéns!</span> Passaste no exame! 🎉
             </p>
-            <p className="mt-5 max-w-5xl">
+            <p className="sm:px-10 max-w-screen-lg mt-5">
               Contudo, tens de saber que o caminho para o sucesso é feito de pequenos avanços e,
               como tal, não te deves focar apenas neste exame e sim em tentar fazer o máximo
               possível.
@@ -95,7 +95,7 @@ const points: React.FC<ExamPageProps> = ({ params }) => {
             <p className="semibold">Continua!</p>
           </>
         )}
-        <PrimaryButton onClick={handleReview} className="mt-16">
+        <PrimaryButton onClick={handleReview} className="mt-16 mb-4">
           Verificar respostas
         </PrimaryButton>
         {!token && (
