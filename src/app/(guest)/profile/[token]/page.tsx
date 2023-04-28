@@ -1,6 +1,10 @@
+import LogoutButton from '@/components/LogoutButton';
 import PreviousExamsTable from '@/components/PreviousExamsTable';
+import PrimaryButton from '@/components/PrimaryButton';
 import { BASE_URL } from 'src/services/api';
 import User from 'src/types/User';
+
+import swal from 'sweetalert';
 
 interface ProfileProps {
   params: {
@@ -58,6 +62,8 @@ const profile: React.FC<ProfileProps> = async ({ params }) => {
       </p>
 
       <PreviousExamsTable token={params.token} />
+
+      <LogoutButton />
     </section>
   );
 };
