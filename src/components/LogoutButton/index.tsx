@@ -5,11 +5,21 @@ import { useRouter } from 'next/navigation';
 import { useToken } from 'src/hooks/useToken';
 import { BASE_URL } from 'src/services/api';
 
+import swal from 'sweetalert';
+
 export default function LogoutButton() {
   const router = useRouter();
 
   const logoutBtnHandler = async () => {
     const { token, setToken } = await useToken();
+
+    const confirmed = await swal({
+      title: 'Tens a certeza que queres terminar sessão?',
+      icon: 'warning',
+      buttons: ['Não', 'Sim']
+    });
+
+    if (!confirmed) return;
 
     // const res = await fetch(BASE_URL + '/auth/logout', {
     //   method: 'POST',
