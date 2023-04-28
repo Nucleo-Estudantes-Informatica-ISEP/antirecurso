@@ -70,7 +70,7 @@ const points: React.FC<ExamPageProps> = ({ params }) => {
             <p className="font-semibold text-xl">
               <span className="text-primary">Parabéns!</span> Passaste no exame! 🎉
             </p>
-            <p className="sm:px-10 max-w-screen-lg mt-5">
+            <p className="px-10 max-w-screen-lg mt-5">
               Contudo, tens de saber que o caminho para o sucesso é feito de pequenos avanços e,
               como tal, não te deves focar apenas neste exame e sim em tentar fazer o máximo
               possível.
