@@ -1,4 +1,6 @@
 import PreviousExamsTable from '@/components/PreviousExamsTable';
+import PrimaryButton from '@/components/PrimaryButton';
+import Link from 'next/link';
 import { BASE_URL } from 'src/services/api';
 import User from 'src/types/User';
 
@@ -26,38 +28,49 @@ const profile: React.FC<ProfileProps> = async ({ params }) => {
       </p>
       <p className="mt-5 px-5 text-center">Hoje é dia {today}. Tens algum exame perto?</p>
 
-      <p className="text-xl font-bold uppercase mt-16 text-center">
-        O teu <span className="text-primary">score</span> ao longo das disciplinas
-      </p>
+      {user.scores.length ? (
+        <>
+          <p className="text-xl font-bold uppercase mt-16 text-center">
+            O teu <span className="text-primary">score</span> ao longo das disciplinas
+          </p>
 
-      <section className="mt-5 md:px-16 w-full grid place-items-center">
-        <table className="w-1/2 text-sm text-center">
-          <thead className="text-xs text-white uppercase bg-primary">
-            <tr>
-              <th scope="col" className="px-6 py-3">
-                Disciplina
-              </th>
-              <th scope="col" className="px-6 py-3">
-                Pontuação
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            {user.scores.map((score) => (
-              <tr className="bg-white border-b">
-                <td className="px-6 py-4">{score.subject.toUpperCase()}</td>
-                <td className="px-6 py-4">{score.score}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </section>
+          <section className="mt-5 md:px-16 w-full grid place-items-center">
+            <table className="w-1/2 text-sm text-center">
+              <thead className="text-xs text-white uppercase bg-primary">
+                <tr>
+                  <th scope="col" className="px-6 py-3">
+                    Disciplina
+                  </th>
+                  <th scope="col" className="px-6 py-3">
+                    Pontuação
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {user.scores.map((score) => (
+                  <tr className="bg-white border-b">
+                    <td className="px-6 py-4">{score.subject.toUpperCase()}</td>
+                    <td className="px-6 py-4">{score.score}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </section>
 
-      <p className="text-xl font-bold uppercase mt-10">
-        Os teus <span className="text-primary">exames</span>
-      </p>
+          <p className="text-xl font-bold uppercase mt-10">
+            Os teus <span className="text-primary">exames</span>
+          </p>
 
-      <PreviousExamsTable token={params.token} />
+          <PreviousExamsTable token={params.token} />
+        </>
+      ) : (
+        <section className="flex flex-col items-center text-center px-3 mt-12">
+          <p className="text-2xl font-bold">Ainda não realizaste nenhum exame.</p>
+          <Link href="/exams" className="mt-10">
+            <PrimaryButton>Resolver exames</PrimaryButton>
+          </Link>
+        </section>
+      )}
     </section>
   );
 };
