@@ -21,17 +21,8 @@ export default function LogoutButton() {
 
     if (!confirmed) return;
 
-    // const res = await fetch(BASE_URL + '/auth/logout', {
-    //   method: 'POST',
-    //   headers: {
-    //     Authorization: `Bearer ${token}`
-    //   }
-    // });
-
-    // if (res.ok) {
     setToken('');
     router.push('/');
-    // }
   };
 
   return (
