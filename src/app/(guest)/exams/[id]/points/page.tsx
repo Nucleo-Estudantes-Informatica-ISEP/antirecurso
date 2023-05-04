@@ -1,4 +1,5 @@
 'use client';
+
 import { useContext, useEffect, useState } from 'react';
 
 import Link from 'next/link';
@@ -9,6 +10,7 @@ import { ExamContext } from 'src/contexts/ExamContext';
 import { useRouter } from 'next/navigation';
 import ReactCanvasConfetti from 'react-canvas-confetti';
 import swal from 'sweetalert';
+import { useToken } from 'src/hooks/useToken';
 
 interface ExamPageProps {
   params: {
@@ -18,6 +20,8 @@ interface ExamPageProps {
 
 const points: React.FC<ExamPageProps> = ({ params }) => {
   const router = useRouter();
+
+  const [token, setToken] = useState<string | null>();
 
   const { examResult, subject } = useContext(ExamContext);
 
@@ -38,12 +42,18 @@ const points: React.FC<ExamPageProps> = ({ params }) => {
 
   const [fire, setFire] = useState(false);
 
+  async function getToken() {
+    const { token } = await useToken();
+    setToken(token);
+  }
+
   useEffect(() => {
     setFire(true);
+    getToken();
   }, []);
 
   return (
-    <section className="h-screen flex flex-col items-center">
+    <section className="h-screen flex flex-col items-center mt-4">
       <p className="text-xl font-bold uppercase md:mt-60 ml-5">
         Exame de <span className="text-primary">{subject}</span>
       </p>
@@ -60,7 +70,7 @@ const points: React.FC<ExamPageProps> = ({ params }) => {
             <p className="font-semibold text-xl">
               <span className="text-primary">Parabéns!</span> Passaste no exame! 🎉
             </p>
-            <p className="mt-5">
+            <p className="px-10 max-w-screen-lg mt-5">
               Contudo, tens de saber que o caminho para o sucesso é feito de pequenos avanços e,
               como tal, não te deves focar apenas neste exame e sim em tentar fazer o máximo
               possível.
@@ -85,18 +95,18 @@ const points: React.FC<ExamPageProps> = ({ params }) => {
             <p className="semibold">Continua!</p>
           </>
         )}
-
-        <PrimaryButton onClick={handleReview} className="mt-16">
+        <PrimaryButton onClick={handleReview} className="mt-16 mb-4">
           Verificar respostas
         </PrimaryButton>
-
-        <p className="text-xs mt-5 mx-5">
-          Não te esqueças que podes criar uma conta para guardar o teu progresso clicando{' '}
-          <Link className="cursor-pointer underline" href="/register">
-            aqui
-          </Link>
-          .
-        </p>
+        {!token && (
+          <p className="text-xs mt-5 mx-5">
+            Não te esqueças que podes criar uma conta para guardar o teu progresso clicando{' '}
+            <Link className="cursor-pointer underline" href="/register">
+              aqui
+            </Link>
+            .
+          </p>
+        )}
       </section>
     </section>
   );

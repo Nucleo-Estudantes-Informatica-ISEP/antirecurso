@@ -48,11 +48,13 @@ const PreviousExamsTable: React.FC<PreviousExamsTableProps> = ({ token }) => {
     <section ref={sectionRef} className="my-5 md:px-16 w-full grid place-items-center">
       {previousExamResponse === undefined ? (
         <ExamTableLoading />
-      ) : (
+      ) : previousExamResponse.data.length ? (
         <>
           <ExamsTable previousExamResponse={previousExamResponse} />
           <Pagination metadata={previousExamResponse?.meta} setFetchUrl={setFetchUrl} />
         </>
+      ) : (
+        <p>Não realizaste nenhum exame.</p>
       )}
     </section>
   );

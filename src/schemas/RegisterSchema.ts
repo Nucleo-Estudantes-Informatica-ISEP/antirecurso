@@ -9,11 +9,11 @@ const schema = z
     email: z.string().email('Introduza um email válido.'),
     password: z
       .string()
-      .min(8, 'A password deve ter no mínimo 3 caracteres.')
+      .min(8, 'A password deve ter no mínimo 8 caracteres.')
       .max(255, 'A password deve ter no máximo 255 caracteres.'),
     password_confirmation: z
       .string()
-      .min(8, 'A password deve ter no mínimo 3 caracteres')
+      .min(8, 'A password deve ter no mínimo 8 caracteres')
       .max(255, 'A password deve ter no máximo 255 caracteres')
   })
   .refine((value) => value.password === value.password_confirmation, {
