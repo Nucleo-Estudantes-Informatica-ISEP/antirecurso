@@ -1,4 +1,5 @@
 import { Check } from '@/styles/Icons';
+import { motion } from 'framer-motion';
 import Question from 'src/types/Question';
 
 interface QuestionProps {
@@ -22,7 +23,14 @@ const QuestionPrompt: React.FC<QuestionProps> = ({
       </p>
       <div className="mt-5 space-y-5">
         {currentQuestion.options.map((option) => (
-          <div
+          <motion.div
+            animate={{
+              opacity: [0.2, 1],
+              x: [50, 0]
+            }}
+            transition={{
+              duration: 0.2
+            }}
             key={option.name}
             onClick={() => selectAnswer(currentQuestionIndex, option.order)}
             className={`w-full flex items-center px-5 py-3 border border-gray-100 h-20 rounded hover:cursor-pointer hover:bg-primary hover:text-white transition ease-in-out ${
@@ -30,7 +38,7 @@ const QuestionPrompt: React.FC<QuestionProps> = ({
             }`}>
             <p>{option.name}</p>
             {answers.get(currentQuestionIndex) === option.order && <Check className="ml-5" />}
-          </div>
+          </motion.div>
         ))}
       </div>
     </>
