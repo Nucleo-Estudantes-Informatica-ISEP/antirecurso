@@ -7,9 +7,7 @@ import { Spinner } from '@/styles/Icons';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
-import { useToken } from 'src/hooks/useToken';
 import LoginSchema from 'src/schemas/LoginSchema';
-import { BASE_URL } from 'src/services/api';
 import swal from 'sweetalert';
 import { z } from 'zod';
 
@@ -47,7 +45,7 @@ const login: React.FC = () => {
 
       const { email, password } = result;
 
-      const res = await fetch(BASE_URL + '/auth/login', {
+      const res = await fetch('/auth/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -59,12 +57,6 @@ const login: React.FC = () => {
       });
 
       if (res.status === 200) {
-        const { token } = await res.json();
-
-        const { setToken } = await useToken();
-
-        setToken(token);
-
         router.push('/');
       } else {
         swal(

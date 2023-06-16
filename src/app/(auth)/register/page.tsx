@@ -12,8 +12,6 @@ import PrimaryButton from '@/components/PrimaryButton';
 import TextInput from '@/components/TextInput';
 import { Spinner } from '@/styles/Icons';
 import { useRouter } from 'next/navigation';
-import { useToken } from 'src/hooks/useToken';
-import { BASE_URL } from 'src/services/api';
 import swal from 'sweetalert';
 
 const register: React.FC = () => {
@@ -58,7 +56,7 @@ const register: React.FC = () => {
 
       const { name, email, password } = result;
 
-      const res = await fetch(BASE_URL + '/auth/register', {
+      const res = await fetch('/api/auth/register', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -71,12 +69,6 @@ const register: React.FC = () => {
       });
 
       if (res.status === 200) {
-        const { setToken } = await useToken();
-
-        const { token } = await res.json();
-
-        setToken(token);
-
         router.push('/');
       } else if (res.status === 422) {
         // duplicate email
@@ -88,7 +80,7 @@ const register: React.FC = () => {
       } else {
         swal(
           'Erro',
-          'Ocorreu um erro ao tentar registar a contar, por favor tente novamente',
+          'Ocorreu um erro ao tentar registar a conta, por favor tente novamente',
           'error'
         );
       }

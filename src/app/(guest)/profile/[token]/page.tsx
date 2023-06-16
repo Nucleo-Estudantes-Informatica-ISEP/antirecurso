@@ -9,6 +9,7 @@ interface ProfileProps {
     token: string;
   };
 }
+
 // @ts-expect-error Server Component
 const profile: React.FC<ProfileProps> = async ({ params }) => {
   const res = await fetch(`${BASE_URL}/user`, {

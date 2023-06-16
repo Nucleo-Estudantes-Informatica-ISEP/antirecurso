@@ -86,19 +86,15 @@ export default function useAnswerableExamNavigation({
     async function handleKeyDown(e: KeyboardEvent) {
       switch (e.key) {
         case '1':
-        case 'a':
           if (currentQuestion?.options[0].order === '1') selectAnswer(currentQuestionIndex, '1');
           break;
         case '2':
-        case 'b':
           if (currentQuestion?.options[1].order === '2') selectAnswer(currentQuestionIndex, '2');
           break;
         case '3':
-        case 'c':
           if (currentQuestion?.options[2]?.order === '3') selectAnswer(currentQuestionIndex, '3');
           break;
         case '4':
-        case 'd':
           if (currentQuestion?.options[3] && currentQuestion.options[3].order === '4')
             selectAnswer(currentQuestionIndex, '4');
           break;

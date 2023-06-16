@@ -1,19 +1,22 @@
-const documents: React.FC = () => {
+const about: React.FC = () => {
   return (
     <section className="flex flex-col items-center text-center mt-32 space-y-10">
       <div className="space-y-3">
-        <p className="text-xl font-semibold uppercase">Made with ❤️ by</p>
-        <p className="text-primary font-semibold">Miguel Ferreira</p>
-      </div>
-
-      <div className="space-y-3">
-        <p className="text-xl font-semibold uppercase">Data mining by</p>
-        <p className="text-primary font-semibold">Tomás Lopes</p>
-      </div>
-
-      <div className="space-y-3">
         <p className="text-xl font-semibold uppercase">Sponsored by</p>
-        <p className="text-primary font-semibold">NEI ISEP</p>
+        <p className="text-primary font-semibold">
+          <a href="https://www.nei-isep.org/" target="_blank">
+            NEI-ISEP
+          </a>
+        </p>
+      </div>
+
+      <div className="space-y-3">
+        <p className="text-xl font-semibold uppercase">Data Mining by</p>
+        <p className="text-primary font-semibold">
+          <a href="mailto:1211289@isep.ipp.pt" target="_blank">
+            Tomás Lopes
+          </a>
+        </p>
       </div>
 
       <div className="space-y-3">
@@ -30,4 +33,4 @@ const documents: React.FC = () => {
   );
 };
 
-export default documents;
+export default about;

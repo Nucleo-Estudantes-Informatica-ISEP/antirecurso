@@ -10,16 +10,17 @@ import Skeleton from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css';
 
 import { ExamContext } from 'src/contexts/ExamContext';
-import { useToken } from 'src/hooks/useToken';
 import { BASE_URL } from 'src/services/api';
 import generateExam from 'src/services/generateExam';
 import getSubjectNameById from 'src/utils/getSubjectNameById';
 
+import CommentSection from '@/components/CommentSection';
 import ExamNumeration from '@/components/ExamNumeration';
 import ExamNumerationContainer from '@/components/ExamNumerationContainer';
 import PrimaryButton from '@/components/PrimaryButton';
 import QuestionPrompt from '@/components/QuestionPrompt';
 import useAnswerableExamNavigation from 'src/hooks/useAnswerableExamNavigation';
+import useToken from 'src/hooks/useToken';
 
 interface ExamPageProps {
   params: {
@@ -158,6 +159,8 @@ const Exam: React.FC<ExamPageProps> = ({ params }) => {
             </div>
           )}
         </section>
+
+        <CommentSection comments={currentQuestion?.comments} questionId={currentQuestion?.id} />
       </div>
     </section>
   );
