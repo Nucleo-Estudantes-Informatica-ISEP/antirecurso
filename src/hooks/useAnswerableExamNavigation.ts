@@ -102,9 +102,11 @@ export default function useAnswerableExamNavigation({
           cycleOptions('DOWN');
           break;
         case 'ArrowUp':
+          e.preventDefault();
           cycleOptions('UP');
           break;
         case 'ArrowDown':
+          e.preventDefault();
           cycleOptions('DOWN');
           break;
         case 'Enter':

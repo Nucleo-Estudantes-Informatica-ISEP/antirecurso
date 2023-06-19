@@ -9,8 +9,8 @@ import { ExamContext } from 'src/contexts/ExamContext';
 
 import { useRouter } from 'next/navigation';
 import ReactCanvasConfetti from 'react-canvas-confetti';
+import useToken from 'src/hooks/useToken';
 import swal from 'sweetalert';
-import { useToken } from 'src/hooks/useToken';
 
 interface ExamPageProps {
   params: {
@@ -43,7 +43,7 @@ const points: React.FC<ExamPageProps> = ({ params }) => {
   const [fire, setFire] = useState(false);
 
   async function getToken() {
-    const { token } = await useToken();
+    const token = await useToken();
     setToken(token);
   }
 
@@ -95,7 +95,7 @@ const points: React.FC<ExamPageProps> = ({ params }) => {
             <p className="semibold">Continua!</p>
           </>
         )}
-        <PrimaryButton onClick={handleReview} className="mt-16 mb-4">
+        <PrimaryButton onClick={handleReview} className="mt-16 mb-4 z-50">
           Verificar respostas
         </PrimaryButton>
         {!token && (

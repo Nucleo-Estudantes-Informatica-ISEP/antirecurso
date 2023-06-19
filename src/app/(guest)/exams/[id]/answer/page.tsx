@@ -55,7 +55,7 @@ const Exam: React.FC<ExamPageProps> = ({ params }) => {
       }))
     };
 
-    const { token } = await useToken();
+    const token = await useToken();
 
     const res = await fetch(`${BASE_URL}/exams/verify`, {
       method: 'POST',
