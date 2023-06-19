@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import Skeleton from 'react-loading-skeleton';
 import useToken from 'src/hooks/useToken';
 import { BASE_URL } from 'src/services/api';
@@ -15,23 +15,7 @@ interface CommentSectionProps {
 
 const CommentSection: React.FC<CommentSectionProps> = ({ comments, questionId }) => {
   const [token, setToken] = useState<string | null>(null);
-  //  const [c, setComments] = useState<Comment[] | undefined>(comments);
-  const [c, setComments] = useState<Comment[] | undefined>([
-    {
-      id: 1,
-      comment: 'sample',
-      user_id: 1,
-      question_id: 2,
-      created_at: new Date('2023-06-14T08:11:21.000000Z')
-    },
-    {
-      id: 2,
-      comment: 'sample2',
-      user_id: 1,
-      question_id: 2,
-      created_at: new Date('2023-06-14T08:11:21.000000Z')
-    }
-  ]);
+  const inputRef = useRef<HTMLTextAreaElement>(null);
 
   async function getUserToken() {
     const t = await useToken();
@@ -42,7 +26,10 @@ const CommentSection: React.FC<CommentSectionProps> = ({ comments, questionId })
     const comment = document.getElementById('comment') as HTMLInputElement;
     const commentValue = comment.value;
 
-    await fetch(BASE_URL + '/comments', {
+    if (!inputRef.current) return;
+    inputRef.current.value = '';
+
+    await fetch(`${BASE_URL}/comments`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -53,13 +40,11 @@ const CommentSection: React.FC<CommentSectionProps> = ({ comments, questionId })
         question_id: questionId
       })
     });
-
-    //TODO set comments
   }
 
   useEffect(() => {
     getUserToken();
-  }, []);
+  }, [comments]);
 
   return (
     <section className="ml-32 my-16">
@@ -75,33 +60,38 @@ const CommentSection: React.FC<CommentSectionProps> = ({ comments, questionId })
             <div className="w-full">
               <InputLabel value="Comentário" />
               <textarea
+                ref={inputRef}
                 rows={3}
                 id="comment"
                 name="comment"
+                onFocus={() => {
+                  // TODO remove all event listeners
+                }}
                 className="block w-full md:w-1/2 mt-1 border-gray-300 rounded-md shadow-sm focus:border-primary-300 focus:ring focus:ring-primary-200 focus:ring-opacity-50 focus-within:text-primary-600 resize-none"></textarea>
             </div>
             <PrimaryButton onClick={submitComment} className="h-10 w-full md:w-32">
               Comentar
             </PrimaryButton>
           </div>
-          {c ? (
+          {comments !== undefined ? (
             <div>
-              {c.map((comment) => (
+              {comments.map((comment) => (
                 <div
                   key={comment.id}
                   className="w-11/12 shadow border border-gray-100 rounded h-auto p-5 bg-white my-5">
-                  <p className="font-semibold">
-                    {comment.user_id}{' '}
-                    <span className="font-thin text-xs text-gray-500 ml-3">
-                      {comment.created_at.toLocaleString()}
-                    </span>
+                  <p className="font-semibold flex items-center gap-x-2">
+                    {comment.user}
+                    {comment.is_admin && (
+                      <img className="h-5 w-5" src="/images/nei-logo.png" alt="Admin" />
+                    )}
+                    <span className="font-thin text-xs text-gray-500">{comment.created_at}</span>
                   </p>
                   <p className="mt-2 text-sm md:text-md">{comment.comment}</p>
                 </div>
               ))}
             </div>
           ) : (
-            <Skeleton />
+            <Skeleton className="w-1/2 max-w-[480px] h-10 mb-3" count={4} />
           )}
         </>
       )}

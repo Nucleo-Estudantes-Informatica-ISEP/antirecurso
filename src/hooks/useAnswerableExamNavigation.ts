@@ -30,6 +30,8 @@ export default function useAnswerableExamNavigation({
     return answers.has(i);
   }
 
+  const optionOrders = currentQuestion?.options.map((option) => option.order);
+
   function selectAnswer(question: number, order: string) {
     setAnswers((prev) => {
       const newAnswers = new Map(prev);
@@ -37,8 +39,6 @@ export default function useAnswerableExamNavigation({
       return newAnswers;
     });
   }
-
-  const optionOrders = currentQuestion?.options.map((option) => option.order);
 
   function cycleOptions(direction: 'UP' | 'DOWN') {
     if (!optionOrders) return;
@@ -58,19 +58,20 @@ export default function useAnswerableExamNavigation({
   }
 
   async function handleKeyDown(e: KeyboardEvent) {
+    if (!optionOrders) return;
+
     switch (e.key) {
       case '1':
-        if (currentQuestion?.options[0].order === '1') selectAnswer(currentQuestionIndex, '1');
+        if (currentQuestion?.options[0]) selectAnswer(currentQuestionIndex, optionOrders[0]);
         break;
       case '2':
-        if (currentQuestion?.options[1].order === '2') selectAnswer(currentQuestionIndex, '2');
+        if (currentQuestion?.options[1]) selectAnswer(currentQuestionIndex, optionOrders[1]);
         break;
       case '3':
-        if (currentQuestion?.options[2]?.order === '3') selectAnswer(currentQuestionIndex, '3');
+        if (currentQuestion?.options[2]) selectAnswer(currentQuestionIndex, optionOrders[2]);
         break;
       case '4':
-        if (currentQuestion?.options[3] && currentQuestion.options[3].order === '4')
-          selectAnswer(currentQuestionIndex, '4');
+        if (currentQuestion?.options[3]) selectAnswer(currentQuestionIndex, optionOrders[3]);
         break;
       case ' ':
         cycleOptions('DOWN');

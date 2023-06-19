@@ -1,6 +1,6 @@
 'use client';
 
-import { useContext, useEffect } from 'react';
+import React, { useContext, useEffect } from 'react';
 
 import Image from 'next/image';
 import Skeleton from 'react-loading-skeleton';
@@ -30,18 +30,21 @@ const reviewPage: React.FC<ExamPageProps> = ({ params }) => {
   function getFirstWrongQuestionIndex() {
     if (!examResult) return;
 
-    const wrongAnswer = examResult.questions.find((question) => question.is_wrong);
+    const wrongAnswer = examResult.questions.find(
+      (question: { is_wrong: boolean }) => question.is_wrong
+    );
     if (!wrongAnswer) return;
 
     return examResult.questions.indexOf(wrongAnswer);
   }
 
   async function getExamResult() {
-    const res = await fetch(BASE_URL + '/exams/' + params.id, {
+    const res = await fetch(`${BASE_URL}/exams/${params.id}`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json'
-      }
+      },
+      cache: 'no-cache' // TODO analyze if we can use hydration
     });
 
     setExamResult(await res.json());
@@ -77,7 +80,7 @@ const reviewPage: React.FC<ExamPageProps> = ({ params }) => {
             </PrimaryButton>
             {examResult.questions.map((question, i) => (
               <ExamNumeration
-                key={question.question.id}
+                key={i}
                 onClick={() => changeQuestion(i)}
                 isWrong={question.is_wrong}
                 active={currentQuestionIndex === i}>
@@ -96,7 +99,11 @@ const reviewPage: React.FC<ExamPageProps> = ({ params }) => {
         ) : (
           <div className="w-screen flex  items-center md:justify-center space-x-10 overflow-x-scroll md:overflow-auto mt-5 px-5">
             {Array.from({ length: N_SKELETON_QUESTIONS }).map((_, i) => (
-              <Skeleton className="h-10 w-10 p-5 flex items-center justify-center " circle={true} />
+              <Skeleton
+                key={i}
+                className="h-10 w-10 p-5 flex items-center justify-center "
+                circle={true}
+              />
             ))}
           </div>
         )}
@@ -120,7 +127,7 @@ const reviewPage: React.FC<ExamPageProps> = ({ params }) => {
         </section>
 
         <CommentSection
-          comments={currentQuestion?.question.comments}
+          comments={examResult?.questions[currentQuestionIndex]?.comments}
           questionId={currentQuestion?.question.id}
         />
       </div>

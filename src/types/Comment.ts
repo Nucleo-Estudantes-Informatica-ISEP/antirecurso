@@ -1,7 +1,8 @@
 export default interface Comment {
   id: number;
   comment: string;
-  user_id: number;
+  user: string;
   question_id: number;
-  created_at: Date;
+  created_at: string;
+  is_admin: boolean;
 }

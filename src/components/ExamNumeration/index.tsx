@@ -1,11 +1,9 @@
 import { motion } from 'framer-motion';
-import { Key } from 'react';
 
 interface ExamNumerationProps {
   wasAnswered?: boolean;
   active?: boolean;
   isWrong?: boolean;
-  key?: Key;
   onClick: () => void;
   children: React.ReactNode;
 }
@@ -13,7 +11,6 @@ interface ExamNumerationProps {
 const ExamNumeration: React.FC<ExamNumerationProps> = ({
   wasAnswered,
   active,
-  key,
   onClick,
   isWrong,
   children
@@ -37,7 +34,6 @@ const ExamNumeration: React.FC<ExamNumerationProps> = ({
         border: active ? 'none' : wasAnswered ? 'none' : '1px solid #d35d19',
         color: active ? '#fff' : wasAnswered ? '#d35d19' : isWrong ? '#fff' : '#d35d19'
       }}
-      key={key}
       onClick={onClick}
       className="h-10 w-10 p-5 flex items-center justify-center rounded-full hover:cursor-pointer">
       <p>{children}</p>

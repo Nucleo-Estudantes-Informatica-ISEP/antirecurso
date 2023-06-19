@@ -17,7 +17,7 @@ const QuestionReview: React.FC<QuestionProps> = ({ currentQuestion }) => {
         {currentQuestion.options.map((option) => (
           <div
             key={option.name}
-            className={`w-full flex items-center px-5 py-3 border border-gray-100 h-20 rounded hover:cursor-pointer hover:bg-primary hover:text-white transition ease-in-out ${
+            className={`w-full flex items-center px-5 py-3 border border-gray-100 h-20 rounded ${
               currentQuestion.selected_option_id === option.id && 'bg-primary text-white'
             }`}>
             <p>{option.name}</p>

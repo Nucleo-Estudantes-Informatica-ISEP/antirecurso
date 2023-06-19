@@ -12,12 +12,11 @@ export default interface ExamReview {
       exam: string;
       correct_option: string;
       question_type: string;
-      comments: Comment[];
     };
     options: Option[];
     selected_option_id: number;
     is_wrong: boolean;
     correct_option: string;
-    comments: string[];
+    comments: Comment[];
   }[];
 }
