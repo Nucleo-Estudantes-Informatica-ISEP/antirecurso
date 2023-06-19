@@ -7,7 +7,7 @@ export async function POST(request: NextRequest) {
 
   if (!email || !password) return new Response('Email and password are required', { status: 400 });
 
-  const res = await fetch(BASE_URL + '/api/auth/login', {
+  const res = await fetch(BASE_URL + '/auth/login', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json'
