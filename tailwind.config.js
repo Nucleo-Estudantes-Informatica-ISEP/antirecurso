@@ -163,7 +163,7 @@ module.exports = {
         '4xl': '8px 10px 8px'
       },
       backgroundImage: {
-        hero: "url('/images/background.png')"
+        hero: "url('/images/background.webp')"
       },
       fontFamily: {
         sans: ['Inter', ...defaultTheme.fontFamily.sans]

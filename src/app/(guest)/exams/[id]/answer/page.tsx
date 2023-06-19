@@ -139,7 +139,7 @@ const Exam: React.FC<ExamPageProps> = ({ params }) => {
               fill
               alt="Subject"
               className="object-cover h-full w-full"
-              src="/images/prcmp.jpg"
+              src="/images/prcmp.webp"
             />
           </div>
 
