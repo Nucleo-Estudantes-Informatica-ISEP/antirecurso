@@ -5,13 +5,11 @@ import HamburgerMenu from '../HamburgerMenu';
 import PrimaryButton from '../PrimaryButton';
 
 const Topbar: React.FC = () => {
-  const cookieStore = cookies().get(config.cookies.token) as
-    | { name: string; value: string }
-    | undefined;
+  const cookieStore = cookies().get(config.cookies.token) as { value: string } | undefined;
   const token = cookieStore?.value;
 
   return (
-    <div className="w-screen h-20 flex items-center justify-between py-5 px-10 bg-white shadow border-gray-100 sticky top-0 left-0 z-20">
+    <div className="w-screen h-[9vh] flex items-center justify-between py-5 px-10 bg-white shadow border-gray-100 sticky top-0 left-0 z-20">
       <Link href="/" className="w-32 md:w-48">
         <img src="/images/logo.png" alt="Our beautiful logo" className="w-full" />
       </Link>
@@ -26,11 +24,11 @@ const Topbar: React.FC = () => {
           <Link href="/scoreboard" className="hover:text-primary transition ease-in-out">
             Scoreboard
           </Link>
-          <Link href="/documents" className="hover:text-primary transition ease-in-out">
-            Documentos
+          <Link href="/about" className="hover:text-primary transition ease-in-out">
+            About
           </Link>
         </div>
-        <div className="ml-5">
+        <div className="ml-6">
           {token ? (
             <form action={`/profile/${token}`}>
               <PrimaryButton>Aceder ao perfil</PrimaryButton>

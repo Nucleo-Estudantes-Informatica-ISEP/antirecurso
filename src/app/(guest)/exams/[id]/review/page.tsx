@@ -6,6 +6,7 @@ import Image from 'next/image';
 import Skeleton from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css';
 
+import CommentSection from '@/components/CommentSection';
 import ExamNumeration from '@/components/ExamNumeration';
 import ExamNumerationContainer from '@/components/ExamNumerationContainer';
 import PrimaryButton from '@/components/PrimaryButton';
@@ -117,6 +118,11 @@ const reviewPage: React.FC<ExamPageProps> = ({ params }) => {
             </div>
           )}
         </section>
+
+        <CommentSection
+          comments={currentQuestion?.question.comments}
+          questionId={currentQuestion?.question.id}
+        />
       </div>
     </section>
   );

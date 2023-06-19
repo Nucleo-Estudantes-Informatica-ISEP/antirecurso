@@ -20,9 +20,9 @@ interface ExamPageProps {
 
 const points: React.FC<ExamPageProps> = ({ params }) => {
   const router = useRouter();
-
   const [token, setToken] = useState<string | null>();
 
+  console.log(token);
   const { examResult, subject } = useContext(ExamContext);
 
   if (!examResult) {
@@ -33,7 +33,7 @@ const points: React.FC<ExamPageProps> = ({ params }) => {
     });
 
     router.push('/');
-    return <></>;
+    return null;
   }
 
   function handleReview() {
@@ -99,7 +99,7 @@ const points: React.FC<ExamPageProps> = ({ params }) => {
           Verificar respostas
         </PrimaryButton>
         {!token && (
-          <p className="text-xs mt-5 mx-5">
+          <p className="text-xs mt-5 mx-5 z-50">
             Não te esqueças que podes criar uma conta para guardar o teu progresso clicando{' '}
             <Link className="cursor-pointer underline" href="/register">
               aqui

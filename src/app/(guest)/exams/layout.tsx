@@ -9,8 +9,8 @@ interface ExamLayoutProps {
 
 const ExamLayout: React.FC<ExamLayoutProps> = ({ children }) => {
   return (
-    <div>
-      <ExamContextProvider>{children}</ExamContextProvider>
+    <div className="h-[91vh]">
+      <ExamContextProvider>{children}</ExamContextProvider>;
     </div>
   );
 };

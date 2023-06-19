@@ -14,7 +14,6 @@ import { BASE_URL } from 'src/services/api';
 import generateExam from 'src/services/generateExam';
 import getSubjectNameById from 'src/utils/getSubjectNameById';
 
-import CommentSection from '@/components/CommentSection';
 import ExamNumeration from '@/components/ExamNumeration';
 import ExamNumerationContainer from '@/components/ExamNumerationContainer';
 import PrimaryButton from '@/components/PrimaryButton';
@@ -159,8 +158,6 @@ const Exam: React.FC<ExamPageProps> = ({ params }) => {
             </div>
           )}
         </section>
-
-        <CommentSection comments={currentQuestion?.comments} questionId={currentQuestion?.id} />
       </div>
     </section>
   );

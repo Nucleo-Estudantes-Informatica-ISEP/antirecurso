@@ -6,7 +6,7 @@ const scoreboard: React.FC = async () => {
   const subjects = await fetchSubjects();
 
   return (
-    <section className="h-screen flex flex-col items-center justify-center text-center">
+    <section className="h-full flex flex-col items-center justify-center text-center">
       <p className="text-xl font-bold uppercase">
         <span className="text-primary">Escolhe</span> uma disciplina para ver o{' '}
         <span className="text-primary">scoreboard</span>

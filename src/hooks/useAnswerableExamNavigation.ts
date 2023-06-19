@@ -57,8 +57,43 @@ export default function useAnswerableExamNavigation({
     else selectAnswer(currentQuestionIndex, optionOrders[nextIndex]);
   }
 
+  async function handleKeyDown(e: KeyboardEvent) {
+    switch (e.key) {
+      case '1':
+        if (currentQuestion?.options[0].order === '1') selectAnswer(currentQuestionIndex, '1');
+        break;
+      case '2':
+        if (currentQuestion?.options[1].order === '2') selectAnswer(currentQuestionIndex, '2');
+        break;
+      case '3':
+        if (currentQuestion?.options[2]?.order === '3') selectAnswer(currentQuestionIndex, '3');
+        break;
+      case '4':
+        if (currentQuestion?.options[3] && currentQuestion.options[3].order === '4')
+          selectAnswer(currentQuestionIndex, '4');
+        break;
+      case ' ':
+        cycleOptions('DOWN');
+        break;
+      case 'ArrowUp':
+        e.preventDefault();
+        cycleOptions('UP');
+        break;
+      case 'ArrowDown':
+        e.preventDefault();
+        cycleOptions('DOWN');
+        break;
+      case 'Enter':
+        if (currentQuestionIndex === questions.length - 1) await submit();
+        if (wasAnswered(currentQuestionIndex)) changeQuestion(currentQuestionIndex + 1);
+      default:
+        break;
+    }
+  }
+
   async function submit(e: React.FormEvent<HTMLFormElement> | void) {
     if (e) e.preventDefault();
+    window.removeEventListener('keydown', handleKeyDown);
 
     if (!hasAnsweredAllQuestions()) {
       const confirmed = await swal({
@@ -83,43 +118,6 @@ export default function useAnswerableExamNavigation({
   }
 
   useEffect(() => {
-    async function handleKeyDown(e: KeyboardEvent) {
-      switch (e.key) {
-        case '1':
-          if (currentQuestion?.options[0].order === '1') selectAnswer(currentQuestionIndex, '1');
-          break;
-        case '2':
-          if (currentQuestion?.options[1].order === '2') selectAnswer(currentQuestionIndex, '2');
-          break;
-        case '3':
-          if (currentQuestion?.options[2]?.order === '3') selectAnswer(currentQuestionIndex, '3');
-          break;
-        case '4':
-          if (currentQuestion?.options[3] && currentQuestion.options[3].order === '4')
-            selectAnswer(currentQuestionIndex, '4');
-          break;
-        case ' ':
-          cycleOptions('DOWN');
-          break;
-        case 'ArrowUp':
-          e.preventDefault();
-          cycleOptions('UP');
-          break;
-        case 'ArrowDown':
-          e.preventDefault();
-          cycleOptions('DOWN');
-          break;
-        case 'Enter':
-          if (currentQuestionIndex === questions.length - 1) {
-            window.removeEventListener('keydown', handleKeyDown);
-            await submit();
-          }
-          if (wasAnswered(currentQuestionIndex)) changeQuestion(currentQuestionIndex + 1);
-        default:
-          break;
-      }
-    }
-
     window.addEventListener('keydown', handleKeyDown);
 
     return () => window.removeEventListener('keydown', handleKeyDown);

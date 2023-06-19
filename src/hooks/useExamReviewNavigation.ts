@@ -17,7 +17,6 @@ export default function useExamReviewNavigation() {
 
   useEffect(() => {
     if (examResult) setCurrentQuestion(examResult.questions[currentQuestionIndex]);
-    console.log(currentQuestion);
   }, [currentQuestionIndex, examResult]);
 
   useEffect(() => {

@@ -3,7 +3,7 @@ import Topbar from '@/components/Topbar';
 
 const Home: React.FC = () => {
   return (
-    <div className="h-full">
+    <div className="h-screen">
       <Topbar />
       <Hero />
     </div>

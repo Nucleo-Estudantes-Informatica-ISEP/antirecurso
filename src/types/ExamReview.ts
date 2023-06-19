@@ -1,3 +1,4 @@
+import Comment from './Comment';
 import Option from './Option';
 
 export default interface ExamReview {
@@ -11,6 +12,7 @@ export default interface ExamReview {
       exam: string;
       correct_option: string;
       question_type: string;
+      comments: Comment[];
     };
     options: Option[];
     selected_option_id: number;

@@ -63,7 +63,7 @@ const CommentSection: React.FC<CommentSectionProps> = ({ comments, questionId })
 
   return (
     <section className="ml-32 my-16">
-      {token ? (
+      {!token ? (
         <p>
           <span className="font-semibold text-primary">Cria</span> ou{' '}
           <span className="font-semibold text-primary">entra numa conta</span> para poderes

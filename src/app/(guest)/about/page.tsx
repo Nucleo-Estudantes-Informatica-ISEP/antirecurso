@@ -1,8 +1,8 @@
 const about: React.FC = () => {
   return (
-    <section className="flex flex-col items-center text-center mt-32 space-y-10">
+    <section className="h-full flex flex-col items-center justify-center text-center space-y-10">
       <div className="space-y-3">
-        <p className="text-xl font-semibold uppercase">Sponsored by</p>
+        <p className="text-xl font-semibold uppercase">Made by</p>
         <p className="text-primary font-semibold">
           <a href="https://www.nei-isep.org/" target="_blank">
             NEI-ISEP
