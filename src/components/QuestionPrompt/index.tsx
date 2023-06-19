@@ -18,9 +18,6 @@ const QuestionPrompt: React.FC<QuestionProps> = ({
   return (
     <>
       <p className="text-lg font-bold mt-5">{currentQuestion.question}</p>
-      <p className="text-sm text-gray-600 mt-2">
-        Tipo de pergunta '{currentQuestion.question_type}' do exame '{currentQuestion.exam}'
-      </p>
       <div className="mt-5 space-y-5">
         {currentQuestion.options.map((option) => (
           <motion.div

@@ -9,10 +9,6 @@ const QuestionReview: React.FC<QuestionProps> = ({ currentQuestion }) => {
   return (
     <>
       <p className="text-lg font-bold mt-5">{currentQuestion.question.question}</p>
-      <p className="text-sm text-gray-600 mt-2">
-        Tipo de pergunta '{currentQuestion.question.question_type}' do exame '
-        {currentQuestion.question.exam}'
-      </p>
       <div className="mt-5 space-y-5">
         {currentQuestion.options.map((option) => (
           <div

@@ -66,12 +66,6 @@ const CommentSection: React.FC<CommentSectionProps> = ({
                     }
                   });
 
-                  document.addEventListener('keydown', (e) => {
-                    if (e.key === 'Enter' && e.shiftKey) {
-                      handleSubmit();
-                    }
-                  });
-
                   removeEventListener();
                 }}
                 onBlur={addListener}
