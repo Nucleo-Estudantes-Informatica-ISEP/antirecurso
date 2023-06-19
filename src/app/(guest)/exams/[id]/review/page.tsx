@@ -22,7 +22,7 @@ interface ExamPageProps {
   };
 }
 
-const reviewPage: React.FC<ExamPageProps> = ({ params }) => {
+const ReviewPage: React.FC<ExamPageProps> = ({ params }) => {
   const { subject } = useContext(ExamContext);
 
   const {
@@ -148,4 +148,4 @@ const reviewPage: React.FC<ExamPageProps> = ({ params }) => {
   );
 };
 
-export default reviewPage;
+export default ReviewPage;

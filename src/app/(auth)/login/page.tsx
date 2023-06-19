@@ -11,7 +11,7 @@ import LoginSchema from 'src/schemas/LoginSchema';
 import swal from 'sweetalert';
 import { z } from 'zod';
 
-const login: React.FC = () => {
+const Login: React.FC = () => {
   const router = useRouter();
 
   const emailInputRef = useRef<HTMLInputElement>(null);
@@ -152,4 +152,4 @@ const login: React.FC = () => {
   );
 };
 
-export default login;
+export default Login;

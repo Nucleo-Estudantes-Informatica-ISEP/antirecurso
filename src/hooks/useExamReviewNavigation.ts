@@ -19,7 +19,7 @@ export default function useExamReviewNavigation() {
 
   useEffect(() => {
     if (examResult) setCurrentQuestion(examResult.questions[currentQuestionIndex]);
-  }, [currentQuestionIndex, examResult]);
+  }, [currentQuestionIndex, examResult, setQuestions, setCurrentQuestion]);
 
   useEffect(() => {
     setQuestions(examResult?.questions || []);

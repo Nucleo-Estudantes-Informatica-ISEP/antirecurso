@@ -20,6 +20,7 @@ export default function useAnswerableExamNavigation({
     currentQuestion,
     setCurrentQuestion
   } = useExamNavigation<Question>();
+
   function hasAnsweredAllQuestions(): boolean {
     if (answers.size === questions.length) return true;
 
@@ -132,7 +133,8 @@ export default function useAnswerableExamNavigation({
     wasAnswered,
     changeQuestion,
     selectAnswer,
-    cycleOptions
+    cycleOptions,
+    removeEventListener
   ]);
 
   useEffect(() => {

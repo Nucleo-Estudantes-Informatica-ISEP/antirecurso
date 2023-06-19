@@ -11,7 +11,7 @@ interface ProfileProps {
 }
 
 // @ts-expect-error Server Component
-const profile: React.FC<ProfileProps> = async ({ params }) => {
+const Profile: React.FC<ProfileProps> = async ({ params }) => {
   const res = await fetch(`${BASE_URL}/user`, {
     headers: {
       Authorization: `Bearer ${params.token}`
@@ -49,7 +49,7 @@ const profile: React.FC<ProfileProps> = async ({ params }) => {
               </thead>
               <tbody>
                 {user.scores.map((score) => (
-                  <tr className="bg-white border-b">
+                  <tr className="bg-white border-b" key={score.subject_id}>
                     <td className="px-6 py-4">{score.subject.toUpperCase()}</td>
                     <td className="px-6 py-4">{score.score}</td>
                   </tr>
@@ -76,4 +76,4 @@ const profile: React.FC<ProfileProps> = async ({ params }) => {
   );
 };
 
-export default profile;
+export default Profile;

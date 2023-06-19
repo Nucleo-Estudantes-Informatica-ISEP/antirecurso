@@ -47,6 +47,7 @@ const Exam: React.FC<ExamPageProps> = ({ params }) => {
   } = useAnswerableExamNavigation({ handleConfirm });
 
   async function handleConfirm() {
+    const token = await useToken();
     removeEventListener();
 
     const data = {
@@ -56,8 +57,6 @@ const Exam: React.FC<ExamPageProps> = ({ params }) => {
         selected_option: answers.get(i) || null
       }))
     };
-
-    const token = await useToken();
 
     const res = await fetch(`${BASE_URL}/exams/verify`, {
       method: 'POST',

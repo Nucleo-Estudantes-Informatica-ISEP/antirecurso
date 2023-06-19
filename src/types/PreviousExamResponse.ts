@@ -1,5 +1,5 @@
-import Answer from "src/types/Answer";
-import PreviousExamResponseMetadata from "./PreviousExamResponseMetadata";
+import Answer from 'src/types/Answer';
+import PreviousExamResponseMetadata from './PreviousExamResponseMetadata';
 
 export default interface PreviousExamResponse {
   data: Answer[];

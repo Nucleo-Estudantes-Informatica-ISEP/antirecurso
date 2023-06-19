@@ -14,7 +14,7 @@ import { Spinner } from '@/styles/Icons';
 import { useRouter } from 'next/navigation';
 import swal from 'sweetalert';
 
-const register: React.FC = () => {
+const Register: React.FC = () => {
   const router = useRouter();
 
   const nameInputRef = useRef<HTMLInputElement>(null);
@@ -183,4 +183,4 @@ const register: React.FC = () => {
   );
 };
 
-export default register;
+export default Register;

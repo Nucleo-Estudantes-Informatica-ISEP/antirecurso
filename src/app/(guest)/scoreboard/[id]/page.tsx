@@ -46,7 +46,7 @@ const ScoreboardPage: React.FC<ScoreboardPageProps> = async ({ params }) => {
             </thead>
             <tbody>
               {scoreboard.scores.map((line, key) => (
-                <tr className="bg-white border-b">
+                <tr className="bg-white border-b" key={line.subject_id}>
                   <th scope="row" className="px-6 py-4 font-medium text-primary whitespace-nowrap">
                     {key + 1}
                   </th>

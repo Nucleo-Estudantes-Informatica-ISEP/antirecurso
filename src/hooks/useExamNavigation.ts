@@ -32,7 +32,7 @@ export default function useExamNavigation<T>() {
     addListener();
 
     return removeEventListener;
-  }, [currentQuestionIndex, changeQuestion]);
+  }, [currentQuestionIndex, changeQuestion, removeEventListener, addListener]);
 
   return {
     changeQuestion,

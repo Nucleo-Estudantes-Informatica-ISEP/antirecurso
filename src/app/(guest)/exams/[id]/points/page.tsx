@@ -18,12 +18,25 @@ interface ExamPageProps {
   };
 }
 
-const points: React.FC<ExamPageProps> = ({ params }) => {
+const Points: React.FC<ExamPageProps> = ({ params }) => {
   const router = useRouter();
   const [token, setToken] = useState<string | null>();
-
-  console.log(token);
+  const [fire, setFire] = useState(false);
   const { examResult, subject } = useContext(ExamContext);
+
+  function handleReview() {
+    router.push('/exams/' + examResult!.id + '/review');
+  }
+
+  async function getToken() {
+    const token = await useToken();
+    setToken(token);
+  }
+
+  useEffect(() => {
+    setFire(true);
+    getToken();
+  }, []);
 
   if (!examResult) {
     swal({
@@ -35,22 +48,6 @@ const points: React.FC<ExamPageProps> = ({ params }) => {
     router.push('/');
     return null;
   }
-
-  function handleReview() {
-    router.push('/exams/' + examResult!.id + '/review');
-  }
-
-  const [fire, setFire] = useState(false);
-
-  async function getToken() {
-    const token = await useToken();
-    setToken(token);
-  }
-
-  useEffect(() => {
-    setFire(true);
-    getToken();
-  }, []);
 
   return (
     <section className="h-screen flex flex-col items-center mt-4">
@@ -112,4 +109,4 @@ const points: React.FC<ExamPageProps> = ({ params }) => {
   );
 };
 
-export default points;
+export default Points;

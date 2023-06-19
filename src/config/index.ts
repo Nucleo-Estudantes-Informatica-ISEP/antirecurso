@@ -1,5 +1,7 @@
-export default {
+const config = {
   cookies: {
     token: '@AntiRecurso:token'
   }
 };
+
+export default config;

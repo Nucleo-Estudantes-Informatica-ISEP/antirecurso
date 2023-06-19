@@ -1,10 +1,10 @@
-const about: React.FC = () => {
+const About: React.FC = () => {
   return (
     <section className="h-full flex flex-col items-center justify-center text-center space-y-10">
       <div className="space-y-3">
         <p className="text-xl font-semibold uppercase">Made by</p>
         <p className="text-primary font-semibold">
-          <a href="https://www.nei-isep.org/" target="_blank">
+          <a href="https://www.nei-isep.org/" rel="noreferrer" target="_blank">
             NEI-ISEP
           </a>
         </p>
@@ -13,7 +13,7 @@ const about: React.FC = () => {
       <div className="space-y-3">
         <p className="text-xl font-semibold uppercase">Data Mining by</p>
         <p className="text-primary font-semibold">
-          <a href="mailto:1211289@isep.ipp.pt" target="_blank">
+          <a href="mailto:1211289@isep.ipp.pt" rel="noreferrer" target="_blank">
             Tomás Lopes
           </a>
         </p>
@@ -23,6 +23,7 @@ const about: React.FC = () => {
         <p className="text-xl font-semibold uppercase">Git repository </p>
         <p className="text-primary font-semibold">
           <a
+            rel="noreferrer"
             href="https://github.com/Nucleo-Estudantes-Informatica-ISEP/antirecurso"
             target="_blank">
             https://github.com/Nucleo-Estudantes-Informatica-ISEP/antirecurso
@@ -33,4 +34,4 @@ const about: React.FC = () => {
   );
 };
 
-export default about;
+export default About;
