@@ -92,9 +92,13 @@ export default function useAnswerableExamNavigation({
     }
   }
 
+  function removeEventListener() {
+    window.removeEventListener('keydown', handleKeyDown);
+  }
+
   async function submit(e: React.FormEvent<HTMLFormElement> | void) {
     if (e) e.preventDefault();
-    window.removeEventListener('keydown', handleKeyDown);
+    removeEventListener();
 
     if (!hasAnsweredAllQuestions()) {
       const confirmed = await swal({
@@ -121,7 +125,7 @@ export default function useAnswerableExamNavigation({
   useEffect(() => {
     window.addEventListener('keydown', handleKeyDown);
 
-    return () => window.removeEventListener('keydown', handleKeyDown);
+    return removeEventListener;
   }, [
     currentQuestionIndex,
     currentQuestion,
@@ -141,6 +145,7 @@ export default function useAnswerableExamNavigation({
     hasAnsweredAllQuestions,
     changeQuestion,
     setCurrentQuestion,
+    removeEventListener,
     setQuestions,
     answers,
     questions,

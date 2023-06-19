@@ -3,17 +3,23 @@
 import { useEffect, useRef, useState } from 'react';
 import Skeleton from 'react-loading-skeleton';
 import useToken from 'src/hooks/useToken';
-import { BASE_URL } from 'src/services/api';
 import Comment from '../../types/Comment';
 import InputLabel from '../InputLabel';
 import PrimaryButton from '../PrimaryButton';
 
 interface CommentSectionProps {
   comments: Comment[] | undefined;
-  questionId: number | undefined;
+  submitComment: (comment: string) => void;
+  removeEventListener: () => void;
+  addListener: () => void;
 }
 
-const CommentSection: React.FC<CommentSectionProps> = ({ comments, questionId }) => {
+const CommentSection: React.FC<CommentSectionProps> = ({
+  comments,
+  submitComment,
+  removeEventListener,
+  addListener
+}) => {
   const [token, setToken] = useState<string | null>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
 
@@ -22,24 +28,13 @@ const CommentSection: React.FC<CommentSectionProps> = ({ comments, questionId })
     setToken(t);
   }
 
-  async function submitComment() {
+  function handleSubmit() {
     const comment = document.getElementById('comment') as HTMLInputElement;
+    if (!comment) return;
     const commentValue = comment.value;
 
-    if (!inputRef.current) return;
-    inputRef.current.value = '';
-
-    await fetch(`${BASE_URL}/comments`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`
-      },
-      body: JSON.stringify({
-        comment: commentValue,
-        question_id: questionId
-      })
-    });
+    submitComment(commentValue);
+    inputRef.current!.value = '';
   }
 
   useEffect(() => {
@@ -65,11 +60,24 @@ const CommentSection: React.FC<CommentSectionProps> = ({ comments, questionId })
                 id="comment"
                 name="comment"
                 onFocus={() => {
-                  // TODO remove all event listeners
+                  document.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter' && e.ctrlKey) {
+                      handleSubmit();
+                    }
+                  });
+
+                  document.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter' && e.shiftKey) {
+                      handleSubmit();
+                    }
+                  });
+
+                  removeEventListener();
                 }}
+                onBlur={addListener}
                 className="block w-full md:w-1/2 mt-1 border-gray-300 rounded-md shadow-sm focus:border-primary-300 focus:ring focus:ring-primary-200 focus:ring-opacity-50 focus-within:text-primary-600 resize-none"></textarea>
             </div>
-            <PrimaryButton onClick={submitComment} className="h-10 w-full md:w-32">
+            <PrimaryButton onClick={handleSubmit} className="h-10 w-full md:w-32">
               Comentar
             </PrimaryButton>
           </div>

@@ -19,11 +19,11 @@ const ExamNumeration: React.FC<ExamNumerationProps> = ({
     <motion.div
       animate={{
         opacity: [0, 1],
-        scale: [0.5, 1],
-        background: active ? '#d35d19' : wasAnswered ? '#d35d1970' : isWrong ? '#f05252' : '#fff'
+        scale: active ? [1, 1.05] : [0.8, 1],
+        background: active ? '#d35d19' : wasAnswered ? '#d35d1970' : isWrong ? '#f00' : '#fff'
       }}
       transition={{
-        duration: 0.5,
+        duration: 0.2,
         delay: 0.1,
         ease: 'easeInOut',
         background: {

@@ -41,11 +41,14 @@ const Exam: React.FC<ExamPageProps> = ({ params }) => {
     wasAnswered,
     currentQuestionIndex,
     changeQuestion,
+    removeEventListener,
     currentQuestion,
     selectAnswer
   } = useAnswerableExamNavigation({ handleConfirm });
 
   async function handleConfirm() {
+    removeEventListener();
+
     const data = {
       subject_id: parseInt(params.id),
       answers: [...Array.from({ length: questions.length }, (_, i) => i)].map((i) => ({
@@ -86,7 +89,7 @@ const Exam: React.FC<ExamPageProps> = ({ params }) => {
   }, []);
 
   return (
-    <section className="h-[90vh] flex flex-col items-center">
+    <section className="h-[88vh] flex flex-col items-center">
       <p className="text-xl font-bold uppercase mt-10 ml-5">
         Exame de <span className="text-primary">{subject}</span>
       </p>

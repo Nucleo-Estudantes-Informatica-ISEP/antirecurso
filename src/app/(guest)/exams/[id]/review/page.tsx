@@ -13,6 +13,7 @@ import PrimaryButton from '@/components/PrimaryButton';
 import QuestionReview from '@/components/QuestionReview';
 import { ExamContext } from 'src/contexts/ExamContext';
 import useExamReviewNavigation from 'src/hooks/useExamReviewNavigation';
+import useToken from 'src/hooks/useToken';
 import { BASE_URL } from 'src/services/api';
 
 interface ExamPageProps {
@@ -24,19 +25,15 @@ interface ExamPageProps {
 const reviewPage: React.FC<ExamPageProps> = ({ params }) => {
   const { subject } = useContext(ExamContext);
 
-  const { currentQuestionIndex, currentQuestion, changeQuestion, setExamResult, examResult } =
-    useExamReviewNavigation();
-
-  function getFirstWrongQuestionIndex() {
-    if (!examResult) return;
-
-    const wrongAnswer = examResult.questions.find(
-      (question: { is_wrong: boolean }) => question.is_wrong
-    );
-    if (!wrongAnswer) return;
-
-    return examResult.questions.indexOf(wrongAnswer);
-  }
+  const {
+    currentQuestionIndex,
+    currentQuestion,
+    changeQuestion,
+    setExamResult,
+    examResult,
+    removeEventListener,
+    addListener
+  } = useExamReviewNavigation();
 
   async function getExamResult() {
     const res = await fetch(`${BASE_URL}/exams/${params.id}`, {
@@ -44,26 +41,40 @@ const reviewPage: React.FC<ExamPageProps> = ({ params }) => {
       headers: {
         'Content-Type': 'application/json'
       },
-      cache: 'no-cache' // TODO analyze if we can use hydration
+      //? maybe separate this in two different methods, one with hydration for the first time and another without hydration for the fetch after comment
+      cache: 'no-cache'
     });
 
     setExamResult(await res.json());
+  }
+
+  async function submitComment(comment: string) {
+    const token = await useToken();
+
+    await fetch(`${BASE_URL}/comments`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`
+      },
+      body: JSON.stringify({
+        comment: comment,
+        question_id: examResult?.questions[currentQuestionIndex].question.id
+      })
+    });
+
+    getExamResult();
   }
 
   useEffect(() => {
     getExamResult();
   }, []);
 
-  useEffect(() => {
-    const index = getFirstWrongQuestionIndex();
-    if (index) changeQuestion(index);
-  }, [examResult]);
-
   const N_SKELETON_QUESTIONS = 10;
   const N_SKELETON_OPTIONS = 4;
 
   return (
-    <section className="h-[90vh] flex flex-col items-center">
+    <section className="h-[88vh] flex flex-col items-center">
       <p className="text-xl font-bold uppercase mt-10 ml-5">
         Exame de <span className="text-primary">{subject}</span>
       </p>
@@ -128,7 +139,9 @@ const reviewPage: React.FC<ExamPageProps> = ({ params }) => {
 
         <CommentSection
           comments={examResult?.questions[currentQuestionIndex]?.comments}
-          questionId={currentQuestion?.question.id}
+          submitComment={submitComment}
+          removeEventListener={removeEventListener}
+          addListener={addListener}
         />
       </div>
     </section>

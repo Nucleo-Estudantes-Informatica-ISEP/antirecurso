@@ -12,7 +12,9 @@ export default function useExamReviewNavigation() {
     questions,
     currentQuestionIndex,
     currentQuestion,
-    setCurrentQuestion
+    setCurrentQuestion,
+    removeEventListener,
+    addListener
   } = useExamNavigation<ExamReview['questions'][0]>();
 
   useEffect(() => {
@@ -27,6 +29,8 @@ export default function useExamReviewNavigation() {
     changeQuestion,
     setCurrentQuestion,
     setQuestions,
+    addListener,
+    removeEventListener,
     questions,
     currentQuestionIndex,
     currentQuestion,

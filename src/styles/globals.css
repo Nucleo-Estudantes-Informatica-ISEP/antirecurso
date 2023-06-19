@@ -300,4 +300,9 @@
     font-family: 'Poppins', sans-serif;
     overflow-x: hidden;
   }
+
+  /* remove scrollbar in every browser*/
+  ::-webkit-scrollbar {
+    display: none;
+  }
 }
