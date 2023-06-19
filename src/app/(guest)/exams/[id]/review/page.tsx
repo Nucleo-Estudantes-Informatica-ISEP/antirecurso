@@ -108,7 +108,7 @@ const reviewPage: React.FC<ExamPageProps> = ({ params }) => {
             </PrimaryButton>
           </ExamNumerationContainer>
         ) : (
-          <div className="w-screen flex  items-center md:justify-center space-x-10 overflow-x-scroll md:overflow-auto mt-5 px-5">
+          <div className="flex items-center w-screen px-5 mt-5 space-x-10 overflow-x-scroll md:justify-center md:overflow-auto">
             {Array.from({ length: N_SKELETON_QUESTIONS }).map((_, i) => (
               <Skeleton
                 key={i}
@@ -118,13 +118,13 @@ const reviewPage: React.FC<ExamPageProps> = ({ params }) => {
             ))}
           </div>
         )}
-        <section className="mt-5 px-5 md:px-32">
+        <section className="px-5 mt-5 md:px-32">
           <div className="relative w-full h-48">
             <Image
               fill
               alt="Subject"
-              className="object-cover h-full w-full"
-              src="/images/prcmp.jpg"
+              className="object-cover w-full h-full"
+              src="/images/prcmp.webp"
             />
           </div>
 
