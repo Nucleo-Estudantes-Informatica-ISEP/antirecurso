@@ -59,7 +59,7 @@ const ReviewPage: React.FC<ExamPageProps> = ({ params }) => {
       },
       body: JSON.stringify({
         comment: comment,
-        question_id: examResult?.questions[currentQuestionIndex].question.id
+        question_id: currentQuestion?.question.id
       })
     });
 
