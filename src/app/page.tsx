@@ -3,7 +3,7 @@ import Topbar from '@/components/Topbar';
 
 const Home: React.FC = () => {
   return (
-    <div className="h-screen">
+    <div className="min-h-screen h-screen">
       <Topbar />
       <Hero />
     </div>

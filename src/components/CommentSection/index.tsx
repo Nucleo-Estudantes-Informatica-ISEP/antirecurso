@@ -1,8 +1,11 @@
 'use client';
 
+import { Flag } from '@/styles/Icons';
 import { useEffect, useRef, useState } from 'react';
 import Skeleton from 'react-loading-skeleton';
 import useToken from 'src/hooks/useToken';
+import { BASE_URL } from 'src/services/api';
+import swal from 'sweetalert';
 import Comment from '../../types/Comment';
 import InputLabel from '../InputLabel';
 import PrimaryButton from '../PrimaryButton';
@@ -12,13 +15,15 @@ interface CommentSectionProps {
   submitComment: (comment: string) => void;
   removeEventListener: () => void;
   addListener: () => void;
+  questionId: number | undefined;
 }
 
 const CommentSection: React.FC<CommentSectionProps> = ({
   comments,
   submitComment,
   removeEventListener,
-  addListener
+  addListener,
+  questionId
 }) => {
   const [token, setToken] = useState<string | null>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
@@ -35,6 +40,46 @@ const CommentSection: React.FC<CommentSectionProps> = ({
 
     submitComment(commentValue);
     inputRef.current!.value = '';
+  }
+
+  async function handleReportQuestion() {
+    if (!questionId) return;
+
+    const result = await swal({
+      text: 'What is wrong?',
+      content: 'input',
+      button: {
+        text: 'Report',
+        closeModal: true
+      }
+    });
+
+    if (result) {
+      const res = await fetch(BASE_URL + '/question-reports', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          question_id: questionId,
+          reason: result
+        })
+      });
+
+      if (res.status === 201)
+        swal({
+          title: 'Reported!',
+          text: 'Your report has been sent to the admins!',
+          icon: 'success'
+        });
+      else
+        swal({
+          title: 'Error!',
+          text: 'Something went wrong!',
+          icon: 'error'
+        });
+    }
   }
 
   useEffect(() => {
@@ -70,9 +115,17 @@ const CommentSection: React.FC<CommentSectionProps> = ({
                 onBlur={addListener}
                 className="block w-full md:mx-0 mx-auto md:w-1/2 mt-1 border-gray-300 rounded-md shadow-sm focus:border-primary-300 focus:ring focus:ring-primary-200 focus:ring-opacity-50 focus-within:text-primary-600 resize-none"></textarea>
             </div>
-            <PrimaryButton onClick={handleSubmit} className="h-10 w-5/6 md:mx-0 mx-auto md:w-32">
-              Comentar
-            </PrimaryButton>
+            <div className="w-5/6 md:mx-0 mx-auto flex items-center gap-x-6">
+              <PrimaryButton onClick={handleSubmit} className="h-10 w-full md:w-32">
+                Comentar
+              </PrimaryButton>
+              <button onClick={handleReportQuestion}>
+                <Flag
+                  size={20}
+                  className="hover:text-red-700 hover:fill-red-500 transition-all duration-150 ease-in-out"
+                />
+              </button>
+            </div>
           </div>
           {comments !== undefined ? (
             <div>

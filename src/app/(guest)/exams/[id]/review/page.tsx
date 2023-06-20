@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useContext, useEffect } from 'react';
+import React, { useCallback, useContext, useEffect } from 'react';
 
 import Image from 'next/image';
 import Skeleton from 'react-loading-skeleton';
@@ -35,7 +35,7 @@ const ReviewPage: React.FC<ExamPageProps> = ({ params }) => {
     addListener
   } = useExamReviewNavigation();
 
-  async function getExamResult() {
+  const getExamResult = useCallback(async () => {
     const res = await fetch(`${BASE_URL}/exams/${params.id}`, {
       method: 'GET',
       headers: {
@@ -46,7 +46,7 @@ const ReviewPage: React.FC<ExamPageProps> = ({ params }) => {
     });
 
     setExamResult(await res.json());
-  }
+  }, [params.id, setExamResult]);
 
   async function submitComment(comment: string) {
     const token = await useToken();
@@ -68,7 +68,7 @@ const ReviewPage: React.FC<ExamPageProps> = ({ params }) => {
 
   useEffect(() => {
     getExamResult();
-  }, []);
+  }, [getExamResult]);
 
   const N_SKELETON_QUESTIONS = 10;
   const N_SKELETON_OPTIONS = 4;
@@ -143,6 +143,7 @@ const ReviewPage: React.FC<ExamPageProps> = ({ params }) => {
           submitComment={submitComment}
           removeEventListener={removeEventListener}
           addListener={addListener}
+          questionId={currentQuestion?.question.id}
         />
       </div>
     </section>

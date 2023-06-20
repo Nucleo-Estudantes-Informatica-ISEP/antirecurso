@@ -8,9 +8,9 @@ export const metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <body className="min-h-screen">
+    <div className="min-h-screen h-screen">
       <Topbar />
-      <main>{children}</main>
-    </body>
+      <main className="my-8 min-h-[90vh]">{children}</main>
+    </div>
   );
 }
