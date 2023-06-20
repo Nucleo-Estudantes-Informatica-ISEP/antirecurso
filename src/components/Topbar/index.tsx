@@ -9,12 +9,12 @@ const Topbar: React.FC = () => {
   const token = cookieStore?.value;
 
   return (
-    <div className="w-screen h-[9vh] flex items-center justify-between py-5 px-10 bg-white shadow border-gray-100 sticky top-0 left-0 z-20">
+    <div className="w-screen h-20 flex items-center justify-between py-5 px-10 bg-white shadow border-gray-100 sticky top-0 left-0 z-20">
       <Link href="/" className="w-32 md:w-48">
         <img src="/images/logo.png" alt="Our beautiful logo" className="w-full" />
       </Link>
       <div className="hidden md:flex md:items-center">
-        <div className="space-x-10">
+        <div className="space-x-5">
           <Link href="/" className="hover:text-primary transition ease-in-out">
             Home
           </Link>
