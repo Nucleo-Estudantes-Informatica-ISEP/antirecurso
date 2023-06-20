@@ -1,4 +1,5 @@
 import { motion } from 'framer-motion';
+import React, { useEffect, useRef, useState } from 'react';
 
 interface ExamNumerationProps {
   wasAnswered?: boolean;
@@ -6,6 +7,7 @@ interface ExamNumerationProps {
   isWrong?: boolean;
   onClick: () => void;
   children: React.ReactNode;
+  align: 'start' | 'end' | 'center';
 }
 
 const ExamNumeration: React.FC<ExamNumerationProps> = ({
@@ -13,8 +15,26 @@ const ExamNumeration: React.FC<ExamNumerationProps> = ({
   active,
   onClick,
   isWrong,
-  children
+  children,
+  align
 }) => {
+  const ref = useRef<HTMLDivElement>(null);
+
+  const [questionInView, setQuestionInView] = useState<HTMLElement>();
+
+  useEffect(() => {
+    if (active) {
+      setQuestionInView(questionInView);
+      if (ref.current) {
+        ref.current.scrollIntoView({
+          behavior: 'smooth',
+          block: 'end',
+          inline: align
+        });
+      }
+    }
+  }, [active, questionInView]);
+
   return (
     <motion.div
       animate={{
@@ -34,6 +54,7 @@ const ExamNumeration: React.FC<ExamNumerationProps> = ({
         border: active ? 'none' : wasAnswered ? 'none' : '1px solid #d35d19',
         color: active ? '#fff' : wasAnswered ? '#d35d19' : isWrong ? '#fff' : '#d35d19'
       }}
+      ref={ref}
       onClick={onClick}
       className="h-10 w-10 p-5 flex items-center justify-center rounded-full hover:cursor-pointer">
       <p>{children}</p>

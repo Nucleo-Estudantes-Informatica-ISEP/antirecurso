@@ -6,7 +6,7 @@ import PrimaryButton from '../PrimaryButton';
 
 const Hero: React.FC = () => {
   return (
-    <div className="bg-hero h-[91vh] bg-center bg-no-repeat bg-cover justify-center text-center text-white">
+    <div className="bg-hero h-full bg-center bg-no-repeat bg-cover justify-center text-center text-white">
       <section className="min-w-screen h-full flex flex-col items-center justify-center text-center text-white">
         <p className="text-4xl font-bold uppercase px-10 md:px-0">
           <span className="text-primary">Queres</span> mesmo ir a{' '}

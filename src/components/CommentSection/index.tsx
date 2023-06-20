@@ -42,7 +42,7 @@ const CommentSection: React.FC<CommentSectionProps> = ({
   }, [comments]);
 
   return (
-    <section className="ml-32 my-16">
+    <section className="md:ml-32 my-16">
       {!token ? (
         <p>
           <span className="font-semibold text-primary">Cria</span> ou{' '}
@@ -52,7 +52,7 @@ const CommentSection: React.FC<CommentSectionProps> = ({
       ) : (
         <>
           <div className="w-full flex flex-col space-y-5 mb-5">
-            <div className="w-full">
+            <div className=" w-5/6 mx-auto md:w-full">
               <InputLabel value="Comentário" />
               <textarea
                 ref={inputRef}
@@ -65,13 +65,12 @@ const CommentSection: React.FC<CommentSectionProps> = ({
                       handleSubmit();
                     }
                   });
-
                   removeEventListener();
                 }}
                 onBlur={addListener}
-                className="block w-full md:w-1/2 mt-1 border-gray-300 rounded-md shadow-sm focus:border-primary-300 focus:ring focus:ring-primary-200 focus:ring-opacity-50 focus-within:text-primary-600 resize-none"></textarea>
+                className="block w-full md:mx-0 mx-auto md:w-1/2 mt-1 border-gray-300 rounded-md shadow-sm focus:border-primary-300 focus:ring focus:ring-primary-200 focus:ring-opacity-50 focus-within:text-primary-600 resize-none"></textarea>
             </div>
-            <PrimaryButton onClick={handleSubmit} className="h-10 w-full md:w-32">
+            <PrimaryButton onClick={handleSubmit} className="h-10 w-5/6 md:mx-0 mx-auto md:w-32">
               Comentar
             </PrimaryButton>
           </div>
@@ -80,7 +79,7 @@ const CommentSection: React.FC<CommentSectionProps> = ({
               {comments.map((comment) => (
                 <div
                   key={comment.id}
-                  className="w-11/12 shadow border border-gray-100 rounded h-auto p-5 bg-white my-5">
+                  className="w-11/12 mx-auto md:mx-0 shadow border border-gray-100 rounded h-auto p-5 bg-white my-5">
                   <p className="font-semibold flex items-center gap-x-2">
                     {comment.user}
                     {comment.is_admin && (

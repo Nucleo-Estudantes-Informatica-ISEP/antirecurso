@@ -7,7 +7,7 @@ const Exams: React.FC = async () => {
   const subjects = await fetchSubjects();
 
   return (
-    <section className="h-[88vh] flex flex-col items-center justify-center text-center">
+    <section className="h-full flex flex-col items-center justify-center text-center">
       <p className="text-xl font-bold uppercase text-center">
         <span className="text-primary">Escolhe</span> uma disciplina para fazer{' '}
         <span className="text-primary">o exame</span>

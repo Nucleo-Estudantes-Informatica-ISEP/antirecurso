@@ -108,7 +108,8 @@ const Exam: React.FC<ExamPageProps> = ({ params }) => {
                 key={question.id}
                 onClick={() => changeQuestion(i)}
                 wasAnswered={wasAnswered(i)}
-                active={currentQuestionIndex === i}>
+                active={currentQuestionIndex === i}
+                align={i < 2 ? 'end' : i > 8 ? 'start' : 'center'}>
                 {i + 1}
               </ExamNumeration>
             ))}
@@ -136,7 +137,7 @@ const Exam: React.FC<ExamPageProps> = ({ params }) => {
           </div>
         )}
         <section className="mt-5 px-5 md:px-32">
-          <div className="relative w-full h-48">
+          <div className="relative w-full h-40">
             <Image
               fill
               alt="Subject"
