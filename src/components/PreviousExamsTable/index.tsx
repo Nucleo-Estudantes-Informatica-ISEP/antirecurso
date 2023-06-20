@@ -45,7 +45,7 @@ const PreviousExamsTable: React.FC<PreviousExamsTableProps> = ({ token }) => {
   }, [fetchUrl, token]);
 
   return (
-    <section ref={sectionRef} className="my-5 md:px-16 w-full grid place-items-center">
+    <section ref={sectionRef} className="my-5 px-4 md:px-8 lg:px-16 w-full grid place-items-center">
       {previousExamResponse === undefined ? (
         <ExamTableLoading />
       ) : previousExamResponse.data.length ? (

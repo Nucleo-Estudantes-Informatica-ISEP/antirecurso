@@ -19,9 +19,9 @@ const About: React.FC = () => {
         </p>
       </div>
 
-      <div className="space-y-3">
+      <div className="space-y-3 w-5/6">
         <p className="text-xl font-semibold uppercase">Git repository </p>
-        <p className="text-primary font-semibold">
+        <p className="text-primary font-semibold w-full">
           <a
             rel="noreferrer"
             href="https://github.com/Nucleo-Estudantes-Informatica-ISEP/antirecurso"

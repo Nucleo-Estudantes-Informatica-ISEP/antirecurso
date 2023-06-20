@@ -31,7 +31,7 @@ const Profile: React.FC<ProfileProps> = async ({ params }) => {
 
       {user.scores.length ? (
         <>
-          <p className="text-xl font-bold uppercase mt-16 text-center">
+          <p className="text-lg md:text-xl font-bold uppercase mt-16 text-center">
             O teu <span className="text-primary">score</span> ao longo das disciplinas
           </p>
 
@@ -58,7 +58,7 @@ const Profile: React.FC<ProfileProps> = async ({ params }) => {
             </table>
           </section>
 
-          <p className="text-xl font-bold uppercase mt-10">
+          <p className="text-lg md:text-xl font-bold uppercase mt-10">
             Os teus <span className="text-primary">exames</span>
           </p>
 
