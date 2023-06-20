@@ -75,7 +75,7 @@ const ReviewPage: React.FC<ExamPageProps> = ({ params }) => {
 
   return (
     <section className="h-[88vh] flex flex-col items-center">
-      <p className="text-xl font-bold uppercase mt-10 ml-5">
+      <p className="text-xl font-bold uppercase mt-10 ml-5 text-center">
         Exame de <span className="text-primary">{subject}</span>
       </p>
       <div className="mb-12">
@@ -120,7 +120,7 @@ const ReviewPage: React.FC<ExamPageProps> = ({ params }) => {
           </div>
         )}
         <section className="px-5 mt-5 md:px-32">
-          <div className="relative w-full h-48">
+          <div className="relative w-full h-28 md:h-48">
             <Image
               fill
               alt="Subject"
