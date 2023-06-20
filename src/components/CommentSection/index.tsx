@@ -46,40 +46,37 @@ const CommentSection: React.FC<CommentSectionProps> = ({
     if (!questionId) return;
 
     const result = await swal({
-      text: 'What is wrong?',
-      content: 'input',
-      button: {
-        text: 'Report',
-        closeModal: true
-      }
+      text: 'What is wrong? (Optional)',
+      content: {
+        element: 'input'
+      },
+      buttons: ['Cancel', 'Report']
     });
 
-    if (result) {
-      const res = await fetch(BASE_URL + '/question-reports', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`
-        },
-        body: JSON.stringify({
-          question_id: questionId,
-          reason: result
-        })
-      });
+    const res = await fetch(BASE_URL + '/question-reports', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`
+      },
+      body: JSON.stringify({
+        question_id: questionId,
+        reason: result
+      })
+    });
 
-      if (res.status === 201)
-        swal({
-          title: 'Reported!',
-          text: 'Your report has been sent to the admins!',
-          icon: 'success'
-        });
-      else
-        swal({
-          title: 'Error!',
-          text: 'Something went wrong!',
-          icon: 'error'
-        });
-    }
+    if (res.status === 201)
+      swal({
+        title: 'Reported!',
+        text: 'Your report has been sent to the admins!',
+        icon: 'success'
+      });
+    else
+      swal({
+        title: 'Error!',
+        text: 'Something went wrong!',
+        icon: 'error'
+      });
   }
 
   useEffect(() => {

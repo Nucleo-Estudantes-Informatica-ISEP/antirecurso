@@ -43,7 +43,8 @@ const Exam: React.FC<ExamPageProps> = ({ params }) => {
     changeQuestion,
     removeEventListener,
     currentQuestion,
-    selectAnswer
+    selectAnswer,
+    isSubmitting
   } = useAnswerableExamNavigation({ handleConfirm });
 
   async function handleConfirm() {
@@ -121,9 +122,15 @@ const Exam: React.FC<ExamPageProps> = ({ params }) => {
               disabled={currentQuestionIndex === questions.length - 1}>
               {'>'}
             </PrimaryButton>
-            <form onSubmit={(e) => submit(e)}>
-              <PrimaryButton>Terminar</PrimaryButton>
-            </form>
+            {isSubmitting ? (
+              <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-primary">
+                <span className="sr-only">Loading...</span>
+              </div>
+            ) : (
+              <form onSubmit={(e) => submit(e)}>
+                <PrimaryButton>Terminar</PrimaryButton>
+              </form>
+            )}
           </ExamNumerationContainer>
         ) : (
           <div className="w-screen flex  items-center md:justify-center space-x-10 overflow-x-scroll md:overflow-auto mt-5 px-5">

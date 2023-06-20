@@ -1,9 +1,9 @@
 import React from 'react';
 
-import TableHeading from '../TableHeading';
-import { formatDateDDStrMonthYYYY } from 'src/utils/Date';
 import Link from 'next/link';
 import PreviousExamResponse from 'src/types/PreviousExamResponse';
+import { formatDateDDStrMonthYYYY } from 'src/utils/Date';
+import TableHeading from '../TableHeading';
 
 interface ExamsTableProps {
   previousExamResponse: PreviousExamResponse;
@@ -19,8 +19,8 @@ const ExamsTable: React.FC<ExamsTableProps> = ({ previousExamResponse }) => {
             <td className="px-2 sm:px-6 py-2 sm:py-4 w-1/4">
               <Link
                 href={`/exams/${answer.id}/review/`}
-                className="hover:text-primary text-base transition ease-in-out">
-                {answer.subject.toUpperCase()}
+                className="hover:text-primary text-base transition ease-in-out capitalize">
+                {answer.subject}
               </Link>
             </td>
             <td className="text-xs md:text-base px-2 sm:px-6 py-2 sm:py-4 w-1/4">{answer.score}</td>

@@ -50,7 +50,7 @@ const Profile: React.FC<ProfileProps> = async ({ params }) => {
               <tbody>
                 {user.scores.map((score) => (
                   <tr className="bg-white border-b" key={score.subject_id}>
-                    <td className="px-6 py-4">{score.subject.toUpperCase()}</td>
+                    <td className="px-6 py-4 capitalize">{score.subject}</td>
                     <td className="px-6 py-4">{score.score}</td>
                   </tr>
                 ))}

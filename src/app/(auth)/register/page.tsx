@@ -106,7 +106,10 @@ const Register: React.FC = () => {
   }, [errors]);
 
   return (
-    <div className="flex items-center justify-center py-12 px-4 sm:p-12 md:w-1/2 md:h-screen">
+    <div className="flex relative items-center justify-center py-12 px-4 sm:p-12 md:w-1/2 md:h-screen">
+      <Link href="/" className="w-32 md:w-48 absolute top-24 mx-auto">
+        <img src="/images/logo.png" alt="Our beautiful logo" className="w-full" />
+      </Link>
       <div className="w-full">
         <h1 className="mb-4 text-xl font-semibold text-gray-700">Criar conta</h1>
 
@@ -153,6 +156,23 @@ const Register: React.FC = () => {
               type="password"
               className="block w-full"
             />
+          </div>
+
+          <div className="flex mt-8 text-sm items-center">
+            <label className="flex items-center dark:text-gray-400">
+              <input
+                type="checkbox"
+                name="privacy-policy"
+                required
+                className="text-primary form-checkbox focus:border-primary focus:outline-none focus:shadow-outline-primary"
+              />
+              <span className="ml-2 text-black">
+                Confirmo que li e aceito a{' '}
+                <Link target="_blank" className="text-primary" href="/privacy-policy">
+                  Política de Privacidade
+                </Link>
+              </span>
+            </label>
           </div>
 
           <div className="mt-6">
