@@ -18,7 +18,7 @@ const Exams: React.FC = async () => {
           <Link
             href={`exams/${subject.id}/answer`}
             key={subject.id}
-            className="w-full md:h-48 p-5 flex flex-col space-y-6 items-center justify-center shadow border border-gray-100 rounded text-center group hover:bg-primary transition ease-in-out">
+            className="w-full h-full md:h-48 p-5 flex flex-col space-y-6 items-center justify-center shadow border border-gray-100 rounded text-center group hover:bg-primary transition ease-in-out">
             <div className="w-full justify-center items-center overflow-auto">
               <p className="w-full text-xs md:text-xl font-bold capitalize line-clamp-6 group-hover:text-white">
                 {subject.name}
