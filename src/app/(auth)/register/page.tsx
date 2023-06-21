@@ -106,8 +106,8 @@ const Register: React.FC = () => {
   }, [errors]);
 
   return (
-    <div className="flex relative items-center justify-center py-12 px-4 sm:p-12 md:w-1/2 md:h-screen">
-      <Link href="/" className="w-32 md:w-48 absolute top-24 mx-auto">
+    <div className="flex flex-col relative items-center justify-center py-12 px-4 sm:p-12 md:w-1/2 md:h-screen">
+      <Link href="/" className="w-32 md:w-48 mb-5 mx-auto">
         <img src="/images/logo.png" alt="Our beautiful logo" className="w-full" />
       </Link>
       <div className="w-full">

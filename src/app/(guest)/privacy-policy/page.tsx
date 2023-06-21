@@ -1,8 +1,8 @@
 const PrivacyPolicy: React.FC = () => {
   return (
-    <div className="h-screen w-full text-md line-clamp-4 px-24">
+    <div className="min-h-screen w-full text-sm md:text-md px-5 md:px-24 pb-5">
       <h1 className="text-primary font-black text-xl">Política de Privacidade</h1>
-      <span>
+      <span className="h-full">
         Aplicação do Regulamento Geral sobre a Proteção de Dados Em vigor a partir de 20 de junho de
         2023. De maneira a compreender que informações são recolhidas e como são utilizadas o Núcleo
         de Estudantes de Informática do Instituto Superior de Engenharia do Porto (NEI-ISEP)
