@@ -1,6 +1,7 @@
 'use client';
 
 import { Flag } from '@/styles/Icons';
+import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
 import Skeleton from 'react-loading-skeleton';
 import useToken from 'src/hooks/useToken';
@@ -39,7 +40,9 @@ const CommentSection: React.FC<CommentSectionProps> = ({
     const commentValue = comment.value;
 
     submitComment(commentValue);
-    inputRef.current!.value = '';
+
+    if (!inputRef.current) return;
+    inputRef.current.value = '';
   }
 
   async function handleReportQuestion() {
@@ -87,9 +90,14 @@ const CommentSection: React.FC<CommentSectionProps> = ({
     <section className="ml-4 md:ml-32 my-14 w-full">
       {!token ? (
         <p className="w-5/6 text-center md:text-start">
-          <span className="font-semibold text-primary">Cria</span> ou{' '}
-          <span className="font-semibold text-primary">entra numa conta</span> para poderes comentar
-          e reportar possíveis erros!
+          <Link href="/register" target="_blank" className="font-semibold text-primary">
+            Cria
+          </Link>{' '}
+          ou{' '}
+          <Link href="/login" target="_blank" className="font-semibold text-primary">
+            entra numa conta
+          </Link>{' '}
+          para poderes comentar e reportar possíveis erros!
         </p>
       ) : (
         <>

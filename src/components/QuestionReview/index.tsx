@@ -1,5 +1,6 @@
 import { Check, X } from '@/styles/Icons';
 import ExamReview from 'src/types/ExamReview';
+import sanitizeOption from 'src/utils/sanitizeOption';
 
 interface QuestionProps {
   currentQuestion: ExamReview['questions'][0];
@@ -16,9 +17,9 @@ const QuestionReview: React.FC<QuestionProps> = ({ currentQuestion }) => {
             className={`w-full flex items-center px-5 py-3 border border-gray-100 h-20 rounded ${
               currentQuestion.selected_option_id === option.id && 'bg-primary text-white'
             }`}>
-            <p>{option.name}</p>
-            {currentQuestion.selected_option_id === option.id &&
-              currentQuestion.is_wrong === true && <X className="ml-5" />}
+            <p>{sanitizeOption(option.name)}</p>
+            {currentQuestion.is_wrong === true &&
+              currentQuestion.selected_option_id === option.id && <X className="ml-5" />}
             {currentQuestion.correct_option === option.order && <Check className="ml-5" />}
           </div>
         ))}

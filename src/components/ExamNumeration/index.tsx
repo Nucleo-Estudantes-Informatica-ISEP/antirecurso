@@ -1,3 +1,5 @@
+'use client';
+
 import { motion } from 'framer-motion';
 import React, { useEffect, useRef, useState } from 'react';
 
@@ -19,21 +21,23 @@ const ExamNumeration: React.FC<ExamNumerationProps> = ({
   align
 }) => {
   const ref = useRef<HTMLDivElement>(null);
+  const width = window.innerWidth; // only works on client
 
   const [questionInView, setQuestionInView] = useState<HTMLElement>();
 
   useEffect(() => {
     if (active) {
       setQuestionInView(questionInView);
-      if (ref.current) {
-        ref.current.scrollIntoView({
-          behavior: 'smooth',
-          block: 'end',
-          inline: align
-        });
-      }
+      if (!ref.current) return;
+      if (width > 768) return;
+
+      ref.current.scrollIntoView({
+        behavior: 'smooth',
+        block: 'nearest',
+        inline: align
+      });
     }
-  }, [active, questionInView]);
+  }, [active, questionInView, align]);
 
   return (
     <motion.div

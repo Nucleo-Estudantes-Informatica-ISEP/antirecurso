@@ -23,7 +23,7 @@ export default function useExamReviewNavigation() {
 
   useEffect(() => {
     setQuestions(examResult?.questions || []);
-  }, [examResult]);
+  }, [examResult, setQuestions]);
 
   return {
     changeQuestion,

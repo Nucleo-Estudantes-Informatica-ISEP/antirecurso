@@ -1,6 +1,7 @@
 import { Check } from '@/styles/Icons';
 import { motion } from 'framer-motion';
 import Question from 'src/types/Question';
+import sanitizeOption from 'src/utils/sanitizeOption';
 
 interface QuestionProps {
   currentQuestion: Question;
@@ -33,7 +34,7 @@ const QuestionPrompt: React.FC<QuestionProps> = ({
             className={`w-full flex items-center px-5 py-3 border border-gray-100 h-16 md:h-20 rounded hover:cursor-pointer hover:bg-primary hover:text-white transition ease-in-out ${
               answers.get(currentQuestionIndex) === option.order && 'bg-primary text-white'
             }`}>
-            <p className="capitalize text-sm md:text-base">{option.name.toLowerCase()}</p>
+            <p className="text-sm md:text-base">{sanitizeOption(option.name)}</p>
             {answers.get(currentQuestionIndex) === option.order && <Check className="ml-5" />}
           </motion.div>
         ))}
