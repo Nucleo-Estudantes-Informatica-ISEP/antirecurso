@@ -56,6 +56,8 @@ const CommentSection: React.FC<CommentSectionProps> = ({
       buttons: ['Cancel', 'Report']
     });
 
+    if (result === null) return;
+
     const res = await fetch(BASE_URL + '/question-reports', {
       method: 'POST',
       headers: {
