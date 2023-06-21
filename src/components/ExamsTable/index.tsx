@@ -11,15 +11,15 @@ interface ExamsTableProps {
 
 const ExamsTable: React.FC<ExamsTableProps> = ({ previousExamResponse }) => {
   return (
-    <table className="w-full sm:w-1/2 text-sm text-center">
+    <table className="w-1/2 text-sm text-center">
       <TableHeading />
       <tbody>
         {previousExamResponse.data.map((answer) => (
           <tr key={answer.id} className="bg-white border-b">
-            <td className="px-2 sm:px-6 py-2 sm:py-4 w-1/4">
+            <td className="text-xs px-2 sm:px-6 py-2 sm:py-4 w-1/4">
               <Link
                 href={`/exams/${answer.id}/review/`}
-                className="hover:text-primary text-base transition ease-in-out capitalize">
+                className="hover:text-primary text-xs md:text-base transition ease-in-out capitalize">
                 {answer.subject}
               </Link>
             </td>

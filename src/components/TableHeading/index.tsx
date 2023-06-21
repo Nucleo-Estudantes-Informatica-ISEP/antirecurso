@@ -1,6 +1,6 @@
 const TableHeading: React.FC = () => {
   return (
-    <thead className="w-full items-center justify-center text-white uppercase bg-primary">
+    <thead className="text-xs text-white uppercase bg-primary">
       <tr>
         <th scope="col" className="text-xs px-4 py-3">
           Disciplina

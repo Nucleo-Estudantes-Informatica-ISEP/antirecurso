@@ -1,5 +1,6 @@
 import PreviousExamsTable from '@/components/PreviousExamsTable';
 import PrimaryButton from '@/components/PrimaryButton';
+import UserProfileScoreboard from '@/components/UserProfileScoreboard';
 import Link from 'next/link';
 import { BASE_URL } from 'src/services/api';
 import User from 'src/types/User';
@@ -37,28 +38,7 @@ const Profile: React.FC<ProfileProps> = async ({ params }) => {
             O teu <span className="text-primary">score</span> ao longo das disciplinas
           </p>
 
-          <section className="grid w-full mt-5 md:px-16 place-items-center">
-            <table className="w-1/2 text-sm text-center">
-              <thead className="text-xs text-white uppercase bg-primary">
-                <tr>
-                  <th scope="col" className="px-6 py-3">
-                    Disciplina
-                  </th>
-                  <th scope="col" className="px-6 py-3">
-                    Pontuação
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {user.scores.map((score) => (
-                  <tr className="bg-white border-b" key={score.subject_id}>
-                    <td className="px-6 py-4 capitalize">{score.subject}</td>
-                    <td className="px-6 py-4">{score.score}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </section>
+          <UserProfileScoreboard user={user} />
 
           <p className="mt-10 text-lg font-bold uppercase md:text-xl">
             Os teus <span className="text-primary">exames</span>
