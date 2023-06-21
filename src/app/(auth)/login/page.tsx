@@ -87,7 +87,10 @@ const Login: React.FC = () => {
   }, [errors]);
 
   return (
-    <div className="flex items-center justify-center py-12 px-4 sm:p-12 md:w-1/2 max-w-md md:h-screen">
+    <div className="flex items-center py-12 px-4 sm:p-12 md:w-1/2 max-w-md md:h-screen relative">
+      <Link href="/" className="w-32 md:w-48 absolute top-24 mx-auto">
+        <img src="/images/logo.png" alt="Our beautiful logo" className="w-full" />
+      </Link>
       <div className="w-full">
         <h1 className="mb-4 text-xl font-semibold text-gray-700">Entrar</h1>
 
@@ -111,17 +114,6 @@ const Login: React.FC = () => {
               type="password"
               className="block w-full"
             />
-          </div>
-
-          <div className="flex mt-8 text-sm">
-            <label className="flex items-center dark:text-gray-400">
-              <input
-                type="checkbox"
-                name="remember"
-                className="text-primary form-checkbox focus:border-primary focus:outline-none focus:shadow-outline-primary"
-              />
-              <span className="ml-2">Lembrar-me</span>
-            </label>
           </div>
 
           <div className="mt-4">

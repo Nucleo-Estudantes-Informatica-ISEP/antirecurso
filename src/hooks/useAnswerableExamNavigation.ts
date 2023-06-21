@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 import swal from 'sweetalert';
 
@@ -11,6 +11,7 @@ export default function useAnswerableExamNavigation({
   handleConfirm: () => Promise<void>;
 }) {
   const [answers, setAnswers] = useState<Map<number, string>>(new Map<number, string>());
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const {
     changeQuestion,
@@ -21,107 +22,99 @@ export default function useAnswerableExamNavigation({
     setCurrentQuestion
   } = useExamNavigation<Question>();
 
-  function hasAnsweredAllQuestions(): boolean {
+  const hasAnsweredAllQuestions = useCallback((): boolean => {
     if (answers.size === questions.length) return true;
 
     return false;
-  }
-
-  function wasAnswered(i: number) {
-    return answers.has(i);
-  }
+  }, [answers, questions]);
 
   const optionOrders = currentQuestion?.options.map((option) => option.order);
 
-  function selectAnswer(question: number, order: string) {
+  const wasAnswered = useCallback(
+    (i: number) => {
+      return answers.has(i);
+    },
+    [answers]
+  );
+
+  const selectAnswer = useCallback((question: number, order: string) => {
     setAnswers((prev) => {
       const newAnswers = new Map(prev);
       newAnswers.set(question, order);
       return newAnswers;
     });
-  }
+  }, []);
 
-  function cycleOptions(direction: 'UP' | 'DOWN') {
-    if (!optionOrders) return;
+  const cycleOptions = useCallback(
+    (direction: 'UP' | 'DOWN') => {
+      if (!optionOrders) return;
 
-    const currentOption = answers.get(currentQuestionIndex);
-    if (!currentOption) return selectAnswer(currentQuestionIndex, optionOrders[0]);
+      const currentOption = answers.get(currentQuestionIndex);
+      if (!currentOption) return selectAnswer(currentQuestionIndex, optionOrders[0]);
 
-    const currentIndex = optionOrders.indexOf(currentOption);
+      const currentIndex = optionOrders.indexOf(currentOption);
 
-    const multiplier = direction === 'UP' ? -1 : 1;
-    const nextIndex = currentIndex + 1 * multiplier;
+      const multiplier = direction === 'UP' ? -1 : 1;
+      const nextIndex = currentIndex + 1 * multiplier;
 
-    if (nextIndex >= optionOrders.length) selectAnswer(currentQuestionIndex, optionOrders[0]);
-    else if (nextIndex < 0)
-      selectAnswer(currentQuestionIndex, optionOrders[optionOrders.length - 1]);
-    else selectAnswer(currentQuestionIndex, optionOrders[nextIndex]);
-  }
+      if (nextIndex >= optionOrders.length) selectAnswer(currentQuestionIndex, optionOrders[0]);
+      else if (nextIndex < 0)
+        selectAnswer(currentQuestionIndex, optionOrders[optionOrders.length - 1]);
+      else selectAnswer(currentQuestionIndex, optionOrders[nextIndex]);
+    },
+    [answers, currentQuestionIndex, optionOrders, selectAnswer]
+  );
 
-  async function handleKeyDown(e: KeyboardEvent) {
-    if (!optionOrders) return;
+  const handleKeyDown: (e: KeyboardEvent) => void = useCallback(
+    async (e: KeyboardEvent) => {
+      if (!optionOrders) return;
 
-    switch (e.key) {
-      case '1':
-        if (currentQuestion?.options[0]) selectAnswer(currentQuestionIndex, optionOrders[0]);
-        break;
-      case '2':
-        if (currentQuestion?.options[1]) selectAnswer(currentQuestionIndex, optionOrders[1]);
-        break;
-      case '3':
-        if (currentQuestion?.options[2]) selectAnswer(currentQuestionIndex, optionOrders[2]);
-        break;
-      case '4':
-        if (currentQuestion?.options[3]) selectAnswer(currentQuestionIndex, optionOrders[3]);
-        break;
-      case ' ':
-        cycleOptions('DOWN');
-        break;
-      case 'ArrowUp':
-        e.preventDefault();
-        cycleOptions('UP');
-        break;
-      case 'ArrowDown':
-        e.preventDefault();
-        cycleOptions('DOWN');
-        break;
-      case 'Enter':
-        if (currentQuestionIndex === questions.length - 1) await submit();
-        if (wasAnswered(currentQuestionIndex)) changeQuestion(currentQuestionIndex + 1);
-      default:
-        break;
-    }
-  }
+      switch (e.key) {
+        case '1':
+          if (currentQuestion?.options[0]) selectAnswer(currentQuestionIndex, optionOrders[0]);
+          break;
+        case '2':
+          if (currentQuestion?.options[1]) selectAnswer(currentQuestionIndex, optionOrders[1]);
+          break;
+        case '3':
+          if (currentQuestion?.options[2]) selectAnswer(currentQuestionIndex, optionOrders[2]);
+          break;
+        case '4':
+          if (currentQuestion?.options[3]) selectAnswer(currentQuestionIndex, optionOrders[3]);
+          break;
+        case ' ':
+          cycleOptions('DOWN');
+          break;
+        case 'ArrowUp':
+          e.preventDefault();
+          cycleOptions('UP');
+          break;
+        case 'ArrowDown':
+          e.preventDefault();
+          cycleOptions('DOWN');
+          break;
+        case 'Enter':
+          if (currentQuestionIndex === questions.length - 1) await submit();
+          if (wasAnswered(currentQuestionIndex)) changeQuestion(currentQuestionIndex + 1);
+        default:
+          break;
+      }
+    },
+    [
+      changeQuestion,
+      currentQuestion,
+      currentQuestionIndex,
+      cycleOptions,
+      optionOrders,
+      selectAnswer,
+      wasAnswered,
+      questions
+    ]
+  );
 
-  function removeEventListener() {
+  const removeEventListener = useCallback(() => {
     window.removeEventListener('keydown', handleKeyDown);
-  }
-
-  async function submit(e: React.FormEvent<HTMLFormElement> | void) {
-    if (e) e.preventDefault();
-    removeEventListener();
-
-    if (!hasAnsweredAllQuestions()) {
-      const confirmed = await swal({
-        title: 'Não respondeu a todas as questões do exame.',
-        text: 'Tem a certeza que quer terminar o exame?',
-        icon: 'warning',
-        buttons: ['Cancelar', 'Continuar']
-      });
-
-      if (!confirmed) return;
-    }
-
-    const confirmed = await swal({
-      title: 'Tem a certeza que quer terminar o exame?',
-      icon: 'warning',
-      buttons: ['Não', 'Sim']
-    });
-
-    if (!confirmed) return;
-
-    handleConfirm();
-  }
+  }, [handleKeyDown]);
 
   useEffect(() => {
     window.addEventListener('keydown', handleKeyDown);
@@ -134,8 +127,40 @@ export default function useAnswerableExamNavigation({
     changeQuestion,
     selectAnswer,
     cycleOptions,
-    removeEventListener
+    removeEventListener,
+    handleKeyDown
   ]);
+
+  const submit = useCallback(
+    async (e: React.FormEvent<HTMLFormElement> | void) => {
+      if (e) e.preventDefault();
+      removeEventListener();
+
+      if (!hasAnsweredAllQuestions()) {
+        const confirmed = await swal({
+          title: 'Não respondeu a todas as questões do exame.',
+          text: 'Tem a certeza que quer terminar o exame?',
+          icon: 'warning',
+          buttons: ['Cancelar', 'Continuar']
+        });
+
+        if (!confirmed) return;
+      }
+
+      const confirmed = await swal({
+        title: 'Tem a certeza que quer terminar o exame?',
+        icon: 'warning',
+        buttons: ['Não', 'Sim']
+      });
+
+      if (!confirmed) return;
+
+      setIsSubmitting(true);
+      handleConfirm();
+      setIsSubmitting(false);
+    },
+    [handleConfirm, hasAnsweredAllQuestions, removeEventListener]
+  );
 
   useEffect(() => {
     setCurrentQuestion(questions[currentQuestionIndex]);
@@ -153,6 +178,7 @@ export default function useAnswerableExamNavigation({
     questions,
     currentQuestionIndex,
     currentQuestion,
-    submit
+    submit,
+    isSubmitting
   };
 }

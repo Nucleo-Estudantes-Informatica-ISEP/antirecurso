@@ -53,32 +53,30 @@ const CommentSection: React.FC<CommentSectionProps> = ({
       buttons: ['Cancel', 'Report']
     });
 
-    if (result) {
-      const res = await fetch(BASE_URL + '/question-reports', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`
-        },
-        body: JSON.stringify({
-          question_id: questionId,
-          reason: result
-        })
-      });
+    const res = await fetch(BASE_URL + '/question-reports', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`
+      },
+      body: JSON.stringify({
+        question_id: questionId,
+        reason: result
+      })
+    });
 
-      if (res.status === 201)
-        swal({
-          title: 'Reported!',
-          text: 'Your report has been sent to the admins!',
-          icon: 'success'
-        });
-      else
-        swal({
-          title: 'Error!',
-          text: 'Something went wrong!',
-          icon: 'error'
-        });
-    }
+    if (res.status === 201)
+      swal({
+        title: 'Reported!',
+        text: 'Your report has been sent to the admins!',
+        icon: 'success'
+      });
+    else
+      swal({
+        title: 'Error!',
+        text: 'Something went wrong!',
+        icon: 'error'
+      });
   }
 
   useEffect(() => {

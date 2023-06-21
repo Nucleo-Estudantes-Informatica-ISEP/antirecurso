@@ -10,6 +10,8 @@ interface ProfileProps {
   };
 }
 
+export const dynamic = 'force-dynamic';
+
 // @ts-expect-error Server Component
 const Profile: React.FC<ProfileProps> = async ({ params }) => {
   const res = await fetch(`${BASE_URL}/user`, {
@@ -27,15 +29,15 @@ const Profile: React.FC<ProfileProps> = async ({ params }) => {
       <p className="text-xl font-semibold">
         Boas vindas, <span className="font-bold text-primary">{user.name}</span>!
       </p>
-      <p className="mt-5 px-5 text-center">Hoje é dia {today}. Tens algum exame perto?</p>
+      <p className="px-5 mt-5 text-center">Hoje é dia {today}. Tens algum exame perto?</p>
 
       {user.scores.length ? (
         <>
-          <p className="text-lg md:text-xl font-bold uppercase mt-16 text-center">
+          <p className="mt-16 text-lg font-bold text-center uppercase md:text-xl">
             O teu <span className="text-primary">score</span> ao longo das disciplinas
           </p>
 
-          <section className="mt-5 md:px-16 w-full grid place-items-center">
+          <section className="grid w-full mt-5 md:px-16 place-items-center">
             <table className="w-1/2 text-sm text-center">
               <thead className="text-xs text-white uppercase bg-primary">
                 <tr>
@@ -50,7 +52,7 @@ const Profile: React.FC<ProfileProps> = async ({ params }) => {
               <tbody>
                 {user.scores.map((score) => (
                   <tr className="bg-white border-b" key={score.subject_id}>
-                    <td className="px-6 py-4">{score.subject.toUpperCase()}</td>
+                    <td className="px-6 py-4 capitalize">{score.subject}</td>
                     <td className="px-6 py-4">{score.score}</td>
                   </tr>
                 ))}
@@ -58,14 +60,14 @@ const Profile: React.FC<ProfileProps> = async ({ params }) => {
             </table>
           </section>
 
-          <p className="text-lg md:text-xl font-bold uppercase mt-10">
+          <p className="mt-10 text-lg font-bold uppercase md:text-xl">
             Os teus <span className="text-primary">exames</span>
           </p>
 
           <PreviousExamsTable token={params.token} />
         </>
       ) : (
-        <section className="flex flex-col items-center text-center px-3 mt-12">
+        <section className="flex flex-col items-center px-3 mt-12 text-center">
           <p className="text-2xl font-bold">Ainda não realizaste nenhum exame.</p>
           <Link href="/exams" className="mt-10">
             <PrimaryButton>Resolver exames</PrimaryButton>

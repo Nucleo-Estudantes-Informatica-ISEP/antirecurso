@@ -30,8 +30,8 @@ const HamburgerMenu: React.FC<HamburgerMenuProps> = ({ token }) => {
           <Link href="/scoreboard" className="hover:text-primary transition ease-in-out">
             Scoreboard
           </Link>
-          <Link href="/documents" className="hover:text-primary transition ease-in-out">
-            Documentos
+          <Link href="/about" className="hover:text-primary transition ease-in-out">
+            About
           </Link>
 
           <div className="mt-5">

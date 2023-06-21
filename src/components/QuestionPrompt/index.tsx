@@ -17,7 +17,7 @@ const QuestionPrompt: React.FC<QuestionProps> = ({
 }) => {
   return (
     <>
-      <p className="text-lg font-bold mt-5">{currentQuestion.question}</p>
+      <p className="text-base md:text-lg font-bold mt-5">{currentQuestion.question}</p>
       <div className="mt-5 space-y-5">
         {currentQuestion.options.map((option) => (
           <motion.div
@@ -30,10 +30,10 @@ const QuestionPrompt: React.FC<QuestionProps> = ({
             }}
             key={option.name}
             onClick={() => selectAnswer(currentQuestionIndex, option.order)}
-            className={`w-full flex items-center px-5 py-3 border border-gray-100 h-20 rounded hover:cursor-pointer hover:bg-primary hover:text-white transition ease-in-out ${
+            className={`w-full flex items-center px-5 py-3 border border-gray-100 h-16 md:h-20 rounded hover:cursor-pointer hover:bg-primary hover:text-white transition ease-in-out ${
               answers.get(currentQuestionIndex) === option.order && 'bg-primary text-white'
             }`}>
-            <p>{option.name}</p>
+            <p className="capitalize text-sm md:text-base">{option.name.toLowerCase()}</p>
             {answers.get(currentQuestionIndex) === option.order && <Check className="ml-5" />}
           </motion.div>
         ))}
