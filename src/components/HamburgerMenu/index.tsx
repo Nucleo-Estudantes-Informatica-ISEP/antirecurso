@@ -3,6 +3,7 @@
 import { Menu } from '@/styles/Icons';
 import { useState } from 'react';
 import PrimaryButton from '../PrimaryButton';
+import Link from 'next/link';
 
 interface HamburgerMenuProps {
   token: string | undefined;
@@ -20,18 +21,18 @@ const HamburgerMenu: React.FC<HamburgerMenuProps> = ({ token }) => {
       <Menu className="text-primary hover:cursor-pointer" onClick={handleClickMenu} />
       {isOpen && (
         <div className="absolute left-0 top-20 w-screen bg-white h-auto p-5 border border-gray-100 shadow rounded flex flex-col space-y-5">
-          <form action="/" className="hover:text-primary transition ease-in-out text-start">
+          <Link href="/" className="hover:text-primary transition ease-in-out text-start">
             <button className="w-ful">Home</button>
-          </form>
-          <form action="/exams" className="hover:text-primary transition ease-in-out">
+          </Link>
+          <Link href="/exams" className="hover:text-primary transition ease-in-out">
             <button className="w-ful">Exames</button>
-          </form>
-          <form action="/scoreboard" className="hover:text-primary transition ease-in-out">
+          </Link>
+          <Link href="/scoreboard" className="hover:text-primary transition ease-in-out">
             <button className="w-ful">Scoreboard</button>
-          </form>
-          <form action="/about" className="hover:text-primary transition ease-in-out">
+          </Link>
+          <Link href="/about" className="hover:text-primary transition ease-in-out">
             <button className="w-ful">About</button>
-          </form>
+          </Link>
 
           <div className="mt-5">
             {token ? (
