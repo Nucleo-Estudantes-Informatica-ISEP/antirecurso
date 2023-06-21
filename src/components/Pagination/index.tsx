@@ -9,12 +9,12 @@ interface PaginationProps {
 const Pagination: React.FC<PaginationProps> = ({ metadata, setFetchUrl }) => {
   return (
     <nav>
-      <ul className="flex justify-center rounded-md bg-white divide-x divide-gray-200 mt-6">
+      <ul className="flex justify-center bg-white py-6">
         {metadata.links.map((link) => (
           <li key={link.label} className="md:mx-1">
             <button
               disabled={link.url === null}
-              className={`flex items-center justify-center px-4 py-2 rounded-md cursor-pointer border-2 ${
+              className={`flex items-center justify-center px-2 py-1 md:px-4 md:py-2 rounded-full cursor-pointer border-2 ${
                 link.active
                   ? 'bg-primary text-white'
                   : link.url !== null
@@ -23,7 +23,9 @@ const Pagination: React.FC<PaginationProps> = ({ metadata, setFetchUrl }) => {
               }
               `}
               onClick={() => setFetchUrl(link.url)}>
-              <a dangerouslySetInnerHTML={{ __html: link.label }} className="text-md"></a>
+              <a
+                dangerouslySetInnerHTML={{ __html: link.label }}
+                className="text-xs md:text-md"></a>
             </button>
           </li>
         ))}
