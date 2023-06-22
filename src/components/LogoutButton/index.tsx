@@ -2,32 +2,44 @@
 
 import PrimaryButton from '@/components/PrimaryButton';
 import { useRouter } from 'next/navigation';
-import { useToken } from 'src/hooks/useToken';
-import { BASE_URL } from 'src/services/api';
-
 import swal from 'sweetalert';
 
-export default function LogoutButton() {
+const LogoutButton: React.FC = () => {
   const router = useRouter();
 
-  const logoutBtnHandler = async () => {
-    const { token, setToken } = await useToken();
-
+  const logoutButtonHandler = async () => {
     const confirmed = await swal({
-      title: 'Tens a certeza que queres terminar sessão?',
+      title: 'Are you sure you want to logout?',
       icon: 'warning',
-      buttons: ['Não', 'Sim']
+      buttons: ['No', 'Yes'],
+      dangerMode: true
     });
 
     if (!confirmed) return;
 
-    setToken('');
-    router.push('/');
+    const res = await fetch('/api/auth/logout', {
+      method: 'PATCH'
+    });
+
+    if (res.status === 200) {
+      swal({
+        title: 'Successfully logged out!',
+        icon: 'success'
+      });
+      router.push('/');
+    } else {
+      swal({
+        title: 'There was an error trying to log you out. Please try again.',
+        icon: 'error'
+      });
+    }
   };
 
   return (
-    <PrimaryButton className="my-16 bg-red-600" onClick={logoutBtnHandler}>
+    <PrimaryButton className="my-16 bg-red-500" onClick={logoutButtonHandler}>
       Terminar Sessão
     </PrimaryButton>
   );
-}
+};
+
+export default LogoutButton;

@@ -6,8 +6,6 @@ import Link from 'next/link';
 import { BASE_URL } from 'src/services/api';
 import User from 'src/types/User';
 
-import swal from 'sweetalert';
-
 interface ProfileProps {
   params: {
     token: string;
@@ -29,7 +27,7 @@ const Profile: React.FC<ProfileProps> = async ({ params }) => {
   const today = new Date().toLocaleDateString('pt-PT');
 
   return (
-    <section className="h-[90vh] flex flex-col items-center mt-16">
+    <section className="h-[90vh] flex flex-col items-center my-16">
       <p className="text-xl font-semibold text-center px-4">
         Boas vindas, <span className="font-bold text-primary">{user.name}</span>!
       </p>
