@@ -1,4 +1,3 @@
-import LogoutButton from '@/components/LogoutButton';
 import PreviousExamsTable from '@/components/PreviousExamsTable';
 import PrimaryButton from '@/components/PrimaryButton';
 import UserProfileScoreboard from '@/components/UserProfileScoreboard';
@@ -55,7 +54,6 @@ const Profile: React.FC<ProfileProps> = async ({ params }) => {
           </Link>
         </section>
       )}
-      <LogoutButton />
     </section>
   );
 };

@@ -9,7 +9,7 @@ const LogoutButton: React.FC = () => {
 
   const logoutButtonHandler = async () => {
     const confirmed = await swal({
-      title: 'Are you sure you want to logout?',
+      title: 'Tens a certeza que queres terminar sessão?',
       icon: 'warning',
       buttons: ['No', 'Yes'],
       dangerMode: true
@@ -23,20 +23,20 @@ const LogoutButton: React.FC = () => {
 
     if (res.status === 200) {
       swal({
-        title: 'Successfully logged out!',
+        title: 'Terminaste sessão com sucesso!',
         icon: 'success'
       });
       router.push('/');
     } else {
       swal({
-        title: 'There was an error trying to log you out. Please try again.',
+        title: 'Algo correu mal. Por favor tenta novamente.',
         icon: 'error'
       });
     }
   };
 
   return (
-    <PrimaryButton className="my-16 bg-red-500" onClick={logoutButtonHandler}>
+    <PrimaryButton className="mb-4 text-white bg-primary" onClick={logoutButtonHandler}>
       Terminar Sessão
     </PrimaryButton>
   );
