@@ -1,6 +1,6 @@
 'use client';
 
-import { useContext, useEffect } from 'react';
+import { useContext, useEffect, useState } from 'react';
 
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
@@ -32,7 +32,9 @@ const N_SKELETON_OPTIONS = 4;
 
 const Exam: React.FC<ExamPageProps> = ({ params }) => {
   const router = useRouter();
-  const { setExamResult, subject, setSubject } = useContext(ExamContext);
+  const [subject, setSubject] = useState('');
+
+  const { setExamResult } = useContext(ExamContext);
   const {
     answers,
     submit,
@@ -74,19 +76,19 @@ const Exam: React.FC<ExamPageProps> = ({ params }) => {
     } else swal('Ocorreu um erro ao submeter o exame.', 'Por favor tente novamente.', 'error');
   }
 
-  async function getExam(id: number) {
-    const exam = await generateExam(id);
-    setQuestions(exam);
-  }
-
-  async function setSubjectName() {
-    setSubject(await getSubjectNameById(parseInt(params.id)));
-  }
-
   useEffect(() => {
+    async function getExam(id: number) {
+      const exam = await generateExam(id);
+      setQuestions(exam);
+    }
+
+    async function setSubjectName() {
+      setSubject(await getSubjectNameById(parseInt(params.id)));
+    }
+
     getExam(parseInt(params.id));
     setSubjectName();
-  }, []);
+  }, [params.id, setQuestions]);
 
   return (
     <section className="h-[88vh] flex flex-col items-center">

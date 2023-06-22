@@ -22,7 +22,7 @@ const Points: React.FC<ExamPageProps> = ({ params }) => {
   const router = useRouter();
   const [token, setToken] = useState<string | null>();
   const [fire, setFire] = useState(false);
-  const { examResult, subject } = useContext(ExamContext);
+  const { examResult } = useContext(ExamContext);
 
   function handleReview() {
     router.push('/exams/' + examResult!.id + '/review');
@@ -52,7 +52,7 @@ const Points: React.FC<ExamPageProps> = ({ params }) => {
   return (
     <section className="h-screen flex flex-col items-center mt-4">
       <p className="text-xl font-bold uppercase md:mt-60 ml-5 text-center px-4">
-        Exame de <span className="text-primary">{subject}</span>
+        Exame de <span className="text-primary">{examResult.subject}</span>
       </p>
       <div className="flex items-center justify-center mt-10 space-x-3">
         <div className="text-white bg-primary p-5 w-8 h-8 flex items-center justify-center rounded-full">

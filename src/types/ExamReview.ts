@@ -5,11 +5,11 @@ export default interface ExamReview {
   id: string;
   score: number;
   taken_at: string;
+  subject: string;
   questions: {
     question: {
       id: number;
       question: string;
-      exam: string;
       correct_option: string;
       question_type: string;
     };
