@@ -22,13 +22,13 @@ const ScoreboardPage: React.FC<ScoreboardPageProps> = async ({ params }) => {
 
   return (
     <section className="h-[90vh] flex flex-col items-center mt-16">
-      <p className="text-xl font-bold uppercase">
+      <p className="text-xl font-bold uppercase text-center px-4">
         Scoreboard de <span className="text-primary">{subjectName}</span>
       </p>
 
       <section className="mt-5 w-full md:px-16 grid place-items-center">
         {scoreboard.scores.length === 0 ? (
-          <p>Sem nenhum utilizador registado</p>
+          <p className="text-center">Sem nenhum utilizador registado</p>
         ) : (
           <table className="w-1/2 text-sm text-center">
             <thead className="text-xs text-white uppercase bg-primary">

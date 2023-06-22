@@ -90,7 +90,7 @@ const Exam: React.FC<ExamPageProps> = ({ params }) => {
 
   return (
     <section className="h-[88vh] flex flex-col items-center">
-      <p className="text-xl font-bold uppercase mt-10 ml-5 text-center">
+      <p className="text-xl font-bold uppercase mt-10 ml-5 text-center px-4">
         Exame de <span className="text-primary">{subject}</span>
       </p>
       <div className="mb-12">

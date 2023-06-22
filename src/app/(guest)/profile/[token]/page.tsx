@@ -27,7 +27,7 @@ const Profile: React.FC<ProfileProps> = async ({ params }) => {
 
   return (
     <section className="h-[90vh] flex flex-col items-center mt-16">
-      <p className="text-xl font-semibold">
+      <p className="text-xl font-semibold text-center px-4">
         Boas vindas, <span className="font-bold text-primary">{user.name}</span>!
       </p>
       <p className="px-5 mt-5 text-center">Hoje é dia {today}. Tens algum exame perto?</p>
