@@ -1,17 +1,19 @@
 'use client';
 
-import { useContext, useEffect } from 'react';
+import React, { useCallback, useContext, useEffect } from 'react';
 
 import Image from 'next/image';
 import Skeleton from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css';
 
+import CommentSection from '@/components/CommentSection';
 import ExamNumeration from '@/components/ExamNumeration';
 import ExamNumerationContainer from '@/components/ExamNumerationContainer';
 import PrimaryButton from '@/components/PrimaryButton';
 import QuestionReview from '@/components/QuestionReview';
 import { ExamContext } from 'src/contexts/ExamContext';
 import useExamReviewNavigation from 'src/hooks/useExamReviewNavigation';
+import useToken from 'src/hooks/useToken';
 import { BASE_URL } from 'src/services/api';
 
 interface ExamPageProps {
@@ -20,47 +22,60 @@ interface ExamPageProps {
   };
 }
 
-const reviewPage: React.FC<ExamPageProps> = ({ params }) => {
+const ReviewPage: React.FC<ExamPageProps> = ({ params }) => {
   const { subject } = useContext(ExamContext);
 
-  const { currentQuestionIndex, currentQuestion, changeQuestion, setExamResult, examResult } =
-    useExamReviewNavigation();
+  const {
+    currentQuestionIndex,
+    currentQuestion,
+    changeQuestion,
+    setExamResult,
+    examResult,
+    removeEventListener,
+    addListener
+  } = useExamReviewNavigation();
 
-  function getFirstWrongQuestionIndex() {
-    if (!examResult) return;
-
-    const wrongAnswer = examResult.questions.find((question) => question.is_wrong);
-    if (!wrongAnswer) return;
-
-    return examResult.questions.indexOf(wrongAnswer);
-  }
-
-  async function getExamResult() {
-    const res = await fetch(BASE_URL + '/exams/' + params.id, {
+  const getExamResult = useCallback(async () => {
+    const res = await fetch(`${BASE_URL}/exams/${params.id}`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json'
-      }
+      },
+      //? maybe separate this in two different methods, one with hydration for the first time and another without hydration for the fetch after comment
+      cache: 'no-cache'
     });
 
     setExamResult(await res.json());
+  }, [params.id, setExamResult]);
+
+  async function submitComment(comment: string) {
+    const token = await useToken();
+
+    await fetch(`${BASE_URL}/comments`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`
+      },
+      body: JSON.stringify({
+        comment: comment,
+        question_id: currentQuestion?.question.id
+      })
+    });
+
+    getExamResult();
   }
 
   useEffect(() => {
     getExamResult();
-  }, []);
-
-  useEffect(() => {
-    const index = getFirstWrongQuestionIndex();
-    if (index) changeQuestion(index);
-  }, [examResult]);
+  }, [getExamResult]);
 
   const N_SKELETON_QUESTIONS = 10;
   const N_SKELETON_OPTIONS = 4;
 
   return (
-    <section className="h-[90vh] flex flex-col items-center">
-      <p className="text-xl font-bold uppercase mt-10 ml-5">
+    <section className="h-[88vh] flex flex-col items-center">
+      <p className="text-xl font-bold uppercase mt-10 ml-5 text-center px-4">
         Exame de <span className="text-primary">{subject}</span>
       </p>
       <div className="mb-12">
@@ -76,10 +91,11 @@ const reviewPage: React.FC<ExamPageProps> = ({ params }) => {
             </PrimaryButton>
             {examResult.questions.map((question, i) => (
               <ExamNumeration
-                key={question.question.id}
+                key={i}
                 onClick={() => changeQuestion(i)}
                 isWrong={question.is_wrong}
-                active={currentQuestionIndex === i}>
+                active={currentQuestionIndex === i}
+                align={i < 2 ? 'end' : i > 8 ? 'start' : 'center'}>
                 {i + 1}
               </ExamNumeration>
             ))}
@@ -93,19 +109,23 @@ const reviewPage: React.FC<ExamPageProps> = ({ params }) => {
             </PrimaryButton>
           </ExamNumerationContainer>
         ) : (
-          <div className="w-screen flex  items-center md:justify-center space-x-10 overflow-x-scroll md:overflow-auto mt-5 px-5">
+          <div className="flex items-center w-screen px-5 mt-5 space-x-10 overflow-x-scroll md:justify-center md:overflow-auto">
             {Array.from({ length: N_SKELETON_QUESTIONS }).map((_, i) => (
-              <Skeleton className="h-10 w-10 p-5 flex items-center justify-center " circle={true} />
+              <Skeleton
+                key={i}
+                className="h-10 w-10 p-5 flex items-center justify-center "
+                circle={true}
+              />
             ))}
           </div>
         )}
-        <section className="mt-5 px-5 md:px-32">
-          <div className="relative w-full h-48">
+        <section className="px-5 mt-5 md:px-32">
+          <div className="relative w-full h-28 md:h-48">
             <Image
               fill
               alt="Subject"
-              className="object-cover h-full w-full"
-              src="/images/prcmp.jpg"
+              className="object-cover w-full h-full"
+              src="/images/prcmp.webp"
             />
           </div>
 
@@ -117,9 +137,17 @@ const reviewPage: React.FC<ExamPageProps> = ({ params }) => {
             </div>
           )}
         </section>
+
+        <CommentSection
+          comments={examResult?.questions[currentQuestionIndex]?.comments}
+          submitComment={submitComment}
+          removeEventListener={removeEventListener}
+          addListener={addListener}
+          questionId={currentQuestion?.question.id}
+        />
       </div>
     </section>
   );
 };
 
-export default reviewPage;
+export default ReviewPage;

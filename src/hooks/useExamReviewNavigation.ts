@@ -12,22 +12,25 @@ export default function useExamReviewNavigation() {
     questions,
     currentQuestionIndex,
     currentQuestion,
-    setCurrentQuestion
+    setCurrentQuestion,
+    removeEventListener,
+    addListener
   } = useExamNavigation<ExamReview['questions'][0]>();
 
   useEffect(() => {
     if (examResult) setCurrentQuestion(examResult.questions[currentQuestionIndex]);
-    console.log(currentQuestion);
-  }, [currentQuestionIndex, examResult]);
+  }, [currentQuestionIndex, examResult, setQuestions, setCurrentQuestion]);
 
   useEffect(() => {
     setQuestions(examResult?.questions || []);
-  }, [examResult]);
+  }, [examResult, setQuestions]);
 
   return {
     changeQuestion,
     setCurrentQuestion,
     setQuestions,
+    addListener,
+    removeEventListener,
     questions,
     currentQuestionIndex,
     currentQuestion,

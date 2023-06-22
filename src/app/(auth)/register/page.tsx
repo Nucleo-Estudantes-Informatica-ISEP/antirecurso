@@ -12,11 +12,9 @@ import PrimaryButton from '@/components/PrimaryButton';
 import TextInput from '@/components/TextInput';
 import { Spinner } from '@/styles/Icons';
 import { useRouter } from 'next/navigation';
-import { useToken } from 'src/hooks/useToken';
-import { BASE_URL } from 'src/services/api';
 import swal from 'sweetalert';
 
-const register: React.FC = () => {
+const Register: React.FC = () => {
   const router = useRouter();
 
   const nameInputRef = useRef<HTMLInputElement>(null);
@@ -58,7 +56,7 @@ const register: React.FC = () => {
 
       const { name, email, password } = result;
 
-      const res = await fetch(BASE_URL + '/auth/register', {
+      const res = await fetch('/api/auth/register', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -71,12 +69,6 @@ const register: React.FC = () => {
       });
 
       if (res.status === 200) {
-        const { setToken } = await useToken();
-
-        const { token } = await res.json();
-
-        setToken(token);
-
         router.push('/');
       } else if (res.status === 422) {
         // duplicate email
@@ -88,7 +80,7 @@ const register: React.FC = () => {
       } else {
         swal(
           'Erro',
-          'Ocorreu um erro ao tentar registar a contar, por favor tente novamente',
+          'Ocorreu um erro ao tentar registar a conta, por favor tente novamente',
           'error'
         );
       }
@@ -114,7 +106,10 @@ const register: React.FC = () => {
   }, [errors]);
 
   return (
-    <div className="flex items-center justify-center py-12 px-4 sm:p-12 md:w-1/2 md:h-screen">
+    <div className="flex flex-col relative items-center justify-center py-12 px-4 sm:p-12 md:w-1/2 md:h-screen">
+      <Link href="/" className="w-32 md:w-48 mb-5 mx-auto">
+        <img src="/images/logo.png" alt="Our beautiful logo" className="w-full" />
+      </Link>
       <div className="w-full">
         <h1 className="mb-4 text-xl font-semibold text-gray-700">Criar conta</h1>
 
@@ -163,6 +158,23 @@ const register: React.FC = () => {
             />
           </div>
 
+          <div className="flex mt-8 text-sm items-center">
+            <label className="flex items-center dark:text-gray-400">
+              <input
+                type="checkbox"
+                name="privacy-policy"
+                required
+                className="text-primary form-checkbox focus:border-primary focus:outline-none focus:shadow-outline-primary"
+              />
+              <span className="ml-2 text-black">
+                Confirmo que li e aceito a{' '}
+                <Link target="_blank" className="text-primary" href="/privacy-policy">
+                  Política de Privacidade
+                </Link>
+              </span>
+            </label>
+          </div>
+
           <div className="mt-6">
             <PrimaryButton disabled={isSubmitting} type="submit" className="block w-full">
               {isSubmitting ? (
@@ -191,4 +203,4 @@ const register: React.FC = () => {
   );
 };
 
-export default register;
+export default Register;

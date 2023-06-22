@@ -10,7 +10,6 @@ import Skeleton from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css';
 
 import { ExamContext } from 'src/contexts/ExamContext';
-import { useToken } from 'src/hooks/useToken';
 import { BASE_URL } from 'src/services/api';
 import generateExam from 'src/services/generateExam';
 import getSubjectNameById from 'src/utils/getSubjectNameById';
@@ -20,6 +19,7 @@ import ExamNumerationContainer from '@/components/ExamNumerationContainer';
 import PrimaryButton from '@/components/PrimaryButton';
 import QuestionPrompt from '@/components/QuestionPrompt';
 import useAnswerableExamNavigation from 'src/hooks/useAnswerableExamNavigation';
+import useToken from 'src/hooks/useToken';
 
 interface ExamPageProps {
   params: {
@@ -41,11 +41,16 @@ const Exam: React.FC<ExamPageProps> = ({ params }) => {
     wasAnswered,
     currentQuestionIndex,
     changeQuestion,
+    removeEventListener,
     currentQuestion,
-    selectAnswer
+    selectAnswer,
+    isSubmitting
   } = useAnswerableExamNavigation({ handleConfirm });
 
   async function handleConfirm() {
+    const token = await useToken();
+    removeEventListener();
+
     const data = {
       subject_id: parseInt(params.id),
       answers: [...Array.from({ length: questions.length }, (_, i) => i)].map((i) => ({
@@ -53,8 +58,6 @@ const Exam: React.FC<ExamPageProps> = ({ params }) => {
         selected_option: answers.get(i) || null
       }))
     };
-
-    const { token } = await useToken();
 
     const res = await fetch(`${BASE_URL}/exams/verify`, {
       method: 'POST',
@@ -86,8 +89,8 @@ const Exam: React.FC<ExamPageProps> = ({ params }) => {
   }, []);
 
   return (
-    <section className="h-[90vh] flex flex-col items-center">
-      <p className="text-xl font-bold uppercase mt-10 ml-5">
+    <section className="h-[88vh] flex flex-col items-center">
+      <p className="text-xl font-bold uppercase mt-10 ml-5 text-center px-4">
         Exame de <span className="text-primary">{subject}</span>
       </p>
       <div className="mb-12">
@@ -106,7 +109,8 @@ const Exam: React.FC<ExamPageProps> = ({ params }) => {
                 key={question.id}
                 onClick={() => changeQuestion(i)}
                 wasAnswered={wasAnswered(i)}
-                active={currentQuestionIndex === i}>
+                active={currentQuestionIndex === i}
+                align={i < 2 ? 'end' : i > 8 ? 'start' : 'center'}>
                 {i + 1}
               </ExamNumeration>
             ))}
@@ -118,9 +122,15 @@ const Exam: React.FC<ExamPageProps> = ({ params }) => {
               disabled={currentQuestionIndex === questions.length - 1}>
               {'>'}
             </PrimaryButton>
-            <form onSubmit={(e) => submit(e)}>
-              <PrimaryButton>Terminar</PrimaryButton>
-            </form>
+            {isSubmitting ? (
+              <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-primary">
+                <span className="sr-only">Loading...</span>
+              </div>
+            ) : (
+              <form onSubmit={(e) => submit(e)}>
+                <PrimaryButton>Terminar</PrimaryButton>
+              </form>
+            )}
           </ExamNumerationContainer>
         ) : (
           <div className="w-screen flex  items-center md:justify-center space-x-10 overflow-x-scroll md:overflow-auto mt-5 px-5">
@@ -134,12 +144,12 @@ const Exam: React.FC<ExamPageProps> = ({ params }) => {
           </div>
         )}
         <section className="mt-5 px-5 md:px-32">
-          <div className="relative w-full h-48">
+          <div className="relative w-full h-28 md:h-48">
             <Image
               fill
               alt="Subject"
               className="object-cover h-full w-full"
-              src="/images/prcmp.jpg"
+              src="/images/prcmp.webp"
             />
           </div>
 

@@ -9,8 +9,8 @@ import { ExamContext } from 'src/contexts/ExamContext';
 
 import { useRouter } from 'next/navigation';
 import ReactCanvasConfetti from 'react-canvas-confetti';
+import useToken from 'src/hooks/useToken';
 import swal from 'sweetalert';
-import { useToken } from 'src/hooks/useToken';
 
 interface ExamPageProps {
   params: {
@@ -18,12 +18,25 @@ interface ExamPageProps {
   };
 }
 
-const points: React.FC<ExamPageProps> = ({ params }) => {
+const Points: React.FC<ExamPageProps> = ({ params }) => {
   const router = useRouter();
-
   const [token, setToken] = useState<string | null>();
-
+  const [fire, setFire] = useState(false);
   const { examResult, subject } = useContext(ExamContext);
+
+  function handleReview() {
+    router.push('/exams/' + examResult!.id + '/review');
+  }
+
+  async function getToken() {
+    const token = await useToken();
+    setToken(token);
+  }
+
+  useEffect(() => {
+    setFire(true);
+    getToken();
+  }, []);
 
   if (!examResult) {
     swal({
@@ -33,28 +46,12 @@ const points: React.FC<ExamPageProps> = ({ params }) => {
     });
 
     router.push('/');
-    return <></>;
+    return null;
   }
-
-  function handleReview() {
-    router.push('/exams/' + examResult!.id + '/review');
-  }
-
-  const [fire, setFire] = useState(false);
-
-  async function getToken() {
-    const { token } = await useToken();
-    setToken(token);
-  }
-
-  useEffect(() => {
-    setFire(true);
-    getToken();
-  }, []);
 
   return (
     <section className="h-screen flex flex-col items-center mt-4">
-      <p className="text-xl font-bold uppercase md:mt-60 ml-5">
+      <p className="text-xl font-bold uppercase md:mt-60 ml-5 text-center px-4">
         Exame de <span className="text-primary">{subject}</span>
       </p>
       <div className="flex items-center justify-center mt-10 space-x-3">
@@ -95,11 +92,11 @@ const points: React.FC<ExamPageProps> = ({ params }) => {
             <p className="semibold">Continua!</p>
           </>
         )}
-        <PrimaryButton onClick={handleReview} className="mt-16 mb-4">
+        <PrimaryButton onClick={handleReview} className="mt-16 mb-4 z-50">
           Verificar respostas
         </PrimaryButton>
         {!token && (
-          <p className="text-xs mt-5 mx-5">
+          <p className="text-xs mt-5 mx-5 z-50">
             Não te esqueças que podes criar uma conta para guardar o teu progresso clicando{' '}
             <Link className="cursor-pointer underline" href="/register">
               aqui
@@ -112,4 +109,4 @@ const points: React.FC<ExamPageProps> = ({ params }) => {
   );
 };
 
-export default points;
+export default Points;

@@ -9,28 +9,36 @@ export default function useExamNavigation<T>() {
     if (i >= 0 && i < questions.length) setCurrentQuestionIndex(i);
   }
 
-  useEffect(() => {
-    function handleKeyDown(e: KeyboardEvent) {
-      switch (e.key) {
-        case 'ArrowLeft':
-          changeQuestion(currentQuestionIndex - 1);
-          break;
-        case 'ArrowRight':
-          changeQuestion(currentQuestionIndex + 1);
-          break;
-      }
+  function handleKeyDown(e: KeyboardEvent) {
+    switch (e.key) {
+      case 'ArrowLeft':
+        changeQuestion(currentQuestionIndex - 1);
+        break;
+      case 'ArrowRight':
+        changeQuestion(currentQuestionIndex + 1);
+        break;
     }
+  }
 
+  function removeEventListener() {
+    window.removeEventListener('keydown', handleKeyDown);
+  }
+
+  function addListener() {
     window.addEventListener('keydown', handleKeyDown);
+  }
 
-    return () => {
-      window.removeEventListener('keydown', handleKeyDown);
-    };
-  }, [currentQuestionIndex, changeQuestion]);
+  useEffect(() => {
+    addListener();
+
+    return removeEventListener;
+  }, [currentQuestionIndex, changeQuestion, removeEventListener, addListener]);
 
   return {
     changeQuestion,
     setQuestions,
+    addListener,
+    removeEventListener,
     questions,
     currentQuestionIndex,
     currentQuestion,

@@ -7,4 +7,4 @@ export default interface PreviousExamResponseMetadata {
     label: string;
     active: boolean;
   }[];
-};
+}

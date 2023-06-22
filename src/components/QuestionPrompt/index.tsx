@@ -1,5 +1,7 @@
 import { Check } from '@/styles/Icons';
+import { motion } from 'framer-motion';
 import Question from 'src/types/Question';
+import sanitizeOption from 'src/utils/sanitizeOption';
 
 interface QuestionProps {
   currentQuestion: Question;
@@ -16,21 +18,25 @@ const QuestionPrompt: React.FC<QuestionProps> = ({
 }) => {
   return (
     <>
-      <p className="text-lg font-bold mt-5">{currentQuestion.question}</p>
-      <p className="text-sm text-gray-600 mt-2">
-        Tipo de pergunta '{currentQuestion.question_type}' do exame '{currentQuestion.exam}'
-      </p>
+      <p className="text-base md:text-lg font-bold mt-5">{currentQuestion.question}</p>
       <div className="mt-5 space-y-5">
         {currentQuestion.options.map((option) => (
-          <div
+          <motion.div
+            animate={{
+              opacity: [0.2, 1],
+              x: [50, 0]
+            }}
+            transition={{
+              duration: 0.2
+            }}
             key={option.name}
             onClick={() => selectAnswer(currentQuestionIndex, option.order)}
-            className={`w-full flex items-center px-5 py-3 border border-gray-100 h-20 rounded hover:cursor-pointer hover:bg-primary hover:text-white transition ease-in-out ${
+            className={`w-full flex items-center px-5 py-3 border border-gray-100 h-16 md:h-20 rounded hover:cursor-pointer hover:bg-primary hover:text-white transition ease-in-out ${
               answers.get(currentQuestionIndex) === option.order && 'bg-primary text-white'
             }`}>
-            <p>{option.name}</p>
+            <p className="text-sm md:text-base">{sanitizeOption(option.name)}</p>
             {answers.get(currentQuestionIndex) === option.order && <Check className="ml-5" />}
-          </div>
+          </motion.div>
         ))}
       </div>
     </>

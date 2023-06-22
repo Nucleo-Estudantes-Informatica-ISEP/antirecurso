@@ -1,20 +1,16 @@
-import { BASE_URL } from 'src/services/api';
+import { cookies } from 'next/headers';
+import config from 'src/config';
 
-export const useToken = async () => {
-  const setToken = (token: string) => {
-    localStorage.setItem('@AntiRecurso:token', token);
-  };
-
-  const token = localStorage.getItem('@AntiRecurso:token');
-
-  const res = await fetch(BASE_URL + '/user', {
+// workaround to read cookies in client components
+export default async function useToken(): Promise<string | null> {
+  const res = await fetch('/api/auth/session', {
+    method: 'GET',
     headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${token}`
+      'Content-Type': 'application/json'
     }
   });
+  if (res.status === 200) return (await res.json()).data;
 
-  if (res.status !== 200) localStorage.removeItem('@AntiRecurso:token');
-
-  return { setToken, token };
-};
+  cookies().delete(config.cookies.token);
+  return null;
+}

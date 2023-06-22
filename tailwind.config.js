@@ -155,6 +155,13 @@ module.exports = {
         700: '#bf125d',
         800: '#99154b',
         900: '#751a3d'
+      },
+      screens: {
+        sm: '640px',
+        md: '768px',
+        lg: '1024px',
+        xl: '1280px',
+        '2xl': '1536px'
       }
     },
     extend: {
@@ -163,7 +170,7 @@ module.exports = {
         '4xl': '8px 10px 8px'
       },
       backgroundImage: {
-        hero: "url('/images/background.png')"
+        hero: "url('/images/background.webp')"
       },
       fontFamily: {
         sans: ['Inter', ...defaultTheme.fontFamily.sans]

@@ -1,3 +1,4 @@
+import Comment from './Comment';
 import Option from './Option';
 
 export default interface Question {
@@ -6,4 +7,5 @@ export default interface Question {
   exam: string;
   question_type: string;
   options: Option[];
+  comments: Comment[];
 }

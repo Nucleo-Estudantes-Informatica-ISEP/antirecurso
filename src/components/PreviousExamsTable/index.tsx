@@ -1,14 +1,14 @@
 'use client';
 
-import Pagination from '../Pagination';
 import { useEffect, useRef, useState } from 'react';
+import 'react-loading-skeleton/dist/skeleton.css';
+import { BASE_URL } from 'src/services/api';
+import PreviousExamResponse from 'src/types/PreviousExamResponse';
 import fetchUserPreviousExams from 'src/utils/FetchAnswers';
 import swal from 'sweetalert';
-import 'react-loading-skeleton/dist/skeleton.css';
-import PreviousExamResponse from 'src/types/PreviousExamResponse';
-import { BASE_URL } from 'src/services/api';
-import ExamTableLoading from '../ExamsTableLoading';
 import ExamsTable from '../ExamsTable';
+import ExamTableLoading from '../ExamsTableLoading';
+import Pagination from '../Pagination';
 
 interface PreviousExamsTableProps {
   token: string;
@@ -42,10 +42,10 @@ const PreviousExamsTable: React.FC<PreviousExamsTableProps> = ({ token }) => {
     }
 
     fetchData();
-  }, [fetchUrl]);
+  }, [fetchUrl, token]);
 
   return (
-    <section ref={sectionRef} className="my-5 md:px-16 w-full grid place-items-center">
+    <section ref={sectionRef} className="mt-5 w-full md:px-16 flex flex-col place-items-center">
       {previousExamResponse === undefined ? (
         <ExamTableLoading />
       ) : previousExamResponse.data.length ? (

@@ -11,6 +11,8 @@
   ],
   "rules": {
     // I suggest you add those two rules:
-    "@typescript-eslint/no-explicit-any": "error"
+    "@typescript-eslint/no-explicit-any": "error",
+    "@typescript-eslint/no-empty-function": "off",
+    "react-hooks/rules-of-hooks": "warn"
   }
 }

@@ -1,6 +1,7 @@
 import LogoutButton from '@/components/LogoutButton';
 import PreviousExamsTable from '@/components/PreviousExamsTable';
 import PrimaryButton from '@/components/PrimaryButton';
+import UserProfileScoreboard from '@/components/UserProfileScoreboard';
 import Link from 'next/link';
 import { BASE_URL } from 'src/services/api';
 import User from 'src/types/User';
@@ -12,8 +13,11 @@ interface ProfileProps {
     token: string;
   };
 }
+
+export const dynamic = 'force-dynamic';
+
 // @ts-expect-error Server Component
-const profile: React.FC<ProfileProps> = async ({ params }) => {
+const Profile: React.FC<ProfileProps> = async ({ params }) => {
   const res = await fetch(`${BASE_URL}/user`, {
     headers: {
       Authorization: `Bearer ${params.token}`
@@ -25,49 +29,28 @@ const profile: React.FC<ProfileProps> = async ({ params }) => {
   const today = new Date().toLocaleDateString('pt-PT');
 
   return (
-    <section className="flex flex-col items-center mt-16">
-      <p className="text-xl font-semibold">
+    <section className="h-[90vh] flex flex-col items-center mt-16">
+      <p className="text-xl font-semibold text-center px-4">
         Boas vindas, <span className="font-bold text-primary">{user.name}</span>!
       </p>
-      <p className="mt-5 px-5 text-center">Hoje é dia {today}. Tens algum exame perto?</p>
+      <p className="px-5 mt-5 text-center">Hoje é dia {today}. Tens algum exame perto?</p>
 
       {user.scores.length ? (
         <>
-          <p className="text-xl font-bold uppercase mt-16 text-center">
+          <p className="mt-16 text-lg font-bold text-center uppercase md:text-xl">
             O teu <span className="text-primary">score</span> ao longo das disciplinas
           </p>
 
-          <section className="mt-5 md:px-16 w-full grid place-items-center">
-            <table className="w-1/2 text-sm text-center">
-              <thead className="text-xs text-white uppercase bg-primary">
-                <tr>
-                  <th scope="col" className="px-6 py-3">
-                    Disciplina
-                  </th>
-                  <th scope="col" className="px-6 py-3">
-                    Pontuação
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {user.scores.map((score) => (
-                  <tr className="bg-white border-b">
-                    <td className="px-6 py-4">{score.subject.toUpperCase()}</td>
-                    <td className="px-6 py-4">{score.score}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </section>
+          <UserProfileScoreboard user={user} />
 
-          <p className="text-xl font-bold uppercase mt-10">
+          <p className="mt-10 text-lg font-bold uppercase md:text-xl">
             Os teus <span className="text-primary">exames</span>
           </p>
 
           <PreviousExamsTable token={params.token} />
         </>
       ) : (
-        <section className="flex flex-col items-center text-center px-3 mt-12">
+        <section className="flex flex-col items-center px-3 mt-12 text-center">
           <p className="text-2xl font-bold">Ainda não realizaste nenhum exame.</p>
           <Link href="/exams" className="mt-10">
             <PrimaryButton>Resolver exames</PrimaryButton>
@@ -79,4 +62,4 @@ const profile: React.FC<ProfileProps> = async ({ params }) => {
   );
 };
 
-export default profile;
+export default Profile;

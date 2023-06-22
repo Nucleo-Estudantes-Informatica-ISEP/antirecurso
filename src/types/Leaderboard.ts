@@ -1,4 +1,4 @@
-import Score from "./Score";
+import Score from './Score';
 
 export default interface Leaderboard {
   subject_id: string;

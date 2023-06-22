@@ -7,7 +7,7 @@ export const ExamContext = createContext<{
   setSubject: React.Dispatch<React.SetStateAction<string | null>>;
 }>({
   examResult: null,
-  setExamResult: () => {},
+  setExamResult: () => {}, // @typescript-eslint/no-empty-function
   subject: null,
   setSubject: () => {}
 });

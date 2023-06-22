@@ -7,13 +7,11 @@ import { Spinner } from '@/styles/Icons';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
-import { useToken } from 'src/hooks/useToken';
 import LoginSchema from 'src/schemas/LoginSchema';
-import { BASE_URL } from 'src/services/api';
 import swal from 'sweetalert';
 import { z } from 'zod';
 
-const login: React.FC = () => {
+const Login: React.FC = () => {
   const router = useRouter();
 
   const emailInputRef = useRef<HTMLInputElement>(null);
@@ -47,7 +45,7 @@ const login: React.FC = () => {
 
       const { email, password } = result;
 
-      const res = await fetch(BASE_URL + '/auth/login', {
+      const res = await fetch('/api/auth/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -59,12 +57,6 @@ const login: React.FC = () => {
       });
 
       if (res.status === 200) {
-        const { token } = await res.json();
-
-        const { setToken } = await useToken();
-
-        setToken(token);
-
         router.push('/');
       } else {
         swal(
@@ -95,7 +87,10 @@ const login: React.FC = () => {
   }, [errors]);
 
   return (
-    <div className="flex items-center justify-center py-12 px-4 sm:p-12 md:w-1/2 max-w-md md:h-screen">
+    <div className="flex flex-col items-center justify-center py-12 px-4 sm:p-12 md:w-1/2 max-w-md md:h-screen relative">
+      <Link href="/" className="w-32 md:w-48 mb-5 mx-auto">
+        <img src="/images/logo.png" alt="Our beautiful logo" className="w-full" />
+      </Link>
       <div className="w-full">
         <h1 className="mb-4 text-xl font-semibold text-gray-700">Entrar</h1>
 
@@ -119,17 +114,6 @@ const login: React.FC = () => {
               type="password"
               className="block w-full"
             />
-          </div>
-
-          <div className="flex mt-8 text-sm">
-            <label className="flex items-center dark:text-gray-400">
-              <input
-                type="checkbox"
-                name="remember"
-                className="text-primary form-checkbox focus:border-primary focus:outline-none focus:shadow-outline-primary"
-              />
-              <span className="ml-2">Lembrar-me</span>
-            </label>
           </div>
 
           <div className="mt-4">
@@ -160,4 +144,4 @@ const login: React.FC = () => {
   );
 };
 
-export default login;
+export default Login;
