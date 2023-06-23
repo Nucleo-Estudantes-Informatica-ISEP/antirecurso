@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useCallback, useContext, useEffect } from 'react';
+import React, { useCallback, useEffect } from 'react';
 
 import Image from 'next/image';
 import Skeleton from 'react-loading-skeleton';
@@ -11,7 +11,6 @@ import ExamNumeration from '@/components/ExamNumeration';
 import ExamNumerationContainer from '@/components/ExamNumerationContainer';
 import PrimaryButton from '@/components/PrimaryButton';
 import QuestionReview from '@/components/QuestionReview';
-import { ExamContext } from 'src/contexts/ExamContext';
 import useExamReviewNavigation from 'src/hooks/useExamReviewNavigation';
 import useToken from 'src/hooks/useToken';
 import { BASE_URL } from 'src/services/api';
@@ -23,8 +22,6 @@ interface ExamPageProps {
 }
 
 const ReviewPage: React.FC<ExamPageProps> = ({ params }) => {
-  const { subject } = useContext(ExamContext);
-
   const {
     currentQuestionIndex,
     currentQuestion,
@@ -76,7 +73,10 @@ const ReviewPage: React.FC<ExamPageProps> = ({ params }) => {
   return (
     <section className="h-[88vh] flex flex-col items-center">
       <p className="text-xl font-bold uppercase mt-10 ml-5 text-center px-4">
-        Exame de <span className="text-primary">{subject}</span>
+        Exame de{' '}
+        <span className="text-primary">
+          {examResult?.subject ? examResult.subject : <Skeleton width={100} />}
+        </span>
       </p>
       <div className="mb-12">
         {examResult ? (

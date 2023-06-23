@@ -2,7 +2,8 @@ import { cookies } from 'next/headers';
 import Link from 'next/link';
 import config from 'src/config';
 import HamburgerMenu from '../HamburgerMenu';
-import PrimaryButton from '../PrimaryButton';
+import HamburgerProfileMenu from '../HamburguerProfileMenu';
+import TopbarLink from '../TopbarLink';
 
 const Topbar: React.FC = () => {
   const cookieStore = cookies().get(config.cookies.token) as { value: string } | undefined;
@@ -15,29 +16,14 @@ const Topbar: React.FC = () => {
       </Link>
       <div className="hidden md:flex md:items-center">
         <div className="space-x-5">
-          <Link href="/" className="hover:text-primary transition ease-in-out">
-            Home
-          </Link>
-          <Link href="/exams" className="hover:text-primary transition ease-in-out">
-            Exames
-          </Link>
-          <Link href="/scoreboard" className="hover:text-primary transition ease-in-out">
-            Scoreboard
-          </Link>
-          <Link href="/about" className="hover:text-primary transition ease-in-out">
-            About
-          </Link>
+          <TopbarLink href="/">Home</TopbarLink>
+          <TopbarLink href="/exams">Exams</TopbarLink>
+          <TopbarLink href="/scoreboard">Scoreboard</TopbarLink>
+          <TopbarLink href="/about">About</TopbarLink>
         </div>
+
         <div className="ml-6">
-          {token ? (
-            <form action={`/profile/${token}`}>
-              <PrimaryButton>Aceder ao perfil</PrimaryButton>
-            </form>
-          ) : (
-            <form action="/register">
-              <PrimaryButton>Criar uma conta</PrimaryButton>
-            </form>
-          )}
+          <HamburgerProfileMenu token={token ? token : null} />
         </div>
       </div>
       <HamburgerMenu token={token} />

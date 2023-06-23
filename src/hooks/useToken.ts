@@ -6,6 +6,7 @@ export default async function useToken(): Promise<string | null> {
       'Content-Type': 'application/json'
     }
   });
+
   if (res.status === 200) return (await res.json()).data;
 
   return null;

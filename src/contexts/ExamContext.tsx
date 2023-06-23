@@ -3,13 +3,9 @@ import { createContext } from 'react';
 export const ExamContext = createContext<{
   examResult: ExamResult | null;
   setExamResult: React.Dispatch<React.SetStateAction<ExamResult | null>>;
-  subject: string | null;
-  setSubject: React.Dispatch<React.SetStateAction<string | null>>;
 }>({
   examResult: null,
-  setExamResult: () => {}, // @typescript-eslint/no-empty-function
-  subject: null,
-  setSubject: () => {}
+  setExamResult: () => {} // @typescript-eslint/no-empty-function
 });
 
 import React, { useState } from 'react';
@@ -21,12 +17,9 @@ interface ExamProviderProps {
 
 const ExamContextProvider: React.FC<ExamProviderProps> = ({ children }) => {
   const [examResult, setExamResult] = useState<ExamResult | null>(null);
-  const [subject, setSubject] = useState<string | null>(null);
 
   return (
-    <ExamContext.Provider value={{ examResult, setExamResult, subject, setSubject }}>
-      {children}
-    </ExamContext.Provider>
+    <ExamContext.Provider value={{ examResult, setExamResult }}>{children}</ExamContext.Provider>
   );
 };
 
