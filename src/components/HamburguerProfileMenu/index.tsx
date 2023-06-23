@@ -17,18 +17,22 @@ const HamburgerProfileMenu: React.FC<HamburgerProfileMenuProps> = ({ token }) =>
     setIsOpen((prev) => !prev);
   };
 
+  function closeMenu() {
+    setIsOpen(false);
+  }
+
   return (
     <div className="flex">
       <Menu className="text-primary hover:cursor-pointer" onClick={handleClickMenu} />
       {isOpen && (
         <div className="absolute w-64 bg-white right-0 rounded-b-lg top-20">
-          <div className="flex flex-col p-2 gap-y-2">
+          <div className="flex flex-col p-2 gap-y-2 mb-1">
             {token ? (
               <>
                 <Link href={`/profile/${token}`}>
                   <PrimaryButton className="w-full">Aceder ao perfil</PrimaryButton>
                 </Link>
-                <LogoutButton />
+                <LogoutButton onClick={closeMenu} />
               </>
             ) : (
               <>

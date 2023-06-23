@@ -23,7 +23,7 @@ const Topbar: React.FC = () => {
         </div>
 
         <div className="ml-6">
-          <HamburgerProfileMenu token={token} />
+          <HamburgerProfileMenu token={token ? token : null} />
         </div>
       </div>
       <HamburgerMenu token={token} />

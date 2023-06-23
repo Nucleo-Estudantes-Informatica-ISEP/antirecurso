@@ -1,21 +1,23 @@
 'use client';
 
-import PrimaryButton from '@/components/PrimaryButton';
 import { useRouter } from 'next/navigation';
 import swal from 'sweetalert';
 
 interface LogoutButtonProps {
   className?: string;
+  onClick?: () => void;
 }
 
-const LogoutButton: React.FC<LogoutButtonProps> = ({ className }) => {
+const LogoutButton: React.FC<LogoutButtonProps> = ({ className, onClick }) => {
   const router = useRouter();
 
   const logoutButtonHandler = async () => {
+    if (onClick) onClick();
+
     const confirmed = await swal({
       title: 'Tens a certeza que queres terminar sessão?',
       icon: 'warning',
-      buttons: ['No', 'Yes'],
+      buttons: ['Não', 'Sim'],
       dangerMode: true
     });
 

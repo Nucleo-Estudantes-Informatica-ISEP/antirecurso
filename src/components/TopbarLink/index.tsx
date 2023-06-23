@@ -3,7 +3,7 @@ import Link from 'next/link';
 interface TopbarLinkProps {
   href: string;
   children: React.ReactNode;
-  onClick: () => void;
+  onClick?: () => void;
 }
 
 const TopbarLink: React.FC<TopbarLinkProps> = ({ href, children, onClick }) => {
