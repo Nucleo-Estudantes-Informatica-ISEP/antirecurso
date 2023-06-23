@@ -4,7 +4,11 @@ import PrimaryButton from '@/components/PrimaryButton';
 import { useRouter } from 'next/navigation';
 import swal from 'sweetalert';
 
-const LogoutButton: React.FC = () => {
+interface LogoutButtonProps {
+  className?: string;
+}
+
+const LogoutButton: React.FC<LogoutButtonProps> = ({ className }) => {
   const router = useRouter();
 
   const logoutButtonHandler = async () => {
@@ -32,13 +36,14 @@ const LogoutButton: React.FC = () => {
         title: 'Algo correu mal. Por favor tenta novamente.',
         icon: 'error'
       });
+      router.refresh();
     }
   };
 
   return (
-    <PrimaryButton className="mb-4 text-white bg-primary" onClick={logoutButtonHandler}>
+    <button className={`text-red-600 ${className}`} onClick={logoutButtonHandler}>
       Terminar Sessão
-    </PrimaryButton>
+    </button>
   );
 };
 

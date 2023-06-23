@@ -3,7 +3,7 @@ import Link from 'next/link';
 import config from 'src/config';
 import HamburgerMenu from '../HamburgerMenu';
 import HamburgerProfileMenu from '../HamburguerProfileMenu';
-import TopbarLinks from '../TopbarLinks';
+import TopbarLink from '../TopbarLink';
 
 const Topbar: React.FC = () => {
   const cookieStore = cookies().get(config.cookies.token) as { value: string } | undefined;
@@ -16,7 +16,10 @@ const Topbar: React.FC = () => {
       </Link>
       <div className="hidden md:flex md:items-center">
         <div className="space-x-5">
-          <TopbarLinks />
+          <TopbarLink href="/">Home</TopbarLink>
+          <TopbarLink href="/exams">Exams</TopbarLink>
+          <TopbarLink href="/scoreboard">Scoreboard</TopbarLink>
+          <TopbarLink href="/about">About</TopbarLink>
         </div>
 
         <div className="ml-6">
