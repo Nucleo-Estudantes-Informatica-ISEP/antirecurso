@@ -70,6 +70,7 @@ const Register: React.FC = () => {
 
       if (res.status === 200) {
         router.push('/');
+        router.refresh();
       } else if (res.status === 422) {
         // duplicate email
         const { message } = await res.json();
