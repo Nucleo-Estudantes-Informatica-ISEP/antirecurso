@@ -13,7 +13,8 @@ export async function GET() {
     headers: {
       'Content-Type': 'application/json',
       Authorization: `Bearer ${token}`
-    }
+    },
+    cache: 'no-store'
   });
   if (res.status === 404) {
     const response = NextResponse.json({ data: res }, { status: 200 });

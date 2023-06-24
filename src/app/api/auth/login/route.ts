@@ -12,6 +12,7 @@ export async function POST(request: NextRequest) {
     headers: {
       'Content-Type': 'application/json'
     },
+    cache: 'no-store',
     body: JSON.stringify({
       email,
       password
