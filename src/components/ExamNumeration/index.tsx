@@ -29,7 +29,6 @@ const ExamNumeration: React.FC<ExamNumerationProps> = ({
     if (active) {
       setQuestionInView(questionInView);
       if (!ref.current) return;
-      if (width > 768) return;
 
       ref.current.scrollIntoView({
         behavior: 'smooth',
@@ -37,7 +36,7 @@ const ExamNumeration: React.FC<ExamNumerationProps> = ({
         inline: align
       });
     }
-  }, [active, questionInView, align]);
+  }, [active, questionInView, align, width]);
 
   return (
     <motion.div

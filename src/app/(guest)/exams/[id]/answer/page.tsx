@@ -52,19 +52,18 @@ const Exams: React.FC<ExamAnswerPageProps> = async ({ params }) => {
         de perguntas do teu <span className="text-primary">exame</span>
       </p>
 
-      <section className="grid grid-cols-2 gap-x-4 px-6 md:grid-cols-4 gap-y-10 md:gap-x-10 mt-10 md:px-16">
+      <section className="grid grid-cols-2 gap-x-4 px-6 md:grid-cols-4 gap-y-10 md:gap-x-10 mt-12 md:px-16">
         {modes.map((mode) => (
           <Link
-            href={`exams/${params.id}/answer?mode=${mode.slug}`}
+            href={`exams/${params.id}/answer/${mode.slug}`}
             key={mode.id}
-            // disable if coming comingSoon
             className={`relative w-full h-full md:h-64 p-5 flex flex-col space-y-6 items-center justify-center shadow border border-gray-100 rounded text-center group hover:bg-primary transition ease-in-out ${
               mode.comingSoon ? 'pointer-events-none opacity-50' : ''
             }`}>
             <p className="text-5xl">{mode.icon}</p>
             {mode.comingSoon && (
               <>
-                <div className="bg-orange-500 rotate-45 absolute top-0 -right-8 text-white font-bold p-2">
+                <div className="text-xs md:text-base bg-orange-500 rotate-45 absolute top-0 -right-4 md:-right-8 text-white font-bold p-1 md:p-2">
                   <p>Coming Soon</p>
                 </div>
               </>

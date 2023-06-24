@@ -31,13 +31,13 @@ const HamburgerMenu: React.FC<HamburgerMenuProps> = ({ token }) => {
             Home
           </TopbarLink>
           <TopbarLink onClick={closeMenu} href="/exams">
-            Exams
+            Exames
           </TopbarLink>
           <TopbarLink onClick={closeMenu} href="/scoreboard">
             Scoreboard
           </TopbarLink>
           <TopbarLink onClick={closeMenu} href="/about">
-            About
+            Sobre
           </TopbarLink>
 
           <div className="mt-6 border-t border-gray-200 pt-6 flex flex-col gap-y-4">

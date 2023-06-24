@@ -95,7 +95,7 @@ const ReviewPage: React.FC<ExamPageProps> = ({ params }) => {
                 onClick={() => changeQuestion(i)}
                 isWrong={question.is_wrong}
                 active={currentQuestionIndex === i}
-                align={i < 2 ? 'end' : i > 8 ? 'start' : 'center'}>
+                align={i < 2 ? 'end' : i > examResult.questions.length - 2 ? 'start' : 'center'}>
                 {i + 1}
               </ExamNumeration>
             ))}

@@ -89,7 +89,7 @@ const Exam: React.FC<ExamPageProps> = ({ params }) => {
 
     getExam(parseInt(params.id), params.mode);
     setSubjectName();
-  }, [params.id, setQuestions]);
+  }, [params.id, setQuestions, params.mode]);
 
   return (
     <section className="h-[88vh] flex flex-col items-center">
@@ -114,7 +114,7 @@ const Exam: React.FC<ExamPageProps> = ({ params }) => {
                 onClick={() => changeQuestion(i)}
                 wasAnswered={wasAnswered(i)}
                 active={currentQuestionIndex === i}
-                align={i < 2 ? 'end' : i > 8 ? 'start' : 'center'}>
+                align={i < 2 ? 'end' : i > questions.length - 2 ? 'start' : 'center'}>
                 {i + 1}
               </ExamNumeration>
             ))}
