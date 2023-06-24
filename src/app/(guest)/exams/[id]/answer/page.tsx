@@ -1,179 +1,85 @@
-'use client';
+import Link from 'next/link';
 
-import { useContext, useEffect, useState } from 'react';
-
-import Image from 'next/image';
-import { useRouter } from 'next/navigation';
-import swal from 'sweetalert';
-
-import Skeleton from 'react-loading-skeleton';
-import 'react-loading-skeleton/dist/skeleton.css';
-
-import { ExamContext } from 'src/contexts/ExamContext';
-import { BASE_URL } from 'src/services/api';
-import generateExam from 'src/services/generateExam';
-import getSubjectNameById from 'src/utils/getSubjectNameById';
-
-import ExamNumeration from '@/components/ExamNumeration';
-import ExamNumerationContainer from '@/components/ExamNumerationContainer';
-import PrimaryButton from '@/components/PrimaryButton';
-import QuestionPrompt from '@/components/QuestionPrompt';
-import useAnswerableExamNavigation from 'src/hooks/useAnswerableExamNavigation';
-import useToken from 'src/hooks/useToken';
-
-interface ExamPageProps {
+interface ExamAnswerPageProps {
   params: {
     id: string;
   };
 }
 
-const N_SKELETON_QUESTIONS = 10;
-const N_SKELETON_OPTIONS = 4;
-
-const Exam: React.FC<ExamPageProps> = ({ params }) => {
-  const router = useRouter();
-  const [subject, setSubject] = useState('');
-
-  const { setExamResult } = useContext(ExamContext);
-  const {
-    answers,
-    submit,
-    setQuestions,
-    questions,
-    wasAnswered,
-    currentQuestionIndex,
-    changeQuestion,
-    removeEventListener,
-    currentQuestion,
-    selectAnswer,
-    isSubmitting
-  } = useAnswerableExamNavigation({ handleConfirm });
-
-  async function handleConfirm() {
-    const token = await useToken();
-    removeEventListener();
-
-    const data = {
-      subject_id: parseInt(params.id),
-      answers: [...Array.from({ length: questions.length }, (_, i) => i)].map((i) => ({
-        question_id: questions[i].id,
-        selected_option: answers.get(i) || null
-      }))
-    };
-
-    const res = await fetch(`${BASE_URL}/exams/verify`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`
-      },
-      body: JSON.stringify(data)
-    });
-
-    if (res.status === 200) {
-      setExamResult(await res.json());
-      router.push(`/exams/${params.id}/points`);
-    } else swal('Ocorreu um erro ao submeter o exame.', 'Por favor tente novamente.', 'error');
+const modes = [
+  {
+    id: 1,
+    name: 'Modo Aleatório',
+    description:
+      'Resolve um exame com um conjunto aleatório de todas as perguntas que temos disponíveis!',
+    slug: 'default',
+    icon: '🎲'
+  },
+  {
+    id: 2,
+    name: 'Modo Realista',
+    description:
+      'Desafia-te em condições de exame. Resolve um exame com o número de questões e opções aproximadas às do exame real!',
+    slug: 'realistic',
+    icon: '📝'
+  },
+  {
+    id: 3,
+    name: 'Modo Novas Perguntas',
+    description:
+      'Resolve um exame com perguntas que nunca resolveste antes. Ideal para treinar para o exame!',
+    slug: 'new',
+    icon: '🆕',
+    comingSoon: true
+  },
+  {
+    id: 4,
+    name: 'Modo Perguntas Erradas',
+    description:
+      'Resolve um exame com perguntas que erraste anteriormente. Ideal para perceberes onde tens de melhorar!',
+    slug: 'wrong',
+    icon: '❌',
+    comingSoon: true
   }
+];
 
-  useEffect(() => {
-    async function getExam(id: number) {
-      const exam = await generateExam(id);
-      setQuestions(exam);
-    }
-
-    async function setSubjectName() {
-      setSubject(await getSubjectNameById(parseInt(params.id)));
-    }
-
-    getExam(parseInt(params.id));
-    setSubjectName();
-  }, [params.id, setQuestions]);
-
+// @ts-expect-error Server Component
+const Exams: React.FC<ExamAnswerPageProps> = async ({ params }) => {
   return (
-    <section className="h-[88vh] flex flex-col items-center">
-      <p className="text-xl font-bold uppercase mt-10 ml-5 text-center px-4">
-        Exame de{' '}
-        <span className="text-primary">{subject ? subject : <Skeleton width={100} />}</span>
+    <section className="h-full w-full flex flex-col items-center justify-center text-center">
+      <p className="text-lg w-5/6 md:text-xl font-bold uppercase text-center px-4">
+        <span className="text-primary">Escolhe</span> o <span className="text-primary">modo</span>{' '}
+        de perguntas do teu <span className="text-primary">exame</span>
       </p>
-      <div className="mb-12">
-        {questions[0] ? (
-          <ExamNumerationContainer>
-            <PrimaryButton
-              className={`h-10 w-10 p-5 items-center !rounded-full flex justify-center mr-4 ${
-                currentQuestionIndex === 0 ? 'opacity-50' : ''
-              }`}
-              onClick={() => changeQuestion(currentQuestionIndex - 1)}
-              disabled={currentQuestionIndex === 0}>
-              {'<'}
-            </PrimaryButton>
-            {questions.map((question, i) => (
-              <ExamNumeration
-                key={question.id}
-                onClick={() => changeQuestion(i)}
-                wasAnswered={wasAnswered(i)}
-                active={currentQuestionIndex === i}
-                align={i < 2 ? 'end' : i > 8 ? 'start' : 'center'}>
-                {i + 1}
-              </ExamNumeration>
-            ))}
-            <PrimaryButton
-              className={`h-10 w-10 p-5 items-center !rounded-full flex justify-center ${
-                currentQuestionIndex === questions.length - 1 ? 'opacity-50' : ''
-              }`}
-              onClick={() => changeQuestion(currentQuestionIndex + 1)}
-              disabled={currentQuestionIndex === questions.length - 1}>
-              {'>'}
-            </PrimaryButton>
-            {isSubmitting ? (
-              <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-primary">
-                <span className="sr-only">Loading...</span>
-              </div>
-            ) : (
-              <form onSubmit={(e) => submit(e)}>
-                <PrimaryButton>Terminar</PrimaryButton>
-              </form>
-            )}
-          </ExamNumerationContainer>
-        ) : (
-          <div className="w-screen flex  items-center md:justify-center space-x-10 overflow-x-scroll md:overflow-auto mt-5 px-5">
-            {Array.from({ length: N_SKELETON_QUESTIONS }).map((_, i) => (
-              <Skeleton
-                key={i}
-                className="h-10 w-10 p-5 flex items-center justify-center "
-                circle={true}
-              />
-            ))}
-          </div>
-        )}
-        <section className="mt-5 px-5 md:px-32">
-          <div className="relative w-full h-28 md:h-48">
-            <Image
-              fill
-              alt="Subject"
-              className="object-cover h-full w-full"
-              src="/images/prcmp.webp"
-            />
-          </div>
 
-          {currentQuestion ? (
-            <section className="mb-10">
-              <QuestionPrompt
-                currentQuestion={currentQuestion}
-                selectAnswer={selectAnswer}
-                currentQuestionIndex={currentQuestionIndex}
-                answers={answers}
-              />
-            </section>
-          ) : (
-            <div className="mt-12">
-              <Skeleton className="h-20 mt-6" count={N_SKELETON_OPTIONS} />
+      <section className="grid grid-cols-2 gap-x-4 px-6 md:grid-cols-4 gap-y-10 md:gap-x-10 mt-10 md:px-16">
+        {modes.map((mode) => (
+          <Link
+            href={`exams/${params.id}/answer?mode=${mode.slug}`}
+            key={mode.id}
+            // disable if coming comingSoon
+            className={`relative w-full h-full md:h-64 p-5 flex flex-col space-y-6 items-center justify-center shadow border border-gray-100 rounded text-center group hover:bg-primary transition ease-in-out ${
+              mode.comingSoon ? 'pointer-events-none opacity-50' : ''
+            }`}>
+            <p className="text-5xl">{mode.icon}</p>
+            {mode.comingSoon && (
+              <>
+                <div className="bg-orange-500 rotate-45 absolute top-0 -right-8 text-white font-bold p-2">
+                  <p>Coming Soon</p>
+                </div>
+              </>
+            )}
+            <div className="w-full justify-center items-center overflow-auto">
+              <p className="w-full text-xs md:text-xl font-bold line-clamp-6 group-hover:text-white">
+                {mode.name}
+              </p>
+              <p className="w-full text-base mt-4 group-hover:text-white">{mode.description}</p>
             </div>
-          )}
-        </section>
-      </div>
+          </Link>
+        ))}
+      </section>
     </section>
   );
 };
 
-export default Exam;
+export default Exams;
