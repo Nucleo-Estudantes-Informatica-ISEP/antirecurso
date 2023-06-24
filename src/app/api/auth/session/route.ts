@@ -2,6 +2,7 @@ import { cookies } from 'next/headers';
 import { NextResponse } from 'next/server';
 import config from 'src/config';
 import { BASE_URL } from 'src/services/api';
+import swal from 'sweetalert';
 
 export async function GET() {
   const cookieStore = cookies();
@@ -16,8 +17,11 @@ export async function GET() {
     },
     cache: 'no-store'
   });
+
   if (res.status === 404) {
     const response = NextResponse.json({ data: res }, { status: 200 });
+
+    swal('Sessão expirada', 'A tua sessão expirou, faz login novamente', 'warning');
 
     response.cookies.delete(config.cookies.token);
     return response;

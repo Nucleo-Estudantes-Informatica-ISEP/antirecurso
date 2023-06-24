@@ -20,6 +20,7 @@ export async function POST(request: NextRequest) {
   });
 
   const { token } = await res.json();
+
   if (res.status === 200) {
     const response = NextResponse.json({ data: res }, { status: 200 });
 
