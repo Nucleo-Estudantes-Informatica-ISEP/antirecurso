@@ -40,7 +40,8 @@ export default function useAnswerableExamNavigation({
   const selectAnswer = useCallback((question: number, order: string) => {
     setAnswers((prev) => {
       const newAnswers = new Map(prev);
-      newAnswers.set(question, order);
+      if (newAnswers.get(question) === order) newAnswers.delete(question);
+      else newAnswers.set(question, order);
       return newAnswers;
     });
   }, []);

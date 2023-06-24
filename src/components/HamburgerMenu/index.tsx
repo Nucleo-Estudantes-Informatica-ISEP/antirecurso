@@ -44,7 +44,9 @@ const HamburgerMenu: React.FC<HamburgerMenuProps> = ({ token }) => {
             {token ? (
               <>
                 <Link href={`/profile/${token}`}>
-                  <PrimaryButton className="w-full">Aceder ao perfil</PrimaryButton>
+                  <PrimaryButton onClick={closeMenu} className="w-full">
+                    Aceder ao perfil
+                  </PrimaryButton>
                 </Link>
                 <LogoutButton className="w-full" />
               </>

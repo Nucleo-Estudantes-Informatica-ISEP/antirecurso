@@ -17,9 +17,9 @@ const Topbar: React.FC = () => {
       <div className="hidden md:flex md:items-center">
         <div className="space-x-5">
           <TopbarLink href="/">Home</TopbarLink>
-          <TopbarLink href="/exams">Exams</TopbarLink>
+          <TopbarLink href="/exams">Exames</TopbarLink>
           <TopbarLink href="/scoreboard">Scoreboard</TopbarLink>
-          <TopbarLink href="/about">About</TopbarLink>
+          <TopbarLink href="/about">Sobre</TopbarLink>
         </div>
 
         <div className="ml-6">

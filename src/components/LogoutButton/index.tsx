@@ -33,6 +33,7 @@ const LogoutButton: React.FC<LogoutButtonProps> = ({ className, onClick }) => {
         icon: 'success'
       });
       router.push('/');
+      router.refresh();
     } else {
       swal({
         title: 'Algo correu mal. Por favor tenta novamente.',
