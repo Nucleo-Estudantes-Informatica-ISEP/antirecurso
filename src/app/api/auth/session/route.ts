@@ -15,20 +15,13 @@ export async function GET() {
       Authorization: `Bearer ${token}`
     }
   });
-
-  const { token: newToken } = await res.json();
-  if (res.status === 401) {
+  if (res.status === 404) {
     const response = NextResponse.json({ data: res }, { status: 200 });
 
-    response.cookies.set({
-      name: config.cookies.token,
-      value: newToken,
-      maxAge: 60 * 60 * 24,
-      httpOnly: true
-    });
-
+    response.cookies.delete(config.cookies.token);
     return response;
   }
+
   if (token) return NextResponse.json({ data: token }, { status: 200 });
   return new Response(null, { status: 401 });
 }
