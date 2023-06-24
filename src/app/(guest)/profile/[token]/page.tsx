@@ -2,16 +2,16 @@ import PreviousExamsTable from '@/components/PreviousExamsTable';
 import PrimaryButton from '@/components/PrimaryButton';
 import UserProfileScoreboard from '@/components/UserProfileScoreboard';
 import Link from 'next/link';
+import { redirect } from 'next/navigation';
 import { BASE_URL } from 'src/services/api';
 import User from 'src/types/User';
+import swal from 'sweetalert';
 
 interface ProfileProps {
   params: {
     token: string;
   };
 }
-
-export const dynamic = 'force-dynamic';
 
 // @ts-expect-error Server Component
 const Profile: React.FC<ProfileProps> = async ({ params }) => {
@@ -21,6 +21,15 @@ const Profile: React.FC<ProfileProps> = async ({ params }) => {
     },
     cache: 'no-store'
   });
+
+  if (res.status === 401) {
+    await fetch(`${BASE_URL}/logout`, {
+      method: 'PATCH'
+    });
+    swal('Sessão expirada', 'Por favor, inicia sessão novamente.', 'error');
+    redirect('/');
+  }
+
   const user = (await res.json()) as User;
 
   const today = new Date().toLocaleDateString('pt-PT');
