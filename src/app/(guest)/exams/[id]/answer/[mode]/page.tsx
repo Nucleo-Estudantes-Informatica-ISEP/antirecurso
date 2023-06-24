@@ -62,7 +62,7 @@ const Exam: React.FC<ExamPageProps> = ({ params }) => {
       }))
     };
 
-    const res = await fetch(`${BASE_URL}/exams/verify`, {
+    const res = await fetch(`${BASE_URL}/exams/verify?mode=${params.mode}`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -92,12 +92,12 @@ const Exam: React.FC<ExamPageProps> = ({ params }) => {
   }, [params.id, setQuestions, params.mode]);
 
   return (
-    <section className="h-[88vh] flex flex-col items-center">
+    <section className="h-[88vh] flex flex-col items-center overflow-x-scroll">
       <p className="text-xl font-bold uppercase mt-10 ml-5 text-center px-4">
         Exame de{' '}
         <span className="text-primary">{subject ? subject : <Skeleton width={100} />}</span>
       </p>
-      <div className="mb-12">
+      <div className="mb-12 w-screen">
         {questions[0] ? (
           <ExamNumerationContainer>
             <PrimaryButton
@@ -114,7 +114,7 @@ const Exam: React.FC<ExamPageProps> = ({ params }) => {
                 onClick={() => changeQuestion(i)}
                 wasAnswered={wasAnswered(i)}
                 active={currentQuestionIndex === i}
-                align={i < 2 ? 'end' : i > questions.length - 2 ? 'start' : 'center'}>
+                align={i < 3 ? 'end' : i > questions.length - 2 ? 'start' : 'center'}>
                 {i + 1}
               </ExamNumeration>
             ))}

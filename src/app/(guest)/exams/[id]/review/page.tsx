@@ -71,7 +71,7 @@ const ReviewPage: React.FC<ExamPageProps> = ({ params }) => {
   const N_SKELETON_OPTIONS = 4;
 
   return (
-    <section className="h-[88vh] flex flex-col items-center">
+    <section className="h-[88vh] flex flex-col items-center overflow-x-scroll">
       <p className="text-xl font-bold uppercase mt-10 ml-5 text-center px-4">
         Exame de{' '}
         <span className="text-primary">

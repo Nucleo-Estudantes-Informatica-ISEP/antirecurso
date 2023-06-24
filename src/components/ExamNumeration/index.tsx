@@ -29,6 +29,7 @@ const ExamNumeration: React.FC<ExamNumerationProps> = ({
     if (active) {
       setQuestionInView(questionInView);
       if (!ref.current) return;
+      if (width > 1280) return; // workaround please fix
 
       ref.current.scrollIntoView({
         behavior: 'smooth',

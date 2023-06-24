@@ -10,6 +10,7 @@ import { ExamContext } from 'src/contexts/ExamContext';
 import { useRouter } from 'next/navigation';
 import ReactCanvasConfetti from 'react-canvas-confetti';
 import useToken from 'src/hooks/useToken';
+import toFixed from 'src/utils/toFixed';
 import swal from 'sweetalert';
 
 interface ExamPageProps {
@@ -50,15 +51,22 @@ const Points: React.FC<ExamPageProps> = ({ params }) => {
   }
 
   return (
-    <section className="h-screen flex flex-col items-center mt-4">
-      <p className="text-xl font-bold uppercase md:mt-60 ml-5 text-center px-4">
+    <section className="h-screen flex flex-col items-center mt-4 ">
+      <p className="text-xl font-bold uppercase md:mt-36 ml-5 text-center px-4">
         Exame de <span className="text-primary">{examResult.subject}</span>
       </p>
       <div className="flex items-center justify-center mt-10 space-x-3">
-        <div className="text-white bg-primary p-5 w-8 h-8 flex items-center justify-center rounded-full">
-          {examResult?.score}
+        <div className="text-white bg-primary p-5 w-12 h-12 flex items-center justify-center rounded-full">
+          {toFixed(examResult?.score, 1)}
         </div>
         <p className="text-xl font-bold uppercase">pontos</p>
+      </div>
+
+      <div className="flex items-center justify-center mt-10 space-x-3">
+        <div className="text-white bg-primary p-5 w-12 h-12 flex items-center justify-center rounded-full">
+          {toFixed((examResult?.score * 20) / 100, 1)}
+        </div>
+        <p className="text-xl font-bold uppercase">valores</p>
       </div>
 
       <section className="mt-10 px-4 flex text-center flex-col items-center justify-center relative">
