@@ -89,7 +89,7 @@ const CommentSection: React.FC<CommentSectionProps> = ({
   }, [comments]);
 
   return (
-    <section className="ml-4 md:ml-32 my-14 w-full">
+    <section className="ml-0 md:ml-32 my-14 w-full">
       {!token ? (
         <p className="w-5/6 text-center md:text-start">
           <Link href="/register" target="_blank" className="font-semibold text-primary">
