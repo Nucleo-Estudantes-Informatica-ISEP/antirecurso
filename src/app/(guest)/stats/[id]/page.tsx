@@ -30,44 +30,61 @@ const SubjectStats: React.FC<SubjectStatsProps> = async ({ params }) => {
   const subjectStats: ISubjectStats = await res.json();
 
   return (
-    <section className="h-full w-full flex flex-col items-center justify-center text-center">
+    <section className="w-full h-full flex flex-col items-center justify-center text-center">
       <p className="text-lg w-5/6 md:text-xl font-bold uppercase text-center px-4">
         As tuas <span className="text-primary">estatísticas </span>
         de <span className="text-primary">{subjectName}</span>
       </p>
-      <div className="flex items-center w-full">
-        <section className="w-1/2 px-4 md:px-8 my-6 md:my-12 h-full flex flex-col gap-y-6">
-          <div className="flex items-center gap-x-2 text-xl">
-            <h2 className="text-primary font-bold">Total de questões respondidas: </h2>
-            <p className="">{subjectStats.n_of_answers}</p>
-          </div>
-          <div className="flex items-center gap-x-2 text-xl">
-            <h2 className="text-primary font-bold">Total de questões disponíveis: </h2>
-            <p className="">{subjectStats.total_of_questions}</p>
+      <div className="max-w-7xl w-full flex flex-col py-6 px-8 gap-12">
+        <section className=" h-full flex flex-col gap-y-6">
+          <div className="flex items-center gap-x-2 text-xl bg-gray-100 px-6 py-4 rounded-md">
+            <p className="text-lg">
+              {/* info icon */}
+              Das <span className="text-primary font-bold">
+                {subjectStats.total_of_questions}
+              </span>{' '}
+              questões disponíveis respondeste a{' '}
+              <span className="text-primary font-bold">{subjectStats.n_of_answers}</span>, ou seja{' '}
+              <span className="text-primary font-bold">
+                {((subjectStats.n_of_answers / subjectStats.total_of_questions) * 100).toFixed(1)}%
+              </span>
+              .
+            </p>
           </div>
         </section>
-        <section className="w-1/2">
-          <StatsPieChart
-            labels={['Aprovado', 'Reprovado']}
-            text="Nº de exames"
-            data={[
-              subjectStats.n_of_exams_passed,
-              subjectStats.n_of_exams_taken - subjectStats.n_of_exams_passed
-            ]}
-          />
-          <StatsPieChart
-            labels={['Corretas', 'Incorretas']}
-            text="Nº de questões"
-            data={[subjectStats.n_of_correct, subjectStats.n_of_wrong_answers]}
-          />
-          <StatsLineChart
-            labels={subjectStats.user_scores.map((score) =>
-              new Date(score.created_at).toLocaleDateString('pt-PT')
-            )}
-            text="Score"
-            data={subjectStats.user_scores.map((score) => score.score)}
-          />
-        </section>
+
+        <div className="flex flex-col md:flex-row gap-6 justify-between items-center px-6 py-4 bg-gray-100 rounded-md">
+          <div className="">
+            <div className="bg-primary text-white rounded-md">
+              <p>Número de Exames</p>
+            </div>
+            <StatsPieChart
+              labels={['Aprovado', 'Reprovado']}
+              text="Nº de exames"
+              data={[
+                subjectStats.n_of_exams_passed,
+                subjectStats.n_of_exams_taken - subjectStats.n_of_exams_passed
+              ]}
+            />
+          </div>
+          <div className="">
+            <div className="bg-primary text-white rounded-md">
+              <p>Número de Questões</p>
+            </div>
+            <StatsPieChart
+              labels={['Corretas', 'Incorretas']}
+              text="Nº de questões"
+              data={[subjectStats.n_of_correct, subjectStats.n_of_wrong_answers]}
+            />
+          </div>
+        </div>
+        <StatsLineChart
+          labels={subjectStats.user_scores.map((score) =>
+            new Date(score.created_at).toLocaleDateString('pt-PT')
+          )}
+          text="Score"
+          data={subjectStats.user_scores.map((score) => score.score)}
+        />
 
         <GradeCalculator
           examGrade={parseInt(subjectStats.average_grade)}
