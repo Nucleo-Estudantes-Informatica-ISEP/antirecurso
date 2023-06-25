@@ -2,6 +2,7 @@ import GradeCalculator from '@/components/GradeCalculator';
 import StatsLineChart from '@/components/StatsLineChart';
 import StatsPieChart from '@/components/StatsPieChart';
 import { cookies } from 'next/headers';
+import { FiInfo } from 'react-icons/fi';
 import config from 'src/config';
 import { BASE_URL } from 'src/services/api';
 import ISubjectStats from 'src/types/SubjectStats';
@@ -37,12 +38,10 @@ const SubjectStats: React.FC<SubjectStatsProps> = async ({ params }) => {
       </p>
       <div className="max-w-7xl w-full flex flex-col py-6 px-8 gap-12">
         <section className=" h-full flex flex-col gap-y-6">
-          <div className="flex items-center gap-x-2 text-xl bg-gray-100 px-6 py-4 rounded-md">
+          <div className="inline-flex items-center gap-x-2 text-xl bg-gray-100 px-6 py-4 rounded-md">
+            <FiInfo />
             <p className="text-lg">
-              {/* info icon */}
-              Das <span className="text-primary font-bold">
-                {subjectStats.total_of_questions}
-              </span>{' '}
+              Das <span className="text-primary font-bold">{subjectStats.total_of_questions}</span>{' '}
               questões disponíveis respondeste a{' '}
               <span className="text-primary font-bold">{subjectStats.n_of_answers}</span>, ou seja{' '}
               <span className="text-primary font-bold">
@@ -54,8 +53,8 @@ const SubjectStats: React.FC<SubjectStatsProps> = async ({ params }) => {
         </section>
 
         <div className="flex flex-col md:flex-row gap-6 justify-between items-center px-6 py-4 bg-gray-100 rounded-md">
-          <div className="">
-            <div className="bg-primary text-white rounded-md">
+          <div className="w-full flex flex-col justify-center items-center gap-2">
+            <div className="bg-primary text-white rounded-md w-full py-1">
               <p>Número de Exames</p>
             </div>
             <StatsPieChart
@@ -67,8 +66,8 @@ const SubjectStats: React.FC<SubjectStatsProps> = async ({ params }) => {
               ]}
             />
           </div>
-          <div className="">
-            <div className="bg-primary text-white rounded-md">
+          <div className="w-full flex flex-col justify-center items-center gap-2">
+            <div className="bg-primary text-white rounded-md w-full py-1">
               <p>Número de Questões</p>
             </div>
             <StatsPieChart
