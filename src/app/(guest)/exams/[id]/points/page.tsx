@@ -9,6 +9,7 @@ import { ExamContext } from 'src/contexts/ExamContext';
 
 import { useRouter } from 'next/navigation';
 import ReactCanvasConfetti from 'react-canvas-confetti';
+import getToken from 'src/services/getToken';
 import toFixed from 'src/utils/toFixed';
 import swal from 'sweetalert';
 
@@ -25,17 +26,27 @@ const Points: React.FC<ExamPageProps> = ({ params }) => {
   const { examResult } = useContext(ExamContext);
 
   function handleReview() {
-    router.push('/exams/' + examResult!.id + '/review');
+    if (!examResult) {
+      swal({
+        title: 'Erro',
+        text: 'Não foi possível obter o resultado do exame.',
+        icon: 'error'
+      });
+
+      router.push('/');
+      return;
+    }
+    router.push('/exams/' + examResult.id + '/review');
   }
 
-  async function getToken() {
+  async function getUserToken() {
     const token = await getToken();
     setToken(token);
   }
 
   useEffect(() => {
     setFire(true);
-    getToken();
+    getUserToken();
   }, []);
 
   if (!examResult) {
