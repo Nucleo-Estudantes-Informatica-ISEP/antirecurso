@@ -1,8 +1,10 @@
 'use client';
 
+import { useRouter } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 import 'react-loading-skeleton/dist/skeleton.css';
 import { BASE_URL } from 'src/services/api';
+import getToken from 'src/services/getToken';
 import PreviousExamResponse from 'src/types/PreviousExamResponse';
 import fetchUserPreviousExams from 'src/utils/FetchAnswers';
 import swal from 'sweetalert';
@@ -10,12 +12,9 @@ import ExamsTable from '../ExamsTable';
 import ExamTableLoading from '../ExamsTableLoading';
 import Pagination from '../Pagination';
 
-interface PreviousExamsTableProps {
-  token: string;
-}
-
-const PreviousExamsTable: React.FC<PreviousExamsTableProps> = ({ token }) => {
+const PreviousExamsTable: React.FC = () => {
   const sectionRef = useRef<HTMLElement>(null);
+  const router = useRouter();
 
   const [fetchUrl, setFetchUrl] = useState<string | null>(BASE_URL + '/exams');
   const [previousExamResponse, setPreviousExamResponse] = useState<PreviousExamResponse>();
@@ -27,9 +26,20 @@ const PreviousExamsTable: React.FC<PreviousExamsTableProps> = ({ token }) => {
   }, [fetchUrl]);
 
   useEffect(() => {
-    async function fetchData(t: string) {
+    async function fetchData() {
+      const token = await getToken();
+      if (!token) {
+        swal({
+          title: 'Erro',
+          text: 'Não foi possível obter o resultado de exames.',
+          icon: 'error'
+        });
+        router.push('/');
+        return;
+      }
+
       try {
-        const data = await fetchUserPreviousExams({ token: t, fetchUrl });
+        const data = await fetchUserPreviousExams({ token, fetchUrl });
         setPreviousExamResponse(data);
       } catch (error) {
         swal({
@@ -37,12 +47,12 @@ const PreviousExamsTable: React.FC<PreviousExamsTableProps> = ({ token }) => {
           text: 'Não foi possível obter o resultado de exames.',
           icon: 'error'
         });
-        return <></>;
+        router.push('/');
       }
     }
 
-    fetchData(token);
-  }, [fetchUrl, token]);
+    fetchData();
+  }, [fetchUrl, router]);
 
   return (
     <section className="mt-5 w-full md:px-16 flex flex-col place-items-center">
