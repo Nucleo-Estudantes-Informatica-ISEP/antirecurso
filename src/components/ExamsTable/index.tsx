@@ -19,7 +19,7 @@ const ExamsTable: React.FC<ExamsTableProps> = ({ previousExamResponse }) => {
             <td className="text-xs px-2 sm:px-6 py-2 sm:py-4 w-1/4">
               <Link
                 href={`/exams/${answer.id}/review/`}
-                className="hover:text-primary text-xs md:text-base transition ease-in-out capitalize">
+                className="hover:text-primary underline text-xs md:text-base transition ease-in-out capitalize">
                 {answer.subject}
               </Link>
             </td>
