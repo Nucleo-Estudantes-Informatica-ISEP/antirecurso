@@ -13,6 +13,7 @@ export default async function fetchAnswers({
 
   const response = await fetch(fetchUrl, {
     headers: {
+      'Content-Type': 'application/json',
       Authorization: `Bearer ${token}`
     },
     cache: 'no-store'
