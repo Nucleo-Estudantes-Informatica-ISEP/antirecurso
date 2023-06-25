@@ -49,11 +49,11 @@ const CommentSection: React.FC<CommentSectionProps> = ({
     if (!questionId) return;
 
     const result = await swal({
-      text: 'What is wrong? (Optional)',
+      text: 'O que está errado com esta pergunta?',
       content: {
         element: 'input'
       },
-      buttons: ['Cancel', 'Report']
+      buttons: ['Cancelar', 'Reportar']
     });
 
     if (result === null) return;
@@ -73,13 +73,13 @@ const CommentSection: React.FC<CommentSectionProps> = ({
     if (res.status === 201)
       swal({
         title: 'Reported!',
-        text: 'Your report has been sent to the admins!',
+        text: 'A tua denúncia foi enviada com sucesso!',
         icon: 'success'
       });
     else
       swal({
-        title: 'Error!',
-        text: 'Something went wrong!',
+        title: 'Erro!',
+        text: 'Algo correu mal ao enviar a tua denúncia. Por favor, tenta novamente.',
         icon: 'error'
       });
   }

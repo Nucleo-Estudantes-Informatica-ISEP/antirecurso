@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useContext, useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
@@ -19,7 +19,6 @@ import ExamNumerationContainer from '@/components/ExamNumerationContainer';
 import PrimaryButton from '@/components/PrimaryButton';
 import QuestionPrompt from '@/components/QuestionPrompt';
 import useAnswerableExamNavigation from 'src/hooks/useAnswerableExamNavigation';
-import getToken from 'src/services/getToken';
 
 interface ExamPageProps {
   params: {
@@ -77,31 +76,24 @@ const Exam: React.FC<ExamPageProps> = ({ params }) => {
     } else swal('Ocorreu um erro ao submeter o exame.', 'Por favor tente novamente.', 'error');
   }
 
-  const getExam = useCallback(
-    async (id: number, mode: string) => {
-      const t = await getToken();
-      setToken(t);
-      if (token !== undefined) {
-        const exam = await generateExam(id, mode, token);
-        if (exam === null) {
-          await swal('Ocorreu um erro ao carregar o exame.', 'Por favor tente novamente.', 'error');
-          router.push('/');
-          return;
-        }
-        setQuestions(exam);
-      }
-    },
-    [router, setQuestions, token]
-  );
-
   useEffect(() => {
+    async function getExam(id: number, mode: string) {
+      const exam = await generateExam(id, mode);
+      if (exam === null) {
+        swal('Ocorreu um erro ao carregar o exame.', 'Por favor tente novamente.', 'error');
+        router.push('/exams');
+        return;
+      }
+      setQuestions(exam);
+    }
+
     async function setSubjectName() {
       setSubject(await getSubjectNameById(parseInt(params.id)));
     }
 
     getExam(parseInt(params.id), params.mode);
     setSubjectName();
-  }, [getExam, params.id, params.mode]);
+  }, [params.id, params.mode, router, setQuestions, token]);
 
   return (
     <section className="h-[88vh] flex flex-col items-center overflow-x-scroll">
