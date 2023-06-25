@@ -51,7 +51,8 @@ export default function useAnswerableExamNavigation({
       if (!optionOrders) return;
 
       const currentOption = answers.get(currentQuestionIndex);
-      if (!currentOption) return selectAnswer(currentQuestionIndex, optionOrders[0]);
+      if (!currentOption && direction === 'DOWN') return selectAnswer(currentQuestionIndex, optionOrders[0]);
+      if (!currentOption && direction === 'UP') return selectAnswer(currentQuestionIndex, optionOrders[optionOrders.length-1]);
 
       const currentIndex = optionOrders.indexOf(currentOption);
 
