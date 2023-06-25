@@ -19,6 +19,7 @@ import ExamNumerationContainer from '@/components/ExamNumerationContainer';
 import PrimaryButton from '@/components/PrimaryButton';
 import QuestionPrompt from '@/components/QuestionPrompt';
 import useAnswerableExamNavigation from 'src/hooks/useAnswerableExamNavigation';
+import getToken from 'src/services/getToken';
 
 interface ExamPageProps {
   params: {
@@ -33,7 +34,6 @@ const N_SKELETON_OPTIONS = 4;
 const Exam: React.FC<ExamPageProps> = ({ params }) => {
   const router = useRouter();
   const [subject, setSubject] = useState('');
-  const [token, setToken] = useState<string | null | undefined>(undefined);
 
   const { setExamResult } = useContext(ExamContext);
   const {
@@ -60,6 +60,8 @@ const Exam: React.FC<ExamPageProps> = ({ params }) => {
         selected_option: answers.get(i) || null
       }))
     };
+
+    const token = await getToken();
 
     const res = await fetch(`${BASE_URL}/exams/verify?mode=${params.mode}`, {
       method: 'POST',
@@ -93,7 +95,7 @@ const Exam: React.FC<ExamPageProps> = ({ params }) => {
 
     getExam(parseInt(params.id), params.mode);
     setSubjectName();
-  }, [params.id, params.mode, router, setQuestions, token]);
+  }, [params.id, params.mode, router, setQuestions]);
 
   return (
     <section className="h-[88vh] flex flex-col items-center overflow-x-scroll">
