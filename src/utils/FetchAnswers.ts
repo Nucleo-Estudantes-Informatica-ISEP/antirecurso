@@ -9,9 +9,8 @@ export default async function fetchAnswers({
   token,
   fetchUrl
 }: Props): Promise<PreviousExamResponse> {
-  if (!fetchUrl) {
-    throw new Error('No fetch url provided');
-  }
+  if (!fetchUrl) throw new Error('No fetch url provided');
+
   const response = await fetch(fetchUrl, {
     headers: {
       Authorization: `Bearer ${token}`

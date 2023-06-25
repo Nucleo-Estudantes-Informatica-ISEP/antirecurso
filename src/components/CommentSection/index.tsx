@@ -4,8 +4,8 @@ import { Flag } from '@/styles/Icons';
 import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
 import Skeleton from 'react-loading-skeleton';
-import useToken from 'src/hooks/useToken';
 import { BASE_URL } from 'src/services/api';
+import getToken from 'src/services/getToken';
 import swal from 'sweetalert';
 import Comment from '../../types/Comment';
 import InputLabel from '../InputLabel';
@@ -30,7 +30,7 @@ const CommentSection: React.FC<CommentSectionProps> = ({
   const inputRef = useRef<HTMLTextAreaElement>(null);
 
   async function getUserToken() {
-    const t = await useToken();
+    const t = await getToken();
     setToken(t);
   }
 

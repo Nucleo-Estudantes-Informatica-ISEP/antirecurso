@@ -12,8 +12,8 @@ import ExamNumerationContainer from '@/components/ExamNumerationContainer';
 import PrimaryButton from '@/components/PrimaryButton';
 import QuestionReview from '@/components/QuestionReview';
 import useExamReviewNavigation from 'src/hooks/useExamReviewNavigation';
-import useToken from 'src/hooks/useToken';
 import { BASE_URL } from 'src/services/api';
+import getToken from 'src/services/getToken';
 
 interface ExamPageProps {
   params: {
@@ -46,7 +46,7 @@ const ReviewPage: React.FC<ExamPageProps> = ({ params }) => {
   }, [params.id, setExamResult]);
 
   async function submitComment(comment: string) {
-    const token = await useToken();
+    const token = await getToken();
 
     await fetch(`${BASE_URL}/comments`, {
       method: 'POST',

@@ -1,5 +1,5 @@
 // workaround to read cookies in client components
-export default async function useToken(): Promise<string | null> {
+export default async function getToken(): Promise<string | null> {
   const res = await fetch('/api/auth/session', {
     method: 'GET',
     headers: {

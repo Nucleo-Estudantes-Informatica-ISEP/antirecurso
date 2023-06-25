@@ -1,6 +1,6 @@
 'use client';
 
-import { useContext, useEffect, useState } from 'react';
+import { useCallback, useContext, useEffect, useState } from 'react';
 
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
@@ -19,7 +19,7 @@ import ExamNumerationContainer from '@/components/ExamNumerationContainer';
 import PrimaryButton from '@/components/PrimaryButton';
 import QuestionPrompt from '@/components/QuestionPrompt';
 import useAnswerableExamNavigation from 'src/hooks/useAnswerableExamNavigation';
-import useToken from 'src/hooks/useToken';
+import getToken from 'src/services/getToken';
 
 interface ExamPageProps {
   params: {
@@ -34,6 +34,7 @@ const N_SKELETON_OPTIONS = 4;
 const Exam: React.FC<ExamPageProps> = ({ params }) => {
   const router = useRouter();
   const [subject, setSubject] = useState('');
+  const [token, setToken] = useState<string | null | undefined>(undefined);
 
   const { setExamResult } = useContext(ExamContext);
   const {
@@ -51,7 +52,6 @@ const Exam: React.FC<ExamPageProps> = ({ params }) => {
   } = useAnswerableExamNavigation({ handleConfirm });
 
   async function handleConfirm() {
-    const token = await useToken();
     removeEventListener();
 
     const data = {
@@ -77,19 +77,31 @@ const Exam: React.FC<ExamPageProps> = ({ params }) => {
     } else swal('Ocorreu um erro ao submeter o exame.', 'Por favor tente novamente.', 'error');
   }
 
-  useEffect(() => {
-    async function getExam(id: number, mode: string) {
-      const exam = await generateExam(id, mode);
-      setQuestions(exam);
-    }
+  const getExam = useCallback(
+    async (id: number, mode: string) => {
+      const t = await getToken();
+      setToken(t);
+      if (token !== undefined) {
+        const exam = await generateExam(id, mode, token);
+        if (exam === null) {
+          await swal('Ocorreu um erro ao carregar o exame.', 'Por favor tente novamente.', 'error');
+          router.push('/');
+          return;
+        }
+        setQuestions(exam);
+      }
+    },
+    [router, setQuestions, token]
+  );
 
+  useEffect(() => {
     async function setSubjectName() {
       setSubject(await getSubjectNameById(parseInt(params.id)));
     }
 
     getExam(parseInt(params.id), params.mode);
     setSubjectName();
-  }, [params.id, setQuestions, params.mode]);
+  }, [getExam, params.id, params.mode]);
 
   return (
     <section className="h-[88vh] flex flex-col items-center overflow-x-scroll">
@@ -114,7 +126,7 @@ const Exam: React.FC<ExamPageProps> = ({ params }) => {
                 onClick={() => changeQuestion(i)}
                 wasAnswered={wasAnswered(i)}
                 active={currentQuestionIndex === i}
-                align={i < 3 ? 'end' : i > questions.length - 2 ? 'start' : 'center'}>
+                align={i < 2 ? 'end' : i > questions.length - 2 ? 'start' : 'center'}>
                 {i + 1}
               </ExamNumeration>
             ))}

@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import 'react-loading-skeleton/dist/skeleton.css';
 import { BASE_URL } from 'src/services/api';
 import PreviousExamResponse from 'src/types/PreviousExamResponse';
@@ -26,23 +26,23 @@ const PreviousExamsTable: React.FC<PreviousExamsTableProps> = ({ token }) => {
     });
   }, [fetchUrl]);
 
-  useEffect(() => {
-    async function fetchData() {
-      try {
-        const data = await fetchUserPreviousExams({ token, fetchUrl });
-        setPreviousExamResponse(data);
-      } catch (error) {
-        swal({
-          title: 'Erro',
-          text: 'Não foi possível obter o resultado de exames.',
-          icon: 'error'
-        });
-        return <></>;
-      }
+  const fetchData = useCallback(async () => {
+    try {
+      const data = await fetchUserPreviousExams({ token, fetchUrl });
+      setPreviousExamResponse(data);
+    } catch (error) {
+      swal({
+        title: 'Erro',
+        text: 'Não foi possível obter o resultado de exames.',
+        icon: 'error'
+      });
+      return <></>;
     }
-
-    fetchData();
   }, [fetchUrl, token]);
+
+  useEffect(() => {
+    fetchData();
+  }, [fetchUrl, token, fetchData]);
 
   return (
     <section className="mt-5 w-full md:px-16 flex flex-col place-items-center">

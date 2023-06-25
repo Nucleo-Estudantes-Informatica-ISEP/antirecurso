@@ -9,7 +9,6 @@ import { ExamContext } from 'src/contexts/ExamContext';
 
 import { useRouter } from 'next/navigation';
 import ReactCanvasConfetti from 'react-canvas-confetti';
-import useToken from 'src/hooks/useToken';
 import toFixed from 'src/utils/toFixed';
 import swal from 'sweetalert';
 
@@ -30,7 +29,7 @@ const Points: React.FC<ExamPageProps> = ({ params }) => {
   }
 
   async function getToken() {
-    const token = await useToken();
+    const token = await getToken();
     setToken(token);
   }
 
