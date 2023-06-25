@@ -4,7 +4,6 @@ import { useRouter } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 import 'react-loading-skeleton/dist/skeleton.css';
 import { BASE_URL } from 'src/services/api';
-import getToken from 'src/services/getToken';
 import PreviousExamResponse from 'src/types/PreviousExamResponse';
 import fetchUserPreviousExams from 'src/utils/FetchAnswers';
 import swal from 'sweetalert';
@@ -27,19 +26,8 @@ const PreviousExamsTable: React.FC = () => {
 
   useEffect(() => {
     async function fetchData() {
-      const token = await getToken();
-      if (!token) {
-        swal({
-          title: 'Erro',
-          text: 'Não foi possível obter o resultado de exames.',
-          icon: 'error'
-        });
-        router.push('/');
-        return;
-      }
-
       try {
-        const data = await fetchUserPreviousExams({ token, fetchUrl });
+        const data = await fetchUserPreviousExams(fetchUrl);
         setPreviousExamResponse(data);
       } catch (error) {
         swal({
