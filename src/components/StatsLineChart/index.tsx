@@ -22,6 +22,7 @@ interface StatsLineChartProps {
 }
 
 const options = {
+  maintainAspectRatio: false,
   scales: {
     y: {
       min: 0,
@@ -54,7 +55,17 @@ const StatsLineChart: React.FC<StatsLineChartProps> = ({ labels, data, text }) =
       }
     ]
   };
-  return <Line data={d} options={options} />;
+  return (
+    <Line
+      data={d}
+      style={{
+        position: 'relative',
+        width: 'full',
+        overflowX: 'scroll'
+      }}
+      options={options}
+    />
+  );
 };
 
 export default StatsLineChart;
