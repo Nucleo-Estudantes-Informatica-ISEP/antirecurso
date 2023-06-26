@@ -26,7 +26,7 @@ const SubjectStats: React.FC<SubjectStatsProps> = async ({ params }) => {
       'Content-Type': 'application/json',
       Authorization: `Bearer ${token}`
     },
-    cache: 'no-cache'
+    cache: 'no-store'
   });
   const subjectStats: ISubjectStats = await res.json();
 
