@@ -11,6 +11,7 @@ import {
   Tooltip
 } from 'chart.js';
 import { Line } from 'react-chartjs-2';
+import regression, { DataPoint } from 'regression';
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
 
@@ -20,7 +21,23 @@ interface StatsLineChartProps {
   text: string;
 }
 
+const options = {
+  responsive: true,
+  scales: {
+    y: {
+      min: 0,
+      max: 20,
+      ticks: {
+        stepSize: 0.5
+      }
+    }
+  }
+};
+
 const StatsLineChart: React.FC<StatsLineChartProps> = ({ labels, data, text }) => {
+  const dataPoints = data.map((value, index) => [index, value] as DataPoint);
+  const regressionLine = regression.linear(dataPoints).points.map((point) => point[1]);
+
   const d = {
     labels,
     datasets: [
@@ -29,10 +46,16 @@ const StatsLineChart: React.FC<StatsLineChartProps> = ({ labels, data, text }) =
         data,
         borderColor: 'rgb(200, 100, 22)',
         backgroundColor: 'rgb(200, 100, 22, 0.5)'
+      },
+      {
+        label: 'Evolução',
+        data: regressionLine,
+        borderColor: 'rgb(100, 100, 100)',
+        backgroundColor: 'rgb(100, 100, 100, 0.5)'
       }
     ]
   };
-  return <Line data={d} />;
+  return <Line data={d} options={options} />;
 };
 
 export default StatsLineChart;

@@ -467,6 +467,11 @@
     "@types/scheduler" "*"
     csstype "^3.0.2"
 
+"@types/regression@^2.0.2":
+  version "2.0.2"
+  resolved "https://registry.yarnpkg.com/@types/regression/-/regression-2.0.2.tgz#a1ad747fbcc6726643a8eb2c42bb804bbf34ce02"
+  integrity sha512-i7KOGl6xdkfpq5+p2ooC+/XFIRUMkYymZ29SD8p+Ko9lesKGUsh6860ey3YM7Y+ZG7kEDGcjzyLO3sOhozqEeA==
+
 "@types/scheduler@*":
   version "0.16.3"
   resolved "https://registry.npmjs.org/@types/scheduler/-/scheduler-0.16.3.tgz"
@@ -2687,6 +2692,11 @@ regexpp@^3.2.0:
   version "3.2.0"
   resolved "https://registry.npmjs.org/regexpp/-/regexpp-3.2.0.tgz"
   integrity sha512-pq2bWo9mVD43nbts2wGv17XLiNLya+GklZ8kaDLV2Z08gDCsGpnKn9BFMepvWuHCbyVvY7J5o5+BVvoQbmlJLg==
+
+regression@^2.0.1:
+  version "2.0.1"
+  resolved "https://registry.yarnpkg.com/regression/-/regression-2.0.1.tgz#8d29c3e8224a10850c35e337e85a8b2fac3b0c87"
+  integrity sha512-A4XYsc37dsBaNOgEjkJKzfJlE394IMmUPlI/p3TTI9u3T+2a+eox5Pr/CPUqF0eszeWZJPAc6QkroAhuUpWDJQ==
 
 resolve-from@^4.0.0:
   version "4.0.0"

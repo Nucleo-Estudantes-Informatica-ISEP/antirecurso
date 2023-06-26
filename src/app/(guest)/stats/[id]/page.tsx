@@ -52,7 +52,7 @@ const SubjectStats: React.FC<SubjectStatsProps> = async ({ params }) => {
           </div>
         </section>
 
-        <div className="flex flex-col md:flex-row gap-6 justify-between items-center px-6 py-4 bg-gray-100 rounded-md">
+        <div className="flex flex-col md:flex-row gap-y-8 md:gap-6 justify-between items-center px-6 py-4 bg-gray-100 rounded-md">
           <div className="w-full flex flex-col justify-center items-center gap-2">
             <div className="bg-primary text-white rounded-md w-full py-1">
               <p>Número de Exames</p>
@@ -77,17 +77,20 @@ const SubjectStats: React.FC<SubjectStatsProps> = async ({ params }) => {
             />
           </div>
         </div>
-        <StatsLineChart
-          labels={subjectStats.user_scores.map((score) =>
-            new Date(score.created_at).toLocaleDateString('pt-PT')
-          )}
-          text="Score"
-          data={subjectStats.user_scores.map((score) => score.score)}
-        />
 
+        <div className="p-2 bg-gray-100 rounded-md">
+          <StatsLineChart
+            labels={subjectStats.user_scores.map((score) =>
+              new Date(score.created_at).toLocaleDateString('pt-PT')
+            )}
+            text="Nota do exame"
+            data={subjectStats.user_scores.map((score) => (score.score * 20) / 100)}
+          />
+        </div>
         <GradeCalculator
           examGrade={parseInt(subjectStats.average_grade)}
           weight={subjectStats.exam_weight}
+          minGrade={subjectStats.min_grade}
         />
       </div>
     </section>

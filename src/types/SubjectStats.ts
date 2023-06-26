@@ -10,6 +10,7 @@ export default interface SubjectStats {
     created_at: string;
   }[];
   exam_weight: number;
+  min_grade: number;
   average_grade: string;
   percentage_of_exams_passed: string;
   percentage_of_correct_answers: string;
