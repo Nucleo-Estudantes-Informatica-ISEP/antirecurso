@@ -18,8 +18,12 @@ const StatsPieChart: React.FC<StatsPieChartProps> = ({ labels, data, text }) => 
       {
         label: text,
         data,
-        backgroundColor: ['rgba(55, 229, 2, 0.8)', 'rgba(255, 22, 12, 0.8)'],
-        borderColor: ['rgba(55, 220, 2, 1)', 'rgba(255, 22, 12, 1)'],
+        backgroundColor: [
+          'rgba(55, 229, 2, 0.8)',
+          'rgba(255, 22, 12, 0.8)',
+          'rgba(100, 100, 100, 0.8)'
+        ],
+        borderColor: ['rgba(55, 220, 2, 1)', 'rgba(255, 22, 12, 1)', 'rgba(100, 100, 100, 1)'],
         borderWidth: 1
       }
     ]

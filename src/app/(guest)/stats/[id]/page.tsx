@@ -71,9 +71,13 @@ const SubjectStats: React.FC<SubjectStatsProps> = async ({ params }) => {
               <p>Número de Questões</p>
             </div>
             <StatsPieChart
-              labels={['Corretas', 'Incorretas']}
+              labels={['Corretas', 'Incorretas', 'Não respondidas']}
               text="Nº de questões"
-              data={[subjectStats.n_of_correct, subjectStats.n_of_wrong_answers]}
+              data={[
+                subjectStats.n_of_correct,
+                subjectStats.n_of_wrong_answers,
+                subjectStats.total_of_questions - subjectStats.n_of_answers
+              ]}
             />
           </div>
         </div>
