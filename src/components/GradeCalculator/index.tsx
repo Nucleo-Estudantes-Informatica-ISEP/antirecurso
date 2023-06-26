@@ -20,21 +20,21 @@ const GradeCalculator: React.FC<GradeCalculatorProps> = ({ examGrade, weight, mi
     !frequency || !exam ? '--' : toFixed(frequency * (1 - weight) + exam * weight, 2);
 
   return (
-    <div className="flex flex-col items-center justify-center p-4 space-y-4 w-1/2 mx-auto my-6">
+    <div className="flex flex-col items-center justify-center p-4 space-y-6 w-full md:w-1/2 mx-auto my-6">
       <div className="flex items-center justify-between gap-x-2 w-full">
         <div className="h-0.5 w-1/3 bg-primary rounded opacity-70"></div>
-        <h1 className="text-xl w-full">
+        <h1 className="text-xl w-full text-center mx-auto">
           Calcula a tua nota <span className="text-primary">final</span>
         </h1>
         <div className="h-0.5 w-1/3 bg-primary rounded opacity-70"></div>
       </div>
-      <div className="flex items-center">
-        <div className="flex items-center gap-x-2 w-full mr-8">
-          <label className="text-right" htmlFor="frequency">
+      <div className="flex flex-col md:flex-row gap-y-4 items-center">
+        <div className="flex items-center gap-x-2 w-full">
+          <label className="text-right w-32" htmlFor="frequency">
             Frequência
           </label>
           <input
-            className="w-full p-2"
+            className="w-full p-2 mr-7"
             value={frequency === null ? '' : frequency}
             onChange={(e) => {
               const value = e.target.value;
@@ -51,7 +51,7 @@ const GradeCalculator: React.FC<GradeCalculatorProps> = ({ examGrade, weight, mi
         </div>
 
         <div className="flex items-center gap-x-2 w-full">
-          <label className="text-right" htmlFor="exam">
+          <label className="text-right w-32" htmlFor="exam">
             Exame
           </label>
           <input
@@ -78,6 +78,9 @@ const GradeCalculator: React.FC<GradeCalculatorProps> = ({ examGrade, weight, mi
             }}
             onMouseLeave={() => {
               setTooltipVisible(false);
+            }}
+            onClick={() => {
+              setTooltipVisible((cur) => !cur);
             }}>
             ⚠️
             {tooltipVisible && (
