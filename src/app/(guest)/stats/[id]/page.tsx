@@ -38,9 +38,11 @@ const SubjectStats: React.FC<SubjectStatsProps> = async ({ params }) => {
       </p>
       <div className="max-w-7xl w-full flex flex-col py-6 px-8 gap-12">
         <section className=" h-full flex flex-col gap-y-6">
-          <div className="inline-flex items-center gap-x-2 text-xl bg-gray-100 px-6 py-4 rounded-md">
-            <FiInfo />
-            <p className="text-lg">
+          <div className="flex items-center gap-x-2 text-xl bg-gray-100 px-6 py-4 rounded-md">
+            <div className="w-12 h-12 flex items-center justify-center">
+              <FiInfo className="w-full" />
+            </div>
+            <p className="text-xs md:text-lg">
               Das <span className="text-primary font-bold">{subjectStats.total_of_questions}</span>{' '}
               questões disponíveis respondeste a{' '}
               <span className="text-primary font-bold">{subjectStats.n_of_answers}</span>, ou seja{' '}
