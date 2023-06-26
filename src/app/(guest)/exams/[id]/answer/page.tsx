@@ -42,7 +42,8 @@ const modes = [
       'Resolve um exame com perguntas que erraste anteriormente. Ideal para perceberes onde tens de melhorar!',
     slug: 'wrong',
     icon: '❌',
-    comingSoon: true
+    needsAuth: true,
+    comingSoon: false
   }
 ];
 
