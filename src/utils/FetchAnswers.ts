@@ -1,9 +1,10 @@
-import getToken from 'src/services/getToken';
 import PreviousExamResponse from 'src/types/PreviousExamResponse';
 
-export default async function fetchAnswers(fetchUrl: string | null): Promise<PreviousExamResponse> {
+export default async function fetchAnswers(
+  fetchUrl: string | null,
+  token: string | null
+): Promise<PreviousExamResponse> {
   if (!fetchUrl) throw new Error('No fetch url provided');
-  const token = await getToken();
 
   const response = await fetch(fetchUrl, {
     headers: {

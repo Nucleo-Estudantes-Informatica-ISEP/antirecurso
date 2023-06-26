@@ -53,7 +53,7 @@ const Profile: React.FC<ProfileProps> = async ({ params }) => {
             Os teus <span className="text-primary">exames</span>
           </p>
 
-          <PreviousExamsTable />
+          <PreviousExamsTable token={params.token} />
         </>
       ) : (
         <section className="flex flex-col items-center px-3 mt-12 text-center">

@@ -11,7 +11,11 @@ import ExamsTable from '../ExamsTable';
 import ExamTableLoading from '../ExamsTableLoading';
 import Pagination from '../Pagination';
 
-const PreviousExamsTable: React.FC = () => {
+interface PreviousExamsTableProps {
+  token: string;
+}
+
+const PreviousExamsTable: React.FC<PreviousExamsTableProps> = ({ token }) => {
   const sectionRef = useRef<HTMLElement>(null);
   const router = useRouter();
 
@@ -27,7 +31,7 @@ const PreviousExamsTable: React.FC = () => {
   useEffect(() => {
     async function fetchData() {
       try {
-        const data = await fetchUserPreviousExams(fetchUrl);
+        const data = await fetchUserPreviousExams(fetchUrl, token);
         setPreviousExamResponse(data);
       } catch (error) {
         swal({
