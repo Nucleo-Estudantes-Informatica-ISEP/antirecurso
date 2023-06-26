@@ -22,7 +22,6 @@ interface StatsLineChartProps {
 }
 
 const options = {
-  responsive: true,
   scales: {
     y: {
       min: 0,

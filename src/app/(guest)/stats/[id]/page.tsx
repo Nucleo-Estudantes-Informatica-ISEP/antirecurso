@@ -31,7 +31,7 @@ const SubjectStats: React.FC<SubjectStatsProps> = async ({ params }) => {
   const subjectStats: ISubjectStats = await res.json();
 
   return (
-    <section className="w-full h-full flex flex-col items-center justify-center text-center">
+    <section className="w-full h-full flex flex-col items-center justify-center text-center overflow-x-scroll">
       <p className="text-lg w-5/6 md:text-xl font-bold uppercase text-center px-4">
         As tuas <span className="text-primary">estatísticas </span>
         de <span className="text-primary">{subjectName}</span>
@@ -78,7 +78,7 @@ const SubjectStats: React.FC<SubjectStatsProps> = async ({ params }) => {
           </div>
         </div>
 
-        <div className="p-2 bg-gray-100 rounded-md">
+        <div className="p-2 bg-gray-100 rounded-md overflow-x-scroll min-w-[620px]">
           <StatsLineChart
             labels={subjectStats.user_scores.map((score) =>
               new Date(score.created_at).toLocaleDateString('pt-PT')
