@@ -88,6 +88,7 @@ export default function useAnswerableExamNavigation({
           if (currentQuestion?.options[3]) selectAnswer(currentQuestionIndex, optionOrders[3]);
           break;
         case ' ':
+          e.preventDefault();
           cycleOptions('DOWN');
           break;
         case 'ArrowUp':
@@ -99,6 +100,7 @@ export default function useAnswerableExamNavigation({
           cycleOptions('DOWN');
           break;
         case 'Enter':
+          e.preventDefault();
           if (currentQuestionIndex === questions.length - 1) await submit();
           if (wasAnswered(currentQuestionIndex)) changeQuestion(currentQuestionIndex + 1);
         default:
