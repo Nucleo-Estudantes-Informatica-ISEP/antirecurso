@@ -13,7 +13,7 @@ const About: React.FC = () => {
       <div className="space-y-3">
         <p className="text-xl font-semibold uppercase">Data Mining by</p>
         <p className="text-primary font-semibold">
-          <a href="mailto:1211289@isep.ipp.pt" rel="noreferrer" target="_blank">
+          <a href="https://github.com/tomasflopes" rel="noreferrer" target="_blank">
             Tomás Lopes
           </a>
         </p>
