@@ -12,9 +12,11 @@ export default function useExamNavigation<T>() {
   function handleKeyDown(e: KeyboardEvent) {
     switch (e.key) {
       case 'ArrowLeft':
+        e.preventDefault();
         changeQuestion(currentQuestionIndex - 1);
         break;
       case 'ArrowRight':
+        e.preventDefault();
         changeQuestion(currentQuestionIndex + 1);
         break;
     }
