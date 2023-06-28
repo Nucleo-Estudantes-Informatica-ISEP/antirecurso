@@ -39,6 +39,57 @@ const ScoreboardPage: React.FC<ScoreboardPageProps> = async ({ params }) => {
                 <MdKeyboardArrowDown />
               </div>
             </div> */}
+            {/* Podium */}
+            <div className="flex flex-row justify-center items-start mb-6">
+              <div className="flex flex-col items-center px-14 pt-24">
+                <Image
+                  className="w-32 rounded-full aspect-square"
+                  src="/images/podium/silver.svg"
+                  alt="User 1"
+                  width={80}
+                  height={80}
+                />
+                <div className="flex flex-col items-center py-4">
+                  <p className="text-2xl font-bold">Nome 2</p>
+                  <p className="text-2xl font-bold bg-orange-200 px-4 rounded-full">93.83</p>
+                </div>
+              </div>
+              <div className="flex flex-col items-center bg-gradient-to-b from-primary to-transparent rounded-t-2xl px-14 py-12">
+                <div className="relative">
+                  <Image
+                    className="w-32 rounded-full aspect-square"
+                    src="/images/default-avatar.svg"
+                    alt="User 2"
+                    width={80}
+                    height={80}
+                  />
+                  <Image
+                    className="w-8 rounded-full aspect-square absolute right-0 top-0"
+                    src="/images/podium/gold-small.svg"
+                    alt="User 2"
+                    width={80}
+                    height={80}
+                  />
+                </div>
+                <div className="flex flex-col items-center py-4">
+                  <p className="text-2xl font-bold">Nome 1</p>
+                  <p className="text-2xl font-bold">97.60</p>
+                </div>
+              </div>
+              <div className="flex flex-col items-center px-14 pt-24">
+                <Image
+                  className="w-32 rounded-full aspect-square"
+                  src="/images/podium/bronze.svg"
+                  alt="User 3"
+                  width={80}
+                  height={80}
+                />
+                <div className="flex flex-col items-center py-4">
+                  <p className="text-2xl font-bold">Nome 3</p>
+                  <p className="text-2xl font-bold">93.14</p>
+                </div>
+              </div>
+            </div>
             <table className="w-1/2 text-sm text-center">
               <tbody>
                 {scoreboard.scores.map((line, key) => (
@@ -46,7 +97,9 @@ const ScoreboardPage: React.FC<ScoreboardPageProps> = async ({ params }) => {
                   <tr
                     className={`${key == 0 ? 'bg-orange-200' : ''} text-xl font-bold`}
                     key={line.user_id}>
-                    <th scope="row" className="pl-16 pr-6 py-3 whitespace-nowrap rounded-l-full">
+                    <th
+                      scope="row"
+                      className="pl-6 md:pl-16 pr-6 py-3 whitespace-nowrap rounded-l-full">
                       {key + 1}
                     </th>
                     <td className="pl-4 py-2 min-w-[3.5rem]">
@@ -58,13 +111,13 @@ const ScoreboardPage: React.FC<ScoreboardPageProps> = async ({ params }) => {
                         height={40}
                       />
                     </td>
-                    <td className="px-4 py-2 min-w-[28rem]">
+                    <td className="px-4 py-2 md:min-w-[28rem]">
                       <div className="flex flex-col items-start">
                         <span className="text-lg leading-5">{line.user_name}</span>
                         <span className="text-sm leading-3 text-gray-500">{line.exams} exames</span>
                       </div>
                     </td>
-                    <td className="pl-6 pr-16 py-2 rounded-r-full">{line.score}</td>
+                    <td className="px-6 md:pr-16 py-2 rounded-r-full">{line.score}</td>
                   </tr>
                 ))}
               </tbody>
