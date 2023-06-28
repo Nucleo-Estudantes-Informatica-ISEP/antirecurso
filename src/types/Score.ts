@@ -4,4 +4,5 @@ export default interface Score {
   user_name: string;
   subject_id: number;
   subject: string;
+  exams: number;
 }
