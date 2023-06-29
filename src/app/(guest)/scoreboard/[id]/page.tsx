@@ -29,6 +29,7 @@ const ScoreboardPage: React.FC<ScoreboardPageProps> = async ({ params }) => {
     user_name: 'Alguém (You)',
     subject_id: 1,
     subject: 'algan',
+    avatar: '1',
     exams: 5
   };
 
@@ -50,12 +51,12 @@ const ScoreboardPage: React.FC<ScoreboardPageProps> = async ({ params }) => {
                 <MdKeyboardArrowDown />
               </div>
             </div> */}
-            <ScoreboardPodium />
+            <ScoreboardPodium scores={scoreboard.scores} />
             <table className="w-1/2 text-sm text-center">
               <tbody>
                 <ScoreboardRow line={example} position={25} highlight />
-                {scoreboard.scores.map((line, key) => (
-                  <ScoreboardRow line={line} position={key + 1} key={key} />
+                {scoreboard.scores.slice(3).map((line, key) => (
+                  <ScoreboardRow line={line} position={key + 4} key={key} />
                 ))}
               </tbody>
             </table>
