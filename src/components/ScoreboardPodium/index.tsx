@@ -1,4 +1,7 @@
+'use client';
+
 import Score from 'src/types/Score';
+import { motion } from 'framer-motion';
 
 interface ScoreboardPodiumProps {
   scores: Score[];
@@ -12,14 +15,23 @@ const ScoreboardPodium: React.FC<ScoreboardPodiumProps> = ({ scores }) => {
   ];
 
   return (
-    <div className="grid grid-cols-3 items-start mb-6" style={{ gridTemplateAreas: `"p2 p1 p3"` }}>
+    <div
+      className="grid grid-cols-3 items-start mb-6 mt-2"
+      style={{ gridTemplateAreas: `"p2 p1 p3"` }}>
       {scores.slice(0, 3).map((score, key) => (
-        <div
+        <motion.div
+          whileHover={{
+            y: -10,
+            scale: 1.02
+          }}
+          transition={{
+            duration: 0.2
+          }}
           key={key}
-          className={`flex flex-col items-center px-8 md:px-14 ${
+          className={`flex flex-col items-center px-8 md:px-14 rounded-t-2xl ${
             key == 0
-              ? 'bg-gradient-to-b from-primary to-transparent rounded-t-2xl py-12 md:pb-24'
-              : 'pt-24 md:pb-12'
+              ? 'py-12 md:pb-24 bg-gradient-to-b from-primary to-transparent z-10'
+              : 'mt-12 pt-12 md:pb-12' //hover:bg-gradient-to-b to-transparent transition-colors duration-200 ease-in-out'
           }`}
           style={{ gridArea: `p${key + 1}` }}>
           <div className="relative">
@@ -45,7 +57,7 @@ const ScoreboardPodium: React.FC<ScoreboardPodiumProps> = ({ scores }) => {
               {score.exams} exames
             </p>
           </div>
-        </div>
+        </motion.div>
       ))}
     </div>
   );

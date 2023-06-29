@@ -9,7 +9,9 @@ interface ScoreboardRowProps {
 const ScoreboardRow: React.FC<ScoreboardRowProps> = ({ line, position, highlight }) => {
   return (
     <tr
-      className={`${highlight ? 'bg-orange-200' : ''} text-lg md:text-xl font-bold`}
+      className={`${
+        highlight ? 'bg-orange-200' : 'hover:bg-gray-100'
+      } text-lg md:text-xl font-bold transition-colors duration-200 ease-in-out`}
       key={line.user_id}>
       <th scope="row" className="pl-6 md:pl-16 pr-6 py-3 whitespace-nowrap rounded-l-full">
         {position}
@@ -21,7 +23,7 @@ const ScoreboardRow: React.FC<ScoreboardRowProps> = ({ line, position, highlight
           alt={line.user_name}
         />
       </td>
-      <td className="md:px-4 py-2  md:min-w-[24rem]">
+      <td className="md:px-4 py-2 md:min-w-[24rem]">
         <div className="flex flex-col items-start text-left">
           <span className="text-lg leading-5 text-ellipsis whitespace-nowrap">
             {line.user_name}

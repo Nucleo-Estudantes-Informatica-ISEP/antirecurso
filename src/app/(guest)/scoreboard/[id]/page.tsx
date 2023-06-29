@@ -52,7 +52,7 @@ const ScoreboardPage: React.FC<ScoreboardPageProps> = async ({ params }) => {
               </div>
             </div> */}
             <ScoreboardPodium scores={scoreboard.scores} />
-            <table className="w-1/2 text-sm text-center">
+            <table className="text-sm text-center">
               <tbody>
                 <ScoreboardRow line={example} position={25} highlight />
                 {scoreboard.scores.slice(3).map((line, key) => (
