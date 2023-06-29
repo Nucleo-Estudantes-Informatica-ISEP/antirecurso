@@ -16,8 +16,10 @@ const ScoreboardPodium: React.FC<ScoreboardPodiumProps> = ({ scores }) => {
       {scores.slice(0, 3).map((score, key) => (
         <div
           key={key}
-          className={`flex flex-col items-center px-14 py-12 ${
-            key == 0 ? 'bg-gradient-to-b from-primary to-transparent rounded-t-2xl pb-24' : 'pt-24'
+          className={`flex flex-col items-center px-8 md:px-14 ${
+            key == 0
+              ? 'bg-gradient-to-b from-primary to-transparent rounded-t-2xl py-12 md:pb-24'
+              : 'pt-24 md:pb-12'
           }`}
           style={{ gridArea: `p${key + 1}` }}>
           <div className="relative">
@@ -29,17 +31,19 @@ const ScoreboardPodium: React.FC<ScoreboardPodiumProps> = ({ scores }) => {
               height={128}
             />
             <img
-              className="w-8 rounded-full aspect-square absolute right-0 top-0"
+              className="w-8 rounded-full aspect-square absolute right-[-.5rem] top-[-.5rem] md:right-0 md:top-0"
               src={badges[key]}
               alt="Badge"
               width={80}
               height={80}
             />
           </div>
-          <div className="flex flex-col items-center py-4">
-            <p className="text-2xl font-bold">{score.user_name}</p>
-            <p className="text-2xl font-bold">{score.score}</p>
-            <p className="text-lg font-normal text-gray-600">{score.exams} exames</p>
+          <div className="flex flex-col items-center py-4 text-center">
+            <p className="text-lg md:text-2xl font-bold leading-5">{score.user_name}</p>
+            <p className="text-lg md:text-2xl font-bold mt-1">{score.score}</p>
+            <p className="text-sm md:text-lg font-normal text-gray-600 whitespace-nowrap">
+              {score.exams} exames
+            </p>
           </div>
         </div>
       ))}

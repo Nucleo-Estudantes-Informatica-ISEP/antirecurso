@@ -39,7 +39,7 @@ const ScoreboardPage: React.FC<ScoreboardPageProps> = async ({ params }) => {
         Scoreboard de <span className="text-primary">{subjectName}</span>
       </p>
 
-      <section className="mt-5 w-full md:px-16 grid place-items-center">
+      <section className="my-5 w-full grid place-items-center">
         {scoreboard.scores.length === 0 ? (
           <p className="text-center">Sem nenhum utilizador registado</p>
         ) : (
