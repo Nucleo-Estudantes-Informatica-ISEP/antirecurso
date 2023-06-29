@@ -1,4 +1,3 @@
-import Image from 'next/image';
 import Score from 'src/types/Score';
 
 interface ScoreboardRowProps {
@@ -14,12 +13,10 @@ const ScoreboardRow: React.FC<ScoreboardRowProps> = ({ line, position, highlight
         {position}
       </th>
       <td className="pl-4 py-2 min-w-[3.5rem]">
-        <Image
+        <img
           className="w-9 rounded-full aspect-square"
           src={`https://gravatar.com/avatar/${line.avatar}?s=64&d=identicon`}
           alt={line.user_name}
-          width={40}
-          height={40}
         />
       </td>
       <td className="px-4 py-2 md:min-w-[28rem]">
