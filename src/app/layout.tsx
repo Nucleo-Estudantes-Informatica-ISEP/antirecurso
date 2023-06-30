@@ -1,3 +1,5 @@
+import ThemeProvider from '@/components/Theme/ThemeProvider';
+import Topbar from '@/components/Topbar';
 import '@/styles/globals.css';
 
 export const metadata = {
@@ -8,7 +10,12 @@ export const metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="pt">
-      <body className="min-h-screen h-screen">{children}</body>
+      <body className="min-h-screen dark:bg-primary-dark">
+        <ThemeProvider>
+          <Topbar />
+          {children}
+        </ThemeProvider>
+      </body>
     </html>
   );
 }
