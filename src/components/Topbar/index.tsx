@@ -10,7 +10,7 @@ const Topbar: React.FC = () => {
   const token = cookieStore?.value;
 
   return (
-    <div className="w-screen h-20 flex items-center justify-between py-5 px-10 bg-white shadow border-gray-100 sticky top-0 left-0 z-20">
+    <div className="sticky top-0 left-0 z-20 flex items-center justify-between w-screen h-20 px-10 py-5 bg-white border-gray-100 shadow dark:bg-primary-dark">
       <Link href="/" className="w-32 md:w-48">
         <img src="/images/logo.png" alt="Our beautiful logo" className="w-full" />
       </Link>

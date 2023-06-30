@@ -22,11 +22,11 @@ const ScoreboardPage: React.FC<ScoreboardPageProps> = async ({ params }) => {
 
   return (
     <section className="min-h-[90vh] flex flex-col items-center my-16">
-      <p className="text-xl font-bold uppercase text-center px-4">
+      <p className="px-4 text-xl font-bold text-center uppercase">
         Scoreboard de <span className="text-primary">{subjectName}</span>
       </p>
 
-      <section className="mt-5 w-full md:px-16 grid place-items-center">
+      <section className="grid w-full mt-5 md:px-16 place-items-center">
         {scoreboard.scores.length === 0 ? (
           <p className="text-center">Sem nenhum utilizador registado</p>
         ) : (
@@ -46,7 +46,7 @@ const ScoreboardPage: React.FC<ScoreboardPageProps> = async ({ params }) => {
             </thead>
             <tbody>
               {scoreboard.scores.map((line, key) => (
-                <tr className="bg-white border-b" key={line.subject_id}>
+                <tr className="bg-white border-b dark:bg-primary-dark" key={line.subject_id}>
                   <th scope="row" className="px-6 py-4 font-medium text-primary whitespace-nowrap">
                     {key + 1}
                   </th>

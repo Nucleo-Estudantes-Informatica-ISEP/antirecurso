@@ -89,7 +89,7 @@ const CommentSection: React.FC<CommentSectionProps> = ({
   }, [comments]);
 
   return (
-    <section className="ml-0 md:ml-32 my-14 w-full">
+    <section className="w-full ml-0 md:ml-32 my-14">
       {!token ? (
         <p className="w-5/6 text-center md:text-start">
           <Link href="/register" target="_blank" className="font-semibold text-primary">
@@ -103,8 +103,8 @@ const CommentSection: React.FC<CommentSectionProps> = ({
         </p>
       ) : (
         <>
-          <div className="w-full flex flex-col space-y-5 mb-5">
-            <div className=" w-5/6 mx-auto md:w-full">
+          <div className="flex flex-col w-full mb-5 space-y-5">
+            <div className="w-5/6 mx-auto  md:w-full">
               <InputLabel value="Comentário" />
               <textarea
                 ref={inputRef}
@@ -120,16 +120,16 @@ const CommentSection: React.FC<CommentSectionProps> = ({
                   removeEventListener();
                 }}
                 onBlur={addListener}
-                className="block w-full md:mx-0 mx-auto md:w-1/2 mt-1 border-gray-300 rounded-md shadow-sm focus:border-primary-300 focus:ring focus:ring-primary-200 focus:ring-opacity-50 focus-within:text-primary-600 resize-none"></textarea>
+                className="block w-full mx-auto mt-1 border-gray-300 rounded-md shadow-sm resize-none md:mx-0 md:w-1/2 focus:border-primary-300 focus:ring focus:ring-primary-200 focus:ring-opacity-50 focus-within:text-primary-600"></textarea>
             </div>
-            <div className="w-5/6 md:mx-0 mx-auto flex items-center gap-x-6">
-              <PrimaryButton onClick={handleSubmit} className="h-10 w-full md:w-32">
+            <div className="flex items-center w-5/6 mx-auto md:mx-0 gap-x-6">
+              <PrimaryButton onClick={handleSubmit} className="w-full h-10 md:w-32">
                 Comentar
               </PrimaryButton>
               <button onClick={handleReportQuestion}>
                 <Flag
                   size={20}
-                  className="hover:text-red-700 hover:fill-red-500 transition-all duration-150 ease-in-out"
+                  className="transition-all duration-150 ease-in-out hover:text-red-700 hover:fill-red-500"
                 />
               </button>
             </div>
@@ -139,13 +139,13 @@ const CommentSection: React.FC<CommentSectionProps> = ({
               {comments.map((comment) => (
                 <div
                   key={comment.id}
-                  className="w-11/12 mx-auto md:mx-0 shadow border border-gray-100 rounded h-auto p-5 bg-white my-5">
-                  <p className="font-semibold flex items-center gap-x-2">
+                  className="w-11/12 h-auto p-5 mx-auto my-5 bg-white border border-gray-100 rounded shadow md:mx-0 dark:bg-primary-dark">
+                  <p className="flex items-center font-semibold gap-x-2">
                     {comment.user}
                     {comment.is_admin && (
-                      <img className="h-5 w-5" src="/images/nei-logo.png" alt="Admin" />
+                      <img className="w-5 h-5" src="/images/nei-logo.png" alt="Admin" />
                     )}
-                    <span className="font-thin text-xs text-gray-500">{comment.created_at}</span>
+                    <span className="text-xs font-thin text-gray-500">{comment.created_at}</span>
                   </p>
                   <p className="mt-2 text-sm md:text-md">{comment.comment}</p>
                 </div>
