@@ -1,4 +1,7 @@
+'use client';
+
 import Score from 'src/types/Score';
+import { motion } from 'framer-motion';
 
 interface ScoreboardRowProps {
   line: Score;
@@ -8,7 +11,11 @@ interface ScoreboardRowProps {
 
 const ScoreboardRow: React.FC<ScoreboardRowProps> = ({ line, position, highlight }) => {
   return (
-    <tr
+    <motion.tr
+      initial={{ opacity: 0, y: 10, scale: 0.95 }}
+      whileInView={{ opacity: 1, y: 0, scale: 1 }}
+      viewport={{ once: true }}
+      transition={{ duration: 0.8, type: 'spring', bounce: 0.4 }}
       className={`${
         highlight ? 'bg-orange-200' : 'hover:bg-gray-100'
       } text-lg md:text-xl font-bold transition-colors duration-200 ease-in-out max-w-fit`}
@@ -30,7 +37,7 @@ const ScoreboardRow: React.FC<ScoreboardRowProps> = ({ line, position, highlight
         </div>
       </td>
       <td className="px-6 md:pr-16 py-2 rounded-r-full">{line.score}</td>
-    </tr>
+    </motion.tr>
   );
 };
 

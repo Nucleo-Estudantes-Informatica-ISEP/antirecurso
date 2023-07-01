@@ -5,8 +5,6 @@ import config from 'src/config';
 import { BASE_URL } from 'src/services/api';
 import fetchSessionUser from 'src/services/fetchSessionUser';
 import Leaderboard from 'src/types/Leaderboard';
-import Score from 'src/types/Score';
-import User from 'src/types/User';
 import getSubjectNameById from 'src/utils/getSubjectNameById';
 
 interface ScoreboardPageProps {

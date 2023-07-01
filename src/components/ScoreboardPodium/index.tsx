@@ -44,7 +44,6 @@ const ScoreboardPodium: React.FC<ScoreboardPodiumProps> = ({ scores, uid }) => {
           transition={{
             duration: 0.2
           }}
-          dragElastic={1}
           key={key}
           className={`flex flex-col items-center px-8 md:px-14 rounded-t-2xl ${
             key == 0
