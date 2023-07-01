@@ -21,23 +21,17 @@ const ScoreboardPage: React.FC<ScoreboardPageProps> = async ({ params }) => {
   const token = cookieStore?.value;
 
   async function fetchLeaderboard(): Promise<Leaderboard> {
-    const res = await fetch(BASE_URL + '/subjects/' + params.id + '/scoreboard', {
+    const res = await fetch(`${BASE_URL}/subjects/${params.id}/scoreboard`, {
       cache: 'no-cache'
     });
     return res.json();
   }
 
-  const promises = [
+  const [subjectName, scoreboard, user] = await Promise.all([
     getSubjectNameById(parseInt(params.id)),
     fetchLeaderboard(),
     fetchSessionUser(token)
-  ];
-
-  const results = await Promise.all(promises);
-
-  const subjectName = results[0];
-  const scoreboard = results[1] as Leaderboard;
-  const user = results[2] as User;
+  ]);
 
   return (
     <section className="min-h-[90vh] flex flex-col items-center my-16">
