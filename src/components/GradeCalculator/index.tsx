@@ -101,7 +101,7 @@ const GradeCalculator: React.FC<GradeCalculatorProps> = ({ examGrade, weight, mi
           className={`font-bold ${
             finalGrade !== null && finalGrade >= 9.5 ? 'text-green-500' : 'text-red-500'
           }`}>
-          {finalGrade ? finalGrade : '--'}
+          {finalGrade ? finalGrade : 'Preenche os campos acima para veres a tua nota final'}
         </span>
       </p>
     </div>

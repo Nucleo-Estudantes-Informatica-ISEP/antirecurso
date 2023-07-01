@@ -22,12 +22,12 @@ const PretendedGradeCalculator: React.FC<GradeCalculatorProps> = ({ weight, min_
       : Math.max(0, toFixed((pretended - 0.5 - frequency * (1 - weight)) / weight, 2));
 
   return (
-    <div className="flex flex-col items-center justify-center p-4 space-y-6 w-full mx-auto my-6">
+    <div className="flex flex-col items-center justify-center p-4 space-y-6 w-full mx-auto my-4">
       <div className="flex items-center justify-between gap-x-2 w-full">
         <div className="h-0.5 w-1/3 bg-primary rounded opacity-70"></div>
         <h1 className="text-xl md:text-3xl w-full font-bold text-center mx-auto">
-          Nota necessária no <span className="text-primary">exame</span> para atingir o teu objetivo
-          na UC!
+          Nota necessária no <span className="text-primary">exame</span> para atingir o teu{' '}
+          <span className="text-primary">objetivo</span> na UC!
         </h1>
         <div className="h-0.5 w-1/3 bg-primary rounded opacity-70"></div>
       </div>
@@ -67,9 +67,9 @@ const PretendedGradeCalculator: React.FC<GradeCalculatorProps> = ({ weight, min_
           {frequency === null
             ? 'Preenche o campo da nota da frequência!'
             : finalGradePretended === null
-            ? '--'
+            ? 'Preenche o campo da nota pretendida!'
             : finalGradePretended > 20
-            ? 'Impossível. Tens de estudar mais.'
+            ? 'Não é possível atingir essa nota... 😕'
             : finalGradePretended}
         </span>
       </p>
