@@ -1,7 +1,7 @@
 const PrivacyPolicy: React.FC = () => {
   return (
-    <div className="min-h-screen w-full text-sm md:text-md px-5 md:px-24 pb-5">
-      <h1 className="text-primary font-black text-xl">Política de Privacidade</h1>
+    <div className="w-full px-5 pb-5 text-sm md:text-md md:px-24">
+      <h1 className="text-xl font-black text-primary">Política de Privacidade</h1>
       <span className="h-full">
         Aplicação do Regulamento Geral sobre a Proteção de Dados Em vigor a partir de 20 de junho de
         2023. De maneira a compreender que informações são recolhidas e como são utilizadas o Núcleo

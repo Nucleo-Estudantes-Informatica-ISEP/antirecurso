@@ -8,13 +8,13 @@ interface PaginationProps {
 
 const Pagination: React.FC<PaginationProps> = ({ metadata, setFetchUrl }) => {
   return (
-    <nav>
-      <ul className="flex justify-center py-6 bg-white">
+    <nav className="w-full">
+      <ul className="flex justify-center py-6 gap-x-2">
         {metadata.links.map((link) => (
-          <li key={link.label} className="md:mx-1">
+          <li key={link.label}>
             <button
               disabled={link.url === null}
-              className={`flex items-center dark:bg-primary-dark justify-center px-2 py-1 md:px-4 md:py-2 rounded-full cursor-pointer border-2 ${
+              className={`flex items-center justify-center px-2 py-1 md:px-4 md:py-2 rounded-full cursor-pointer border-2 ${
                 link.active
                   ? 'bg-primary text-white'
                   : link.url !== null

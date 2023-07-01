@@ -14,7 +14,7 @@ const Topbar: React.FC = () => {
   const token = cookieStore?.value;
 
   return (
-    <nav className="fixed top-0 left-0 z-20 flex items-center justify-between w-screen h-20 px-10 py-5 bg-white border-gray-100 shadow dark:bg-primary-dark">
+    <nav className="fixed top-0 left-0 z-20 flex items-center justify-between w-screen h-20 px-10 py-5 bg-white border-gray-100 shadow dark:shadow-secondary-dark dark:bg-secondary-dark">
       <Link href="/" className="dark:hidden max-w-[8rem] md:max-w-[12rem] ">
         <Image height={192} width={192} priority src={MainLogo} alt="AntiRecurso Light Logo" />
       </Link>

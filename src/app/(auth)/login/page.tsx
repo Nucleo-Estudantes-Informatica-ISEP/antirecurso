@@ -3,10 +3,7 @@
 import InputLabel from '@/components/InputLabel';
 import PrimaryButton from '@/components/PrimaryButton';
 import TextInput from '@/components/TextInput';
-import DarkMainLogo from '@/images/logos/main-logo-dark.svg';
-import MainLogo from '@/images/logos/main-logo.svg';
 import { Spinner } from '@/styles/Icons';
-import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
@@ -93,20 +90,6 @@ const Login: React.FC = () => {
 
   return (
     <div className="relative flex flex-col items-center justify-center max-w-md px-4 py-12 sm:p-12 md:w-1/2 md:h-screen">
-      <Link href="/" className="dark:hidden max-w-[16rem] mb-5 mx-auto">
-        <Image height={256} width={256} priority src={MainLogo} alt="AntiRecurso Light Logo" />
-      </Link>
-      <Link href="/" className="hidden dark:block max-w-[16rem] mb-5 mx-auto">
-        <Image
-          height={256}
-          width={256}
-          priority
-          src={DarkMainLogo}
-          alt="AntiRecurso Dark Logo"
-          className="w-full"
-        />
-      </Link>
-
       <div className="w-full dark:text-white">
         <h1 className="mb-4 text-xl font-semibold ">Entrar</h1>
 

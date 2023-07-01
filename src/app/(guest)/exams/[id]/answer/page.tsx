@@ -53,7 +53,7 @@ const Exams: React.FC<ExamAnswerPageProps> = async ({ params }) => {
   const token = t?.value;
 
   return (
-    <section className="flex flex-col items-center justify-center w-full h-full min-h-screen text-center">
+    <section className="flex flex-col items-center justify-center w-full text-center">
       <p className="w-5/6 px-4 text-lg font-bold text-center uppercase md:text-xl">
         <span className="text-primary">Escolhe</span> o <span className="text-primary">modo</span>{' '}
         de perguntas do teu <span className="text-primary">exame</span>
@@ -64,7 +64,7 @@ const Exams: React.FC<ExamAnswerPageProps> = async ({ params }) => {
           <Link
             href={`exams/${params.id}/answer/${mode.slug}`}
             key={mode.id}
-            className={`relative w-full h-full md:h-64 p-5 flex flex-col space-y-6 items-center justify-center shadow border border-gray-100 rounded text-center group hover:bg-primary transition ease-in-out ${
+            className={`relative w-full h-full md:h-64 p-5 flex flex-col space-y-6 items-center justify-center shadow dark:shadow-gray-500 rounded text-center group hover:bg-primary transition ease-in-out ${
               mode.comingSoon || (mode.needsAuth && !token) ? 'pointer-events-none opacity-50' : ''
             }`}>
             <p className="text-5xl">{mode.icon}</p>

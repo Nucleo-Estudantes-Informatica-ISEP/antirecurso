@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useState } from 'react';
 import LogoutButton from '../LogoutButton';
 import PrimaryButton from '../PrimaryButton';
+import ThemeChanger from '../Theme/ThemeChanger';
 import TopbarLink from '../TopbarLink';
 
 interface HamburgerMenuProps {
@@ -26,7 +27,11 @@ const HamburgerMenu: React.FC<HamburgerMenuProps> = ({ token }) => {
     <div className="flex md:hidden">
       <Menu className="text-primary hover:cursor-pointer" onClick={handleClickMenu} />
       {isOpen && (
-        <div className="absolute left-0 flex flex-col w-screen h-auto p-5 space-y-5 bg-white border border-gray-100 rounded shadow top-20 dark:bg-primary-dark">
+        <div className="absolute left-0 flex flex-col w-screen h-auto p-5 space-y-5 bg-white shadow dark:shadow-secondary-dark top-20 dark:bg-secondary-dark">
+          <div className="self-end">
+            <ThemeChanger />
+          </div>
+
           <TopbarLink onClick={closeMenu} href="/">
             Home
           </TopbarLink>
