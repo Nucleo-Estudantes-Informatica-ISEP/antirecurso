@@ -57,7 +57,10 @@ const ScoreboardPage: React.FC<ScoreboardPageProps> = async ({ params }) => {
                 <MdKeyboardArrowDown />
               </div>
             </div> */}
-            <ScoreboardPodium scores={scoreboard.scores} />
+            <ScoreboardPodium
+              scores={scoreboard.scores}
+              uid={user !== null ? user.id : undefined}
+            />
             <table className="text-sm text-center">
               <tbody>
                 {scoreboard.scores.slice(3).map((line, key) => (
