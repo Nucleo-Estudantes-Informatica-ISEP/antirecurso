@@ -1,8 +1,12 @@
 import ScoreboardPodium from '@/components/ScoreboardPodium';
 import ScoreboardRow from '@/components/ScoreboardRow';
+import { cookies } from 'next/headers';
+import config from 'src/config';
 import { BASE_URL } from 'src/services/api';
+import fetchSessionUser from 'src/services/fetchSessionUser';
 import Leaderboard from 'src/types/Leaderboard';
 import Score from 'src/types/Score';
+import User from 'src/types/User';
 import getSubjectNameById from 'src/utils/getSubjectNameById';
 
 interface ScoreboardPageProps {
@@ -13,8 +17,8 @@ interface ScoreboardPageProps {
 
 // @ts-expect-error Server Component
 const ScoreboardPage: React.FC<ScoreboardPageProps> = async ({ params }) => {
-  const subjectName = await getSubjectNameById(parseInt(params.id));
-  const scoreboard = await fetchLeaderboard();
+  const cookieStore = cookies().get(config.cookies.token) as { value: string } | undefined;
+  const token = cookieStore?.value;
 
   async function fetchLeaderboard(): Promise<Leaderboard> {
     const res = await fetch(BASE_URL + '/subjects/' + params.id + '/scoreboard', {
@@ -23,15 +27,17 @@ const ScoreboardPage: React.FC<ScoreboardPageProps> = async ({ params }) => {
     return res.json();
   }
 
-  const example: Score = {
-    user_id: 1000,
-    score: 51.56,
-    user_name: 'Alguém (You)',
-    subject_id: 1,
-    subject: 'algan',
-    avatar: '1',
-    exams: 5
-  };
+  const promises = [
+    getSubjectNameById(parseInt(params.id)),
+    fetchLeaderboard(),
+    fetchSessionUser(token)
+  ];
+
+  const results = await Promise.all(promises);
+
+  const subjectName = results[0];
+  const scoreboard = results[1] as Leaderboard;
+  const user = results[2] as User;
 
   return (
     <section className="min-h-[90vh] flex flex-col items-center my-16">
@@ -54,9 +60,13 @@ const ScoreboardPage: React.FC<ScoreboardPageProps> = async ({ params }) => {
             <ScoreboardPodium scores={scoreboard.scores} />
             <table className="text-sm text-center">
               <tbody>
-                <ScoreboardRow line={example} position={25} highlight />
                 {scoreboard.scores.slice(3).map((line, key) => (
-                  <ScoreboardRow line={line} position={key + 4} key={key} />
+                  <ScoreboardRow
+                    line={line}
+                    position={key + 4}
+                    key={key}
+                    highlight={user !== null && user.id === line.user_id}
+                  />
                 ))}
               </tbody>
             </table>
