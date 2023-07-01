@@ -9,7 +9,7 @@ interface GradeCalculatorProps {
   min_grade: number;
 }
 
-const PretendedGradeCalculator: React.FC<GradeCalculatorProps> = ({ weight, min_grade }) => {
+const GoalGradeCalculator: React.FC<GradeCalculatorProps> = ({ weight, min_grade }) => {
   const MAX_GRADE = 20;
 
   const [pretended, setPretendGrade] = useState<number | null>(null);
@@ -77,4 +77,4 @@ const PretendedGradeCalculator: React.FC<GradeCalculatorProps> = ({ weight, min_
   );
 };
 
-export default PretendedGradeCalculator;
+export default GoalGradeCalculator;
