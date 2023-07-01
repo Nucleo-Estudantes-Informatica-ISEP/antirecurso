@@ -71,8 +71,8 @@ const ReviewPage: React.FC<ExamPageProps> = ({ params }) => {
   const N_SKELETON_OPTIONS = 4;
 
   return (
-    <section className="h-[88vh] flex flex-col items-center overflow-x-scroll">
-      <p className="text-xl font-bold uppercase mt-10 ml-5 text-center px-4">
+    <section className="flex flex-col items-center overflow-x-scroll ">
+      <p className="px-4 mt-10 ml-5 text-xl font-bold text-center uppercase">
         Exame de{' '}
         <span className="text-primary">
           {examResult?.subject ? examResult.subject : <Skeleton width={100} />}
@@ -113,7 +113,7 @@ const ReviewPage: React.FC<ExamPageProps> = ({ params }) => {
             {Array.from({ length: N_SKELETON_QUESTIONS }).map((_, i) => (
               <Skeleton
                 key={i}
-                className="h-10 w-10 p-5 flex items-center justify-center "
+                className="flex items-center justify-center w-10 h-10 p-5 "
                 circle={true}
               />
             ))}

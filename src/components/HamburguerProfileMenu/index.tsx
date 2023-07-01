@@ -23,7 +23,7 @@ const HamburgerProfileMenu: React.FC<HamburgerProfileMenuProps> = ({ token }) =>
 
   return (
     <div className="flex">
-      <Menu className="text-primary hover:cursor-pointer" onClick={handleClickMenu} />
+      <Menu className="w-5 h-5 text-primary hover:cursor-pointer" onClick={handleClickMenu} />
       {isOpen && (
         <div className="absolute right-0 w-64 bg-white rounded-b-lg dark:bg-primary-dark top-20">
           <div className="flex flex-col p-2 mb-1 gap-y-2">

@@ -100,12 +100,12 @@ const Exam: React.FC<ExamPageProps> = ({ params }) => {
   }, [params.id, params.mode, router, setQuestions]);
 
   return (
-    <section className="h-[88vh] flex flex-col items-center overflow-x-scroll">
-      <p className="text-xl font-bold uppercase mt-10 ml-5 text-center px-4">
+    <section className="flex flex-col items-center overflow-x-scroll">
+      <p className="px-4 mt-10 ml-5 text-xl font-bold text-center uppercase">
         Exame de{' '}
         <span className="text-primary">{subject ? subject : <Skeleton width={100} />}</span>
       </p>
-      <div className="mb-12 w-screen">
+      <div className="w-screen mb-12">
         {questions[0] ? (
           <ExamNumerationContainer>
             <PrimaryButton
@@ -135,7 +135,7 @@ const Exam: React.FC<ExamPageProps> = ({ params }) => {
               {'>'}
             </PrimaryButton>
             {isSubmitting ? (
-              <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-primary">
+              <div className="w-10 h-10 border-t-2 border-b-2 rounded-full animate-spin border-primary">
                 <span className="sr-only">Loading...</span>
               </div>
             ) : (
@@ -145,22 +145,22 @@ const Exam: React.FC<ExamPageProps> = ({ params }) => {
             )}
           </ExamNumerationContainer>
         ) : (
-          <div className="w-screen flex  items-center md:justify-center space-x-10 overflow-x-scroll md:overflow-auto mt-5 px-5">
+          <div className="flex items-center w-screen px-5 mt-5 space-x-10 overflow-x-scroll md:justify-center md:overflow-auto">
             {Array.from({ length: N_SKELETON_QUESTIONS }).map((_, i) => (
               <Skeleton
                 key={i}
-                className="h-10 w-10 p-5 flex items-center justify-center "
+                className="flex items-center justify-center w-10 h-10 p-5 "
                 circle={true}
               />
             ))}
           </div>
         )}
-        <section className="mt-5 px-5 md:px-32">
+        <section className="px-5 mt-5 md:px-32">
           <div className="relative w-full h-28 md:h-48">
             <Image
               fill
               alt="Subject"
-              className="object-cover h-full w-full"
+              className="object-cover w-full h-full"
               src="/images/prcmp.webp"
             />
           </div>
