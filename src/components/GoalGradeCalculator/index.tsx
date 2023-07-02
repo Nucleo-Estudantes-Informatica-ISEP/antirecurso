@@ -54,7 +54,7 @@ const GoalGradeCalculator: React.FC<GradeCalculatorProps> = ({ weight, min_grade
         </div>
       </div>
       <p className="text-xl">
-        Nota <span className="text-primary">necessária</span>:{' '}
+        Nota necessária:{' '}
         <span
           className={`font-bold  ${
             frequency === null ||
