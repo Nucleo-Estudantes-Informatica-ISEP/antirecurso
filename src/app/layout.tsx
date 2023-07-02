@@ -10,13 +10,11 @@ export const metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="pt">
-      <body className=" dark:bg-primary-dark">
+      <body className="transition-colors dark:bg-primary-dark">
         <ThemeProvider>
           <Topbar />
-          <main className="flex min-h-screen">
-            <div className="pt-20 min-h-[calc(100%-8rem)] w-full flex items-stretch">
-              {children}
-            </div>
+          <main className="flex">
+            <div className="flex items-stretch w-full min-h-[calc(100vh-5rem)]">{children}</div>
           </main>
         </ThemeProvider>
       </body>
