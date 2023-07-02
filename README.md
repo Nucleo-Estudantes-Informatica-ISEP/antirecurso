@@ -4,63 +4,84 @@
     </a>
 </p>
 
-# Antirecurso joined the server!
 
-Hello there, and welcome the Antirecurso's github repository!
 
-With this README.md you'll get to know everything about the project so you can contribute to it with some of your amazing code and ideas.
+## Welcome to Antirecurso's GitHub Repository 🚀
 
-So, let's start, shall we? ✨
+Hello, and welcome to Antirecurso's home on GitHub! This repository is the nucleus of our development efforts, a space where innovation, collaboration, and progress coalesce. Here you'll find all the necessary code, documentation, and resources related to the Antirecurso platform.
 
-## The project 🤓
+The repository serves as the starting point for anyone who wishes to understand our project better, contribute their unique ideas, or simply stay updated with our developments. So, whether you're a potential contributor, an interested observer, or a user wanting to understand more about the gears that drive Antirecurso, you're in the right place! Welcome aboard!
 
-So, you might have heard of "antirecurso" before. It started out as an android mobile app that was specifically designed to help students studying for their PRCMP (Princípios de Computação) exams. The app was widely used by students in the first year and it passed on through "generations".
+## About the Project 🤓
 
-After a while, the idea to create a new and version of "antirecurso" started to be discussed around students that realized that they could do even more to help others. This project is the effort to take the app to the next level and turn it into a full-fledged platform. Now, "antirecurso" is much more than just a mobile app to study for PRCMP - it's a comprehensive study tool that can be accessed from any device with internet connection for students to study to EVERY subject.
+"Antirecurso" initially began as an Android mobile app designed to help students studying for PRCMP (Princípios de Computação) exams. Over time, it has evolved into a comprehensive platform that caters to a broad range of academic subjects, accessible from any device with an internet connection.
 
-Whether you're using a computer, a tablet, or even your phone, you can log in to "antirecurso" and access a ton of exercises to help you prepare for your exams. These exercises are presented in a form of short quizzes with 10 random questions each. After answering them, the user gets a feedback with how many they got wrong and it goes into a scoreboard.
+Whether using a computer, tablet, or mobile phone, "antirecurso" provides numerous exercises in the form of short quizzes, each with 10 random questions. Upon completion, users receive immediate feedback and their performance is tracked on a scoreboard.
 
-So, if you're a student looking for a little extra help with your studies, definitely check out "antirecurso" <a href="https://antirecurso.nei-isep.org" target="_blank">here</a>. It's a game-changer when it comes to exam prep!
+If you're a student seeking extra academic resources, check out "antirecurso" <a href="https://antirecurso.nei-isep.org" target="_blank">here</a>. It's a comprehensive tool for exam preparation.
 
-## The stack 🔧
+## Usage Examples 🌐
 
-For this project we're using the TALL stack, and it helps with productive and agile development.
+To start using Antirecurso:
 
-Here's a little brief of what the TALL stack is:
+1. Navigate to the Antirecurso homepage by clicking [here](https://antirecurso.nei-isep.org).
 
-The TALL stack for Laravel is a set of technologies that can be used together to build web applications with the Laravel PHP framework.
+![Homepage Screenshot](/public/images/homepage.png "Antirecurso Homepage")
 
-Here's a brief overview of each component in the TALL stack for Laravel:
+2. Register an account or login if you already have one.
 
-- Tailwind CSS: Tailwind CSS is a CSS framework that provides a set of utility classes for building user interfaces. It allows you to build layouts and style your application using a set of predefined classes, rather than writing your own custom CSS.
+3. Choose your desired subject from the wide array available.
 
-- Alpine.js: Alpine.js is a small JavaScript library that provides reactive components and two-way data binding for building user interfaces. It is often used as an alternative to larger JavaScript frameworks like React or Vue.js.
+![Homepage Screenshot](/public/images/desiredSubject.png "Antirecurso Homepage")
 
-- Laravel Livewire: Laravel Livewire is a PHP library that makes it easy to build dynamic, interactive UIs with Laravel. It allows you to create components that can automatically update the DOM without the need for full page reloads.
+4. Choose the Type of questions you wish to take
 
-- Laravel: Laravel is a popular PHP framework for building web applications. It provides a set of tools and features that make it easier to build complex, feature-rich applications. Laravel is known for its clean codebase, excellent documentation, and strong developer community.
+![Homepage Screenshot](/public/images/typeOfQuestions.png "Antirecurso Homepage")
 
-Together, these technologies can be used to build powerful, dynamic web applications that you can use in the comfort of your house 🤗.
+5. Submit your answers, and immediately receive feedback on your performance, including a breakdown of correct and incorrect responses.
 
-## Releases 📑
+6. Track your progress over time using the inbuilt scoreboard feature.
 
-For more detailed information about the releases, you can check our <a href="https://github.com/Nucleo-Estudantes-Informatica-ISEP/antirecurso/releases" target="_blank">releases' page</a>, but here's a little preview table!
+![Homepage Screenshot](/public/images/score.png "Antirecurso Homepage")
+
+
+## The Tech Stack 🔧
+
+For this project, we've transitioned to using the Next.js framework. It brings productivity and agility in development and allows us to build server-side rendering and static web applications.
+
+Here's a quick rundown of the tech stack:
+
+- **Next.js**: A top-tier open-source React front-end development web framework that enables functionality such as server-side rendering and generating static websites for React based web applications.
+
+- **Tailwind CSS**: A utility-first CSS framework packed with classes like flex, pt-4, text-center and rotate-90 that can be composed to build any design, directly in your markup.
+
+- **Alpine.js**: A rugged, minimal framework for composing JavaScript behavior in your markup. It’s like Tailwind for JavaScript.
+
+Together, these technologies provide the infrastructure to build dynamic, feature-rich web applications accessible from the comfort of your home 🤗.
+
+## Release Updates 📑
+
+To keep track of the evolution and advancements in our project, we diligently document each release update. You can gain in-depth information about each version, the improvements made, and the new features added by visiting our <a href="https://github.com/Nucleo-Estudantes-Informatica-ISEP/antirecurso/releases" target="_blank">releases' page</a>.
+
+For your convenience, we have included a snapshot of the release history below:
 
 <table>
     <thead>
         <th>
-            Update name
+            Release Name
         </th>
         <th>
-            Version
+            Version Number
         </th>
         <th>
-            Update date
+            Release Date
         </th>
     </thead>
     <tbody>
     </tbody>
 </table>
+
+Make sure to stay updated by regularly visiting our releases' page to utilize the full potential of "antirecurso".
 
 
 ## Contribuitions 🤝
@@ -73,18 +94,49 @@ After selecting what you want to do, get your hands to coding!
 
 - Clone our repo by inserting the following command on your terminal:
 ```
-https://github.com/Nucleo-Estudantes-Informatica-ISEP/antirecurso.git
+git clone https://github.com/Nucleo-Estudantes-Informatica-ISEP/antirecurso.git
 ```
-- Open your project folder and paste the command down below on your terminal:
+- Open your project folder and paste the command down below on your terminal (remove the <>):
 ```
 git checkout -b <branch-name>
+```
+
+> **Now you're ready to add your amazing feature or fix. Make the necessary changes in the codebase.**
+
+- Once you're done, commit your changes with a clear and concise commit message:
+```
+git commit -m "Add your commit message here"
+```
+- Push your branch to the remote repository:
+```
+git push origin <branch-name>
 ```
 
 - Finally, you just got to add your amazing feature and create a pull request to submit it to a review!
 
 > **Note**: we recommend that the branch name looks something like "feat-comments"
 
-## Thank you 🫶🏻
+
+
+## License Information 📝
+
+Antirecurso is open-source software, licensed under the MIT License. The terms of the MIT License offer many freedoms to those who interact with software under it. These freedoms include:
+
+- The freedom to use the software for any purpose.
+- The freedom to change the software to suit your needs.
+- The freedom to share the software with your friends and neighbors.
+- The freedom to distribute your changes so that others can benefit from your modifications.
+
+By providing Antirecurso under the MIT License, we aim to foster a community of contribution and collaboration. We believe that sharing our work in this way will lead to better software and better solutions to the challenges of our users.
+
+For the precise terms and conditions of this license, please refer to the [LICENSE](LICENSE) file in this repository. 
+
+Please note: while the MIT License provides many freedoms, it does not absolve you of the responsibility to respect others' copyrights. Always ensure that your use of licensed software respects the intellectual property rights of others.
+
+This is only a summary of the MIT License, and by no means does it capture all the nuances of the license. For the full license text, please refer to the actual [MIT License](https://opensource.org/licenses/MIT).
+
+
+## Thank you 🙌
 
 It's really important to us that you're simply checking this page.
 If you want to contribute, it's even better!
