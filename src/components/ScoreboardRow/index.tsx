@@ -1,7 +1,7 @@
 'use client';
 
-import Score from 'src/types/Score';
 import { motion } from 'framer-motion';
+import Score from 'src/types/Score';
 
 interface ScoreboardRowProps {
   line: Score;
@@ -30,7 +30,7 @@ const ScoreboardRow: React.FC<ScoreboardRowProps> = ({ line, position, highlight
           alt={line.user_name}
         />
       </td>
-      <td className="md:px-4 py-2 md:min-w-[24rem]">
+      <td className="md:px-4 py-2 md:min-w-[32rem]">
         <div className="flex flex-col items-start text-left">
           <span className="text-lg leading-5">{line.user_name}</span>
           <span className="text-sm leading-3 font-normal text-gray-600">{line.exams} exames</span>

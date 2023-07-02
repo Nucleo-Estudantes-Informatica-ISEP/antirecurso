@@ -11,9 +11,9 @@ const fetchSessionUser = async (token: string | undefined): Promise<User | null>
     cache: 'no-store'
   });
 
-  if (res.status === 401) return null;
+  if (res.status === 200) return (await res.json()) as User;
 
-  return (await res.json()) as User;
+  return null;
 };
 
 export default fetchSessionUser;
