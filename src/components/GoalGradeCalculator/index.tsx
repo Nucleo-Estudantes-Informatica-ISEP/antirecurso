@@ -40,12 +40,12 @@ const GoalGradeCalculator: React.FC<GradeCalculatorProps> = ({ weight, min_grade
             className="w-full p-2 mr-7 rounded-lg border-2 border-primary"
             value={pretended === null ? '' : pretended}
             onChange={(e) => {
-              const value = e.target.value;
-              if (value === '') setPretendGrade(null);
-              if (value.match(/^\d{1,}$/)) {
-                if (parseInt(value) < 0) return setPretendGrade(0);
-                if (parseInt(value) > MAX_GRADE) return setPretendGrade(MAX_GRADE);
-                setPretendGrade(parseInt(value));
+              const value = e.target.valueAsNumber;
+              if (value === null) setPretendGrade(null);
+              else {
+                if (value < 0) return setPretendGrade(0);
+                if (value > MAX_GRADE) return setPretendGrade(MAX_GRADE);
+                setPretendGrade(value);
               }
             }}
             step={0.1}
