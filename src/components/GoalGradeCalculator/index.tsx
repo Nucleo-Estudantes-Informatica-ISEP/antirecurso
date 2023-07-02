@@ -16,7 +16,7 @@ const GoalGradeCalculator: React.FC<GradeCalculatorProps> = ({ weight, min_grade
 
   const { frequency } = useContext(GradeCalculatorContext);
 
-  const finalGradePretended =
+  const finalGradeNeeded =
     !frequency || !pretended
       ? null
       : Math.max(0, toFixed((pretended - 0.5 - frequency * (1 - weight)) / weight, 2));
@@ -58,19 +58,19 @@ const GoalGradeCalculator: React.FC<GradeCalculatorProps> = ({ weight, min_grade
         <span
           className={`font-bold  ${
             frequency === null ||
-            finalGradePretended === null ||
-            finalGradePretended > 20 ||
-            finalGradePretended < min_grade
+            finalGradeNeeded === null ||
+            finalGradeNeeded > 20 ||
+            finalGradeNeeded < min_grade
               ? 'text-red-500'
               : 'text-green-500'
           }`}>
           {frequency === null
             ? 'Preenche o campo da nota da frequência!'
-            : finalGradePretended === null
+            : finalGradeNeeded === null
             ? 'Preenche o campo da nota pretendida!'
-            : finalGradePretended > 20
+            : finalGradeNeeded > 20
             ? 'Não é possível atingir essa nota... 😕'
-            : finalGradePretended}
+            : finalGradeNeeded}
         </span>
       </p>
     </div>
