@@ -1,5 +1,6 @@
 import PreviousExamsTable from '@/components/PreviousExamsTable';
 import PrimaryButton from '@/components/PrimaryButton';
+import UserAvatar from '@/components/UserAvatar';
 import UserProfileScoreboard from '@/components/UserProfileScoreboard';
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
@@ -36,6 +37,12 @@ const Profile: React.FC<ProfileProps> = async ({ params }) => {
 
   return (
     <section className="h-[90vh] flex flex-col items-center my-16">
+      <p className="md:text-2xl text-xl font-bold uppercase text-center px-4">
+        O teu <span className="text-primary">perfil</span>
+      </p>
+
+      <UserAvatar avatar={user.avatar} />
+
       <p className="text-xl font-semibold text-center px-4">
         Boas vindas, <span className="font-bold text-primary">{user.name}</span>!
       </p>
