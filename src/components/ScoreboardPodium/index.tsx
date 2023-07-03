@@ -2,6 +2,7 @@
 
 import Score from 'src/types/Score';
 import { motion } from 'framer-motion';
+import Image from 'next/image';
 
 interface ScoreboardPodiumProps {
   scores: Score[];
@@ -52,14 +53,14 @@ const ScoreboardPodium: React.FC<ScoreboardPodiumProps> = ({ scores, uid }) => {
           }`}
           style={{ gridArea: `p${key + 1}` }}>
           <div className="relative">
-            <img
+            <Image
               className="w-32 rounded-full aspect-square"
               src={`https://gravatar.com/avatar/${score.avatar}?s=128&d=identicon`}
               alt={score.user_name}
               width={128}
               height={128}
             />
-            <img
+            <Image
               className="w-8 rounded-full aspect-square absolute right-[-.5rem] top-[-.5rem] md:right-0 md:top-0"
               src={badges[key]}
               alt="Badge"
