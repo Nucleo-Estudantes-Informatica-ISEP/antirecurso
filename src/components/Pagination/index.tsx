@@ -1,3 +1,5 @@
+'use client';
+
 import React, { Dispatch, SetStateAction } from 'react';
 import PreviousExamResponseMetadata from 'src/types/PreviousExamResponseMetadata';
 
@@ -6,9 +8,12 @@ interface PaginationProps {
   setFetchUrl: Dispatch<SetStateAction<string | null>>;
 }
 
-const MAX_LINKS = 6;
-
 const Pagination: React.FC<PaginationProps> = ({ metadata, setFetchUrl }) => {
+  const { width } = document.documentElement.getBoundingClientRect();
+  let MAX_LINKS = 8;
+
+  if (width < 768) MAX_LINKS = 6;
+
   return (
     <nav className="w-full">
       <ul className="flex justify-center items-center py-6 gap-x-3">
@@ -17,7 +22,9 @@ const Pagination: React.FC<PaginationProps> = ({ metadata, setFetchUrl }) => {
             <button
               disabled={link.url === null}
               className={`flex items-center justify-center ${
-                parseInt(link.label) <= MAX_LINKS ? 'w-9 h-9' : 'px-3 py-1.5'
+                parseInt(link.label) <= MAX_LINKS
+                  ? 'w-7 h-7 md:w-9 md:h-9'
+                  : 'px-2 py-1 md:px-3 md:py-1.5'
               } rounded-full cursor-pointer border-2 text-center ${
                 link.active
                   ? 'bg-primary text-white'

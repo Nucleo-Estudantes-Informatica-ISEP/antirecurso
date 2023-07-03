@@ -9,7 +9,8 @@ const nextConfig = {
     NEXT_PUBLIC_BASE_URL: process.env.NEXT_PUBLIC_BASE_URL
   },
   images: {
-    domains: ['gravatar.com']
+    domains: ['gravatar.com'],
+    minimumCacheTTL: 60
   }
 };
 

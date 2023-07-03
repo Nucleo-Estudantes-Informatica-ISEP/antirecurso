@@ -1,6 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
+import Image from 'next/image';
 import Score from 'src/types/Score';
 
 interface ScoreboardRowProps {
@@ -24,10 +25,11 @@ const ScoreboardRow: React.FC<ScoreboardRowProps> = ({ line, position, highlight
         {position}
       </th>
       <td className="md:pl-4 py-2 min-w-[3.5rem]">
-        <img
-          className="rounded-full w-9 aspect-square"
+        <Image
+          className="w-9 rounded-full aspect-square"
           src={`https://gravatar.com/avatar/${line.avatar}?s=64&d=identicon`}
           alt={line.user_name}
+          loading="lazy"
         />
       </td>
       <td className="md:px-4 py-2 md:min-w-[32rem]">
