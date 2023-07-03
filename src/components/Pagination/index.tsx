@@ -8,17 +8,19 @@ interface PaginationProps {
   setFetchUrl: Dispatch<SetStateAction<string | null>>;
 }
 
+const MAX_LINKS = 8;
+const MAX_MOBILE_LINKS = 4;
+
 const Pagination: React.FC<PaginationProps> = ({ metadata, setFetchUrl }) => {
   const { width } = document.documentElement.getBoundingClientRect();
-  let MAX_LINKS = 8;
 
-  if (width < 768) MAX_LINKS = 4;
+  const maxLinks = width > 768 ? MAX_LINKS : MAX_MOBILE_LINKS;
 
   return (
     <nav className="w-full">
       <ul className="flex justify-center items-center py-6 gap-x-3">
         {metadata.links.map((link) => {
-          if (!Number.isNaN(parseInt(link.label)) && parseInt(link.label) > MAX_LINKS) return;
+          if (!Number.isNaN(parseInt(link.label)) && parseInt(link.label) > maxLinks) return;
 
           return (
             <li key={link.label}>
