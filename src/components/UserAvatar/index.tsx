@@ -17,12 +17,12 @@ const UserAvatar: React.FC<UserAvatarProps> = ({ avatar }) => {
     <div
       onMouseOver={() => setIsHovering(true)}
       onMouseLeave={() => setIsHovering(false)}
-      className="flex flex-col items-center relative hover:cursor-pointer md:w-36 md:h-36 w-20 h-20 my-6">
+      className="flex flex-col items-center relative hover:cursor-pointer md:w-40 md:h-40 w-24 h-24 my-6">
       <Image
         placeholder="blur"
         blurDataURL="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjU2IiBoZWlnaHQ9IjI1NiIgdmlld0JveD0iMCAwIDI1NiAyNTYiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAw"
-        width={256}
-        height={256}
+        width={328}
+        height={328}
         src={`https://gravatar.com/avatar/${avatar}?s=256&d=identicon`}
         alt="Avatar"
         className="w-full h-full rounded-full"
