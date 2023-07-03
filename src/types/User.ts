@@ -6,6 +6,7 @@ export default interface User {
   name: string;
   email: string;
   is_admin: number;
+  avatar: string;
   scores: Score[];
   answers: Answer[];
 }
