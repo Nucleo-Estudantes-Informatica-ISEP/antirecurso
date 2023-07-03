@@ -39,10 +39,14 @@ const HamburgerProfileMenu: React.FC<HamburgerProfileMenuProps> = ({ token }) =>
             ) : (
               <>
                 <Link href="/login">
-                  <PrimaryButton className="w-full">Entrar numa conta</PrimaryButton>
+                  <PrimaryButton onClick={closeMenu} className="w-full">
+                    Entrar numa conta
+                  </PrimaryButton>
                 </Link>
                 <Link href="/register">
-                  <PrimaryButton className="w-full">Criar uma conta</PrimaryButton>
+                  <PrimaryButton onClick={closeMenu} className="w-full">
+                    Criar uma conta
+                  </PrimaryButton>
                 </Link>
               </>
             )}

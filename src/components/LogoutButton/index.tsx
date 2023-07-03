@@ -21,7 +21,8 @@ const LogoutButton: React.FC<LogoutButtonProps> = ({ className, onClick }) => {
       title: 'Tens a certeza que queres terminar sessão?',
       icon: 'warning',
       buttons: ['Não', 'Sim'],
-      dangerMode: true
+      dangerMode: true,
+      className: theme === 'dark' ? 'swal-dark' : ''
     });
 
     if (!confirmed) return;
@@ -34,6 +35,7 @@ const LogoutButton: React.FC<LogoutButtonProps> = ({ className, onClick }) => {
       swal({
         title: 'Terminaste sessão com sucesso!',
         icon: 'success',
+        timer: 2000,
         className: theme === 'dark' ? 'swal-dark' : ''
       });
       router.push('/');

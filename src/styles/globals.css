@@ -54,10 +54,6 @@
     filter: brightness(1.1);
   }
 
-  .swal-dark .swal-button:active {
-    filter: brightness(1.1);
-  }
-
   .swal-dark .swal-button.swal-button--confirm {
     background-color: #d35d19 !important;
     border: 1px solid #eaeaea !important;
@@ -73,5 +69,77 @@
   .swal-dark input:focus {
     border: 1px solid #eaeaea !important;
     box-shadow: 0 0 0 1px #d35d19 !important;
+  }
+
+  .swal-dark .swal-footer {
+    background-color: #222026 !important;
+    border: 1px solid #eaeaea !important;
+    color: #d35d19 !important;
+  }
+
+  .swal-dark .swal-icon--error {
+    border-color: #d35d19 !important;
+  }
+
+  .swal-dark .swal-icon--error::before {
+    background-color: #d35d19 !important;
+  }
+
+  .swal-dark .swal-icon--error .swal-icon--error-x-mark {
+    border-color: #d35d19 !important;
+  }
+
+  .swal-dark .swal-icon--error .swal-icon--error-x-mark::before,
+  .swal-dark .swal-icon--error .swal-icon--error-x-mark::after {
+    background-color: #d35d19 !important;
+  }
+
+  .swal-dark .swal-icon--warning {
+    border-color: #d35d19 !important;
+  }
+
+  .swal-dark .swal-icon--warning::before {
+    background-color: #d35d19 !important;
+  }
+
+  .swal-dark .swal-icon--warning .swal-icon--warning-body {
+    border-color: #d35d19 !important;
+  }
+
+  .swal-dark .swal-icon--warning .swal-icon--warning-body::before {
+    background-color: #d35d19 !important;
+  }
+
+  .swal-dark .swal-icon--warning .swal-icon--warning-dot {
+    background-color: #d35d19 !important;
+  }
+
+  .swal-dark .swal-icon--info {
+    border-color: #d35d19 !important;
+  }
+
+  .swal-dark .swal-icon--info::before {
+    background-color: #d35d19 !important;
+  }
+
+  .swal-dark .swal-icon--info .swal-icon--info-i {
+    border-color: #d35d19 !important;
+  }
+
+  .swal-dark .swal-icon--info .swal-icon--info-i::before {
+    background-color: #d35d19 !important;
+  }
+
+  .swal-dark .swal-icon--success {
+    border-color: #d35d19 !important;
+    background-color: #222026 !important;
+  }
+
+  .swal-dark .swal-icon--success__hide-corners {
+    background: none !important;
+  }
+  .swal-dark .swal-icon--success:before,
+  .swal-dark .swal-icon--success:after {
+    background: none !important;
   }
 }
