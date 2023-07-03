@@ -12,7 +12,7 @@ const Pagination: React.FC<PaginationProps> = ({ metadata, setFetchUrl }) => {
   const { width } = document.documentElement.getBoundingClientRect();
   let MAX_LINKS = 8;
 
-  if (width < 768) MAX_LINKS = 6;
+  if (width < 768) MAX_LINKS = 4;
 
   return (
     <nav className="w-full">
