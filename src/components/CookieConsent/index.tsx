@@ -5,9 +5,11 @@ import Link from 'next/link';
 import { AnimatePresence, motion } from 'framer-motion';
 import PrimaryButton from '@/components/PrimaryButton';
 import config from '@/config';
+import useIsMobile from '@/hooks/useIsMobile';
 
 const CookieConsent: React.FC = () => {
   const [visible, setVisible] = useState(false);
+  const isMobile = useIsMobile();
 
   useEffect(() => {
     const consent = localStorage.getItem(config.localStorage.consent);
@@ -19,13 +21,15 @@ const CookieConsent: React.FC = () => {
     setVisible(false);
   };
 
+  const position = isMobile ? -160 : -80;
+
   return (
     <AnimatePresence>
       {visible && (
         <motion.div
-          className="fixed -bottom-20 left-0 w-full px-8 py-4 bg-white text-black shadow-black shadow-lg border-t flex flex-col md:flex-row items-center justify-between gap-4"
-          animate={{ y: [0, -80] }}
-          exit={{ y: [-80, 0] }}
+          className="fixed -bottom-40 md:-bottom-20 left-0 w-full px-8 py-4 bg-white text-black shadow-black shadow-lg border-t flex flex-col md:flex-row items-center justify-between gap-4"
+          animate={{ y: [0, position] }}
+          exit={{ y: [position, 0] }}
           transition={{ duration: 0.3, ease: 'easeOut' }}>
           <div>
             <p className="font-medium">
