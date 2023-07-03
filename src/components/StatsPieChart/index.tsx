@@ -1,6 +1,7 @@
 'use client';
 
 import { ArcElement, Chart as ChartJS, ChartOptions, Legend, Tooltip } from 'chart.js';
+import { useTheme } from 'next-themes';
 import { Pie } from 'react-chartjs-2';
 
 ChartJS.register(ArcElement, Tooltip, Legend);
@@ -9,13 +10,13 @@ interface StatsPieChartProps {
   labels: string[];
   data: number[];
   text: string;
-  options?: ChartOptions<'pie'>;
 }
 
-const StatsPieChart: React.FC<StatsPieChartProps> = ({ labels, data, text, options, ...props }) => {
-  const DARK_MODE_OPTIONS: ChartOptions<'pie'> = {
-    color: 'white',
-    ...options
+const StatsPieChart: React.FC<StatsPieChartProps> = ({ labels, data, text, ...props }) => {
+  const { theme } = useTheme();
+
+  const options: ChartOptions<'pie'> = {
+    color: theme === 'dark' ? 'white' : 'black'
   };
 
   const d = {
@@ -37,11 +38,8 @@ const StatsPieChart: React.FC<StatsPieChartProps> = ({ labels, data, text, optio
 
   return (
     <div className="max-w-xs">
-      <div className="block dark:hidden">
+      <div className="h-full">
         <Pie options={options} data={d} {...props} />
-      </div>
-      <div className="hidden dark:block">
-        <Pie options={DARK_MODE_OPTIONS} data={d} {...props} />{' '}
       </div>
     </div>
   );

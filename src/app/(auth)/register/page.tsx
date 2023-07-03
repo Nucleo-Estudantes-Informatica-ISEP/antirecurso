@@ -11,6 +11,7 @@ import InputLabel from '@/components/InputLabel';
 import PrimaryButton from '@/components/PrimaryButton';
 import TextInput from '@/components/TextInput';
 import { Spinner } from '@/styles/Icons';
+import { useTheme } from 'next-themes';
 import { useRouter } from 'next/navigation';
 import swal from 'sweetalert';
 
@@ -21,6 +22,8 @@ const Register: React.FC = () => {
   const emailInputRef = useRef<HTMLInputElement>(null);
   const passwordInputRef = useRef<HTMLInputElement>(null);
   const passwordConfirmationInputRef = useRef<HTMLInputElement>(null);
+
+  const { theme } = useTheme();
 
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [errors, setErrors] = useState<{
@@ -82,7 +85,10 @@ const Register: React.FC = () => {
         swal(
           'Erro',
           'Ocorreu um erro ao tentar registar a conta, por favor tente novamente',
-          'error'
+          'error',
+          {
+            className: theme === 'dark' ? 'swal-dark' : ''
+          }
         );
       }
     } catch (err) {

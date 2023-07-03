@@ -1,6 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
+import { useTheme } from 'next-themes';
 import React, { useEffect, useRef, useState } from 'react';
 
 interface ExamNumerationProps {
@@ -22,6 +23,7 @@ const ExamNumeration: React.FC<ExamNumerationProps> = ({
 }) => {
   const ref = useRef<HTMLDivElement>(null);
   const width = window.innerWidth; // only works on client
+  const { theme } = useTheme();
 
   const [questionInView, setQuestionInView] = useState<HTMLElement>();
 
@@ -39,12 +41,14 @@ const ExamNumeration: React.FC<ExamNumerationProps> = ({
     }
   }, [active, questionInView, align, width]);
 
+  const background = theme === 'dark' ? '#222026' : '#fff';
+
   return (
     <motion.div
       animate={{
         opacity: [0, 1],
         scale: active ? [1, 1.05] : [0.8, 1],
-        background: active ? '#d35d19' : wasAnswered ? '#d35d1970' : isWrong ? '#f00' : '#fff'
+        background: active ? '#d35d19' : wasAnswered ? '#d35d1970' : isWrong ? '#f00' : background
       }}
       transition={{
         duration: 0.2,
@@ -56,7 +60,7 @@ const ExamNumeration: React.FC<ExamNumerationProps> = ({
       }}
       style={{
         border: active ? 'none' : wasAnswered ? 'none' : '1px solid #d35d19',
-        color: active ? '#fff' : wasAnswered ? '#d35d19' : isWrong ? '#fff' : '#d35d19'
+        color: active ? background : wasAnswered ? '#d35d19' : isWrong ? background : '#d35d19'
       }}
       ref={ref}
       onClick={onClick}

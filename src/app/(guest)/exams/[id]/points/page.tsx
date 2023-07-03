@@ -7,6 +7,7 @@ import Link from 'next/link';
 import PrimaryButton from '@/components/PrimaryButton';
 import { ExamContext } from 'src/contexts/ExamContext';
 
+import { useTheme } from 'next-themes';
 import { useRouter } from 'next/navigation';
 import ReactCanvasConfetti from 'react-canvas-confetti';
 import getToken from 'src/services/getToken';
@@ -25,12 +26,15 @@ const Points: React.FC<ExamPageProps> = ({ params }) => {
   const [fire, setFire] = useState(false);
   const { examResult } = useContext(ExamContext);
 
+  const { theme } = useTheme();
+
   function handleReview() {
     if (!examResult) {
       swal({
         title: 'Erro',
         text: 'Não foi possível obter o resultado do exame.',
-        icon: 'error'
+        icon: 'error',
+        className: theme === 'dark' ? 'swal-dark' : ''
       });
 
       router.push('/');
@@ -53,7 +57,8 @@ const Points: React.FC<ExamPageProps> = ({ params }) => {
     swal({
       title: 'Erro',
       text: 'Não foi possível obter o resultado do exame.',
-      icon: 'error'
+      icon: 'error',
+      className: theme === 'dark' ? 'swal-dark' : ''
     });
 
     router.push('/');

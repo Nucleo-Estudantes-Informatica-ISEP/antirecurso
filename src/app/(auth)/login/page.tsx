@@ -4,6 +4,7 @@ import InputLabel from '@/components/InputLabel';
 import PrimaryButton from '@/components/PrimaryButton';
 import TextInput from '@/components/TextInput';
 import { Spinner } from '@/styles/Icons';
+import { useTheme } from 'next-themes';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
@@ -17,6 +18,7 @@ const Login: React.FC = () => {
 
   const emailInputRef = useRef<HTMLInputElement>(null);
   const passwordInputRef = useRef<HTMLInputElement>(null);
+  const { theme } = useTheme();
 
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [errors, setErrors] = useState<{
@@ -64,7 +66,10 @@ const Login: React.FC = () => {
         swal(
           'Oops!',
           'Ocorreu um erro ao tentar fazer login. Por favor, tente novamente.',
-          'error'
+          'error',
+          {
+            className: theme === 'dark' ? 'swal-dark' : ''
+          }
         );
 
         setIsSubmitting(false);

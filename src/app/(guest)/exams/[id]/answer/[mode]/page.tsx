@@ -18,6 +18,7 @@ import ExamNumeration from '@/components/ExamNumeration';
 import ExamNumerationContainer from '@/components/ExamNumerationContainer';
 import PrimaryButton from '@/components/PrimaryButton';
 import QuestionPrompt from '@/components/QuestionPrompt';
+import { useTheme } from 'next-themes';
 import useAnswerableExamNavigation from 'src/hooks/useAnswerableExamNavigation';
 import getToken from 'src/services/getToken';
 
@@ -34,6 +35,8 @@ const N_SKELETON_OPTIONS = 4;
 const Exam: React.FC<ExamPageProps> = ({ params }) => {
   const router = useRouter();
   const [subject, setSubject] = useState('');
+
+  const { theme } = useTheme();
 
   const { setExamResult } = useContext(ExamContext);
   const {
@@ -77,14 +80,19 @@ const Exam: React.FC<ExamPageProps> = ({ params }) => {
     if (res.status === 200) {
       setExamResult(await res.json());
       router.push(`/exams/${params.id}/points`);
-    } else swal('Ocorreu um erro ao submeter o exame.', 'Por favor tente novamente.', 'error');
+    } else
+      swal('Ocorreu um erro ao submeter o exame.', 'Por favor tente novamente.', 'error', {
+        className: theme === 'dark' ? 'swal-dark' : ''
+      });
   }
 
   useEffect(() => {
     async function getExam(id: number, mode: string) {
       const exam = await generateExam(id, mode);
       if (exam === null) {
-        swal('Ocorreu um erro ao carregar o exame.', 'Por favor tente novamente.', 'error');
+        swal('Ocorreu um erro ao carregar o exame.', 'Por favor tente novamente.', 'error', {
+          className: theme === 'dark' ? 'swal-dark' : ''
+        });
         router.push('/exams');
         return;
       }

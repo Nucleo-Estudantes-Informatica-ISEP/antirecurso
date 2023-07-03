@@ -1,5 +1,6 @@
 'use client';
 
+import { useTheme } from 'next-themes';
 import { useRouter } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 import 'react-loading-skeleton/dist/skeleton.css';
@@ -22,6 +23,8 @@ const PreviousExamsTable: React.FC<PreviousExamsTableProps> = ({ token }) => {
   const [fetchUrl, setFetchUrl] = useState<string | null>(BASE_URL + '/exams');
   const [previousExamResponse, setPreviousExamResponse] = useState<PreviousExamResponse>();
 
+  const { theme } = useTheme();
+
   useEffect(() => {
     sectionRef.current?.scrollIntoView({
       behavior: 'smooth'
@@ -37,7 +40,8 @@ const PreviousExamsTable: React.FC<PreviousExamsTableProps> = ({ token }) => {
         swal({
           title: 'Erro',
           text: 'Não foi possível obter o resultado de exames.',
-          icon: 'error'
+          icon: 'error',
+          className: theme === 'dark' ? 'swal-dark' : ''
         });
         router.push('/');
       }

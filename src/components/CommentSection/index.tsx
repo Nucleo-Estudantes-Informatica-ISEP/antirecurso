@@ -1,6 +1,7 @@
 'use client';
 
 import { Flag } from '@/styles/Icons';
+import { useTheme } from 'next-themes';
 import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
 import Skeleton from 'react-loading-skeleton';
@@ -29,6 +30,8 @@ const CommentSection: React.FC<CommentSectionProps> = ({
   const [token, setToken] = useState<string | null>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
 
+  const { theme } = useTheme();
+
   async function getUserToken() {
     const t = await getToken();
     setToken(t);
@@ -53,7 +56,8 @@ const CommentSection: React.FC<CommentSectionProps> = ({
       content: {
         element: 'input'
       },
-      buttons: ['Cancelar', 'Reportar']
+      buttons: ['Cancelar', 'Reportar'],
+      className: theme === 'dark' ? 'swal-dark' : ''
     });
 
     if (result === null) return;
@@ -74,13 +78,15 @@ const CommentSection: React.FC<CommentSectionProps> = ({
       swal({
         title: 'Reported!',
         text: 'A tua denúncia foi enviada com sucesso!',
-        icon: 'success'
+        icon: 'success',
+        className: theme === 'dark' ? 'swal-dark' : ''
       });
     else
       swal({
         title: 'Erro!',
         text: 'Algo correu mal ao enviar a tua denúncia. Por favor, tenta novamente.',
-        icon: 'error'
+        icon: 'error',
+        className: theme === 'dark' ? 'swal-dark' : ''
       });
   }
 

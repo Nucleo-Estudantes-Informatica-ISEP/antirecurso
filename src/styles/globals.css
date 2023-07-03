@@ -25,4 +25,53 @@
     -ms-overflow-style: none; /* IE and Edge */
     scrollbar-width: none; /* Firefox */
   }
+
+  .swal-dark {
+    background-color: #222026 !important;
+    border: 1px solid #eaeaea !important;
+    color: #fff !important;
+  }
+
+  .swal-dark .swal-title {
+    color: #fff !important;
+  }
+
+  .swal-dark .swal-text {
+    color: #fff !important;
+  }
+
+  .swal-dark .swal-button {
+    background-color: #222026 !important;
+    border: 1px solid #eaeaea !important;
+    color: #fff !important;
+  }
+
+  .swal-dark .swal-button:hover {
+    filter: brightness(1.1);
+  }
+
+  .swal-dark .swal-button:focus {
+    filter: brightness(1.1);
+  }
+
+  .swal-dark .swal-button:active {
+    filter: brightness(1.1);
+  }
+
+  .swal-dark .swal-button.swal-button--confirm {
+    background-color: #d35d19 !important;
+    border: 1px solid #eaeaea !important;
+    color: #fff !important;
+  }
+
+  .swal-dark input {
+    background-color: #222026 !important;
+    border: 1px solid #eaeaea !important;
+    color: #fff !important;
+  }
+
+  .swal-dark input:focus {
+    border: 1px solid #eaeaea !important;
+    box-shadow: 0 0 0 1px #d35d19 !important;
+  }
 }

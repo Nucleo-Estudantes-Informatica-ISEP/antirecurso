@@ -31,7 +31,7 @@ const SubjectStats: React.FC<SubjectStatsProps> = async ({ params }) => {
   const subjectStats: ISubjectStats = await res.json();
 
   return (
-    <section className="flex flex-col items-center justify-center w-full h-full overflow-x-hidden text-center">
+    <section className="flex flex-col items-center justify-center w-full h-full overflow-x-hidden text-center mt-6">
       <p className="w-5/6 px-4 text-lg font-bold text-center uppercase md:text-xl">
         As tuas <span className="text-primary">estatísticas </span>
         de <span className="text-primary">{subjectName}</span>
