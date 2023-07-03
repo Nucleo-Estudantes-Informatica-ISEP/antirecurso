@@ -1,5 +1,6 @@
 'use client';
 
+import { useTheme } from 'next-themes';
 import { useRouter } from 'next/navigation';
 import swal from 'sweetalert';
 
@@ -11,6 +12,8 @@ interface LogoutButtonProps {
 const LogoutButton: React.FC<LogoutButtonProps> = ({ className, onClick }) => {
   const router = useRouter();
 
+  const { theme } = useTheme();
+
   const logoutButtonHandler = async () => {
     if (onClick) onClick();
 
@@ -18,7 +21,8 @@ const LogoutButton: React.FC<LogoutButtonProps> = ({ className, onClick }) => {
       title: 'Tens a certeza que queres terminar sessão?',
       icon: 'warning',
       buttons: ['Não', 'Sim'],
-      dangerMode: true
+      dangerMode: true,
+      className: theme === 'dark' ? 'swal-dark' : ''
     });
 
     if (!confirmed) return;
@@ -30,14 +34,17 @@ const LogoutButton: React.FC<LogoutButtonProps> = ({ className, onClick }) => {
     if (res.status === 200) {
       swal({
         title: 'Terminaste sessão com sucesso!',
-        icon: 'success'
+        icon: 'success',
+        timer: 2000,
+        className: theme === 'dark' ? 'swal-dark' : ''
       });
       router.push('/');
       router.refresh();
     } else {
       swal({
         title: 'Algo correu mal. Por favor tenta novamente.',
-        icon: 'error'
+        icon: 'error',
+        className: theme === 'dark' ? 'swal-dark' : ''
       });
       router.refresh();
     }

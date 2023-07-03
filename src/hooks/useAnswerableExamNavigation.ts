@@ -1,7 +1,10 @@
+'use client';
+
 import { useCallback, useEffect, useState } from 'react';
 
 import swal from 'sweetalert';
 
+import { useTheme } from 'next-themes';
 import Question from 'src/types/Question';
 import useExamNavigation from './useExamNavigation';
 
@@ -12,6 +15,8 @@ export default function useAnswerableExamNavigation({
 }) {
   const [answers, setAnswers] = useState<Map<number, string>>(new Map<number, string>());
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const { theme } = useTheme();
 
   const {
     changeQuestion,
@@ -148,7 +153,8 @@ export default function useAnswerableExamNavigation({
           title: 'Não respondeu a todas as questões do exame.',
           text: 'Tem a certeza que quer terminar o exame?',
           icon: 'warning',
-          buttons: ['Cancelar', 'Continuar']
+          buttons: ['Cancelar', 'Continuar'],
+          className: theme === 'dark' ? 'swal-dark' : ''
         });
 
         if (!confirmed) return;
@@ -157,7 +163,8 @@ export default function useAnswerableExamNavigation({
       const confirmed = await swal({
         title: 'Tem a certeza que quer terminar o exame?',
         icon: 'warning',
-        buttons: ['Não', 'Sim']
+        buttons: ['Não', 'Sim'],
+        className: theme === 'dark' ? 'swal-dark' : ''
       });
 
       if (!confirmed) return;

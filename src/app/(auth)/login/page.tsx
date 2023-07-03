@@ -4,11 +4,13 @@ import InputLabel from '@/components/InputLabel';
 import PrimaryButton from '@/components/PrimaryButton';
 import TextInput from '@/components/TextInput';
 import { Spinner } from '@/styles/Icons';
+import { useTheme } from 'next-themes';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 import LoginSchema from 'src/schemas/LoginSchema';
 import swal from 'sweetalert';
+
 import { z } from 'zod';
 
 const Login: React.FC = () => {
@@ -16,6 +18,7 @@ const Login: React.FC = () => {
 
   const emailInputRef = useRef<HTMLInputElement>(null);
   const passwordInputRef = useRef<HTMLInputElement>(null);
+  const { theme } = useTheme();
 
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [errors, setErrors] = useState<{
@@ -63,7 +66,10 @@ const Login: React.FC = () => {
         swal(
           'Oops!',
           'Ocorreu um erro ao tentar fazer login. Por favor, tente novamente.',
-          'error'
+          'error',
+          {
+            className: theme === 'dark' ? 'swal-dark' : ''
+          }
         );
 
         setIsSubmitting(false);
@@ -88,12 +94,9 @@ const Login: React.FC = () => {
   }, [errors]);
 
   return (
-    <div className="flex flex-col items-center justify-center py-12 px-4 sm:p-12 md:w-1/2 max-w-md md:h-screen relative">
-      <Link href="/" className="w-32 md:w-48 mb-5 mx-auto">
-        <img src="/images/logo.png" alt="Our beautiful logo" className="w-full" />
-      </Link>
-      <div className="w-full">
-        <h1 className="mb-4 text-xl font-semibold text-gray-700">Entrar</h1>
+    <div className="relative flex flex-col items-center justify-center max-w-md px-4 py-12 sm:p-12 md:w-1/2 md:h-screen">
+      <div className="w-full dark:text-white">
+        <h1 className="mb-4 text-xl font-semibold ">Entrar</h1>
 
         <form onSubmit={handleSubmit}>
           <div className="mt-4">
@@ -120,7 +123,7 @@ const Login: React.FC = () => {
           <div className="mt-4">
             <PrimaryButton disabled={isSubmitting} type="submit" className="block w-full">
               {isSubmitting ? (
-                <div className="flex flex-row justify-center items-center">
+                <div className="flex flex-row items-center justify-center">
                   <svg className="animate-spin h-[16px] w-[16px] mr-3">
                     <Spinner size={16} />
                   </svg>

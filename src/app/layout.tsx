@@ -1,4 +1,6 @@
 import CookieConsent from '@/components/CookieConsent';
+import ThemeProvider from '@/components/Theme/ThemeProvider';
+import Topbar from '@/components/Topbar';
 import '@/styles/globals.css';
 
 export const metadata = {
@@ -9,9 +11,14 @@ export const metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="pt">
-      <body className="min-h-screen h-screen">
-        {children}
-        <CookieConsent />
+      <body className="transition-colors dark:bg-primary-dark">
+        <ThemeProvider>
+          <Topbar />
+          <main className="flex">
+            <div className="flex items-stretch w-full min-h-[calc(100vh-5rem)]">{children}</div>
+          </main>
+          <CookieConsent />
+        </ThemeProvider>
       </body>
     </html>
   );

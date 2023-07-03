@@ -15,16 +15,16 @@ const ExamsTable: React.FC<ExamsTableProps> = ({ previousExamResponse }) => {
       <TableHeading />
       <tbody>
         {previousExamResponse.data.map((answer) => (
-          <tr key={answer.id} className="bg-white border-b">
-            <td className="text-xs px-2 sm:px-6 py-2 sm:py-4 w-1/4">
+          <tr key={answer.id} className="bg-white border-b dark:bg-primary-dark">
+            <td className="w-1/4 px-2 py-2 text-xs sm:px-6 sm:py-4">
               <Link
                 href={`/exams/${answer.id}/review/`}
-                className="hover:text-primary underline text-xs md:text-base transition ease-in-out capitalize">
+                className="text-xs underline capitalize transition ease-in-out hover:text-primary md:text-base">
                 {answer.subject}
               </Link>
             </td>
-            <td className="text-xs md:text-base px-2 sm:px-6 py-2 sm:py-4 w-1/4">{answer.score}</td>
-            <td className="text-xs md:text-base px-2 sm:px-6 py-2 sm:py-4 w-1/4">
+            <td className="w-1/4 px-2 py-2 text-xs md:text-base sm:px-6 sm:py-4">{answer.score}</td>
+            <td className="w-1/4 px-2 py-2 text-xs md:text-base sm:px-6 sm:py-4">
               {formatDateDDStrMonthYYYY(answer.created_at)}
             </td>
           </tr>

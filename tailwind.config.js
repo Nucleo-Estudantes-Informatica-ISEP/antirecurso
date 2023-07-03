@@ -3,6 +3,7 @@ const defaultTheme = require('tailwindcss/defaultTheme');
 const plugin = require('tailwindcss/plugin');
 
 module.exports = {
+  darkMode: 'class',
   content: [
     './app/**/*.{js,ts,jsx,tsx}',
     './pages/**/*.{js,ts,jsx,tsx}',
@@ -180,7 +181,13 @@ module.exports = {
         xl: '36rem'
       },
       colors: {
-        primary: '#d35d19'
+        primary: {
+          DEFAULT: '#d35d19',
+          dark: '#2e303a'
+        },
+        secondary: {
+          dark: '#222026'
+        }
       }
     }
   },

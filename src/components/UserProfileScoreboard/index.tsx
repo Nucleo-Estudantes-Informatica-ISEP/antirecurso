@@ -10,7 +10,7 @@ interface UsePreviousExamsTableProps {
 
 const UserProfileScoreboard: React.FC<UsePreviousExamsTableProps> = ({ user }) => {
   return (
-    <section className="mt-5 w-full md:px-16 grid place-items-center">
+    <section className="grid w-full mt-5 md:px-16 place-items-center">
       <table className="w-1/2 text-sm text-center">
         <thead className="text-xs text-white uppercase bg-primary">
           <tr>
@@ -24,11 +24,11 @@ const UserProfileScoreboard: React.FC<UsePreviousExamsTableProps> = ({ user }) =
         </thead>
         <tbody>
           {user.scores.map((score) => (
-            <tr className="bg-white border-b" key={score.subject_id}>
+            <tr className="bg-white border-b dark:bg-primary-dark" key={score.subject_id}>
               <td className="px-6 py-4 capitalize">
                 <Link
                   href={`/stats/${score.subject_id}`}
-                  className="hover:text-primary underline text-xs md:text-base transition ease-in-out capitalize">
+                  className="text-xs underline capitalize transition ease-in-out hover:text-primary md:text-base">
                   {score.subject}
                 </Link>
               </td>

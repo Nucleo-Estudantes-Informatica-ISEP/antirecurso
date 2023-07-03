@@ -1,11 +1,12 @@
 'use client';
 
 import { Menu } from '@/styles/Icons';
+import Link from 'next/link';
 import { useState } from 'react';
-import TopbarLink from '../TopbarLink';
 import LogoutButton from '../LogoutButton';
 import PrimaryButton from '../PrimaryButton';
-import Link from 'next/link';
+import ThemeChanger from '../Theme/ThemeChanger';
+import TopbarLink from '../TopbarLink';
 
 interface HamburgerMenuProps {
   token: string | undefined;
@@ -26,7 +27,11 @@ const HamburgerMenu: React.FC<HamburgerMenuProps> = ({ token }) => {
     <div className="flex md:hidden">
       <Menu className="text-primary hover:cursor-pointer" onClick={handleClickMenu} />
       {isOpen && (
-        <div className="absolute left-0 top-20 w-screen bg-white h-auto p-5 border border-gray-100 shadow rounded flex flex-col space-y-5">
+        <div className="absolute left-0 flex flex-col w-screen h-auto p-5 space-y-5 bg-white shadow dark:shadow-secondary-dark top-20 dark:bg-secondary-dark">
+          <div className="self-end">
+            <ThemeChanger />
+          </div>
+
           <TopbarLink onClick={closeMenu} href="/">
             Home
           </TopbarLink>
@@ -40,7 +45,7 @@ const HamburgerMenu: React.FC<HamburgerMenuProps> = ({ token }) => {
             Sobre
           </TopbarLink>
 
-          <div className="mt-6 border-t border-gray-200 pt-6 flex flex-col gap-y-4">
+          <div className="flex flex-col pt-6 mt-6 border-t border-gray-200 gap-y-4">
             {token ? (
               <>
                 <Link href={`/profile/${token}`}>

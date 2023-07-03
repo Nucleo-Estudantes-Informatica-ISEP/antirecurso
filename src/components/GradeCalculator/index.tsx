@@ -22,21 +22,21 @@ const GradeCalculator: React.FC<GradeCalculatorProps> = ({ examGrade, weight, mi
     !frequency || !exam ? null : toFixed(frequency * (1 - weight) + exam * weight, 2);
 
   return (
-    <div className="flex flex-col items-center justify-center p-4 space-y-6 w-full mx-auto my-6">
-      <div className="flex items-center justify-between gap-x-2 w-full">
+    <div className="flex flex-col items-center justify-center w-full p-4 mx-auto my-6 space-y-6">
+      <div className="flex items-center justify-between w-full gap-x-2">
         <div className="h-0.5 w-1/3 bg-primary rounded opacity-70"></div>
-        <h1 className="text-xl md:text-3xl w-full font-bold text-center mx-auto">
+        <h1 className="w-full mx-auto text-xl font-bold text-center md:text-3xl">
           Calcula a tua nota <span className="text-primary">final</span>
         </h1>
         <div className="h-0.5 w-1/3 bg-primary rounded opacity-70"></div>
       </div>
-      <div className="flex flex-col md:flex-row gap-y-4 items-center ">
-        <div className="flex items-center gap-x-2 w-full">
-          <label className="text-right text-lg w-32" htmlFor="frequency">
+      <div className="flex flex-col items-center md:flex-row gap-y-4 ">
+        <div className="flex items-center w-full gap-x-2">
+          <label className="w-32 text-lg text-right" htmlFor="frequency">
             Frequência
           </label>
           <input
-            className="w-full p-2 mr-7 rounded-lg border-2 border-primary"
+            className="w-full p-2 border-2 rounded-lg mr-7 border-primary dark:bg-secondary-dark dark:text-white"
             value={frequency === null ? '' : frequency}
             onChange={(e) => {
               const value = e.target.value;
@@ -52,12 +52,12 @@ const GradeCalculator: React.FC<GradeCalculatorProps> = ({ examGrade, weight, mi
           />
         </div>
 
-        <div className="flex items-center gap-x-2 w-full">
-          <label className="text-right text-lg w-32" htmlFor="exam">
+        <div className="flex items-center w-full gap-x-2">
+          <label className="w-32 text-lg text-right" htmlFor="exam">
             Exame
           </label>
           <input
-            className="w-full p-2 rounded-lg border-2 border-primary"
+            className="w-full p-2 border-2 rounded-lg border-primary dark:bg-secondary-dark dark:text-white"
             value={exam === null ? '' : exam}
             onChange={(e) => {
               const value = e.target.value;
@@ -87,7 +87,7 @@ const GradeCalculator: React.FC<GradeCalculatorProps> = ({ examGrade, weight, mi
             }}>
             ⚠️
             {tooltipVisible && (
-              <span className="absolute bottom-4 -left-10 md:left-4 z-10 p-2 mt-2 text-xs text-white bg-red-500 rounded-md shadow-md">
+              <span className="absolute z-10 p-2 mt-2 text-xs text-white bg-red-500 rounded-md shadow-md bottom-4 -left-10 md:left-4">
                 A tua nota no exame é inferior à nota mínima para aprovação.
               </span>
             )}

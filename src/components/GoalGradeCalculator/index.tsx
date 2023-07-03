@@ -22,22 +22,22 @@ const GoalGradeCalculator: React.FC<GradeCalculatorProps> = ({ weight, min_grade
       : Math.max(0, toFixed((pretended - 0.5 - frequency * (1 - weight)) / weight, 2));
 
   return (
-    <div className="flex flex-col items-center justify-center p-4 space-y-6 w-full mx-auto my-4">
-      <div className="flex items-center justify-between gap-x-2 w-full">
+    <div className="flex flex-col items-center justify-center w-full p-4 mx-auto my-4 space-y-6">
+      <div className="flex items-center justify-between w-full gap-x-2">
         <div className="h-0.5 w-1/3 bg-primary rounded opacity-70"></div>
-        <h1 className="text-xl md:text-3xl w-full font-bold text-center mx-auto">
+        <h1 className="w-full mx-auto text-xl font-bold text-center md:text-3xl">
           Nota necessária no <span className="text-primary">exame</span> para atingir o teu{' '}
           <span className="text-primary">objetivo</span> na UC!
         </h1>
         <div className="h-0.5 w-1/3 bg-primary rounded opacity-70"></div>
       </div>
-      <div className="flex flex-col md:flex-row gap-y-4 items-center justify-center">
-        <div className="flex items-center gap-x-2 w-full">
-          <label className="text-right text-lg w-32" htmlFor="pretended">
+      <div className="flex flex-col items-center justify-center md:flex-row gap-y-4">
+        <div className="flex items-center w-full gap-x-2">
+          <label className="w-32 text-lg text-right" htmlFor="pretended">
             Objetivo
           </label>
           <input
-            className="w-full p-2 mr-7 rounded-lg border-2 border-primary"
+            className="w-full p-2 border-2 rounded-lg mr-7 border-primary dark:bg-secondary-dark dark:text-white"
             value={pretended === null ? '' : pretended}
             onChange={(e) => {
               const value = e.target.valueAsNumber;

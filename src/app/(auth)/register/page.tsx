@@ -11,6 +11,7 @@ import InputLabel from '@/components/InputLabel';
 import PrimaryButton from '@/components/PrimaryButton';
 import TextInput from '@/components/TextInput';
 import { Spinner } from '@/styles/Icons';
+import { useTheme } from 'next-themes';
 import { useRouter } from 'next/navigation';
 import swal from 'sweetalert';
 
@@ -21,6 +22,8 @@ const Register: React.FC = () => {
   const emailInputRef = useRef<HTMLInputElement>(null);
   const passwordInputRef = useRef<HTMLInputElement>(null);
   const passwordConfirmationInputRef = useRef<HTMLInputElement>(null);
+
+  const { theme } = useTheme();
 
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [errors, setErrors] = useState<{
@@ -82,7 +85,10 @@ const Register: React.FC = () => {
         swal(
           'Erro',
           'Ocorreu um erro ao tentar registar a conta, por favor tente novamente',
-          'error'
+          'error',
+          {
+            className: theme === 'dark' ? 'swal-dark' : ''
+          }
         );
       }
     } catch (err) {
@@ -107,12 +113,9 @@ const Register: React.FC = () => {
   }, [errors]);
 
   return (
-    <div className="flex flex-col relative items-center justify-center py-12 px-4 sm:p-12 md:w-1/2 md:h-screen">
-      <Link href="/" className="w-32 md:w-48 mb-5 mx-auto">
-        <img src="/images/logo.png" alt="Our beautiful logo" className="w-full" />
-      </Link>
-      <div className="w-full">
-        <h1 className="mb-4 text-xl font-semibold text-gray-700">Criar conta</h1>
+    <div className="relative flex flex-col items-center justify-center px-4 py-12 sm:p-12 md:w-1/2 md:h-screen">
+      <div className="w-full dark:text-white">
+        <h1 className="mb-4 text-xl font-semibold ">Criar conta</h1>
 
         <form onSubmit={handleSubmit}>
           <div className="mt-1">
@@ -159,7 +162,7 @@ const Register: React.FC = () => {
             />
           </div>
 
-          <div className="flex mt-8 text-sm items-center">
+          <div className="flex items-center mt-8 text-sm">
             <label className="flex items-center dark:text-gray-400">
               <input
                 type="checkbox"
@@ -167,9 +170,12 @@ const Register: React.FC = () => {
                 required
                 className="text-primary form-checkbox focus:border-primary focus:outline-none focus:shadow-outline-primary"
               />
-              <span className="ml-2 text-black">
+              <span className="ml-2 dark:text-white">
                 Confirmo que li e aceito a{' '}
-                <Link target="_blank" className="text-primary" href="/privacy-policy">
+                <Link
+                  target="_blank"
+                  className="text-primary hover:underline"
+                  href="/privacy-policy">
                   Política de Privacidade
                 </Link>
               </span>
@@ -179,7 +185,7 @@ const Register: React.FC = () => {
           <div className="mt-6">
             <PrimaryButton disabled={isSubmitting} type="submit" className="block w-full">
               {isSubmitting ? (
-                <div className="flex flex-row justify-center items-center">
+                <div className="flex flex-row items-center justify-center">
                   <svg className="animate-spin h-[16px] w-[16px] mr-3">
                     <Spinner size={16} />
                   </svg>

@@ -1,8 +1,8 @@
 'use client';
 
-import Score from 'src/types/Score';
 import { motion } from 'framer-motion';
 import Image from 'next/image';
+import Score from 'src/types/Score';
 
 interface ScoreboardPodiumProps {
   scores: Score[];
@@ -35,7 +35,7 @@ const ScoreboardPodium: React.FC<ScoreboardPodiumProps> = ({ scores, uid }) => {
 
   return (
     <div
-      className="grid grid-cols-3 items-start mb-6 mt-2"
+      className="grid items-start grid-cols-3 mt-2 mb-6"
       style={{ gridTemplateAreas: `"p2 p1 p3"` }}>
       {scores.slice(0, 3).map((score, key) => (
         <motion.div
@@ -69,7 +69,7 @@ const ScoreboardPodium: React.FC<ScoreboardPodiumProps> = ({ scores, uid }) => {
             />
             {score.user_id == uid && (
               <motion.div
-                className="-z-10 w-28 md:w-32 text-center text-xs md:text-sm rounded-full bg-orange-400 absolute left-1/2 -translate-x-1/2"
+                className="absolute text-xs text-center -translate-x-1/2 bg-orange-400 rounded-full -z-10 w-28 md:w-32 md:text-sm left-1/2"
                 variants={youMotion}
                 transition={{
                   duration: 0.2,
@@ -80,9 +80,9 @@ const ScoreboardPodium: React.FC<ScoreboardPodiumProps> = ({ scores, uid }) => {
             )}
           </div>
           <div className="flex flex-col items-center py-4 text-center max-w-min">
-            <p className="text-lg md:text-2xl font-bold leading-5">{score.user_name}</p>
-            <p className="text-lg md:text-2xl font-bold mt-1">{score.score}</p>
-            <p className="text-sm md:text-lg font-normal text-gray-600 whitespace-nowrap">
+            <p className="text-lg font-bold leading-5 md:text-2xl">{score.user_name}</p>
+            <p className="mt-1 text-lg font-bold md:text-2xl">{score.score}</p>
+            <p className="text-sm font-normal text-gray-600 md:text-lg dark:text-primary whitespace-nowrap">
               {score.exams} exames
             </p>
           </div>

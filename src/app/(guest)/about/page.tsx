@@ -1,9 +1,9 @@
 const About: React.FC = () => {
   return (
-    <section className="h-full flex flex-col items-center justify-center text-center space-y-10">
+    <section className="flex flex-col items-center w-full space-y-10 text-center mt-8">
       <div className="space-y-3">
         <p className="text-xl font-semibold uppercase">Made by</p>
-        <p className="text-primary font-semibold">
+        <p className="font-semibold text-primary">
           <a href="https://www.nei-isep.org/" rel="noreferrer" target="_blank">
             NEI-ISEP
           </a>
@@ -12,16 +12,16 @@ const About: React.FC = () => {
 
       <div className="space-y-3">
         <p className="text-xl font-semibold uppercase">Data Mining by</p>
-        <p className="text-primary font-semibold">
+        <p className="font-semibold text-primary">
           <a href="https://github.com/tomasflopes" rel="noreferrer" target="_blank">
             Tomás Lopes
           </a>
         </p>
       </div>
 
-      <div className="space-y-3 w-5/6">
+      <div className="w-5/6 space-y-3">
         <p className="text-xl font-semibold uppercase">Git repository </p>
-        <p className="text-primary font-semibold w-full">
+        <p className="w-full font-semibold text-primary">
           <a
             rel="noreferrer"
             href="https://github.com/Nucleo-Estudantes-Informatica-ISEP/antirecurso"

@@ -32,12 +32,12 @@ const ScoreboardPage: React.FC<ScoreboardPageProps> = async ({ params }) => {
   ]);
 
   return (
-    <section className="min-h-[90vh] flex flex-col items-center my-16">
-      <p className="text-xl font-bold uppercase text-center px-4">
+    <section className="flex flex-col items-center w-full my-16">
+      <p className="px-4 text-xl font-bold text-center uppercase">
         Scoreboard de <span className="text-primary">{subjectName}</span>
       </p>
 
-      <section className="my-5 w-full grid place-items-center">
+      <section className="grid w-full my-5 place-items-center">
         {scoreboard.scores.length === 0 ? (
           <p className="text-center">Sem nenhum utilizador registado</p>
         ) : (
