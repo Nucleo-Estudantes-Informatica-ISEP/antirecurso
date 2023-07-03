@@ -36,7 +36,7 @@ const Profile: React.FC<ProfileProps> = async ({ params }) => {
   const today = new Date().toLocaleDateString('pt-PT');
 
   return (
-    <section className="w-full flex flex-col items-center my-16">
+    <section className="w-full flex flex-col items-center my-8">
       <p className="md:text-2xl text-xl font-bold uppercase text-center px-4">
         O teu <span className="text-primary">perfil</span>
       </p>

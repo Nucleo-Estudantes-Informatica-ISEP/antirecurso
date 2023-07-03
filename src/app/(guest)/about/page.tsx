@@ -1,6 +1,6 @@
 const About: React.FC = () => {
   return (
-    <section className="flex flex-col items-center justify-center w-full space-y-10 text-center">
+    <section className="flex flex-col items-center w-full space-y-10 text-center mt-8">
       <div className="space-y-3">
         <p className="text-xl font-semibold uppercase">Made by</p>
         <p className="font-semibold text-primary">

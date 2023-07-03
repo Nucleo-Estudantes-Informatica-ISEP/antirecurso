@@ -12,7 +12,7 @@ const TopbarLink: React.FC<TopbarLinkProps> = ({ href, children, onClick }) => {
       <Link
         onClick={onClick}
         href={href}
-        className="transition ease-in-out hover:text-primary dark:text-white">
+        className="transition ease-in-out duration-100 dark:text-white dark:hover:text-primary hover:text-primary ">
         <button>{children}</button>
       </Link>
     </>
