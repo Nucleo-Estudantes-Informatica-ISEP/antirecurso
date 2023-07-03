@@ -1,4 +1,4 @@
-import GradeCalculator from '@/components/GradeCalculator';
+import GradeCalculatorContainer from '@/components/GradeCalculatorContainer';
 import StatsLineChart from '@/components/StatsLineChart';
 import StatsPieChart from '@/components/StatsPieChart';
 import { cookies } from 'next/headers';
@@ -93,11 +93,8 @@ const SubjectStats: React.FC<SubjectStatsProps> = async ({ params }) => {
             data={subjectStats.user_scores.map((score) => (score.score * 20) / 100)}
           />
         </div>
-        <GradeCalculator
-          examGrade={parseInt(subjectStats.average_grade)}
-          weight={subjectStats.exam_weight}
-          minGrade={subjectStats.min_grade}
-        />
+
+        <GradeCalculatorContainer subjectStats={subjectStats} />
       </div>
     </section>
   );
