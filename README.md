@@ -16,9 +16,9 @@ The repository serves as the starting point for anyone who wishes to understand 
 
 "Antirecurso" initially began as an Android mobile app designed to help students studying for PRCMP (Princípios de Computação) exams. Over time, it has evolved into a comprehensive platform that caters to a broad range of academic subjects, accessible from any device with an internet connection.
 
-Whether using a computer, tablet, or mobile phone, "antirecurso" provides numerous exercises in the form of short quizzes, each with 10 random questions. Upon completion, users receive immediate feedback and their performance is tracked on a scoreboard.
+Whether using a computer, tablet, or mobile phone, Antirecurso provides numerous exercises in the form of short quizzes, each with 10 random questions. Upon completion, users receive immediate feedback and their performance is tracked on a scoreboard.
 
-If you're a student seeking extra academic resources, check out "antirecurso" <a href="https://antirecurso.nei-isep.org" target="_blank">here</a>. It's a comprehensive tool for exam preparation.
+If you're a student seeking extra academic resources, check out Antirecurso <a href="https://antirecurso.nei-isep.org" target="_blank">here</a>. It's a comprehensive tool for exam preparation.
 
 ## Usage Examples 🌐
 
@@ -36,28 +36,50 @@ To start using Antirecurso:
 
 4. Choose the Type of questions you wish to take
 
-![Homepage Screenshot](/public/images/typeOfQuestions.png "Antirecurso Homepage")
+![Homepage Screenshot](/public/images/typeOfQuestions.png "Antirecurso questions")
 
 5. Submit your answers, and immediately receive feedback on your performance, including a breakdown of correct and incorrect responses.
 
 6. Track your progress over time using the inbuilt scoreboard feature.
 
-![Homepage Screenshot](/public/images/score.png "Antirecurso Homepage")
+![Homepage Screenshot](/public/images/score.png "Antirecurso score")
 
 
 ## The Tech Stack 🔧
 
 For this project, we've transitioned to using the Next.js framework. It brings productivity and agility in development and allows us to build server-side rendering and static web applications.
 
-Here's a quick rundown of the tech stack:
+Here's a quick rundown of the updated tech stack:
 
-- **Next.js**: A top-tier open-source React front-end development web framework that enables functionality such as server-side rendering and generating static websites for React based web applications.
+- **Next.js**: A top-tier open-source React front-end development web framework that enables functionality such as server-side rendering and generating static websites for React-based web applications. 
 
-- **Tailwind CSS**: A utility-first CSS framework packed with classes like flex, pt-4, text-center and rotate-90 that can be composed to build any design, directly in your markup.
+- **Tailwind CSS**: A utility-first CSS framework packed with classes like flex, pt-4, text-center, and rotate-90 that can be composed to build any design, directly in your markup.
 
-- **Alpine.js**: A rugged, minimal framework for composing JavaScript behavior in your markup. It’s like Tailwind for JavaScript.
+- **Framer Motion**: A production-ready motion library for React that helps create smooth and delightful animations. It provides a simple and intuitive API to animate components and create interactive user experiences.
 
 Together, these technologies provide the infrastructure to build dynamic, feature-rich web applications accessible from the comfort of your home 🤗.
+
+## Roadmap or Future Plans 🚀
+
+We have an exciting vision for the future of Antirecurso! Here are some of the planned features and enhancements we have in store:
+
+- **Enhanced Question Bank**: Expand the question bank across multiple subjects and academic levels. We aim to provide a comprehensive set of questions that cover a wide range of topics to cater to the needs of students studying various disciplines.
+
+- **Interactive Learning Resources**: Integrate interactive learning resources, such as videos, tutorials, and additional study materials, to supplement the quizzes. This will provide users with a more comprehensive learning experience and help them grasp the concepts more effectively.
+
+- **Social Features**: Implement social features to foster a community of learners. This may include the ability to connect with other users, share achievements, and engage in discussions related to specific subjects or questions.
+
+- **Localization and Multilingual Support**: Provide localization options and multilingual support to make Antirecurso accessible to a wider audience. This will involve translating the user interface, quizzes, and learning resources into multiple languages.
+
+- **Gamification Elements**: Introduce gamification elements, such as badges, rewards, and leaderboards, to make the learning process more engaging and motivating for users. This will encourage healthy competition and provide incentives for users to actively participate and improve their performance.
+
+- **Accessibility Improvements**: Continuously work on improving the accessibility of the platform to ensure that it is usable by individuals with diverse abilities. This includes adhering to accessibility guidelines, providing alternative text for images, and optimizing the user interface for screen readers and other assistive technologies.
+
+Please note that these are just a few examples of the exciting features and enhancements we have planned for Antirecurso. The roadmap is subject to change based on user feedback, community contributions, and emerging needs in the education sector.
+
+We invite you to join us on this journey of growth and innovation as we strive to create a powerful and accessible learning platform for students worldwide. If you have any suggestions or ideas for future development, we'd love to hear from you!
+
+Let's make learning fun and effective together! 🌟
 
 ## Release Updates 📑
 
