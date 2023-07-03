@@ -13,7 +13,7 @@ const Exams: React.FC = async () => {
         <span className="text-primary">o exame</span>
       </p>
 
-      <section className="grid grid-cols-2 gap-x-4 px-6 md:grid-cols-4 gap-y-10 md:gap-x-10 mt-10 md:px-16">
+      <section className="grid grid-cols-2 gap-x-4 px-6 md:grid-cols-4 gap-y-10 md:gap-x-10 my-8 md:px-16">
         {subjects.map((subject) => (
           <Link
             key={subject.id}

@@ -94,9 +94,9 @@ const Login: React.FC = () => {
   }, [errors]);
 
   return (
-    <div className="relative flex flex-col items-center justify-center max-w-md px-4 py-12 sm:p-12 md:w-1/2 md:h-screen">
+    <div className="relative flex flex-col items-center justify-center w-11/12 max-w-md px-4 py-12 sm:p-12 md:w-1/2 h-full">
       <div className="w-full dark:text-white">
-        <h1 className="mb-4 text-xl font-semibold ">Entrar</h1>
+        <h1 className="mb-4 text-xl font-semibold">Entrar</h1>
 
         <form onSubmit={handleSubmit}>
           <div className="mt-4">
