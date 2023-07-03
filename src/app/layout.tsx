@@ -1,3 +1,4 @@
+import CookieConsent from '@/components/CookieConsent';
 import '@/styles/globals.css';
 
 export const metadata = {
@@ -8,7 +9,10 @@ export const metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="pt">
-      <body className="min-h-screen h-screen">{children}</body>
+      <body className="min-h-screen h-screen">
+        {children}
+        <CookieConsent />
+      </body>
     </html>
   );
 }

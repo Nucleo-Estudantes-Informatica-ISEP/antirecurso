@@ -1,6 +1,6 @@
 const PrivacyPolicy: React.FC = () => {
   return (
-    <div className="min-h-screen w-full text-sm md:text-md px-5 md:px-24 pb-5">
+    <div className="w-full text-sm md:text-md px-5 md:px-24 md:pb-24 pb-48">
       <h1 className="text-primary font-black text-xl">Política de Privacidade</h1>
       <span className="h-full">
         <h3 className="mt-2 font-bold text-primary">
