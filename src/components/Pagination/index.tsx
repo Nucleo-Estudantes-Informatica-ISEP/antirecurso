@@ -17,29 +17,31 @@ const Pagination: React.FC<PaginationProps> = ({ metadata, setFetchUrl }) => {
   return (
     <nav className="w-full">
       <ul className="flex justify-center items-center py-6 gap-x-3">
-        {metadata.links.map((link) => (
-          <li key={link.label}>
-            <button
-              disabled={link.url === null}
-              className={`flex items-center justify-center ${
-                parseInt(link.label) <= MAX_LINKS
-                  ? 'w-7 h-7 md:w-9 md:h-9'
-                  : 'px-2 py-1 md:px-3 md:py-1.5'
-              } rounded-full cursor-pointer border-2 text-center ${
-                link.active
-                  ? 'bg-primary text-white'
-                  : link.url !== null
-                  ? 'hover:bg-primary hover:text-white'
-                  : 'opacity-50 pointer-events-none'
-              }
+        {metadata.links.map((link) => {
+          if (!Number.isNaN(parseInt(link.label)) && parseInt(link.label) > MAX_LINKS) return;
+
+          return (
+            <li key={link.label}>
+              <button
+                disabled={link.url === null}
+                className={`flex items-center justify-center ${
+                  parseInt(link.label) ? 'w-7 h-7 md:w-9 md:h-9' : 'px-2 py-1 md:px-3 md:py-1.5'
+                } rounded-full cursor-pointer border-2 text-center ${
+                  link.active
+                    ? 'bg-primary text-white'
+                    : link.url !== null
+                    ? 'hover:bg-primary hover:text-white'
+                    : 'opacity-50 pointer-events-none'
+                }
               `}
-              onClick={() => setFetchUrl(link.url)}>
-              <a
-                dangerouslySetInnerHTML={{ __html: link.label }}
-                className="text-xs md:text-md"></a>
-            </button>
-          </li>
-        ))}
+                onClick={() => setFetchUrl(link.url)}>
+                <a
+                  dangerouslySetInnerHTML={{ __html: link.label }}
+                  className="text-xs md:text-md"></a>
+              </button>
+            </li>
+          );
+        })}
       </ul>
     </nav>
   );
