@@ -106,38 +106,48 @@ For your convenience, we have included a snapshot of the release history below:
 Make sure to stay updated by regularly visiting our releases' page to utilize the full potential of "antirecurso".
 
 
-## Contribuitions 🤝
+
+## Contributions 🤝
 
 Want to contribute? That's great!
 
-Start off by selecting an issue from our <a href="https://github.com/Nucleo-Estudantes-Informatica-ISEP/antirecurso/issues">issues' page</a> or creating one yourself.
+Start off by selecting an issue from our [issues' page](https://github.com/Nucleo-Estudantes-Informatica-ISEP/antirecurso/issues) or creating one yourself.
 
-After selecting what you want to do, get your hands to coding!
+After selecting what you want to do, follow these steps to contribute to the project:
 
-- Clone our repo by inserting the following command on your terminal:
-```
-git clone https://github.com/Nucleo-Estudantes-Informatica-ISEP/antirecurso.git
-```
-- Open your project folder and paste the command down below on your terminal (remove the <>):
-```
-git checkout -b <branch-name>
-```
+1. **Fork the Repository**: Click on the "Fork" button at the top right corner of the repository page. This will create a copy of the repository under your GitHub account.
 
-> **Now you're ready to add your amazing feature or fix. Make the necessary changes in the codebase.**
+2. **Clone the Repository**: Clone your forked repository to your local machine. Open your terminal and use the following command:
+```
+git clone https://github.com/your-username/antirecurso.git
+```
+Replace `your-username` with your actual GitHub username.
 
-- Once you're done, commit your changes with a clear and concise commit message:
+3. **Create a New Branch**: Move into the project directory using the `cd antirecurso` command. Then create a new branch to work on your feature or fix:
+```
+git checkout -b branch-name
+```
+Replace `branch-name` with a descriptive name for your branch.
+
+4. **Make Changes**: Now you're ready to add your amazing feature or fix. Make the necessary changes in the codebase.
+
+5. **Commit Changes**: Once you're done, commit your changes with a clear and concise commit message:
 ```
 git commit -m "Add your commit message here"
 ```
-- Push your branch to the remote repository:
+
+6. **Push Changes**: Push your branch to your forked repository on GitHub:
 ```
-git push origin <branch-name>
+git push origin branch-name
 ```
 
-- Finally, you just got to add your amazing feature and create a pull request to submit it to a review!
+7. **Create a Pull Request**: Go to your forked repository on GitHub and switch to the branch you just pushed. Click on the "New Pull Request" button next to the branch selection dropdown. Provide a descriptive title and detailed description for your pull request, and submit it for review.
 
-> **Note**: we recommend that the branch name looks something like "feat-comments"
+> Note: We recommend that the branch name looks something like "feat-comments".
 
+> If you have any questions just folow the instructions of this [video](https://www.youtube.com/watch?v=CML6vfKjQss)
+
+Congratulations! You have successfully contributed to the Antirecurso project. Thank you for your valuable contribution!
 
 
 ## License Information 📝
@@ -156,6 +166,15 @@ For the precise terms and conditions of this license, please refer to the [LICEN
 Please note: while the MIT License provides many freedoms, it does not absolve you of the responsibility to respect others' copyrights. Always ensure that your use of licensed software respects the intellectual property rights of others.
 
 This is only a summary of the MIT License, and by no means does it capture all the nuances of the license. For the full license text, please refer to the actual [MIT License](https://opensource.org/licenses/MIT).
+
+## Contact Us 📧
+
+If you have any questions, suggestions, or just want to say hello, feel free to reach out to us:
+
+- **Email**: support.antirecurso@nei-isep.org
+- **Discord**: [Antirecurso Server](https://discord.gg/pNC6An9A)
+
+We value your feedback and would love to hear from you!
 
 
 ## Thank you 🙌
