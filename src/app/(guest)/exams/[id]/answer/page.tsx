@@ -44,6 +44,24 @@ const modes = [
     icon: '❌',
     needsAuth: true,
     comingSoon: false
+  },
+  {
+    id: 5,
+    name: 'Modo Perguntas Difíceis',
+    description: 'Desafia-te com as perguntas mais erradas por todos os estudantes!',
+    slug: 'hard',
+    icon: '🤯',
+    needsAuth: true,
+    comingSoon: true
+  },
+  {
+    id: 6,
+    name: 'Modo Duelo',
+    description: 'Desafia um amigo para descobrir quem acerta mais perguntas!',
+    slug: 'duel',
+    icon: '👥',
+    needsAuth: true,
+    comingSoon: true
   }
 ];
 
@@ -53,13 +71,13 @@ const Exams: React.FC<ExamAnswerPageProps> = async ({ params }) => {
   const token = t?.value;
 
   return (
-    <section className="flex flex-col items-center justify-center w-full text-center">
+    <section className="flex flex-col items-center justify-center w-full text-center mb-8">
       <p className="w-5/6 px-4 text-lg font-bold text-center uppercase md:text-xl">
         <span className="text-primary">Escolhe</span> o <span className="text-primary">modo</span>{' '}
         de perguntas do teu <span className="text-primary">exame</span>
       </p>
 
-      <section className="grid grid-cols-2 px-6 mt-12 gap-x-4 md:grid-cols-4 gap-y-10 md:gap-x-10 md:px-16">
+      <section className="grid px-6 mt-12 gap-x-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-y-10 md:gap-x-10 md:px-16">
         {modes.map((mode) => (
           <Link
             href={`exams/${params.id}/answer/${mode.slug}`}
