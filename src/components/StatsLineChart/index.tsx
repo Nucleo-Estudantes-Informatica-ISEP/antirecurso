@@ -3,6 +3,8 @@
 import {
   CategoryScale,
   Chart as ChartJS,
+  ChartData,
+  ChartOptions,
   Legend,
   LinearScale,
   LineElement,
@@ -10,6 +12,8 @@ import {
   Title,
   Tooltip
 } from 'chart.js';
+import { useTheme } from 'next-themes';
+import { useId } from 'react';
 import { Line } from 'react-chartjs-2';
 import regression, { DataPoint } from 'regression';
 
@@ -21,25 +25,36 @@ interface StatsLineChartProps {
   text: string;
 }
 
-const options = {
-  maintainAspectRatio: false,
-  scales: {
-    y: {
-      min: 0,
-      max: 20,
-      ticks: {
-        stepSize: 0.5
-      }
-    }
-  }
-};
-
 const StatsLineChart: React.FC<StatsLineChartProps> = ({ labels, data, text }) => {
   const dataPoints = data.map((value, index) => [index, value] as DataPoint);
   const regressionLine = regression.linear(dataPoints).points.map((point) => point[1]);
 
-  const d = {
+  const { theme } = useTheme();
+
+  const options: ChartOptions<'line'> = {
+    maintainAspectRatio: false,
+
+    scales: {
+      y: {
+        min: 0,
+        max: 20,
+        ticks: {
+          stepSize: 0.5,
+          color: theme === 'dark' ? 'white' : 'black'
+        }
+      },
+      x: {
+        ticks: {
+          color: theme === 'dark' ? 'white' : 'black'
+        }
+      }
+    },
+    color: theme === 'dark' ? 'white' : 'black'
+  };
+
+  const d: ChartData<'line', number[], string> = {
     labels,
+
     datasets: [
       {
         label: text,
@@ -50,21 +65,26 @@ const StatsLineChart: React.FC<StatsLineChartProps> = ({ labels, data, text }) =
       {
         label: 'Evolução',
         data: regressionLine,
-        borderColor: 'rgb(100, 100, 100)',
-        backgroundColor: 'rgb(100, 100, 100, 0.5)'
+        borderColor: theme === 'dark' ? '#ddd' : 'rgb(100, 100, 100)',
+        backgroundColor: theme === 'dark' ? 'rgb(200,200,200,.05)' : 'rgb(100, 100, 100, 0.5)'
       }
     ]
   };
   return (
-    <Line
-      data={d}
-      style={{
-        position: 'relative',
-        width: 'full',
-        overflowX: 'scroll'
-      }}
-      options={options}
-    />
+    <div className="h-full">
+      <div className="h-full">
+        <Line
+          data={d}
+          key={useId()}
+          style={{
+            position: 'relative',
+            width: 'full',
+            overflowX: 'scroll'
+          }}
+          options={options}
+        />
+      </div>
+    </div>
   );
 };
 

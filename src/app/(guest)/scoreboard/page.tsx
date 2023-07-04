@@ -7,7 +7,7 @@ const Scoreboard: React.FC = async () => {
   const subjects = await fetchSubjects();
 
   return (
-    <section className="h-full w-full flex flex-col items-center justify-center text-center">
+    <section className="h-full w-full flex flex-col items-center text-center mt-8">
       <p className="text-lg w-5/6 md:text-xl font-bold uppercase text-center px-4">
         <span className="text-primary">Escolhe</span> uma disciplina para ver o{' '}
         <span className="text-primary">scoreboard</span>
@@ -18,7 +18,7 @@ const Scoreboard: React.FC = async () => {
           <Link
             key={subject.id}
             href={`/scoreboard/${subject.id}`}
-            className="w-full h-full md:h-48 p-6 flex flex-col space-y-6 items-center justify-center shadow border border-gray-100 rounded text-center group hover:bg-primary transition ease-in-out">
+            className="w-full h-full md:h-48 p-6 flex flex-col space-y-6 items-center justify-center shadow dark:shadow-secondary-dark border border-gray-100 rounded text-center group hover:bg-primary transition ease-in-out">
             <div className="w-full justify-center items-center overflow-auto">
               <p className="w-full text-xs md:text-xl font-bold capitalize line-clamp-6 group-hover:text-white">
                 {subject.name}

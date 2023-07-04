@@ -9,7 +9,10 @@ interface TopbarLinkProps {
 const TopbarLink: React.FC<TopbarLinkProps> = ({ href, children, onClick }) => {
   return (
     <>
-      <Link onClick={onClick} href={href} className="hover:text-primary transition ease-in-out">
+      <Link
+        onClick={onClick}
+        href={href}
+        className="transition ease-in-out duration-100 dark:text-white dark:hover:text-primary hover:text-primary ">
         <button>{children}</button>
       </Link>
     </>

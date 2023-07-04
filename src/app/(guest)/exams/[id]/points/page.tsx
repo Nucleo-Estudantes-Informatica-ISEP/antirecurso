@@ -7,6 +7,7 @@ import Link from 'next/link';
 import PrimaryButton from '@/components/PrimaryButton';
 import { ExamContext } from 'src/contexts/ExamContext';
 
+import { useTheme } from 'next-themes';
 import { useRouter } from 'next/navigation';
 import ReactCanvasConfetti from 'react-canvas-confetti';
 import getToken from 'src/services/getToken';
@@ -25,12 +26,15 @@ const Points: React.FC<ExamPageProps> = ({ params }) => {
   const [fire, setFire] = useState(false);
   const { examResult } = useContext(ExamContext);
 
+  const { theme } = useTheme();
+
   function handleReview() {
     if (!examResult) {
       swal({
         title: 'Erro',
         text: 'Não foi possível obter o resultado do exame.',
-        icon: 'error'
+        icon: 'error',
+        className: theme === 'dark' ? 'swal-dark' : ''
       });
 
       router.push('/');
@@ -53,7 +57,8 @@ const Points: React.FC<ExamPageProps> = ({ params }) => {
     swal({
       title: 'Erro',
       text: 'Não foi possível obter o resultado do exame.',
-      icon: 'error'
+      icon: 'error',
+      className: theme === 'dark' ? 'swal-dark' : ''
     });
 
     router.push('/');
@@ -61,31 +66,31 @@ const Points: React.FC<ExamPageProps> = ({ params }) => {
   }
 
   return (
-    <section className="h-screen flex flex-col items-center mt-4 ">
-      <p className="text-xl font-bold uppercase md:mt-36 ml-5 text-center px-4">
+    <section className="flex flex-col items-center w-full h-screen mt-4">
+      <p className="px-4 ml-5 text-xl font-bold text-center uppercase md:mt-36">
         Exame de <span className="text-primary">{examResult.subject}</span>
       </p>
       <div className="flex items-center justify-center mt-10 space-x-3">
-        <div className="text-white bg-primary p-5 w-12 h-12 flex items-center justify-center rounded-full">
+        <div className="flex items-center justify-center w-12 h-12 p-5 text-white rounded-full bg-primary">
           {toFixed(examResult?.score, 1)}
         </div>
         <p className="text-xl font-bold uppercase">pontos</p>
       </div>
 
       <div className="flex items-center justify-center mt-10 space-x-3">
-        <div className="text-white bg-primary p-5 w-12 h-12 flex items-center justify-center rounded-full">
+        <div className="flex items-center justify-center w-12 h-12 p-5 text-white rounded-full bg-primary">
           {toFixed((examResult?.score * 20) / 100, 1)}
         </div>
         <p className="text-xl font-bold uppercase">valores</p>
       </div>
 
-      <section className="mt-10 px-4 flex text-center flex-col items-center justify-center relative">
+      <section className="relative flex flex-col items-center justify-center px-4 mt-10 text-center">
         {examResult?.passed ? (
           <>
-            <p className="font-semibold text-xl">
+            <p className="text-xl font-semibold">
               <span className="text-primary">Parabéns!</span> Passaste no exame! 🎉
             </p>
-            <p className="px-10 max-w-screen-lg mt-5">
+            <p className="max-w-screen-lg px-10 mt-5">
               Contudo, tens de saber que o caminho para o sucesso é feito de pequenos avanços e,
               como tal, não te deves focar apenas neste exame e sim em tentar fazer o máximo
               possível.
@@ -95,12 +100,12 @@ const Points: React.FC<ExamPageProps> = ({ params }) => {
               particleCount={150}
               fire={fire}
               origin={{ y: 0.9 }}
-              className="fixed w-full h-full z-50"
+              className="fixed z-50 w-full h-full"
             />
           </>
         ) : (
           <>
-            <p className="font-semibold text-xl">
+            <p className="text-xl font-semibold">
               <span className="text-primary">Ohhh...</span> reprovaste no exame... 😔
             </p>
             <p className="mt-5">
@@ -110,13 +115,13 @@ const Points: React.FC<ExamPageProps> = ({ params }) => {
             <p className="semibold">Continua!</p>
           </>
         )}
-        <PrimaryButton onClick={handleReview} className="mt-16 mb-4 z-50">
+        <PrimaryButton onClick={handleReview} className="z-50 mt-16 mb-4">
           Verificar respostas
         </PrimaryButton>
         {!token && (
-          <p className="text-xs mt-5 mx-5 z-50">
+          <p className="z-50 mx-5 mt-5 text-xs">
             Não te esqueças que podes criar uma conta para guardar o teu progresso clicando{' '}
-            <Link className="cursor-pointer underline" href="/register">
+            <Link className="underline cursor-pointer" href="/register">
               aqui
             </Link>
             .
