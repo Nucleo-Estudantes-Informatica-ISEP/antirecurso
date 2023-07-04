@@ -20,22 +20,22 @@ const Pagination: React.FC<PaginationProps> = ({ metadata, setFetchUrl }) => {
   if (metadata.links.length <= maxLinks) {
     links.push(...metadata.links);
   } else {
-    const threshold = Math.ceil(maxLinks / 2);
+    const threshold = maxLinks - 3;
     const { current_page, last_page } = metadata;
 
     const lowerBound =
-      current_page < threshold // current page is close to the first page
+      current_page <= threshold // current page is close to the first page
         ? 2
         : current_page > last_page - threshold // current page is close to the last page
         ? last_page - threshold - 1
-        : current_page - threshold / 2;
+        : current_page - Math.floor(threshold / 2);
 
     const upperBound =
       current_page > last_page - threshold // current page is close to the last page
         ? last_page - 1
-        : current_page < threshold // current page is close to the first page
+        : current_page <= threshold // current page is close to the first page
         ? threshold + 2
-        : current_page + threshold / 2;
+        : current_page + Math.floor(threshold / 2);
 
     links.push(metadata.links[0]); // prev btn
     links.push(metadata.links[1]); // first page
