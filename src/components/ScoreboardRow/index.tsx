@@ -18,7 +18,9 @@ const ScoreboardRow: React.FC<ScoreboardRowProps> = ({ line, position, highlight
       viewport={{ once: true }}
       transition={{ duration: 0.8, type: 'spring', bounce: 0.4 }}
       className={`${
-        highlight ? 'bg-orange-200' : 'hover:bg-gray-100 hover:dark:bg-primary'
+        highlight
+          ? 'bg-orange-200 dark:bg-orange-800'
+          : 'hover:bg-gray-100 dark:hover:bg-cool-gray-700'
       } text-lg md:text-xl font-bold transition-colors duration-200 ease-in-out max-w-fit`}
       key={line.user_id}>
       <th scope="row" className="py-3 pl-6 pr-6 rounded-l-full md:pl-16 whitespace-nowrap">
@@ -30,6 +32,8 @@ const ScoreboardRow: React.FC<ScoreboardRowProps> = ({ line, position, highlight
           src={`https://gravatar.com/avatar/${line.avatar}?s=64&d=identicon`}
           alt={line.user_name}
           loading="lazy"
+          width={64}
+          height={64}
         />
       </td>
       <td className="md:px-4 py-2 md:min-w-[32rem]">
