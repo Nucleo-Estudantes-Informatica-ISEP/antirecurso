@@ -32,14 +32,14 @@ const Changelog: React.FC = () => {
           'Alteração visual do leaderboard',
           'Destaque nos primeiros lugares do leaderboard',
           'Adição de animações na leaderboard',
-          <span key="1.3.0-gravitar-option">
+          <span key="1.3.0-gravatar-option">
             Suporte a avatar com{' '}
             <Link
               className="underline"
               href="https://en.gravatar.com/"
               target="_blank"
               rel="noreferrer">
-              Gravitar
+              Gravatar
             </Link>
           </span>
         ]}>
