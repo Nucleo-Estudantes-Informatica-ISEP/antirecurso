@@ -17,7 +17,7 @@ const Pagination: React.FC<PaginationProps> = ({ metadata, setFetchUrl }) => {
 
   const links = [];
 
-  if (metadata.links.length <= maxLinks) {
+  if (metadata.last_page <= maxLinks) {
     links.push(...metadata.links);
   } else {
     const threshold = maxLinks - 3;
