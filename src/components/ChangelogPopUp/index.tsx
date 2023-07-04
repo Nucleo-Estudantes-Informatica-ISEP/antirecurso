@@ -11,7 +11,7 @@ const ChangelogPopUp: React.FC = () => {
   const [visible, setVisible] = useState(false);
   const isMobile = useIsMobile();
 
-  const localStorageKeyName = `config.localStorage.changelog-${config.version}`;
+  const localStorageKeyName = `${config.localStorage.changelog}-${config.version}`;
 
   useEffect(() => {
     const hasSeenChangelog = localStorage.getItem(localStorageKeyName);
