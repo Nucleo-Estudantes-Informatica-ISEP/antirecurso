@@ -95,7 +95,7 @@ const CommentSection: React.FC<CommentSectionProps> = ({
   }, [comments]);
 
   return (
-    <section className="w-full ml-0 md:ml-32 my-14">
+    <section className="px-5 mt-14 mb-28 md:mb-14 md:px-32">
       {!token ? (
         <p className="w-5/6 text-center md:text-start">
           <Link href="/register" target="_blank" className="font-semibold text-primary">
@@ -109,8 +109,8 @@ const CommentSection: React.FC<CommentSectionProps> = ({
         </p>
       ) : (
         <>
-          <div className="flex flex-col w-full mb-5 space-y-5">
-            <div className="w-5/6 mx-auto md:w-full">
+          <div className="flex flex-col mb-5 space-y-5 w-11/12 md:w-2/3 mx-auto md:mx-0">
+            <div className="">
               <InputLabel value="Comentário" />
               <textarea
                 ref={inputRef}
@@ -126,7 +126,7 @@ const CommentSection: React.FC<CommentSectionProps> = ({
                   removeEventListener();
                 }}
                 onBlur={addListener}
-                className="block w-full mx-auto mt-1 border-gray-300 rounded-md shadow-sm resize-none dark:text-white dark:bg-primary-dark dark:shadow-secondary-dark md:mx-0 md:w-1/2 focus:border-primary-300 focus:ring focus:ring-primary-200 focus:ring-opacity-50 focus-within:text-primary-600"></textarea>
+                className="block w-full mx-auto mt-1 border-gray-300 rounded-md shadow-sm resize-none dark:text-white dark:bg-primary-dark dark:shadow-secondary-dark md:mx-0 focus:border-primary-300 focus:ring focus:ring-primary-200 focus:ring-opacity-50 focus-within:text-primary-600"></textarea>
             </div>
             <div className="flex items-center w-5/6 mx-auto md:mx-0 gap-x-6">
               <PrimaryButton onClick={handleSubmit} className="w-full h-10 md:w-32">
@@ -145,7 +145,7 @@ const CommentSection: React.FC<CommentSectionProps> = ({
               {comments.map((comment) => (
                 <div
                   key={comment.id}
-                  className="w-11/12 h-auto p-5 mx-auto my-5 bg-white border border-gray-100 rounded shadow dark:shadow-secondary-dark md:mx-0 dark:bg-primary-dark">
+                  className="w-full md:w-11/12 h-auto p-5 mx-auto my-5 bg-white border border-gray-100 rounded shadow dark:shadow-secondary-dark md:mx-0 dark:bg-primary-dark">
                   <p className="flex items-center font-semibold gap-x-2">
                     {comment.user}
                     {comment.is_admin && (
