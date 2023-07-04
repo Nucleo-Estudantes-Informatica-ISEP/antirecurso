@@ -15,7 +15,7 @@ const Changelog: React.FC = () => {
       />
       <ChangelogVersion
         title="v1.3.2 🛠️"
-        date={new Date(2023, 5, 7)}
+        date={new Date(2023, 6, 7)}
         updates={[
           'Adição da página de changelog',
           'Adição da política de cookies',
