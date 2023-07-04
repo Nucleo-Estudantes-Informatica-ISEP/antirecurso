@@ -1,3 +1,4 @@
+import CookieConsent from '@/components/CookieConsent';
 import ThemeProvider from '@/components/Theme/ThemeProvider';
 import Topbar from '@/components/Topbar';
 import '@/styles/globals.css';
@@ -16,6 +17,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <main className="flex">
             <div className="flex items-stretch w-full min-h-[calc(100vh-5rem)]">{children}</div>
           </main>
+          <CookieConsent />
         </ThemeProvider>
       </body>
     </html>
