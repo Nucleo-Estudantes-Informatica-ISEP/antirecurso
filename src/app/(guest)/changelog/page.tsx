@@ -5,6 +5,15 @@ const Changelog: React.FC = () => {
   return (
     <section className="w-full text-sm md:text-md px-5 md:px-24 md:pb-24 pb-48 mt-5">
       <ChangelogVersion
+        title="v1." // TODO
+        date={new Date(2023, 5, 7)} // TODO
+        updates={[
+          'Melhoria na paginação dos exames realizados',
+          'Correção da versão dark mode de certos componentes',
+          'Correção de comentários que ocupavam mais do que o tamanho do ecrã'
+        ]}
+      />
+      <ChangelogVersion
         title="v1.3.2 🛠️"
         date={new Date(2023, 5, 7)}
         updates={[
