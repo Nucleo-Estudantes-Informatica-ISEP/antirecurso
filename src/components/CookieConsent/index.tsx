@@ -33,7 +33,7 @@ const CookieConsent: React.FC = () => {
           transition={{ duration: 0.3, ease: 'easeOut' }}>
           <div>
             <p className="font-medium">
-              Usamos cookies essenciais para garantir que o Antirecurso funcione corretamente.{' '}
+              🍪 Usamos cookies essenciais para garantir que o Antirecurso funcione corretamente.{' '}
               <Link
                 href="/cookie-policy"
                 className="text-blue-700 dark:text-blue-300 hover:underline cursor-pointer"
