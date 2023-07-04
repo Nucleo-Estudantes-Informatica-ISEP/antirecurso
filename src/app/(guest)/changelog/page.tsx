@@ -5,6 +5,16 @@ const Changelog: React.FC = () => {
   return (
     <section className="w-full text-sm md:text-md px-5 md:px-24 md:pb-24 pb-48 mt-5">
       <ChangelogVersion
+        title="v1.3.2 🛠️"
+        date={new Date(2023, 5, 7)}
+        updates={[
+          'Adição da página de changelog',
+          'Adição da política de cookies',
+          'Criação de um email de support e submissão de resoluções de exames, disponível na página de sobre',
+          'Correção de erro com o tempo de invalidação de cache das imagens dos avatares dos utilizadores'
+        ]}
+      />
+      <ChangelogVersion
         title="v1.3.1 Dark Mode 🌙"
         date={new Date(2023, 6, 3)}
         updates={[
@@ -74,7 +84,8 @@ const Changelog: React.FC = () => {
           'Adição de tipos de exame',
           'Adição do modo realista',
           'Correção de erro com o token de sessão',
-          'Suporte a Logout'
+          'Suporte a Logout',
+          'Correção dos erros com a navegação por teclado no exame'
         ]}>
         Adição dos modos de exame para ser possível explorar novas combinações de perguntas
       </ChangelogVersion>
