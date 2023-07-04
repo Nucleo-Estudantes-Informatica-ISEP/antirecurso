@@ -1,3 +1,5 @@
+import Link from 'next/link';
+
 const About: React.FC = () => {
   return (
     <section className="h-full flex flex-col items-center justify-center text-center space-y-10">
@@ -41,9 +43,9 @@ const About: React.FC = () => {
       <div className="space-y-3 w-5/6">
         <p className="text-xl font-semibold uppercase">EMAIL</p>
         <p className="text-primary font-semibold">
-          <a href="mailto:support.antirecurso@nei-isep.org" rel="noreferrer" target="_blank">
+          <Link href="mailto:support.antirecurso@nei-isep.org" rel="noreferrer" target="_blank">
             support.antirecurso@nei-isep.org
-          </a>
+          </Link>
         </p>
       </div>
     </section>
