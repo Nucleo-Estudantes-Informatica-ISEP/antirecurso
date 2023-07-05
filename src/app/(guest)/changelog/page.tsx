@@ -11,6 +11,8 @@ const Changelog: React.FC = () => {
           'Correção da paginação de exames no perfil (finalmente)',
           'Adição de suporte a imagem nas perguntas',
           'Correção da contagem de exames reprovados nas estatísticas',
+          'Correção da versão dark mode de certos componentes',
+          'Correção de comentários que ocupavam mais do que o tamanho do ecrã',
           <span key="1.3.3-new-questions">
             Adição de +30 perguntas de <span className="text-primary">SCOMP</span> (Obrigado{' '}
             <Link

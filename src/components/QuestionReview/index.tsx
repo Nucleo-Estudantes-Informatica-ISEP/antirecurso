@@ -14,13 +14,15 @@ const QuestionReview: React.FC<QuestionProps> = ({ currentQuestion }) => {
         {currentQuestion.options.map((option) => (
           <div
             key={option.name}
-            className={`w-full flex items-center px-2 md:px-4 py-2 md:py-3 border border-gray-100 h-20 rounded ${
+            className={`w-full flex items-center px-1.5 md:px-4 py-2 md:py-3 border border-gray-100 min-h-[4rem] md:min-h-[5rem] rounded ${
               currentQuestion.selected_option_id === option.id && 'bg-primary text-white'
             }`}>
             <p className="text-xs md:text-base">{sanitizeOption(option.name)}</p>
             {currentQuestion.is_wrong === true &&
-              currentQuestion.selected_option_id === option.id && <X className="ml-2 md:ml-4" />}
-            {currentQuestion.correct_option === option.order && <Check className="ml-2 md:ml-4" />}
+              currentQuestion.selected_option_id === option.id && <X className="ml-1.5 md:ml-4" />}
+            {currentQuestion.correct_option === option.order && (
+              <Check className="ml-1.5 md:ml-4" />
+            )}
           </div>
         ))}
       </div>
