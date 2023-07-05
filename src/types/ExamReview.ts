@@ -12,6 +12,7 @@ export default interface ExamReview {
       question: string;
       correct_option: string;
       question_type: string;
+      image: string;
     };
     options: Option[];
     selected_option_id: number;
