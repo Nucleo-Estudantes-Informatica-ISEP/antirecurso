@@ -1,12 +1,10 @@
-import { cookies } from 'next/headers';
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import config from 'src/config';
 import { BASE_URL } from 'src/services/api';
 import swal from 'sweetalert';
 
-export async function GET() {
-  const cookieStore = cookies();
-  const t = cookieStore.get(config.cookies.token) as { value: string } | undefined;
+export async function GET(request: NextRequest) {
+  const t = request.cookies.get(config.cookies.token) as { value: string } | undefined;
   const token = t?.value;
 
   const res = await fetch(`${BASE_URL}/user`, {

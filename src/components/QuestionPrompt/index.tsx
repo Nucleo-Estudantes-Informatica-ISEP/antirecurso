@@ -31,7 +31,7 @@ const QuestionPrompt: React.FC<QuestionProps> = ({
             }}
             key={option.name}
             onClick={() => selectAnswer(currentQuestionIndex, option.order)}
-            className={`w-full flex items-center px-2 md:px-4 py-2 md:py-3 border border-gray-100 h-16 md:h-20 rounded hover:cursor-pointer hover:bg-primary hover:text-white transition ease-in-out ${
+            className={`w-full flex items-center px-2 md:px-4 py-2 md:py-3 border border-gray-100 min-h-[4rem] md:min-h-[5rem] rounded hover:cursor-pointer hover:bg-primary hover:text-white transition ease-in-out ${
               answers.get(currentQuestionIndex) === option.order && 'bg-primary text-white'
             }`}>
             <p className="text-xs md:text-base">{sanitizeOption(option.name)}</p>
