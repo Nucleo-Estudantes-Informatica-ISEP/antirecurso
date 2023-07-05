@@ -57,10 +57,13 @@ const HamburgerMenu: React.FC<HamburgerMenuProps> = ({ token }) => {
               </>
             ) : (
               <>
-                <Link href={`/login`}>
+                <Link href={`/login`} onClick={closeMenu}>
                   <PrimaryButton className="w-full">Entrar numa conta</PrimaryButton>
                 </Link>
-                <Link href={`/register`} className="flex items-center justify-center">
+                <Link
+                  href={`/register`}
+                  onClick={closeMenu}
+                  className="flex items-center justify-center">
                   <span>Criar uma conta</span>
                 </Link>
               </>
