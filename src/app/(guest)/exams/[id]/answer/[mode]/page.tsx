@@ -170,7 +170,7 @@ const Exam: React.FC<ExamPageProps> = ({ params }) => {
             <section className="mb-10">
               <div
                 className={`relative w-full ${
-                  currentQuestion.image === '' ? 'md:h-[18rem] h-8' : 'md:h-[24rem] h-[16rem]'
+                  currentQuestion.image === '' ? 'md:h-[18rem] h-20' : 'md:h-[24rem] h-[16rem]'
                 }`}>
                 {currentQuestion.image === '' ? (
                   <Image
