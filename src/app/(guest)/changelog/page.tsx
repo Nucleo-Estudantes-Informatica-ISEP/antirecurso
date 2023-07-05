@@ -12,7 +12,7 @@ const Changelog: React.FC = () => {
           'Adição de suporte a imagem nas perguntas',
           'Correção da contagem de exames reprovados nas estatísticas',
           <span key="1.3.3-new-questions">
-            Adição de +30 perguntas de SCOMP (Obrigado{' '}
+            Adição de +30 perguntas de <span className="text-primary">SCOMP</span> (Obrigado{' '}
             <Link
               className="underline text-primary"
               target="_blank"
