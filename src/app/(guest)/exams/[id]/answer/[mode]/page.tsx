@@ -19,6 +19,7 @@ import ExamNumerationContainer from '@/components/ExamNumerationContainer';
 import PrimaryButton from '@/components/PrimaryButton';
 import QuestionPrompt from '@/components/QuestionPrompt';
 import { useTheme } from 'next-themes';
+import sampleImage from 'public/images/sample.webp';
 import useAnswerableExamNavigation from 'src/hooks/useAnswerableExamNavigation';
 import getToken from 'src/services/getToken';
 
@@ -80,10 +81,11 @@ const Exam: React.FC<ExamPageProps> = ({ params }) => {
     if (res.status === 200) {
       setExamResult(await res.json());
       router.push(`/exams/${params.id}/points`);
-    } else
+    } else {
       swal('Ocorreu um erro ao submeter o exame.', 'Por favor tente novamente.', 'error', {
         className: theme === 'dark' ? 'swal-dark' : ''
       });
+    }
   }
 
   useEffect(() => {
@@ -109,7 +111,7 @@ const Exam: React.FC<ExamPageProps> = ({ params }) => {
 
   return (
     <section className="flex flex-col items-center overflow-x-scroll">
-      <p className="px-4 mt-10 ml-5 text-xl font-bold text-center uppercase">
+      <p className="px-4 mt-2 ml-5 text-xl font-bold text-center uppercase">
         Exame de{' '}
         <span className="text-primary">{subject ? subject : <Skeleton width={100} />}</span>
       </p>
@@ -164,17 +166,28 @@ const Exam: React.FC<ExamPageProps> = ({ params }) => {
           </div>
         )}
         <section className="px-5 mt-5 md:px-32">
-          <div className="relative w-full h-28 md:h-48">
-            <Image
-              fill
-              alt="Subject"
-              className="object-cover w-full h-full"
-              src="/images/prcmp.webp"
-            />
-          </div>
-
           {currentQuestion ? (
             <section className="mb-10">
+              <div
+                className={`relative w-full ${
+                  currentQuestion.image === '' ? 'md:h-[10rem] h-20' : 'md:h-[24rem] h-[16rem]'
+                }`}>
+                {currentQuestion.image === '' ? (
+                  <Image
+                    fill
+                    alt="Sample Image"
+                    className="object-cover w-full h-full"
+                    src={sampleImage}
+                  />
+                ) : (
+                  <Image
+                    fill
+                    alt="Question Image"
+                    className="w-full object-contain h-full"
+                    src={currentQuestion.image}
+                  />
+                )}
+              </div>
               <QuestionPrompt
                 currentQuestion={currentQuestion}
                 selectAnswer={selectAnswer}

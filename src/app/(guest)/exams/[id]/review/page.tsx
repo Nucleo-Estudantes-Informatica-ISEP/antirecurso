@@ -11,6 +11,7 @@ import ExamNumeration from '@/components/ExamNumeration';
 import ExamNumerationContainer from '@/components/ExamNumerationContainer';
 import PrimaryButton from '@/components/PrimaryButton';
 import QuestionReview from '@/components/QuestionReview';
+import sampleImage from 'public/images/sample.webp';
 import useExamReviewNavigation from 'src/hooks/useExamReviewNavigation';
 import { BASE_URL } from 'src/services/api';
 import getToken from 'src/services/getToken';
@@ -120,17 +121,32 @@ const ReviewPage: React.FC<ExamPageProps> = ({ params }) => {
           </div>
         )}
         <section className="px-5 mt-5 md:px-32">
-          <div className="relative w-full h-28 md:h-48">
-            <Image
-              fill
-              alt="Subject"
-              className="object-cover w-full h-full"
-              src="/images/prcmp.webp"
-            />
-          </div>
-
           {currentQuestion?.question ? (
-            <QuestionReview currentQuestion={currentQuestion} />
+            <section className="mb-10">
+              <div
+                className={`relative w-full ${
+                  currentQuestion.question.image === ''
+                    ? 'md:h-[10rem] h-20'
+                    : 'md:h-[24rem] h-[16rem]'
+                }`}>
+                {currentQuestion.question.image === '' ? (
+                  <Image
+                    fill
+                    alt="Sample Image"
+                    className="object-cover w-full h-full"
+                    src={sampleImage}
+                  />
+                ) : (
+                  <Image
+                    fill
+                    alt="Question Image"
+                    className="w-full object-contain h-full"
+                    src={currentQuestion.question.image}
+                  />
+                )}
+              </div>
+              <QuestionReview currentQuestion={currentQuestion} />
+            </section>
           ) : (
             <div className="mt-12">
               <Skeleton className="h-20 mt-6" count={N_SKELETON_OPTIONS} />

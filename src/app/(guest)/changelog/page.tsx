@@ -5,12 +5,23 @@ const Changelog: React.FC = () => {
   return (
     <section className="w-full text-sm md:text-md px-5 md:px-24 md:pb-24 pb-48 mt-5">
       <ChangelogVersion
-        title="v1." // TODO
-        date={new Date(2023, 5, 7)} // TODO
+        title="v1.3.3 🛠️"
+        date={new Date(2023, 5, 7)}
         updates={[
-          'Melhoria na paginação dos exames realizados',
-          'Correção da versão dark mode de certos componentes',
-          'Correção de comentários que ocupavam mais do que o tamanho do ecrã'
+          'Correção da paginação de exames no perfil (finalmente)',
+          'Adição de suporte a imagem nas perguntas',
+          'Correção da contagem de exames reprovados nas estatísticas',
+          <span key="1.3.3-new-questions">
+            Adição de +30 perguntas de <span className="text-primary">SCOMP</span> (Obrigado{' '}
+            <Link
+              className="underline text-primary"
+              target="_blank"
+              rel="noreferrer"
+              href="https://www.linkedin.com/in/brunaccosta03/">
+              Bruna Costa
+            </Link>
+            )
+          </span>
         ]}
       />
       <ChangelogVersion
