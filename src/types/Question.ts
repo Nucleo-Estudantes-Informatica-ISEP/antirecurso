@@ -6,6 +6,7 @@ export default interface Question {
   question: string;
   exam: string;
   question_type: string;
+  image: string;
   options: Option[];
   comments: Comment[];
 }
