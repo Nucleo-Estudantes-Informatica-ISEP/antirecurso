@@ -9,7 +9,7 @@ const nextConfig = {
     NEXT_PUBLIC_BASE_URL: process.env.NEXT_PUBLIC_BASE_URL
   },
   images: {
-    domains: ['gravatar.com', 'ibb.co'],
+    domains: ['gravatar.com', 'i.ibb.co'],
     minimumCacheTTL: 60
   }
 };

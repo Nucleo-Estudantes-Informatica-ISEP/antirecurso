@@ -9,6 +9,7 @@ const Changelog: React.FC = () => {
         date={new Date(2023, 5, 7)}
         updates={[
           'Correção da paginação de exames no perfil (finalmente)',
+          'Adição de suporte a imagem nas perguntas',
           'Correção da contagem de exames reprovados nas estatísticas',
           <span key="1.3.3-new-questions">
             Adição de +30 perguntas de SCOMP (Obrigado{' '}

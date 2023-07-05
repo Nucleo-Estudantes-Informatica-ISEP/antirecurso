@@ -168,7 +168,7 @@ const Exam: React.FC<ExamPageProps> = ({ params }) => {
         <section className="px-5 mt-5 md:px-32">
           {currentQuestion ? (
             <section className="mb-10">
-              <div className="relative w-full h-32 md:h-64">
+              <div className="relative w-full md:h-[24rem] h-[16rem]">
                 {currentQuestion.image === '' ? (
                   <Image
                     fill
@@ -179,8 +179,8 @@ const Exam: React.FC<ExamPageProps> = ({ params }) => {
                 ) : (
                   <Image
                     fill
-                    alt="Subject"
-                    className="object-cover w-full h-full"
+                    alt="Question Image"
+                    className="w-full object-contain h-full"
                     src={currentQuestion.image}
                   />
                 )}
