@@ -94,6 +94,12 @@ AntiRecurso is licensed under the GNU General Public License v3.0. See the [LICE
 
 We have adopted a Code of Conduct that we expect project participants to adhere to. Please read the [full text](CODE_OF_CONDUCT.md) so that you can understand what actions will and will not be tolerated.
 
+## Security Policy 🔒
+
+We take security seriously at AntiRecurso. If you discover a security issue, please bring it to our attention right away!
+
+Please read our [Security Policy](SECURITY.md) for more information.
+
 ## Contact Us 📧
 
 If you have any questions, suggestions, or just want to say hello, feel free to reach out to us:
