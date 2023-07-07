@@ -34,8 +34,9 @@ To start using AntiRecurso:
 
 4. Choose the type of exam you wish to take
 
-![Homepage Screenshot](/assets/typeOfQuestions.png 'AntiRecurso questions')
-
+<span style="center">
+  ![Homepage Screenshot](/assets/typeOfQuestions.png 'AntiRecurso questions')
+</span>
 5. Submit your answers, and immediately receive feedback on your performance, including a breakdown of correct and incorrect responses.
 
 6. Track your progress over time using the inbuilt scoreboard feature.
