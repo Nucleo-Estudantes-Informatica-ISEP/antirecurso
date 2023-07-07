@@ -4,108 +4,75 @@
     </a>
 </p>
 
+## Welcome to AntiRecurso's GitHub Repository 🚀
 
+Hello, and welcome to AntiRecurso's home on GitHub! Here you'll find all the necessary code, documentation, and resources related to the AntiRecurso platform.
 
-## Welcome to Antirecurso's GitHub Repository 🚀
-
-Hello, and welcome to Antirecurso's home on GitHub! This repository is the nucleus of our development efforts, a space where innovation, collaboration, and progress coalesce. Here you'll find all the necessary code, documentation, and resources related to the Antirecurso platform.
-
-The repository serves as the starting point for anyone who wishes to understand our project better, contribute their unique ideas, or simply stay updated with our developments. So, whether you're a potential contributor, an interested observer, or a user wanting to understand more about the gears that drive Antirecurso, you're in the right place! Welcome aboard!
+The repository serves as the starting point for anyone who wishes to understand our project better, contribute their unique ideas, or simply stay updated with our developments. So, whether you're a potential contributor, an interested observer, or a user wanting to understand more about the gears that drive AntiRecurso, you're in the right place! Welcome aboard!
 
 ## About the Project 🤓
 
-"Antirecurso" initially began as an Android mobile app designed to help students studying for PRCMP (Princípios de Computação) exams. Over time, it has evolved into a comprehensive platform that caters to a broad range of academic subjects, accessible from any device with an internet connection.
+"AntiRecurso" initially began as an Android mobile app designed to help ISEP students studying for exams. Over time, it has evolved into a platform that caters to a broad range of academic subjects, accessible from any device.
 
-Whether using a computer, tablet, or mobile phone, Antirecurso provides numerous exercises in the form of short quizzes, each with 10 random questions. Upon completion, users receive immediate feedback and their performance is tracked on a scoreboard.
+Whether using a computer, tablet, or mobile phone, AntiRecurso provides numerous exercises in the form of short quizzes, each with 10 random questions. Upon completion, users receive immediate feedback and their performance is tracked on a scoreboard.
 
-If you're a student seeking extra academic resources, check out Antirecurso <a href="https://antirecurso.nei-isep.org" target="_blank">here</a>. It's a comprehensive tool for exam preparation.
+If you're a student seeking extra academic resources, check out AntiRecurso <a href="https://antirecurso.nei-isep.org" target="_blank">here</a>.
 
 ## Usage Examples 🌐
 
-To start using Antirecurso:
+To start using AntiRecurso:
 
-1. Navigate to the Antirecurso homepage by clicking [here](https://antirecurso.nei-isep.org).
+1. Navigate to the AntiRecurso homepage by clicking [here](https://antirecurso.nei-isep.org).
 
-![Homepage Screenshot](/public/images/homepage.png "Antirecurso Homepage")
+![Homepage Screenshot](/public/images/homepage.png 'AntiRecurso Homepage')
 
-2. Register an account or login if you already have one.
+2. Register an account, or login if you already have one.
 
 3. Choose your desired subject from the wide array available.
 
-![Homepage Screenshot](/public/images/desiredSubject.png "Antirecurso Homepage")
+![Homepage Screenshot](/public/images/desiredSubject.png 'AntiRecurso Homepage')
 
-4. Choose the Type of questions you wish to take
+4. Choose the type of exam you wish to take
 
-![Homepage Screenshot](/public/images/typeOfQuestions.png "Antirecurso questions")
+![Homepage Screenshot](/public/images/typeOfQuestions.png 'AntiRecurso questions')
 
 5. Submit your answers, and immediately receive feedback on your performance, including a breakdown of correct and incorrect responses.
 
 6. Track your progress over time using the inbuilt scoreboard feature.
 
-![Homepage Screenshot](/public/images/score.png "Antirecurso score")
-
+![Homepage Screenshot](/public/images/score.png 'AntiRecurso score')
 
 ## The Tech Stack 🔧
 
-For this project, we've transitioned to using the Next.js framework. It brings productivity and agility in development and allows us to build server-side rendering and static web applications.
+For this project, we're using the Next.js framework.
 
-Here's a quick rundown of the updated tech stack:
+Here's a quick rundown of the tech stack:
 
-- **Next.js**: A top-tier open-source React front-end development web framework that enables functionality such as server-side rendering and generating static websites for React-based web applications. 
+- **Next.js**: An open-source React front-end development web framework that enables functionality such as server-side rendering and generating static websites for React-based web applications.
 
-- **Tailwind CSS**: A utility-first CSS framework packed with classes like flex, pt-4, text-center, and rotate-90 that can be composed to build any design, directly in your markup.
+- **Tailwind CSS**: A utility-first CSS framework that uses class utilities to build any design, directly in the markup.
 
-- **Framer Motion**: A production-ready motion library for React that helps create smooth and delightful animations. It provides a simple and intuitive API to animate components and create interactive user experiences.
-
-Together, these technologies provide the infrastructure to build dynamic, feature-rich web applications accessible from the comfort of your home 🤗.
+- **Framer Motion**: A motion library for React that helps create smooth and delightful animations. It provides a simple and intuitive API to animate components and create interactive user experiences.
 
 ## Roadmap or Future Plans 🚀
 
-We have an exciting vision for the future of Antirecurso! Here are some of the planned features and enhancements we have in store:
+We have an exciting vision for the future of AntiRecurso! Here are some of the planned features and enhancements we have in store:
 
-- **Enhanced Question Bank**: Expand the question bank across multiple subjects and academic levels. We aim to provide a comprehensive set of questions that cover a wide range of topics to cater to the needs of students studying various disciplines.
-
-- **Interactive Learning Resources**: Integrate interactive learning resources, such as videos, tutorials, and additional study materials, to supplement the quizzes. This will provide users with a more comprehensive learning experience and help them grasp the concepts more effectively.
+- **Enhanced Question Bank**: Expand the question bank across multiple subjects. We aim to provide a comprehensive set of questions that cover a wide range of topics to cater to the needs of students studying various disciplines.
 
 - **Social Features**: Implement social features to foster a community of learners. This may include the ability to connect with other users, share achievements, and engage in discussions related to specific subjects or questions.
 
-- **Localization and Multilingual Support**: Provide localization options and multilingual support to make Antirecurso accessible to a wider audience. This will involve translating the user interface, quizzes, and learning resources into multiple languages.
+- **Localization and Multilingual Support**: Provide localization options and multilingual support to make AntiRecurso accessible to a wider audience. This will involve translating the user interface and quizzes.
 
-- **Gamification Elements**: Introduce gamification elements, such as badges, rewards, and leaderboards, to make the learning process more engaging and motivating for users. This will encourage healthy competition and provide incentives for users to actively participate and improve their performance.
+- **Gamification Elements**: Introduce gamification elements, such as badges, rewards, to make the learning process more engaging and motivating for users. This will encourage healthy competition and provide incentives for users to actively participate and improve their performance.
 
-- **Accessibility Improvements**: Continuously work on improving the accessibility of the platform to ensure that it is usable by individuals with diverse abilities. This includes adhering to accessibility guidelines, providing alternative text for images, and optimizing the user interface for screen readers and other assistive technologies.
+- **Accessibility Improvements**: Continuously work on improving the accessibility of the platform to ensure that it is usable by individuals with diverse abilities. This includes adhering to accessibility guidelines, optimizing the user interface for screen readers and other assistive technologies.
 
-Please note that these are just a few examples of the exciting features and enhancements we have planned for Antirecurso. The roadmap is subject to change based on user feedback, community contributions, and emerging needs in the education sector.
+Note that these are just a few examples of the features and enhancements we have planned for AntiRecurso. The roadmap is subject to change based on user feedback, community contributions, and emerging needs in the education sector.
 
-We invite you to join us on this journey of growth and innovation as we strive to create a powerful and accessible learning platform for students worldwide. If you have any suggestions or ideas for future development, we'd love to hear from you!
+We invite you to join us on this journey of growth and innovation as we strive to create a powerful and accessible learning platform for the students. If you have any suggestions or ideas for future development, we'd love to hear from you!
 
 Let's make learning fun and effective together! 🌟
-
-## Release Updates 📑
-
-To keep track of the evolution and advancements in our project, we diligently document each release update. You can gain in-depth information about each version, the improvements made, and the new features added by visiting our <a href="https://github.com/Nucleo-Estudantes-Informatica-ISEP/antirecurso/releases" target="_blank">releases' page</a>.
-
-For your convenience, we have included a snapshot of the release history below:
-
-<table>
-    <thead>
-        <th>
-            Release Name
-        </th>
-        <th>
-            Version Number
-        </th>
-        <th>
-            Release Date
-        </th>
-    </thead>
-    <tbody>
-    </tbody>
-</table>
-
-Make sure to stay updated by regularly visiting our releases' page to utilize the full potential of "antirecurso".
-
-
 
 ## Contributions 🤝
 
@@ -118,64 +85,48 @@ After selecting what you want to do, follow these steps to contribute to the pro
 1. **Fork the Repository**: Click on the "Fork" button at the top right corner of the repository page. This will create a copy of the repository under your GitHub account.
 
 2. **Clone the Repository**: Clone your forked repository to your local machine. Open your terminal and use the following command:
+
 ```
 git clone https://github.com/your-username/antirecurso.git
 ```
+
 Replace `your-username` with your actual GitHub username.
 
 3. **Create a New Branch**: Move into the project directory using the `cd antirecurso` command. Then create a new branch to work on your feature or fix:
+
 ```
 git checkout -b branch-name
 ```
+
 Replace `branch-name` with a descriptive name for your branch.
 
 4. **Make Changes**: Now you're ready to add your amazing feature or fix. Make the necessary changes in the codebase.
 
 5. **Commit Changes**: Once you're done, commit your changes with a clear and concise commit message:
+
 ```
 git commit -m "Add your commit message here"
 ```
 
 6. **Push Changes**: Push your branch to your forked repository on GitHub:
+
 ```
 git push origin branch-name
 ```
 
 7. **Create a Pull Request**: Go to your forked repository on GitHub and switch to the branch you just pushed. Click on the "New Pull Request" button next to the branch selection dropdown. Provide a descriptive title and detailed description for your pull request, and submit it for review.
 
-> Note: We recommend that the branch name looks something like "feat-comments".
+> Note: We recommend that the branch name looks something like "feat/comments".
 
-> If you have any questions just folow the instructions of this [video](https://www.youtube.com/watch?v=CML6vfKjQss)
-
-Congratulations! You have successfully contributed to the Antirecurso project. Thank you for your valuable contribution!
-
-
-## License Information 📝
-
-Antirecurso is open-source software, licensed under the MIT License. The terms of the MIT License offer many freedoms to those who interact with software under it. These freedoms include:
-
-- The freedom to use the software for any purpose.
-- The freedom to change the software to suit your needs.
-- The freedom to share the software with your friends and neighbors.
-- The freedom to distribute your changes so that others can benefit from your modifications.
-
-By providing Antirecurso under the MIT License, we aim to foster a community of contribution and collaboration. We believe that sharing our work in this way will lead to better software and better solutions to the challenges of our users.
-
-For the precise terms and conditions of this license, please refer to the [LICENSE](LICENSE) file in this repository. 
-
-Please note: while the MIT License provides many freedoms, it does not absolve you of the responsibility to respect others' copyrights. Always ensure that your use of licensed software respects the intellectual property rights of others.
-
-This is only a summary of the MIT License, and by no means does it capture all the nuances of the license. For the full license text, please refer to the actual [MIT License](https://opensource.org/licenses/MIT).
+Congratulations! You have successfully contributed to the AntiRecurso project. Thank you for your valuable contribution!
 
 ## Contact Us 📧
 
 If you have any questions, suggestions, or just want to say hello, feel free to reach out to us:
 
-- **Email**: support.antirecurso@nei-isep.org
-- **Discord**: [Antirecurso Server](https://discord.gg/pNC6An9A)
+- **Email**: <support.antirecurso@nei-isep.org>
 
 We value your feedback and would love to hear from you!
-
 
 ## Thank you 🙌
 
@@ -188,4 +139,4 @@ Keep being awesome!
 
 With love,
 
-NEI ISEP
+NEI ISEP ❤︎
