@@ -2,6 +2,7 @@
 
 import { Flag } from '@/styles/Icons';
 import { useTheme } from 'next-themes';
+import Image from 'next/image';
 import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
 import Skeleton from 'react-loading-skeleton';
@@ -141,22 +142,32 @@ const CommentSection: React.FC<CommentSectionProps> = ({
             </div>
           </div>
           {comments !== undefined ? (
-            <div>
+            <>
               {comments.map((comment) => (
                 <div
                   key={comment.id}
-                  className="w-full md:w-11/12 h-auto p-5 mx-auto my-5 bg-white border border-gray-100 rounded shadow dark:shadow-secondary-dark md:mx-0 dark:bg-primary-dark">
-                  <p className="flex items-center font-semibold gap-x-2">
-                    {comment.user}
-                    {comment.is_admin && (
-                      <img className="w-5 h-5" src="/images/nei-logo.png" alt="Admin" />
-                    )}
-                    <span className="text-xs font-thin text-gray-500">{comment.created_at}</span>
-                  </p>
-                  <p className="mt-2 text-sm md:text-md">{comment.comment}</p>
+                  className="w-full flex items-center gap-x-4 md:w-11/12 h-auto p-5 mx-auto my-5 bg-white border border-gray-100 rounded shadow dark:shadow-secondary-dark md:mx-0 dark:bg-primary-dark">
+                  <Image
+                    className="w-8 h-8 md:w-12 md:h-12 rounded-full aspect-square"
+                    src={`https://gravatar.com/avatar/${comment.user_avatar}?s=32&d=identicon`}
+                    alt={comment.user}
+                    loading="lazy"
+                    width={32}
+                    height={32}
+                  />
+                  <div>
+                    <p className="flex items-center font-semibold gap-x-2">
+                      {comment.user}
+                      {comment.is_admin && (
+                        <Image width={20} height={20} src="/images/nei-logo.png" alt="Admin" />
+                      )}
+                      <span className="text-xs font-thin text-gray-500">{comment.created_at}</span>
+                    </p>
+                    <p className="mt-2 text-sm md:text-md">{comment.comment}</p>
+                  </div>
                 </div>
               ))}
-            </div>
+            </>
           ) : (
             <Skeleton className="w-1/2 max-w-[480px] h-10 mb-3" count={4} />
           )}
