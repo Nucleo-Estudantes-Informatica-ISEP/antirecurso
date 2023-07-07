@@ -24,23 +24,23 @@ To start using AntiRecurso:
 
 1. Navigate to the AntiRecurso homepage by clicking [here](https://antirecurso.nei-isep.org).
 
-![Homepage Screenshot](/public/images/homepage.png 'AntiRecurso Homepage')
+![Homepage Screenshot](/assets/homepage.png 'AntiRecurso Homepage')
 
 2. Register an account, or login if you already have one.
 
 3. Choose your desired subject from the wide array available.
 
-![Homepage Screenshot](/public/images/desiredSubject.png 'AntiRecurso Homepage')
+![Homepage Screenshot](/assets/desiredSubject.png 'AntiRecurso Homepage')
 
 4. Choose the type of exam you wish to take
 
-![Homepage Screenshot](/public/images/typeOfQuestions.png 'AntiRecurso questions')
+![Homepage Screenshot](/assets/typeOfQuestions.png 'AntiRecurso questions')
 
 5. Submit your answers, and immediately receive feedback on your performance, including a breakdown of correct and incorrect responses.
 
 6. Track your progress over time using the inbuilt scoreboard feature.
 
-![Homepage Screenshot](/public/images/score.png 'AntiRecurso score')
+![Homepage Screenshot](/assets/score.png 'AntiRecurso score')
 
 ## The Tech Stack 🔧
 
