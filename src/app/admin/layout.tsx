@@ -17,7 +17,7 @@ const admin: React.FC<AdminLayoutProps> = ({ children }) => {
               </Link>
             </li>
             <li className="text-lg">
-              <Link className="hover:text-primary" href="/admin/reports">
+              <Link className="hover:text-primary" href="/admin/question-reports">
                 🚩 Reports
               </Link>
             </li>

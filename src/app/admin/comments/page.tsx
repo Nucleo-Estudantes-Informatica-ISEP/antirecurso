@@ -18,10 +18,9 @@ const comments: React.FC = async () => {
   const comments = await res.json();
 
   return (
-    <div className="h-full flex items-center">
-      <p className="text-4xl font-black">Comments</p>
-
-      <div className="flex flex-col gap-y-2 ml-2">
+    <div className="w-full h-full mt-4 flex flex-col items-center justify-center">
+      <h2 className="text-4xl font-black">Comments</h2>
+      <div className="flex gap-6 my-4">
         <input type="checkbox" name="comments" id="comments" />
         <label htmlFor="comments">Comments</label>
 
@@ -47,12 +46,14 @@ const comments: React.FC = async () => {
         <button className="bg-primary text-white px-4 py-2 rounded-md">Add New</button>
       </div>
 
-      <div>
+      <div className="flex flex-col w-3/4">
         <table className="table-auto">
           <thead>
             <tr>
-              <th className="px-4 py-2">Author</th>
-              <th className="px-4 py-2">Comment</th>
+              <th className="px-4 py-2">Autor</th>
+              <th className="px-4 py-2">Comentário</th>
+              <th className="px-4 py-2">Question ID</th>
+              <th className="px-4 py-2">Criado em</th>
             </tr>
           </thead>
           <tbody>
@@ -60,6 +61,8 @@ const comments: React.FC = async () => {
               <tr key={comment.id}>
                 <td className="border px-4 py-2">{comment.user}</td>
                 <td className="border px-4 py-2">{comment.comment}</td>
+                <td className="border px-4 py-2">{comment.question_id}</td>
+                <td className="border px-4 py-2">{comment.created_at}</td>
               </tr>
             ))}
           </tbody>
