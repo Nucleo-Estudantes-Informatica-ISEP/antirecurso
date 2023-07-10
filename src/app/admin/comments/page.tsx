@@ -1,75 +1,92 @@
-import config from '@/config';
-import { BASE_URL } from '@/services/api';
-import Comment from '@/types/Comment';
-import { cookies } from 'next/headers';
+import CommentTable from '@/components/CommentTable';
 
-// @ts-expect-error Server Component
-const comments: React.FC = async () => {
-  const t = cookies().get(config.cookies.token);
-  const token = t?.value;
-  const res = await fetch(`${BASE_URL}/comments`, {
-    method: 'GET',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${token}`
-    }
-  });
+const Comments: React.FC = () => {
+  // const [selectedActions, setSelectedActions] = useState<string[]>([]);
 
-  const comments = await res.json();
+  // const [isChecked, setIsChecked] = useState(false);
+
+  // const handleActionCheckboxChange = (actionName: string) => {
+  //   if (isChecked) {
+  //     setSelectedActions([...selectedActions, actionName]);
+  //   } else {
+  //     setIsChecked(false);
+  //     setSelectedActions(selectedActions.filter((action) => action !== actionName));
+  //   }
+  // };
+
+  // const handleApply = () => {
+  //   if (selectedActions.includes('approved')) {
+  //     /*TODO: Perform the action for "Approved" comments*/
+  //   }
+
+  //   if (selectedActions.includes('rejected')) {
+  //     /*TODO: Perform the action for "Rejected" comments*/
+  //   }
+
+  //   if (selectedActions.includes('spam')) {
+  //     /*TODO: Perform the action for "Spam" comments*/
+  //   }
+
+  //   if (selectedActions.includes('delete')) {
+  //     /*TODO: Perform the action for "Delete" comments*/
+  //   }
+
+  //   setSelectedActions([]);
+  // };
 
   return (
     <div className="w-full h-full mt-4 flex flex-col items-center justify-center">
       <h2 className="text-4xl font-black">Comments</h2>
-      <div className="flex gap-6 my-4">
-        <input type="checkbox" name="comments" id="comments" />
-        <label htmlFor="comments">Comments</label>
-
-        <input type="checkbox" name="pending" id="pending" />
-        <label htmlFor="pending">Pending</label>
-
+      <div className="w-3/4 flex gap-6 my-4 border bg-gray-400 dark:bg-gray-700 items-center justify-center">
         <input type="checkbox" name="approved" id="approved" />
-        <label htmlFor="approved">Approved</label>
+        <label htmlFor="approved" className="text-white">
+          Approved
+        </label>
 
-        <input type="checkbox" name="rejected" id="rejected" />
-        <label htmlFor="rejected">Rejected</label>
+        <input
+          type="checkbox"
+          name="rejected"
+          id="rejected"
+          // checked={selectedActions.includes('rejected')}
+          // onChange={() => handleActionCheckboxChange('rejected')}
+        />
+        <label htmlFor="rejected" className="text-white">
+          Rejected
+        </label>
 
         <input type="checkbox" name="spam" id="spam" />
-        <label htmlFor="spam">Spam</label>
+        <label htmlFor="spam" className="text-white">
+          Spam
+        </label>
 
-        <input type="checkbox" name="trash" id="trash" />
-        <label htmlFor="trash">Trash</label>
+        <input type="checkbox" name="delete" id="delete" />
+        <label htmlFor="delete" className="text-white">
+          Delete
+        </label>
 
         <input type="checkbox" name="all" id="all" />
-        <label htmlFor="all">All</label>
+        <label htmlFor="all" className="text-white">
+          All
+        </label>
+      </div>
 
-        <button className="bg-primary text-white px-4 py-2 rounded-md">Apply</button>
-        <button className="bg-primary text-white px-4 py-2 rounded-md">Add New</button>
+      <div className="flex gap-x-2">
+        <button
+          className="bg-gray-400 hover:bg-gray-500 text-white px-4 py-2 rounded-md shadow-md"
+          // onClick={handleApply}
+        >
+          Apply
+        </button>
+        <button className="bg-gray-400 hover:bg-gray-500 text-white px-4 py-2 rounded-md shadow-md">
+          Add New
+        </button>
       </div>
 
       <div className="flex flex-col w-3/4">
-        <table className="table-auto">
-          <thead>
-            <tr>
-              <th className="px-4 py-2">Autor</th>
-              <th className="px-4 py-2">Comentário</th>
-              <th className="px-4 py-2">Question ID</th>
-              <th className="px-4 py-2">Criado em</th>
-            </tr>
-          </thead>
-          <tbody>
-            {comments.map((comment: Comment) => (
-              <tr key={comment.id}>
-                <td className="border px-4 py-2">{comment.user}</td>
-                <td className="border px-4 py-2">{comment.comment}</td>
-                <td className="border px-4 py-2">{comment.question_id}</td>
-                <td className="border px-4 py-2">{comment.created_at}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+        <CommentTable />
       </div>
     </div>
   );
 };
 
-export default comments;
+export default Comments;
