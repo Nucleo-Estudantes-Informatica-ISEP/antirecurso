@@ -96,19 +96,19 @@ const CommentSection: React.FC<CommentSectionProps> = ({
 
   return (
     <section className="px-5 mt-14 mb-28 md:mb-14 md:px-32">
-      {!token ? (
-        <p className="w-5/6 text-center md:text-start">
-          <Link href="/register" target="_blank" className="font-semibold text-primary">
-            Cria
-          </Link>{' '}
-          ou{' '}
-          <Link href="/login" target="_blank" className="font-semibold text-primary">
-            entra numa conta
-          </Link>{' '}
-          para poderes comentar e reportar possíveis erros!
-        </p>
-      ) : (
-        <>
+      <div>
+        {!token ? (
+          <p className="w-5/6 text-center md:text-start">
+            <Link href="/register" target="_blank" className="font-semibold text-primary">
+              Cria
+            </Link>{' '}
+            ou{' '}
+            <Link href="/login" target="_blank" className="font-semibold text-primary">
+              entra numa conta
+            </Link>{' '}
+            para poderes comentar e reportar possíveis erros!
+          </p>
+        ) : (
           <div className="flex flex-col mb-5 space-y-5 w-11/12 md:w-2/3 mx-auto md:mx-0">
             <div className="">
               <InputLabel value="Comentário" />
@@ -140,28 +140,28 @@ const CommentSection: React.FC<CommentSectionProps> = ({
               </button>
             </div>
           </div>
-          {comments !== undefined ? (
-            <div>
-              {comments.map((comment) => (
-                <div
-                  key={comment.id}
-                  className="w-full md:w-11/12 h-auto p-5 mx-auto my-5 bg-white border border-gray-100 rounded shadow dark:shadow-secondary-dark md:mx-0 dark:bg-primary-dark">
-                  <p className="flex items-center font-semibold gap-x-2">
-                    {comment.user}
-                    {comment.is_admin && (
-                      <img className="w-5 h-5" src="/images/nei-logo.png" alt="Admin" />
-                    )}
-                    <span className="text-xs font-thin text-gray-500">{comment.created_at}</span>
-                  </p>
-                  <p className="mt-2 text-sm md:text-md">{comment.comment}</p>
-                </div>
-              ))}
-            </div>
-          ) : (
-            <Skeleton className="w-1/2 max-w-[480px] h-10 mb-3" count={4} />
-          )}
-        </>
-      )}
+        )}
+        {comments !== undefined ? (
+          <div>
+            {comments.map((comment) => (
+              <div
+                key={comment.id}
+                className="w-full md:w-11/12 h-auto p-5 mx-auto my-5 bg-white border border-gray-100 rounded shadow dark:shadow-secondary-dark md:mx-0 dark:bg-primary-dark">
+                <p className="flex items-center font-semibold gap-x-2">
+                  {comment.user}
+                  {comment.is_admin && (
+                    <img className="w-5 h-5" src="/images/nei-logo.png" alt="Admin" />
+                  )}
+                  <span className="text-xs font-thin text-gray-500">{comment.created_at}</span>
+                </p>
+                <p className="mt-2 text-sm md:text-md">{comment.comment}</p>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <Skeleton className="w-1/2 max-w-[480px] h-10 mb-3" count={4} />
+        )}
+      </div>
     </section>
   );
 };

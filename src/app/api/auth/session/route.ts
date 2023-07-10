@@ -17,7 +17,7 @@ export async function GET(request: NextRequest) {
   });
 
   if (res.status === 404) {
-    const response = NextResponse.json({ data: res }, { status: 200 });
+    const response = NextResponse.json({ data: res }, { status: 404 });
 
     swal('Sessão expirada', 'A tua sessão expirou, faz login novamente', 'warning');
 
