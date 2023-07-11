@@ -7,13 +7,13 @@ const Scoreboard: React.FC = async () => {
   const subjects = await fetchSubjects();
 
   return (
-    <section className="h-full w-full flex flex-col items-center text-center mt-8">
+    <section className="w-full flex flex-col items-center text-center mt-8">
       <p className="text-lg w-5/6 md:text-xl font-bold uppercase text-center px-4">
         <span className="text-primary">Escolhe</span> uma disciplina para ver o{' '}
         <span className="text-primary">scoreboard</span>
       </p>
 
-      <section className="grid grid-cols-2 gap-x-4 px-6 md:grid-cols-4 gap-y-10 md:gap-x-10 mt-10 md:px-16">
+      <section className="grid grid-cols-2 gap-x-4 px-6 md:grid-cols-4 gap-y-10 md:gap-x-10 my-8 md:px-16">
         {subjects.map((subject) => (
           <Link
             key={subject.id}

@@ -38,7 +38,7 @@ const UserAvatar: React.FC<UserAvatarProps> = ({ avatar }) => {
         href="https://en.gravatar.com/gravatars/new/computer"
         target="_blank"
         rel="noreferrer"
-        className="w-full h-full rounded-full absolute top-0 left-0 flex justify-center items-center text-white text-sm z-20">
+        className="w-full h-full rounded-full absolute top-0 left-0 flex justify-center items-center text-white text-sm z-5">
         <motion.div
           {...animation}
           className="w-full h-full rounded-full absolute top-0 left-0 bg-primary bg-opacity-70"
