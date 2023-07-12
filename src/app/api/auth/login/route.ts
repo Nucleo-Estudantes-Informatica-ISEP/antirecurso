@@ -5,12 +5,14 @@ import { BASE_URL } from 'src/services/api';
 export async function POST(request: NextRequest) {
   const { email, password } = await request.json();
 
-  if (!email || !password) return new Response('Email and password are required', { status: 400 });
+  if (!email || !password)
+    return NextResponse.json({ error: 'Email and password are required' }, { status: 400 });
 
   const res = await fetch(BASE_URL + '/auth/login', {
     method: 'POST',
     headers: {
-      'Content-Type': 'application/json'
+      'Content-Type': 'application/json',
+      accept: 'application/json'
     },
     cache: 'no-store',
     body: JSON.stringify({
@@ -19,9 +21,8 @@ export async function POST(request: NextRequest) {
     })
   });
 
-  const { token } = await res.json();
-
   if (res.status === 200) {
+    const { token } = await res.json();
     const response = NextResponse.json({ data: res }, { status: 200 });
 
     response.cookies.set({
@@ -33,5 +34,6 @@ export async function POST(request: NextRequest) {
     return response;
   }
 
-  return res;
+  const { message } = await res.json();
+  return NextResponse.json({ error: message }, { status: res.status });
 }
