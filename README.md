@@ -4,87 +4,111 @@
     </a>
 </p>
 
-# Antirecurso joined the server!
+## Welcome to AntiRecurso's GitHub Repository 🚀
 
-Hello there, and welcome the Antirecurso's github repository!
+Hello, and welcome to AntiRecurso's home on GitHub! Here you'll find all the necessary code, documentation, and resources related to the AntiRecurso platform.
 
-With this README.md you'll get to know everything about the project so you can contribute to it with some of your amazing code and ideas.
+The repository serves as the starting point for anyone who wishes to understand our project better, contribute their unique ideas, or simply stay updated with our developments. So, whether you're a potential contributor, an interested observer, or a user wanting to understand more about the gears that drive AntiRecurso, you're in the right place! Welcome aboard!
 
-So, let's start, shall we? ✨
+## About the Project 🤓
 
-## The project 🤓
+"AntiRecurso" initially began as an Android mobile app designed to help ISEP students studying for exams. Over time, it has evolved into a platform that caters to a broad range of academic subjects, accessible from any device.
 
-So, you might have heard of "antirecurso" before. It started out as an android mobile app that was specifically designed to help students studying for their PRCMP (Princípios de Computação) exams. The app was widely used by students in the first year and it passed on through "generations".
+Whether using a computer, tablet, or mobile phone, AntiRecurso provides numerous exercises in the form of short quizzes, each with 10 random questions. Upon completion, users receive immediate feedback and their performance is tracked on a scoreboard.
 
-After a while, the idea to create a new and version of "antirecurso" started to be discussed around students that realized that they could do even more to help others. This project is the effort to take the app to the next level and turn it into a full-fledged platform. Now, "antirecurso" is much more than just a mobile app to study for PRCMP - it's a comprehensive study tool that can be accessed from any device with internet connection for students to study to EVERY subject.
+If you're a student seeking extra academic resources, check out AntiRecurso <a href="https://antirecurso.nei-isep.org" target="_blank">here</a>.
 
-Whether you're using a computer, a tablet, or even your phone, you can log in to "antirecurso" and access a ton of exercises to help you prepare for your exams. These exercises are presented in a form of short quizzes with 10 random questions each. After answering them, the user gets a feedback with how many they got wrong and it goes into a scoreboard.
+## The Tech Stack 🔧
 
-So, if you're a student looking for a little extra help with your studies, definitely check out "antirecurso" <a href="https://antirecurso.nei-isep.org" target="_blank">here</a>. It's a game-changer when it comes to exam prep!
+For this project, we're using the Next.js framework.
 
-## The stack 🔧
+Here's a quick rundown of the tech stack:
 
-For this project we're using the TALL stack, and it helps with productive and agile development.
+- **Next.js**: An open-source React front-end development web framework that enables functionality such as server-side rendering and generating static websites for React-based web applications.
 
-Here's a little brief of what the TALL stack is:
+- **Tailwind CSS**: A utility-first CSS framework that uses class utilities to build any design, directly in the markup.
 
-The TALL stack for Laravel is a set of technologies that can be used together to build web applications with the Laravel PHP framework.
+- **Framer Motion**: A motion library for React that helps create smooth and delightful animations. It provides a simple and intuitive API to animate components and create interactive user experiences.
 
-Here's a brief overview of each component in the TALL stack for Laravel:
+## Usage Examples 🌐
 
-- Tailwind CSS: Tailwind CSS is a CSS framework that provides a set of utility classes for building user interfaces. It allows you to build layouts and style your application using a set of predefined classes, rather than writing your own custom CSS.
+To start using AntiRecurso:
 
-- Alpine.js: Alpine.js is a small JavaScript library that provides reactive components and two-way data binding for building user interfaces. It is often used as an alternative to larger JavaScript frameworks like React or Vue.js.
+1. Navigate to the AntiRecurso homepage by clicking [here](https://antirecurso.nei-isep.org).
 
-- Laravel Livewire: Laravel Livewire is a PHP library that makes it easy to build dynamic, interactive UIs with Laravel. It allows you to create components that can automatically update the DOM without the need for full page reloads.
+<p align="center">
+  <img src="/assets/homepage.png" width="600" alt="Homepage Printscreen">
+</p>
 
-- Laravel: Laravel is a popular PHP framework for building web applications. It provides a set of tools and features that make it easier to build complex, feature-rich applications. Laravel is known for its clean codebase, excellent documentation, and strong developer community.
+2. Register an account, or login if you already have one.
 
-Together, these technologies can be used to build powerful, dynamic web applications that you can use in the comfort of your house 🤗.
+3. Choose your desired subject from the wide array available.
 
-## Releases 📑
+<p align="center">
+  <img src="/assets/desiredSubject.png" width="600" alt="Subject Selector Screen Printscreen">
+</p>
 
-For more detailed information about the releases, you can check our <a href="https://github.com/Nucleo-Estudantes-Informatica-ISEP/antirecurso/releases" target="_blank">releases' page</a>, but here's a little preview table!
+4. Choose the type of exam you wish to take
 
-<table>
-    <thead>
-        <th>
-            Update name
-        </th>
-        <th>
-            Version
-        </th>
-        <th>
-            Update date
-        </th>
-    </thead>
-    <tbody>
-    </tbody>
-</table>
+<p align="center">
+  <img src="/assets/typeOfQuestions.png" width="600" alt="Exam Type Selector Screen Printscreen">
+</p>
 
+5. Submit your answers, and immediately receive feedback on your performance, including a breakdown of correct and incorrect responses.
 
-## Contribuitions 🤝
+6. Track your progress over time using the inbuilt scoreboard feature.
 
-Want to contribute? That's great!
+<p align="center">
+  <img src="/assets/score.png" width="600" alt="Exam Result Screen Printscreen">
+</p>
 
-Start off by selecting an issue from our <a href="https://github.com/Nucleo-Estudantes-Informatica-ISEP/antirecurso/issues">issues' page</a> or creating one yourself.
+## Roadmap or Future Plans 🚀
 
-After selecting what you want to do, get your hands to coding!
+We have an exciting vision for the future of AntiRecurso! Here are some of the planned features and enhancements we have in store:
 
-- Clone our repo by inserting the following command on your terminal:
-```
-https://github.com/Nucleo-Estudantes-Informatica-ISEP/antirecurso.git
-```
-- Open your project folder and paste the command down below on your terminal:
-```
-git checkout -b <branch-name>
-```
+- **Enhanced Question Bank**: Expand the question bank across multiple subjects. We aim to provide a comprehensive set of questions that cover a wide range of topics to cater to the needs of students studying various disciplines.
 
-- Finally, you just got to add your amazing feature and create a pull request to submit it to a review!
+- **Social Features**: Implement social features to foster a community of learners. This may include the ability to connect with other users, share achievements, and engage in discussions related to specific subjects or questions.
 
-> **Note**: we recommend that the branch name looks something like "feat-comments"
+- **Localization and Multilingual Support**: Provide localization options and multilingual support to make AntiRecurso accessible to a wider audience. This will involve translating the user interface and quizzes.
 
-## Thank you 🫶🏻
+- **Gamification Elements**: Introduce gamification elements, such as badges, rewards, to make the learning process more engaging and motivating for users. This will encourage healthy competition and provide incentives for users to actively participate and improve their performance.
+
+- **Accessibility Improvements**: Continuously work on improving the accessibility of the platform to ensure that it is usable by individuals with diverse abilities. This includes adhering to accessibility guidelines, optimizing the user interface for screen readers and other assistive technologies.
+
+Note that these are just a few examples of the features and enhancements we have planned for AntiRecurso. The roadmap is subject to change based on user feedback, community contributions, and emerging needs in the education sector.
+
+We invite you to join us on this journey of growth and innovation as we strive to create a powerful and accessible learning platform for the students. If you have any suggestions or ideas for future development, we'd love to hear from you!
+
+Let's make learning fun and effective together! 🌟
+
+## Contributions 🤝
+
+We welcome contributions from the community! If you're interested in contributing to AntiRecurso, please check out our [Contributing Guidelines](CONTRIBUTING.md) for more information.
+
+## License 📝
+
+AntiRecurso is licensed under the GNU General Public License v3.0. See the [LICENSE](LICENSE) file for more details.
+
+## Code of Conduct 📜
+
+We have adopted a Code of Conduct that we expect project participants to adhere to. Please read the [full text](CODE_OF_CONDUCT.md) so that you can understand what actions will and will not be tolerated.
+
+## Security Policy 🔒
+
+We take security seriously at AntiRecurso. If you discover a security issue, please bring it to our attention right away!
+
+Please read our [Security Policy](SECURITY.md) for more information.
+
+## Contact Us 📧
+
+If you have any questions, suggestions, or just want to say hello, feel free to reach out to us:
+
+- **Email**: <support.antirecurso@nei-isep.org>
+
+We value your feedback and would love to hear from you!
+
+## Thank you 🙌
 
 It's really important to us that you're simply checking this page.
 If you want to contribute, it's even better!
@@ -95,4 +119,4 @@ Keep being awesome!
 
 With love,
 
-NEI ISEP
+NEI ISEP ❤︎
