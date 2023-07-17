@@ -2,12 +2,12 @@
 
 import { createContext, useEffect, useState } from 'react';
 
-import User from '@/types/User';
 import fetchSessionUser from '@/services/fetchSessionUser';
-import getToken from '@/services/getToken';
+import User from '@/types/User';
 
 export interface AuthContextData {
   user: User | null;
+  token: string | null;
   clear: () => void;
   fetchToken: () => void;
 }
@@ -47,10 +47,20 @@ export function AuthContextProvider({ children, ...props }: AuthContextProviderP
   }, []);
 
   return (
-    <AuthContext.Provider value={{ user, clear, fetchToken }} {...props}>
+    <AuthContext.Provider value={{ user, token, clear, fetchToken }} {...props}>
       {children}
     </AuthContext.Provider>
   );
+}
+
+async function getToken(): Promise<string | null> {
+  const res = await fetch('/api/auth/session', {
+    method: 'GET',
+    headers: { 'Content-Type': 'application/json' }
+  });
+
+  if (res.status === 200) return (await res.json()).data;
+  return null;
 }
 
 export default AuthContext;
