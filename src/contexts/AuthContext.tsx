@@ -3,6 +3,7 @@
 import { createContext, useEffect, useState } from 'react';
 
 import User from '@/types/User';
+import swal from 'sweetalert';
 
 interface SessionData {
   user: User | null;
@@ -56,6 +57,10 @@ async function fetchSession(): Promise<SessionData | null> {
   });
 
   if (res.status === 200) return (await res.json()) as SessionData;
+
+  if (res.status === 404) {
+    await swal('Sessão expirada', 'Por favor, inicia sessão novamente.', 'error');
+  }
   return null;
 }
 

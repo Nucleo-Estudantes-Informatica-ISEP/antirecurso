@@ -18,7 +18,7 @@ export async function GET(request: NextRequest) {
   });
 
   if (res.status === 404) {
-    const response = new NextResponse(null, { status: 401 });
+    const response = new NextResponse(null, { status: 404 });
     response.cookies.delete(config.cookies.token);
     return response;
   }
