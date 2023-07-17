@@ -41,7 +41,6 @@ const LogoutButton: React.FC<LogoutButtonProps> = ({ className, onClick }) => {
         timer: 2000,
         className: theme === 'dark' ? 'swal-dark' : ''
       });
-      router.push('/');
       router.refresh();
     } else {
       swal({
