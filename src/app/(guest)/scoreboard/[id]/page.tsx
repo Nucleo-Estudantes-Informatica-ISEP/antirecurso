@@ -1,11 +1,9 @@
 import ScoreboardPodium from '@/components/ScoreboardPodium';
 import ScoreboardRow from '@/components/ScoreboardRow';
-import { cookies } from 'next/headers';
-import config from 'src/config';
-import { BASE_URL } from 'src/services/api';
-import fetchSessionUser from 'src/services/fetchSessionUser';
-import Leaderboard from 'src/types/Leaderboard';
-import getSubjectNameById from 'src/utils/getSubjectNameById';
+import getServerSession from '@/services/getServerSession';
+import { BASE_URL } from '@/services/api';
+import Leaderboard from '@/types/Leaderboard';
+import getSubjectNameById from '@/utils/getSubjectNameById';
 
 interface ScoreboardPageProps {
   params: {
@@ -15,9 +13,6 @@ interface ScoreboardPageProps {
 
 // @ts-expect-error Server Component
 const ScoreboardPage: React.FC<ScoreboardPageProps> = async ({ params }) => {
-  const cookieStore = cookies().get(config.cookies.token) as { value: string } | undefined;
-  const token = cookieStore?.value;
-
   async function fetchLeaderboard(): Promise<Leaderboard> {
     const res = await fetch(`${BASE_URL}/subjects/${params.id}/scoreboard`, {
       cache: 'no-cache'
@@ -25,10 +20,10 @@ const ScoreboardPage: React.FC<ScoreboardPageProps> = async ({ params }) => {
     return res.json();
   }
 
-  const [subjectName, scoreboard, user] = await Promise.all([
+  const [subjectName, scoreboard, session] = await Promise.all([
     getSubjectNameById(parseInt(params.id)),
     fetchLeaderboard(),
-    fetchSessionUser(token)
+    getServerSession()
   ]);
 
   return (
@@ -51,7 +46,7 @@ const ScoreboardPage: React.FC<ScoreboardPageProps> = async ({ params }) => {
             </div> */}
             <ScoreboardPodium
               scores={scoreboard.scores}
-              uid={user !== null ? user.id : undefined}
+              uid={!session ? undefined : session.user.id}
             />
             <table className="text-sm text-center">
               <tbody>
@@ -60,7 +55,7 @@ const ScoreboardPage: React.FC<ScoreboardPageProps> = async ({ params }) => {
                     line={line}
                     position={key + 4}
                     key={key}
-                    highlight={user !== null && user.id === line.user_id}
+                    highlight={!!session && session.user.id === line.user_id}
                   />
                 ))}
               </tbody>

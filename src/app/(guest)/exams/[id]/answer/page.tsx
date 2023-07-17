@@ -1,6 +1,5 @@
-import { cookies } from 'next/headers';
+import getServerSession from '@/services/getServerSession';
 import Link from 'next/link';
-import config from 'src/config';
 
 interface ExamAnswerPageProps {
   params: {
@@ -67,8 +66,7 @@ const modes = [
 
 // @ts-expect-error Server Component
 const Exams: React.FC<ExamAnswerPageProps> = async ({ params }) => {
-  const t = cookies().get(config.cookies.token);
-  const token = t?.value;
+  const session = await getServerSession();
 
   return (
     <section className="flex flex-col items-center justify-center w-full text-center mb-8">
@@ -83,7 +81,9 @@ const Exams: React.FC<ExamAnswerPageProps> = async ({ params }) => {
             href={`exams/${params.id}/answer/${mode.slug}`}
             key={mode.id}
             className={`relative w-full h-full md:h-64 p-5 flex flex-col space-y-6 items-center justify-center shadow dark:shadow-gray-500 rounded text-center group hover:bg-primary transition ease-in-out ${
-              mode.comingSoon || (mode.needsAuth && !token) ? 'pointer-events-none opacity-50' : ''
+              mode.comingSoon || (mode.needsAuth && !session)
+                ? 'pointer-events-none opacity-50'
+                : ''
             }`}>
             <p className="text-5xl">{mode.icon}</p>
             {mode.comingSoon ? (
@@ -92,7 +92,7 @@ const Exams: React.FC<ExamAnswerPageProps> = async ({ params }) => {
               </div>
             ) : (
               mode.needsAuth &&
-              !token && (
+              !session && (
                 <div className="absolute left-0 w-full p-1 text-xs font-bold text-white bg-red-500 md:text-base -top-4 md:-right-8 md:p-2">
                   <p>Needs account 🔒</p>
                 </div>

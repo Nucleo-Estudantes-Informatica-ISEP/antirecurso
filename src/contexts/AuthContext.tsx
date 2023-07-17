@@ -22,6 +22,7 @@ interface AuthContextProviderProps {
 const AuthContext = createContext<AuthContextData>({} as AuthContextData);
 
 export function AuthContextProvider({ children, ...props }: AuthContextProviderProps) {
+  // isLoading could be implemented to prevent the user from seeing the no auth version for a split second
   const [token, setToken] = useState<string | null>(null);
   const [user, setUser] = useState<User | null>(null);
 
