@@ -3,6 +3,7 @@
 import InputLabel from '@/components/InputLabel';
 import PrimaryButton from '@/components/PrimaryButton';
 import TextInput from '@/components/TextInput';
+import useSession from '@/hooks/useSession';
 import { Spinner } from '@/styles/Icons';
 import { useTheme } from 'next-themes';
 import Link from 'next/link';
@@ -14,6 +15,7 @@ import swal from 'sweetalert';
 import { z } from 'zod';
 
 const Login: React.FC = () => {
+  const session = useSession();
   const router = useRouter();
 
   const emailInputRef = useRef<HTMLInputElement>(null);
@@ -60,6 +62,7 @@ const Login: React.FC = () => {
       });
 
       if (res.status === 200) {
+        session.fetchToken();
         router.push('/');
         router.refresh();
       } else {

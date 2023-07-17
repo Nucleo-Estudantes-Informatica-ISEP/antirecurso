@@ -90,7 +90,7 @@ const Exam: React.FC<ExamPageProps> = ({ params }) => {
 
   useEffect(() => {
     async function getExam(id: number, mode: string) {
-      const exam = await generateExam(id, mode);
+      const exam = await generateExam(id, mode, session.token);
       if (exam === null) {
         swal('Ocorreu um erro ao carregar o exame.', 'Por favor tente novamente.', 'error', {
           className: theme === 'dark' ? 'swal-dark' : ''
