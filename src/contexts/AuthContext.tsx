@@ -2,14 +2,16 @@
 
 import { createContext, useEffect, useState } from 'react';
 
-import fetchSessionUser from '@/services/fetchSessionUser';
 import User from '@/types/User';
 
-export interface AuthContextData {
+interface SessionData {
   user: User | null;
   token: string | null;
+}
+
+export interface AuthContextData extends SessionData {
   clear: () => void;
-  fetchToken: () => void;
+  revalidate: () => void;
 }
 
 interface AuthContextProviderProps {
@@ -22,13 +24,12 @@ export function AuthContextProvider({ children, ...props }: AuthContextProviderP
   const [token, setToken] = useState<string | null>(null);
   const [user, setUser] = useState<User | null>(null);
 
-  const fetchToken = async () => {
-    const token = await getToken();
-    setToken(token);
-  };
+  const revalidate = async () => {
+    const session = await fetchSession();
+    if (!session) return;
 
-  const fetchSession = async (token: string) => {
-    const user = await fetchSessionUser(token);
+    const { token, user } = session;
+    setToken(token);
     setUser(user);
   };
 
@@ -38,28 +39,23 @@ export function AuthContextProvider({ children, ...props }: AuthContextProviderP
   };
 
   useEffect(() => {
-    if (!token) return;
-    fetchSession(token);
-  }, [token]);
-
-  useEffect(() => {
-    fetchToken();
+    revalidate();
   }, []);
 
   return (
-    <AuthContext.Provider value={{ user, token, clear, fetchToken }} {...props}>
+    <AuthContext.Provider value={{ user, token, clear, revalidate }} {...props}>
       {children}
     </AuthContext.Provider>
   );
 }
 
-async function getToken(): Promise<string | null> {
+async function fetchSession(): Promise<SessionData | null> {
   const res = await fetch('/api/auth/session', {
     method: 'GET',
     headers: { 'Content-Type': 'application/json' }
   });
 
-  if (res.status === 200) return (await res.json()).data;
+  if (res.status === 200) return (await res.json()) as SessionData;
   return null;
 }
 

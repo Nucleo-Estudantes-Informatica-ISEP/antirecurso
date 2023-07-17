@@ -1,14 +1,11 @@
-import { BASE_URL } from 'src/services/api';
 import User from 'src/types/User';
 import swal from 'sweetalert';
 
 const fetchSessionUser = async (token: string | undefined): Promise<User | null> => {
   if (!token) return null;
 
-  const res = await fetch(`${BASE_URL}/user`, {
-    headers: {
-      Authorization: `Bearer ${token}`
-    },
+  const res = await fetch(`/api/auth/session`, {
+    headers: { Authorization: `Bearer ${token}` },
     cache: 'no-store'
   });
 

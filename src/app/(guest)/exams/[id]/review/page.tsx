@@ -49,7 +49,7 @@ const ReviewPage: React.FC<ExamPageProps> = ({ params }) => {
   }, [params.id, setExamResult]);
 
   async function submitComment(comment: string) {
-    if (!session.token) return;
+    if (!session.user) return;
 
     await fetch(`${BASE_URL}/comments`, {
       method: 'POST',

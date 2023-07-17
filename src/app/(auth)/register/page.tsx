@@ -74,7 +74,7 @@ const Register: React.FC = () => {
       });
 
       if (res.status === 200) {
-        session.fetchToken();
+        session.revalidate();
         router.push('/');
         router.refresh();
       } else if (res.status === 422) {

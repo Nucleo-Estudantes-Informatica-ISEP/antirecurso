@@ -62,7 +62,7 @@ const Login: React.FC = () => {
       });
 
       if (res.status === 200) {
-        session.fetchToken();
+        session.revalidate();
         router.push('/');
         router.refresh();
       } else {

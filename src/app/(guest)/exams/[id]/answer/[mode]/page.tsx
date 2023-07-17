@@ -57,7 +57,7 @@ const Exam: React.FC<ExamPageProps> = ({ params }) => {
   } = useAnswerableExamNavigation({ handleConfirm });
 
   async function handleConfirm() {
-    if (isSubmitting || !session.token) return;
+    if (isSubmitting || !session.user) return;
 
     removeEventListener();
 

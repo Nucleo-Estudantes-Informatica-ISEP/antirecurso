@@ -45,7 +45,7 @@ const CommentSection: React.FC<CommentSectionProps> = ({
   }
 
   async function handleReportQuestion() {
-    if (!questionId || !session.token) return;
+    if (!questionId || !session.user) return;
 
     const result = await swal({
       text: 'O que está errado com esta pergunta?',
@@ -89,7 +89,7 @@ const CommentSection: React.FC<CommentSectionProps> = ({
   return (
     <section className="px-5 mt-14 mb-28 md:mb-14 md:px-32">
       <div>
-        {!session.token ? (
+        {!session.user ? (
           <p className="w-5/6 text-center md:text-start">
             <Link href="/register" target="_blank" className="font-semibold text-primary">
               Cria
