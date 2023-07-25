@@ -2,11 +2,9 @@ import PreviousExamsTable from '@/components/PreviousExamsTable';
 import PrimaryButton from '@/components/PrimaryButton';
 import UserAvatar from '@/components/UserAvatar';
 import UserProfileScoreboard from '@/components/UserProfileScoreboard';
+import getServerSession from '@/services/getServerSession';
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
-import { BASE_URL } from 'src/services/api';
-import User from 'src/types/User';
-import swal from 'sweetalert';
 
 interface ProfileProps {
   params: {
@@ -15,23 +13,11 @@ interface ProfileProps {
 }
 
 // @ts-expect-error Server Component
-const Profile: React.FC<ProfileProps> = async ({ params }) => {
-  const res = await fetch(`${BASE_URL}/user`, {
-    headers: {
-      Authorization: `Bearer ${params.token}`
-    },
-    cache: 'no-store'
-  });
+const Profile: React.FC<ProfileProps> = async () => {
+  const session = await getServerSession();
+  if (!session) redirect('/');
 
-  if (res.status === 401) {
-    await fetch(`${BASE_URL}/logout`, {
-      method: 'PATCH'
-    });
-    swal('Sessão expirada', 'Por favor, inicia sessão novamente.', 'error');
-    redirect('/');
-  }
-
-  const user = (await res.json()) as User;
+  const { token, user } = session;
 
   const today = new Date().toLocaleDateString('pt-PT');
 
@@ -60,7 +46,7 @@ const Profile: React.FC<ProfileProps> = async ({ params }) => {
             Os teus <span className="text-primary">exames</span>
           </p>
 
-          <PreviousExamsTable token={params.token} />
+          <PreviousExamsTable token={token} />
         </>
       ) : (
         <section className="flex flex-col items-center px-3 mt-12 text-center">

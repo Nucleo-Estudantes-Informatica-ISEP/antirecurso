@@ -1,5 +1,6 @@
 'use client';
 
+import useSession from '@/hooks/useSession';
 import { useTheme } from 'next-themes';
 import { useRouter } from 'next/navigation';
 import swal from 'sweetalert';
@@ -10,6 +11,7 @@ interface LogoutButtonProps {
 }
 
 const LogoutButton: React.FC<LogoutButtonProps> = ({ className, onClick }) => {
+  const session = useSession();
   const router = useRouter();
 
   const { theme } = useTheme();
@@ -32,13 +34,13 @@ const LogoutButton: React.FC<LogoutButtonProps> = ({ className, onClick }) => {
     });
 
     if (res.status === 200) {
+      session.clear();
       swal({
         title: 'Terminaste sessão com sucesso!',
         icon: 'success',
         timer: 2000,
         className: theme === 'dark' ? 'swal-dark' : ''
       });
-      router.push('/');
       router.refresh();
     } else {
       swal({

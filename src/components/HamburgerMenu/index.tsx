@@ -1,5 +1,6 @@
 'use client';
 
+import useSession from '@/hooks/useSession';
 import { Menu } from '@/styles/Icons';
 import Link from 'next/link';
 import { useState } from 'react';
@@ -8,12 +9,10 @@ import PrimaryButton from '../PrimaryButton';
 import ThemeChanger from '../Theme/ThemeChanger';
 import TopbarLink from '../TopbarLink';
 
-interface HamburgerMenuProps {
-  token: string | undefined;
-}
-
-const HamburgerMenu: React.FC<HamburgerMenuProps> = ({ token }) => {
+const HamburgerMenu: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
+
+  const session = useSession();
 
   const handleClickMenu = () => {
     setIsOpen((prev) => !prev);
@@ -46,9 +45,9 @@ const HamburgerMenu: React.FC<HamburgerMenuProps> = ({ token }) => {
           </TopbarLink>
 
           <div className="flex flex-col pt-6 mt-6 border-t border-gray-200 gap-y-4">
-            {token ? (
+            {session.user ? (
               <>
-                <Link href={`/profile/${token}`}>
+                <Link href={`/profile`}>
                   <PrimaryButton onClick={closeMenu} className="w-full">
                     Aceder ao perfil
                   </PrimaryButton>

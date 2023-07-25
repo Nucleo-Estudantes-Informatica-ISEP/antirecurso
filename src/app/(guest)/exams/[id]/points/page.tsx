@@ -10,19 +10,13 @@ import { ExamContext } from 'src/contexts/ExamContext';
 import { useTheme } from 'next-themes';
 import { useRouter } from 'next/navigation';
 import ReactCanvasConfetti from 'react-canvas-confetti';
-import getToken from 'src/services/getToken';
 import toFixed from 'src/utils/toFixed';
 import swal from 'sweetalert';
+import useSession from '@/hooks/useSession';
 
-interface ExamPageProps {
-  params: {
-    id: string;
-  };
-}
-
-const Points: React.FC<ExamPageProps> = ({ params }) => {
+const Points: React.FC = () => {
+  const session = useSession();
   const router = useRouter();
-  const [token, setToken] = useState<string | null>();
   const [fire, setFire] = useState(false);
   const { examResult } = useContext(ExamContext);
 
@@ -43,14 +37,8 @@ const Points: React.FC<ExamPageProps> = ({ params }) => {
     router.push('/exams/' + examResult.id + '/review');
   }
 
-  async function getUserToken() {
-    const token = await getToken();
-    setToken(token);
-  }
-
   useEffect(() => {
     setFire(true);
-    getUserToken();
   }, []);
 
   if (!examResult) {
@@ -118,7 +106,7 @@ const Points: React.FC<ExamPageProps> = ({ params }) => {
         <PrimaryButton onClick={handleReview} className="z-50 mt-16 mb-4">
           Verificar respostas
         </PrimaryButton>
-        {!token && (
+        {!session.user && (
           <p className="z-50 mx-5 mt-5 text-xs">
             Não te esqueças que podes criar uma conta para guardar o teu progresso clicando{' '}
             <Link className="underline cursor-pointer" href="/register">

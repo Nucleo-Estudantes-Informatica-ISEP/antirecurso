@@ -1,11 +1,13 @@
 import config from 'src/config';
 import { BASE_URL } from 'src/services/api';
 import Question from 'src/types/Question';
-import getToken from './getToken';
 
-const generateExam = async (id: number, mode: string): Promise<Question[] | null> => {
+const generateExam = async (
+  id: number,
+  mode: string,
+  token: string | null
+): Promise<Question[] | null> => {
   if (config.mandatoryAuthModes.includes(mode)) {
-    const token = await getToken();
     if (!token) return null;
     const res = await fetch(BASE_URL + `/exams/generate/${id}?mode=${mode}`, {
       method: 'GET',

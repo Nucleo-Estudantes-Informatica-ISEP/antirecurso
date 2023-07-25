@@ -1,13 +1,13 @@
 'use client';
 
+import useSession from '@/hooks/useSession';
 import { Flag } from '@/styles/Icons';
 import { useTheme } from 'next-themes';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useEffect, useRef, useState } from 'react';
+import { useRef } from 'react';
 import Skeleton from 'react-loading-skeleton';
 import { BASE_URL } from 'src/services/api';
-import getToken from 'src/services/getToken';
 import swal from 'sweetalert';
 import Comment from '../../types/Comment';
 import InputLabel from '../InputLabel';
@@ -28,15 +28,10 @@ const CommentSection: React.FC<CommentSectionProps> = ({
   addListener,
   questionId
 }) => {
-  const [token, setToken] = useState<string | null>(null);
-  const inputRef = useRef<HTMLTextAreaElement>(null);
-
+  const session = useSession();
   const { theme } = useTheme();
 
-  async function getUserToken() {
-    const t = await getToken();
-    setToken(t);
-  }
+  const inputRef = useRef<HTMLTextAreaElement>(null);
 
   function handleSubmit() {
     const comment = document.getElementById('comment') as HTMLInputElement;
@@ -50,7 +45,7 @@ const CommentSection: React.FC<CommentSectionProps> = ({
   }
 
   async function handleReportQuestion() {
-    if (!questionId) return;
+    if (!questionId || !session.user) return;
 
     const result = await swal({
       text: 'O que está errado com esta pergunta?',
@@ -67,7 +62,7 @@ const CommentSection: React.FC<CommentSectionProps> = ({
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`
+        Authorization: `Bearer ${session.token}`
       },
       body: JSON.stringify({
         question_id: questionId,
@@ -91,14 +86,10 @@ const CommentSection: React.FC<CommentSectionProps> = ({
       });
   }
 
-  useEffect(() => {
-    getUserToken();
-  }, [comments]);
-
   return (
     <section className="px-5 mt-14 mb-28 md:mb-14 md:px-32">
       <div>
-        {!token ? (
+        {!session.user ? (
           <p className="w-5/6 text-center md:text-start">
             <Link href="/register" target="_blank" className="font-semibold text-primary">
               Cria
