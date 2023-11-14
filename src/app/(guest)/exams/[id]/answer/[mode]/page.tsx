@@ -57,7 +57,7 @@ const Exam: React.FC<ExamPageProps> = ({ params }) => {
   } = useAnswerableExamNavigation({ handleConfirm });
 
   async function handleConfirm() {
-    if (isSubmitting || !session.user) return;
+    if (isSubmitting) return;
 
     removeEventListener();
 
@@ -107,7 +107,7 @@ const Exam: React.FC<ExamPageProps> = ({ params }) => {
 
     getExam(parseInt(params.id), params.mode);
     setSubjectName();
-  }, [params.id, params.mode, router, setQuestions]);
+  }, [params.id, params.mode, router, setQuestions, session.token]);
 
   return (
     <section className="flex flex-col items-center overflow-x-scroll">
