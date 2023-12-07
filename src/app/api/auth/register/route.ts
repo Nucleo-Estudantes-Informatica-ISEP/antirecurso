@@ -6,13 +6,15 @@ export async function POST(request: NextRequest) {
   const { name, email, password } = await request.json();
 
   if (!name || !email || !password)
-    return new Response('Name, Email and password are required', { status: 400 });
+    return NextResponse.json({ error: 'Name, Email and password are required' }, { status: 400 });
 
   const res = await fetch(BASE_URL + '/auth/register', {
     method: 'POST',
     headers: {
-      'Content-Type': 'application/json'
+      'Content-Type': 'application/json',
+      accept: 'application/json'
     },
+    cache: 'no-store',
     body: JSON.stringify({
       name,
       email,
@@ -20,8 +22,8 @@ export async function POST(request: NextRequest) {
     })
   });
 
-  const { token } = await res.json();
   if (res.status === 200) {
+    const { token } = await res.json();
     const response = NextResponse.json({ data: res }, { status: 200 });
 
     response.cookies.set({
@@ -31,7 +33,10 @@ export async function POST(request: NextRequest) {
       httpOnly: true
     });
     return response;
+  } else if (res.status === 500) {
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 
-  return res;
+  const { message } = await res.json();
+  return NextResponse.json({ error: message }, { status: res.status });
 }

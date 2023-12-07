@@ -4,24 +4,25 @@ import { useContext, useEffect, useState } from 'react';
 
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
+import { useTheme } from 'next-themes';
 import swal from 'sweetalert';
 
 import Skeleton from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css';
 
-import { ExamContext } from 'src/contexts/ExamContext';
-import { BASE_URL } from 'src/services/api';
-import generateExam from 'src/services/generateExam';
-import getSubjectNameById from 'src/utils/getSubjectNameById';
+import { ExamContext } from '@/contexts/ExamContext';
+import { BASE_URL } from '@/services/api';
+import generateExam from '@/services/generateExam';
+import getSubjectNameById from '@/utils/getSubjectNameById';
 
 import ExamNumeration from '@/components/ExamNumeration';
 import ExamNumerationContainer from '@/components/ExamNumerationContainer';
 import PrimaryButton from '@/components/PrimaryButton';
 import QuestionPrompt from '@/components/QuestionPrompt';
-import { useTheme } from 'next-themes';
+import useAnswerableExamNavigation from '@/hooks/useAnswerableExamNavigation';
+import useSession from '@/hooks/useSession';
+
 import sampleImage from 'public/images/sample.webp';
-import useAnswerableExamNavigation from 'src/hooks/useAnswerableExamNavigation';
-import getToken from 'src/services/getToken';
 
 interface ExamPageProps {
   params: {
@@ -37,6 +38,7 @@ const Exam: React.FC<ExamPageProps> = ({ params }) => {
   const router = useRouter();
   const [subject, setSubject] = useState('');
 
+  const session = useSession();
   const { theme } = useTheme();
 
   const { setExamResult } = useContext(ExamContext);
@@ -67,13 +69,11 @@ const Exam: React.FC<ExamPageProps> = ({ params }) => {
       }))
     };
 
-    const token = await getToken();
-
     const res = await fetch(`${BASE_URL}/exams/verify?mode=${params.mode}`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`
+        Authorization: `Bearer ${session.token}`
       },
       body: JSON.stringify(data)
     });
@@ -90,7 +90,7 @@ const Exam: React.FC<ExamPageProps> = ({ params }) => {
 
   useEffect(() => {
     async function getExam(id: number, mode: string) {
-      const exam = await generateExam(id, mode);
+      const exam = await generateExam(id, mode, session.token);
       if (exam === null) {
         swal('Ocorreu um erro ao carregar o exame.', 'Por favor tente novamente.', 'error', {
           className: theme === 'dark' ? 'swal-dark' : ''
@@ -107,7 +107,7 @@ const Exam: React.FC<ExamPageProps> = ({ params }) => {
 
     getExam(parseInt(params.id), params.mode);
     setSubjectName();
-  }, [params.id, params.mode, router, setQuestions]);
+  }, [params.id, params.mode, router, setQuestions, session.token]);
 
   return (
     <section className="flex flex-col items-center overflow-x-scroll">

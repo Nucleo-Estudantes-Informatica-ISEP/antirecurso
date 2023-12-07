@@ -1,12 +1,13 @@
 'use client';
 
+import useSession from '@/hooks/useSession';
 import { Flag } from '@/styles/Icons';
 import { useTheme } from 'next-themes';
+import Image from 'next/image';
 import Link from 'next/link';
-import { useEffect, useRef, useState } from 'react';
+import { useRef } from 'react';
 import Skeleton from 'react-loading-skeleton';
 import { BASE_URL } from 'src/services/api';
-import getToken from 'src/services/getToken';
 import swal from 'sweetalert';
 import Comment from '../../types/Comment';
 import InputLabel from '../InputLabel';
@@ -27,15 +28,10 @@ const CommentSection: React.FC<CommentSectionProps> = ({
   addListener,
   questionId
 }) => {
-  const [token, setToken] = useState<string | null>(null);
-  const inputRef = useRef<HTMLTextAreaElement>(null);
-
+  const session = useSession();
   const { theme } = useTheme();
 
-  async function getUserToken() {
-    const t = await getToken();
-    setToken(t);
-  }
+  const inputRef = useRef<HTMLTextAreaElement>(null);
 
   function handleSubmit() {
     const comment = document.getElementById('comment') as HTMLInputElement;
@@ -49,7 +45,7 @@ const CommentSection: React.FC<CommentSectionProps> = ({
   }
 
   async function handleReportQuestion() {
-    if (!questionId) return;
+    if (!questionId || !session.user) return;
 
     const result = await swal({
       text: 'O que está errado com esta pergunta?',
@@ -66,7 +62,7 @@ const CommentSection: React.FC<CommentSectionProps> = ({
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`
+        Authorization: `Bearer ${session.token}`
       },
       body: JSON.stringify({
         question_id: questionId,
@@ -90,25 +86,21 @@ const CommentSection: React.FC<CommentSectionProps> = ({
       });
   }
 
-  useEffect(() => {
-    getUserToken();
-  }, [comments]);
-
   return (
     <section className="px-5 mt-14 mb-28 md:mb-14 md:px-32">
-      {!token ? (
-        <p className="w-5/6 text-center md:text-start">
-          <Link href="/register" target="_blank" className="font-semibold text-primary">
-            Cria
-          </Link>{' '}
-          ou{' '}
-          <Link href="/login" target="_blank" className="font-semibold text-primary">
-            entra numa conta
-          </Link>{' '}
-          para poderes comentar e reportar possíveis erros!
-        </p>
-      ) : (
-        <>
+      <div>
+        {!session.user ? (
+          <p className="w-5/6 text-center md:text-start">
+            <Link href="/register" target="_blank" className="font-semibold text-primary">
+              Cria
+            </Link>{' '}
+            ou{' '}
+            <Link href="/login" target="_blank" className="font-semibold text-primary">
+              entra numa conta
+            </Link>{' '}
+            para poderes comentar e reportar possíveis erros!
+          </p>
+        ) : (
           <div className="flex flex-col mb-5 space-y-5 w-11/12 md:w-2/3 mx-auto md:mx-0">
             <div className="">
               <InputLabel value="Comentário" />
@@ -140,12 +132,22 @@ const CommentSection: React.FC<CommentSectionProps> = ({
               </button>
             </div>
           </div>
-          {comments !== undefined ? (
-            <div>
-              {comments.map((comment) => (
-                <div
-                  key={comment.id}
-                  className="w-full md:w-11/12 h-auto p-5 mx-auto my-5 bg-white border border-gray-100 rounded shadow dark:shadow-secondary-dark md:mx-0 dark:bg-primary-dark">
+        )}
+        {comments !== undefined ? (
+          <div>
+            {comments.map((comment) => (
+              <div
+                key={comment.id}
+                className="w-full flex items-start gap-x-4 md:w-11/12 h-auto p-5 mx-auto my-5 bg-white border border-gray-100 rounded shadow dark:shadow-secondary-dark md:mx-0 dark:bg-primary-dark">
+                <Image
+                  className="w-8 h-8 md:w-12 md:h-12 rounded-full aspect-square"
+                  src={`https://gravatar.com/avatar/${comment.user_avatar}?s=32&d=identicon`}
+                  alt={comment.user}
+                  loading="lazy"
+                  width={32}
+                  height={32}
+                />
+                <div>
                   <p className="flex items-center font-semibold gap-x-2">
                     {comment.user}
                     {comment.is_admin && (
@@ -155,13 +157,13 @@ const CommentSection: React.FC<CommentSectionProps> = ({
                   </p>
                   <p className="mt-2 text-sm md:text-md">{comment.comment}</p>
                 </div>
-              ))}
-            </div>
-          ) : (
-            <Skeleton className="w-1/2 max-w-[480px] h-10 mb-3" count={4} />
-          )}
-        </>
-      )}
+              </div>
+            ))}
+          </div>
+        ) : (
+          <Skeleton className="w-1/2 max-w-[480px] h-10 mb-3" count={4} />
+        )}
+      </div>
     </section>
   );
 };

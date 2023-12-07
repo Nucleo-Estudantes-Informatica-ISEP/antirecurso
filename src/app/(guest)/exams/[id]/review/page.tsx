@@ -14,7 +14,7 @@ import QuestionReview from '@/components/QuestionReview';
 import sampleImage from 'public/images/sample.webp';
 import useExamReviewNavigation from 'src/hooks/useExamReviewNavigation';
 import { BASE_URL } from 'src/services/api';
-import getToken from 'src/services/getToken';
+import useSession from '@/hooks/useSession';
 
 interface ExamPageProps {
   params: {
@@ -23,6 +23,8 @@ interface ExamPageProps {
 }
 
 const ReviewPage: React.FC<ExamPageProps> = ({ params }) => {
+  const session = useSession();
+
   const {
     currentQuestionIndex,
     currentQuestion,
@@ -47,13 +49,13 @@ const ReviewPage: React.FC<ExamPageProps> = ({ params }) => {
   }, [params.id, setExamResult]);
 
   async function submitComment(comment: string) {
-    const token = await getToken();
+    if (!session.user) return;
 
     await fetch(`${BASE_URL}/comments`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`
+        Authorization: `Bearer ${session.token}`
       },
       body: JSON.stringify({
         comment: comment,

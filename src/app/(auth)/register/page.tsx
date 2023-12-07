@@ -14,8 +14,10 @@ import { Spinner } from '@/styles/Icons';
 import { useTheme } from 'next-themes';
 import { useRouter } from 'next/navigation';
 import swal from 'sweetalert';
+import useSession from '@/hooks/useSession';
 
 const Register: React.FC = () => {
+  const session = useSession();
   const router = useRouter();
 
   const nameInputRef = useRef<HTMLInputElement>(null);
@@ -72,6 +74,7 @@ const Register: React.FC = () => {
       });
 
       if (res.status === 200) {
+        session.revalidate();
         router.push('/');
         router.refresh();
       } else if (res.status === 422) {
