@@ -1,19 +1,14 @@
-import config from 'src/config';
-import { cookies } from 'next/headers';
 import UserAvatar from '@/components/UserAvatar';
 import swal from 'sweetalert';
 import { redirect } from 'next/navigation';
-import fetchSessionUser from '@/services/fetchSessionUser';
 import StatsLineChart from '@/components/StatsLineChart';
+import getServerSession from '@/services/getServerSession';
 
 // @ts-expect-error Server Component
 const AdminPage: React.FC = async () => {
-  const cookieStore = cookies().get(config.cookies.token) as { value: string } | undefined;
-  const token = cookieStore?.value;
+  const session = await getServerSession();
 
-  const user = await fetchSessionUser(token);
-
-  if (user === null) {
+  if (session === null) {
     swal({
       title: 'Acesso negado',
       text: 'Ocorreu um erro',
@@ -27,9 +22,9 @@ const AdminPage: React.FC = async () => {
 
   return (
     <div className="w-full h-full flex flex-col items-center justify-center">
-      <UserAvatar avatar={user.avatar} />
+      <UserAvatar avatar={session.user.avatar} />
       <p className="text-xl font-semibold text-center px-4">
-        Bem vindo(a), <span className="font-bold text-primary">{user.name}</span>!
+        Bem vindo(a), <span className="font-bold text-primary">{session.user.name}</span>!
       </p>
 
       <div className="flex flex-col gap-4 mt-8">
