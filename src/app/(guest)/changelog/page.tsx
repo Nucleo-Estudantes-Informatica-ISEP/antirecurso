@@ -82,7 +82,7 @@ const Changelog: React.FC = () => {
         a todos os que estão na plataforma pela primeira vez! Espero que gostem e que vos ajude a
         preparar para os exames :) <br />
         <br /> Não se esqueçam que a plataforma é apenas um complemento ao estudo, não é uma solução
-        milagrosa para descobrir o que aconteceu nas cadeiras durante o semestre. <br />
+        milagrosa para descobrir o que aconteceu nas UC{`'`}s durante o semestre. <br />
         <span className="text-primary font-extrabold">Boa sorte!</span>
       </ChangelogVersion>
       <ChangelogVersion
