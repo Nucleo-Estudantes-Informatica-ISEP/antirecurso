@@ -8,16 +8,62 @@ const Changelog: React.FC = () => {
         title="v1.3.4 🆕"
         date={new Date(2024, 0, 5)}
         updates={[
-          '+242 perguntas de <span className="text-primary">ARQCP</span> (Obrigado <Link className="underline text-primary" target="_blank" rel="noreferrer" href="https://portal.isep.ipp.pt/intranet/areapessoal/docente.aspx?codeuser=18517">Prof. Paulo Baltarejo De Sousa</Link> e <Link className="underline text-primary" target="_blank" rel="noreferrer" href="https://portal.isep.ipp.pt/intranet/areapessoal/docente.aspx?codeuser=6522">Prof. Luís Nogueira</Link>)',
-          '+63 perguntas de <span className="text-primary">PRCMP</span> (Obrigado <Link className="underline text-primary" target="_blank" rel="noreferrer" href="https://portal.isep.ipp.pt/intranet/areapessoal/docente.aspx?codeuser=6303">Prof. António Barros</Link>)',
-          '+27 perguntas de <span className="text-primary">ALGAV</span> (Obrigado <Link className="underline text-primary" target="_blank" rel="noreferrer" href="https://portal.isep.ipp.pt/intranet/areapessoal/docente.aspx?codeuser=6337">Prof. Carlos Ramos</Link>)'
+          <span className="align-middle" key="1.3.4-arqcp-questions">
+            +242 perguntas de <span className="text-primary font-bold align-middle">ARQCP</span>{' '}
+            (Obrigado{' '}
+            <Link
+              className="underline text-primary"
+              target="_blank"
+              rel="noreferrer"
+              href="https://portal.isep.ipp.pt/intranet/areapessoal/docente.aspx?codeuser=18517">
+              Prof. Paulo Baltarejo De Sousa
+            </Link>{' '}
+            e{' '}
+            <Link
+              className="underline text-primary"
+              target="_blank"
+              rel="noreferrer"
+              href="https://portal.isep.ipp.pt/intranet/areapessoal/docente.aspx?codeuser=6522">
+              Prof. Luís Nogueira
+            </Link>
+            )
+          </span>,
+          <span className="align-middle" key="1.3.4-prcmp-questions">
+            +63 perguntas de <span className="text-primary font-bold align-middle">PRCMP</span>{' '}
+            (Obrigado{' '}
+            <Link
+              className="underline text-primary"
+              target="_blank"
+              rel="noreferrer"
+              href="https://portal.isep.ipp.pt/intranet/areapessoal/docente.aspx?codeuser=6303">
+              Prof. António Barros
+            </Link>
+            )
+          </span>,
+          <span className="align-middle" key="1.3.4-algav-questions">
+            +27 perguntas de <span className="text-primary font-bold align-middle">ALGAV</span>{' '}
+            (Obrigado{' '}
+            <Link
+              className="underline text-primary"
+              target="_blank"
+              rel="noreferrer"
+              href="https://portal.isep.ipp.pt/intranet/areapessoal/docente.aspx?codeuser=6337">
+              Prof. Carlos Ramos
+            </Link>
+            )
+          </span>
         ]}>
         Mais uma época de exames, mais perguntas para resolver!
-        <span className="text-primary font-bold">Bem-vindos</span> a todos os que estão na
-        plataforma pela primeira vez! Espero que gostem e que vos ajude a preparar para os exames :)
-        Não se esqueçam que a plataforma é apenas um complemento ao estudo, não é uma solução
-        milagrosa para descobrir o que aconteceu nas cadeiras durante o semestre.{' '}
-        <span className="text-primary font-bold">Boa sorte</span>!
+        <span className="text-primary font-bold">
+          <br />
+          <br />
+          Bem-vindos
+        </span>{' '}
+        a todos os que estão na plataforma pela primeira vez! Espero que gostem e que vos ajude a
+        preparar para os exames :) <br />
+        <br /> Não se esqueçam que a plataforma é apenas um complemento ao estudo, não é uma solução
+        milagrosa para descobrir o que aconteceu nas cadeiras durante o semestre. <br />
+        <span className="text-primary font-extrabold">Boa sorte!</span>
       </ChangelogVersion>
       <ChangelogVersion
         title="v1.3.3 🛠️"
