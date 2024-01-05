@@ -109,6 +109,7 @@ const CommentSection: React.FC<CommentSectionProps> = ({
                 rows={3}
                 id="comment"
                 name="comment"
+                placeholder="Escreve aqui o teu comentário..."
                 onFocus={() => {
                   document.addEventListener('keydown', (e) => {
                     if (e.key === 'Enter' && e.ctrlKey) {
