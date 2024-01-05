@@ -30,7 +30,7 @@ const About: React.FC = () => {
       </div>
 
       <div className="w-5/6 space-y-3">
-        <p className="text-xl font-semibold uppercase">Git repository </p>
+        <p className="text-xl font-semibold uppercase">Repositório Git</p>
         <p className="w-full font-semibold text-primary">
           <Link
             rel="noreferrer"
@@ -43,10 +43,10 @@ const About: React.FC = () => {
       </div>
 
       <div className="w-5/6 space-y-3">
-        <p className="text-xl font-semibold uppercase">versions</p>
+        <p className="text-xl font-semibold uppercase">Versões</p>
         <p className="w-full font-semibold text-primary">
           <Link className="hover:brightness-110" href="/changelog">
-            Check the new features
+            Changelog
           </Link>
         </p>
       </div>

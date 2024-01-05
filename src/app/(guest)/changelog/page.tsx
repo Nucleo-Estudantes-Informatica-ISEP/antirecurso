@@ -5,6 +5,21 @@ const Changelog: React.FC = () => {
   return (
     <section className="w-full text-sm md:text-md px-5 md:px-24 md:pb-24 pb-48 mt-5">
       <ChangelogVersion
+        title="v1.3.4 🆕"
+        date={new Date(2024, 0, 5)}
+        updates={[
+          '+242 perguntas de <span className="text-primary">ARQCP</span> (Obrigado <Link className="underline text-primary" target="_blank" rel="noreferrer" href="https://portal.isep.ipp.pt/intranet/areapessoal/docente.aspx?codeuser=18517">Prof. Paulo Baltarejo De Sousa</Link> e <Link className="underline text-primary" target="_blank" rel="noreferrer" href="https://portal.isep.ipp.pt/intranet/areapessoal/docente.aspx?codeuser=6522">Prof. Luís Nogueira</Link>)',
+          '+63 perguntas de <span className="text-primary">PRCMP</span> (Obrigado <Link className="underline text-primary" target="_blank" rel="noreferrer" href="https://portal.isep.ipp.pt/intranet/areapessoal/docente.aspx?codeuser=6303">Prof. António Barros</Link>)',
+          '+27 perguntas de <span className="text-primary">ALGAV</span> (Obrigado <Link className="underline text-primary" target="_blank" rel="noreferrer" href="https://portal.isep.ipp.pt/intranet/areapessoal/docente.aspx?codeuser=6337">Prof. Carlos Ramos</Link>)'
+        ]}>
+        Mais uma época de exames, mais perguntas para resolver!
+        <span className="text-primary font-bold">Bem-vindos</span> a todos os que estão na
+        plataforma pela primeira vez! Espero que gostem e que vos ajude a preparar para os exames :)
+        Não se esqueçam que a plataforma é apenas um complemento ao estudo, não é uma solução
+        milagrosa para descobrir o que aconteceu nas cadeiras durante o semestre.{' '}
+        <span className="text-primary font-bold">Boa sorte</span>!
+      </ChangelogVersion>
+      <ChangelogVersion
         title="v1.3.3 🛠️"
         date={new Date(2023, 5, 7)}
         updates={[

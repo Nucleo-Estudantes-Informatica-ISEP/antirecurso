@@ -7,7 +7,7 @@ const config = {
     changelog: '@AntiRecurso:changelog'
   },
   mandatoryAuthModes: ['new', 'realistic', 'wrong'],
-  version: '1.3.3'
+  version: '1.3.4'
 };
 
 export default config;
