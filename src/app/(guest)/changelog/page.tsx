@@ -9,8 +9,8 @@ const Changelog: React.FC = () => {
         date={new Date(2024, 0, 5)}
         updates={[
           <span className="align-middle" key="1.3.4-arqcp-questions">
-            +242 perguntas de <span className="text-primary font-bold align-middle">ARQCP</span>{' '}
-            (Obrigado{' '}
+            <span className="font-bold">+242</span> de{' '}
+            <span className="text-primary font-bold align-middle">ARQCP</span> (Obrigado{' '}
             <Link
               className="underline text-primary"
               target="_blank"
@@ -29,8 +29,8 @@ const Changelog: React.FC = () => {
             )
           </span>,
           <span className="align-middle" key="1.3.4-prcmp-questions">
-            +63 perguntas de <span className="text-primary font-bold align-middle">PRCMP</span>{' '}
-            (Obrigado{' '}
+            <span className="font-bold">+63</span> perguntas de{' '}
+            <span className="text-primary font-bold align-middle">PRCMP</span> (Obrigado{' '}
             <Link
               className="underline text-primary"
               target="_blank"
@@ -41,8 +41,8 @@ const Changelog: React.FC = () => {
             )
           </span>,
           <span className="align-middle" key="1.3.4-algav-questions">
-            +27 perguntas de <span className="text-primary font-bold align-middle">ALGAV</span>{' '}
-            (Obrigado{' '}
+            <span className="font-bold">+27</span> perguntas de{' '}
+            <span className="text-primary font-bold align-middle">ALGAV</span> (Obrigado{' '}
             <Link
               className="underline text-primary"
               target="_blank"
@@ -51,6 +51,26 @@ const Changelog: React.FC = () => {
               Prof. Carlos Ramos
             </Link>
             )
+          </span>,
+          <span className="align-middle" key="1.3.4-realistic-arqcp">
+            Adicionado <span className="font-bold">modo realista</span> de{' '}
+            <span className="text-primary align-middle">ARQCP</span>
+          </span>,
+          <span className="align-middle" key="1.3.4-realistic-prcmp">
+            Adicionado <span className="font-bold">modo realista</span> de{' '}
+            <span className="text-primary align-middle">PRCMP</span>
+          </span>,
+          <span className="align-middle" key="1.3.4-realistic-algav">
+            Adicionado <span className="font-bold">modo realista</span> de{' '}
+            <span className="text-primary align-middle">ALGAV</span>
+          </span>,
+          <span className="align-middle" key="1.3.4-realistic-sgrai">
+            Adicionado <span className="font-bold">modo realista</span> de{' '}
+            <span className="text-primary align-middle">SGRAI</span>
+          </span>,
+          <span className="align-middle" key="1.3.4-realistic-asist">
+            Adicionado <span className="font-bold">modo realista</span> de{' '}
+            <span className="text-primary align-middle">ASIST</span> (apenas 25 perguntas p/ exame)
           </span>
         ]}>
         Mais uma época de exames, mais perguntas para resolver!
