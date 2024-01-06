@@ -5,6 +5,18 @@ const Changelog: React.FC = () => {
   return (
     <section className="w-full text-sm md:text-md px-5 md:px-24 md:pb-24 pb-48 mt-5">
       <ChangelogVersion
+        title="v1.3.5 🤯"
+        date={new Date(2024, 0, 6)}
+        updates={[
+          <span key="1.3.5-hard-mode">
+            Adição do <span className="text-primary font-bold align-middle">modo difícil</span> de
+            exames. Neste modo estão presentes as perguntas mais erradas por todos os utilizadores
+            da plataforma.
+          </span>,
+          'Correção de um erro no cálculo do score dos exames realistas'
+        ]}
+      />
+      <ChangelogVersion
         title="v1.3.4 🆕"
         date={new Date(2024, 0, 5)}
         updates={[

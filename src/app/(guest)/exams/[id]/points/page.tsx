@@ -7,12 +7,12 @@ import Link from 'next/link';
 import PrimaryButton from '@/components/PrimaryButton';
 import { ExamContext } from 'src/contexts/ExamContext';
 
+import useSession from '@/hooks/useSession';
 import { useTheme } from 'next-themes';
 import { useRouter } from 'next/navigation';
 import ReactCanvasConfetti from 'react-canvas-confetti';
 import toFixed from 'src/utils/toFixed';
 import swal from 'sweetalert';
-import useSession from '@/hooks/useSession';
 
 const Points: React.FC = () => {
   const session = useSession();
@@ -96,9 +96,13 @@ const Points: React.FC = () => {
             <p className="text-xl font-semibold">
               <span className="text-primary">Ohhh...</span> reprovaste no exame... 😔
             </p>
-            <p className="mt-5">
-              Mas hey, não te preocupes! O caminho faz-se caminhando, e tu ainda tens muito pela
-              frente para poderes responder! Eu acredito em ti!
+            <p className="mt-5 w-5/6">
+              Os professores bem avisaram que as teóricas eram importantes... <br /> Mas, não te
+              preocupes! Continua a estudar e a resolver exames para tentar melhorar. Podes sempre
+              verificar as tuas estatísticas para perceber a tua evolução no teu{' '}
+              <Link className="underline text-primary" href="/profile">
+                perfil
+              </Link>
             </p>
             <p className="semibold">Continua!</p>
           </>

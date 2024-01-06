@@ -17,7 +17,7 @@ const ChangelogVersion: React.FC<ChangelogVersion> = ({ title, date, updates, ch
       <ul className="list-inside flex flex-col gap-y-1.5 ml-1 text-base font-light md:text-lg">
         {updates.map((update) => (
           <li className="align-middle" key={update?.toString()}>
-            ♦️ {update}
+            {update}
           </li>
         ))}
       </ul>
