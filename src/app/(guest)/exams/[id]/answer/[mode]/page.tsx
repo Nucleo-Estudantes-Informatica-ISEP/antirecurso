@@ -3,7 +3,7 @@
 import { useContext, useEffect, useState } from 'react';
 
 import Image from 'next/image';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useTheme } from 'next-themes';
 import swal from 'sweetalert';
 
@@ -36,6 +36,13 @@ const N_SKELETON_OPTIONS = 4;
 
 const Exam: React.FC<ExamPageProps> = ({ params }) => {
   const router = useRouter();
+  // Use the hook to get the search parameters
+  const searchParams = useSearchParams();
+
+  // Access a specific parameter
+  const nOfQuestions = searchParams.get('n_of_questions');
+  const penalizingFactor = searchParams.get('penalizing_factor');
+
   const [subject, setSubject] = useState('');
 
   const session = useSession();
@@ -69,14 +76,17 @@ const Exam: React.FC<ExamPageProps> = ({ params }) => {
       }))
     };
 
-    const res = await fetch(`${BASE_URL}/exams/verify?mode=${params.mode}`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${session.token}`
-      },
-      body: JSON.stringify(data)
-    });
+    const res = await fetch(
+      `${BASE_URL}/exams/verify?mode=${params.mode}?n_of_questions=${nOfQuestions}&penalizing_factor=${penalizingFactor}`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${session.token}`
+        },
+        body: JSON.stringify(data)
+      }
+    );
 
     if (res.status === 200) {
       setExamResult(await res.json());
@@ -89,25 +99,37 @@ const Exam: React.FC<ExamPageProps> = ({ params }) => {
   }
 
   useEffect(() => {
-    async function getExam(id: number, mode: string) {
-      const exam = await generateExam(id, mode, session.token);
-      if (exam === null) {
-        swal('Ocorreu um erro ao carregar o exame.', 'Por favor tente novamente.', 'error', {
+    async function getExam(id: number, mode: string, n_of_questions?: number) {
+      try {
+        console.log(id);
+        const exam = await generateExam(id, mode, session.token, n_of_questions);
+        if (exam === null) {
+          swal('Ocorreu um erro ao carregar o exame.', 'Por favor tente novamente.', 'error', {
+            className: theme === 'dark' ? 'swal-dark' : ''
+          });
+          router.push('/exams');
+          return;
+        }
+        setQuestions(exam);
+      } catch (err) {
+        swal('Error', 'Por favor tente novamente.', 'error', {
           className: theme === 'dark' ? 'swal-dark' : ''
         });
-        router.push('/exams');
-        return;
       }
-      setQuestions(exam);
     }
 
     async function setSubjectName() {
       setSubject(await getSubjectNameById(parseInt(params.id)));
     }
 
-    getExam(parseInt(params.id), params.mode);
+    if (nOfQuestions !== undefined && nOfQuestions !== null) {
+      getExam(parseInt(params.id), params.mode, parseInt(nOfQuestions as string));
+    } else {
+      getExam(parseInt(params.id), params.mode);
+    }
+
     setSubjectName();
-  }, [params.id, params.mode, router, setQuestions, session.token]);
+  }, [params.id, params.mode, router, setQuestions, session.token, theme, nOfQuestions]);
 
   return (
     <section className="flex flex-col items-center overflow-x-scroll">
