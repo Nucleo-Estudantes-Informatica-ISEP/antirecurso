@@ -15,7 +15,8 @@ const Changelog: React.FC = () => {
           </span>,
           'Correção de um erro no cálculo do score dos exames realistas',
           <span key="1.3.5-shuffle">
-            Adicionado <span className="italic">shuffle</span> extra das perguntas nos exames do modo <span className="font-bold text-primary">respostas erradas</span>
+            Adicionado <span className="italic">shuffle</span> extra das perguntas nos exames do
+            modo <span className="font-bold text-primary">respostas erradas</span>
           </span>
         ]}
       />
