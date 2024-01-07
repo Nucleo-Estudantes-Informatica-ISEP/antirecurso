@@ -20,7 +20,7 @@ const modes = [
     id: 2,
     name: 'Modo Realista',
     description:
-      'Desafia-te em condições de exame. Resolve um exame com o número de questões e opções aproximadas às do exame real!',
+      'Desafia-te em condições de exame. Resolve um exame com o número de questões, opções e penalizações aproximadas às do exame real!',
     slug: 'realistic',
     icon: '📝',
     needsAuth: true
