@@ -76,17 +76,30 @@ const Exam: React.FC<ExamPageProps> = ({ params }) => {
       }))
     };
 
-    const res = await fetch(
-      `${BASE_URL}/exams/verify?mode=${params.mode}?n_of_questions=${nOfQuestions}&penalizing_factor=${penalizingFactor}`,
-      {
+    let res;
+
+    if (nOfQuestions && penalizingFactor) {
+      res = await fetch(
+        `${BASE_URL}/exams/verify?mode=${params.mode}&n_of_questions=${nOfQuestions}&penalizing_factor=${penalizingFactor}`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${session.token}`
+          },
+          body: JSON.stringify(data)
+        }
+      );
+    } else {
+      res = await fetch(`${BASE_URL}/exams/verify?mode=${params.mode}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${session.token}`
         },
         body: JSON.stringify(data)
-      }
-    );
+      });
+    }
 
     if (res.status === 200) {
       setExamResult(await res.json());
