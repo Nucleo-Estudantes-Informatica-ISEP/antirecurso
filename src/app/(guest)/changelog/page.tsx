@@ -13,7 +13,10 @@ const Changelog: React.FC = () => {
             exames. Neste modo estão presentes as perguntas mais erradas por todos os utilizadores
             da plataforma.
           </span>,
-          'Correção de um erro no cálculo do score dos exames realistas'
+          'Correção de um erro no cálculo do score dos exames realistas',
+          <span key="1.3.5-shuffle">
+            Adicionado <span className="font-italic">shuffle</span> extra das perguntas nos exames do modo <span className="font-bold text-primary">respostas erradas</span>
+          </span>,
         ]}
       />
       <ChangelogVersion
