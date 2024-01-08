@@ -5,6 +5,26 @@ const Changelog: React.FC = () => {
   return (
     <section className="w-full text-sm md:text-md px-5 md:px-24 md:pb-24 pb-48 mt-5">
       <ChangelogVersion
+        title="v1.3.6 ⚙️"
+        date={new Date(2024, 0, 8)}
+        updates={[
+          <span key="1.3.6-custon-mode">
+            Adição do{' '}
+            <span className="text-primary font-bold align-middle">modo personalizado</span> de
+            exames. Neste modo podes definir o número de questões por exame e a penalização por cada
+            pergunta que errares!
+          </span>,
+          'Novo sistema de display de score no final do exame',
+          'Correção de margens em toda a plataforma',
+          'Correção de questões de usabilidade no menu de autenticação em modo web',
+          <span key="1.3.6-asist-questions">
+            <span className="text-primary font-bod">Modo realista</span> dos exames de
+            <span className="font-bold text-primary">ASIST</span> passa a ter 50 perguntas.
+          </span>,
+          'Adição da política de privacidade e de cookies no menu de sobre'
+        ]}
+      />
+      <ChangelogVersion
         title="v1.3.5 🤯"
         date={new Date(2024, 0, 6)}
         updates={[
