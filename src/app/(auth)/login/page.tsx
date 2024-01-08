@@ -98,7 +98,7 @@ const Login: React.FC = () => {
 
   return (
     <div className="relative flex flex-col items-center justify-center w-11/12 max-w-md px-4 py-12 sm:p-12 md:w-1/2 h-full">
-      <div className="w-full dark:text-white -mt-12 md:mt-0">
+      <div className="w-full dark:text-white -mt-8 md:mt-0">
         <h1 className="mb-12 text-2xl font-semibold">Bem-vindo!</h1>
 
         <form onSubmit={handleSubmit}>
