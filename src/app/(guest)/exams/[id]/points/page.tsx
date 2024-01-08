@@ -62,7 +62,7 @@ const Points: React.FC = () => {
         Exame de <span className="text-primary">{examResult.subject}</span>
       </p>
 
-      <p className="text-xl align-middle">
+      <p className="text-lg md:text-xl align-middle mx-6">
         Demoraste{' '}
         <span className="text-primary font-black align-middle">
           {minutes ? `${minutes} minutos e` : ''} {examTime % 60} segundos
@@ -70,7 +70,7 @@ const Points: React.FC = () => {
         a responder ao exame.
       </p>
 
-      <ScoreIndicator score={examResult.score} className="mt-16"></ScoreIndicator>
+      <ScoreIndicator score={examResult.score} className="mt-8"></ScoreIndicator>
 
       <section className="relative flex flex-col items-center justify-center px-4 mt-14 text-center">
         {examResult?.passed ? (

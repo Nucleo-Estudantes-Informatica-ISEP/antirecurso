@@ -141,12 +141,14 @@ const Exam: React.FC<ExamPageProps> = ({ params }) => {
 
   return (
     <section className="flex flex-col items-center overflow-x-scroll relative">
-      <span className="-top-1 left-8 absolute font-bold text-2xl align-middle">
+      <span className="-top-1 left-auto absolute font-bold text-lg md:text-xl align-middle">
         {Math.floor(examTime / 60)}:{examTime % 60 < 10 ? `0${examTime % 60}` : examTime % 60}
       </span>
-      <p className="px-4 my-5 ml-5 text-xl font-bold text-center uppercase">
+      <p className="mt-10 mb-4 text-xl font-bold text-center uppercase">
         Exame de{' '}
-        <span className="text-primary">{subject ? subject : <Skeleton width={100} />}</span>
+        <span className="text-primary align-middle">
+          {subject ? subject : <Skeleton width={100} />}
+        </span>
       </p>
       <div className="w-screen mb-12">
         {questions[0] ? (

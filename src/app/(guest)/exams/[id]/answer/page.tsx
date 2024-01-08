@@ -78,7 +78,7 @@ const modes = [
 ];
 
 const Exams: React.FC<ExamAnswerPageProps> = ({ params }) => {
-  const session = useSession();
+  const { token: session } = useSession();
   const [isCustomExamModalOpen, setIsCustomExamModalOpen] = useState(false);
 
   return (
@@ -96,8 +96,24 @@ const Exams: React.FC<ExamAnswerPageProps> = ({ params }) => {
               <button
                 key={mode.id}
                 onClick={() => setIsCustomExamModalOpen(true)}
-                className="relative w-full h-full md:h-64 p-5 flex flex-col space-y-6 items-center justify-center shadow dark:shadow-gray-500 rounded text-center group hover:bg-primary transition ease-in-out">
+                className={`relative w-full h-full md:h-64 p-5 flex flex-col space-y-6 items-center justify-center shadow dark:shadow-gray-500 rounded text-center group hover:bg-primary transition ease-in-out ${
+                  mode.comingSoon || (mode.needsAuth && !session)
+                    ? 'pointer-events-none opacity-50'
+                    : ''
+                }`}>
                 <p className="text-5xl">{mode.icon}</p>
+                {mode.comingSoon ? (
+                  <div className="absolute top-0 p-1 text-xs font-bold text-white rotate-45 bg-orange-500 md:text-base -right-4 md:-right-8 md:p-2">
+                    <p>Coming Soon</p>
+                  </div>
+                ) : (
+                  mode.needsAuth &&
+                  !session && (
+                    <div className="absolute left-0 w-full p-1 text-xs font-bold text-white bg-red-500 md:text-base -top-4 md:-right-8 md:p-2">
+                      <p>Needs account 🔒</p>
+                    </div>
+                  )
+                )}
                 <div className="items-center justify-center w-full overflow-auto">
                   <p className="w-full text-xs font-bold md:text-xl line-clamp-6 group-hover:text-white">
                     {mode.name}

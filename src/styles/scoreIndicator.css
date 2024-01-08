@@ -46,8 +46,8 @@
   transform-style: preserve-3d;
   backface-visibility: hidden;
   animation-fill-mode: forwards;
-  animation-duration: 0.4s;
-  animation-timing-function: linear;
+  animation-duration: 1.2s;
+  animation-timing-function: ease-in-out;
   z-index: 4;
   border-color: #d35d19;
   animation-name: rotate-one;
