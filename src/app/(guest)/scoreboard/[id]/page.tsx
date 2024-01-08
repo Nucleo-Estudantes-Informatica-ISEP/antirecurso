@@ -1,7 +1,7 @@
 import ScoreboardPodium from '@/components/ScoreboardPodium';
 import ScoreboardRow from '@/components/ScoreboardRow';
-import getServerSession from '@/services/getServerSession';
 import { BASE_URL } from '@/services/api';
+import getServerSession from '@/services/getServerSession';
 import Leaderboard from '@/types/Leaderboard';
 import getSubjectNameById from '@/utils/getSubjectNameById';
 
@@ -14,7 +14,7 @@ interface ScoreboardPageProps {
 // @ts-expect-error Server Component
 const ScoreboardPage: React.FC<ScoreboardPageProps> = async ({ params }) => {
   async function fetchLeaderboard(): Promise<Leaderboard> {
-    const res = await fetch(`${BASE_URL}/subjects/${params.id}/scoreboard`, {
+    const res = await fetch(`${BASE_URL}/subjects/${params.id}/scoreboard/all`, {
       cache: 'no-cache'
     });
     return res.json();
@@ -37,13 +37,6 @@ const ScoreboardPage: React.FC<ScoreboardPageProps> = async ({ params }) => {
           <p className="text-center">Sem nenhum utilizador registado</p>
         ) : (
           <>
-            {/* Year Selector, future implementation */}
-            {/* <div className="flex flex-row justify-end">
-              <div className="inline-flex items-center gap-1">
-                <p className="text-center">2023</p>
-                <MdKeyboardArrowDown />
-              </div>
-            </div> */}
             <ScoreboardPodium
               scores={scoreboard.scores}
               uid={!session ? undefined : session.user.id}
