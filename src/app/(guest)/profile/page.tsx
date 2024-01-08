@@ -23,7 +23,7 @@ const Profile: React.FC<ProfileProps> = async () => {
 
   return (
     <section className="w-full flex flex-col items-center my-8">
-      <p className="md:text-2xl text-xl font-bold uppercase text-center px-4">
+      <p className="w-5/6 px-4 text-xl font-bold text-center uppercase md:text-2xl my-5">
         O teu <span className="text-primary">perfil</span>
       </p>
 
@@ -32,7 +32,9 @@ const Profile: React.FC<ProfileProps> = async () => {
       <p className="text-xl font-semibold text-center px-4">
         Boas vindas, <span className="font-bold text-primary">{user.name}</span>!
       </p>
-      <p className="px-5 mt-5 text-center">Hoje é dia {today}. Tens algum exame perto?</p>
+      <p className="px-5 mt-2 text-sm md:text-base text-center">
+        Hoje é dia {today}. Tens algum exame perto?
+      </p>
 
       {user.scores.length ? (
         <>

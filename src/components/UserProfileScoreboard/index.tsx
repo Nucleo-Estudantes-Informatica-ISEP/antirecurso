@@ -10,8 +10,8 @@ interface UsePreviousExamsTableProps {
 
 const UserProfileScoreboard: React.FC<UsePreviousExamsTableProps> = ({ user }) => {
   return (
-    <section className="grid w-full mt-5 md:px-16 place-items-center">
-      <table className="w-1/2 text-sm text-center">
+    <section className="grid w-full mt-5 md:px-16 place-items-center px-6">
+      <table className="w-full lg:w-1/2 text-sm text-center">
         <thead className="text-xs text-white uppercase bg-primary">
           <tr>
             <th scope="col" className="px-6 py-3">

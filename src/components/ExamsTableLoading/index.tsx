@@ -7,7 +7,7 @@ const N_COLUMNS = 3;
 
 const ExamTableLoading = () => {
   return (
-    <table className="w-1/2 text-sm text-center">
+    <table className="w-full lg:w-1/2 text-sm text-center">
       <TableHeading />
       <tbody>
         <tr>

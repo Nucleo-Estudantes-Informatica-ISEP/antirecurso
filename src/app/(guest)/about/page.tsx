@@ -2,7 +2,7 @@ import Link from 'next/link';
 
 const About: React.FC = () => {
   return (
-    <section className="flex flex-col items-center w-full space-y-10 text-center my-8">
+    <section className="flex flex-col items-center w-full space-y-10 text-center my-14">
       <div className="space-y-3">
         <p className="text-xl font-semibold uppercase">Made by</p>
         <p className="font-semibold text-primary">
@@ -47,6 +47,20 @@ const About: React.FC = () => {
         <p className="w-full font-semibold text-primary">
           <Link className="hover:brightness-110" href="/changelog">
             Changelog
+          </Link>
+        </p>
+      </div>
+
+      <div className="w-5/6 space-y-3">
+        <p className="text-xl font-semibold uppercase">Política de Privacidade e Cookies</p>
+        <p className="w-full font-semibold text-primary">
+          <Link className="hover:brightness-110" href="/privacy-policy\">
+            Política de Privacidade
+          </Link>
+        </p>
+        <p className="w-full font-semibold text-primary">
+          <Link className="hover:brightness-110" href="/cookie-policy">
+            Política de Cookies
           </Link>
         </p>
       </div>

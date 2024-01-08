@@ -111,7 +111,7 @@ const Exam: React.FC<ExamPageProps> = ({ params }) => {
 
   return (
     <section className="flex flex-col items-center overflow-x-scroll">
-      <p className="px-4 mt-2 ml-5 text-xl font-bold text-center uppercase">
+      <p className="px-4 my-5 ml-5 text-xl font-bold text-center uppercase">
         Exame de{' '}
         <span className="text-primary">{subject ? subject : <Skeleton width={100} />}</span>
       </p>

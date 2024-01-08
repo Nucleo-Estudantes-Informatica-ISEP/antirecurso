@@ -98,13 +98,14 @@ const Login: React.FC = () => {
 
   return (
     <div className="relative flex flex-col items-center justify-center w-11/12 max-w-md px-4 py-12 sm:p-12 md:w-1/2 h-full">
-      <div className="w-full dark:text-white">
-        <h1 className="mb-4 text-xl font-semibold">Entrar</h1>
+      <div className="w-full dark:text-white -mt-28 md:mt-0">
+        <h1 className="mb-12 text-2xl font-semibold">Bem-vindo!</h1>
 
         <form onSubmit={handleSubmit}>
-          <div className="mt-4">
+          <div>
             <InputLabel htmlFor="email" value="Email" />
             <TextInput
+              placeholder="Email"
               inputRef={emailInputRef}
               disabled={isSubmitting}
               className="block w-full"
@@ -112,9 +113,10 @@ const Login: React.FC = () => {
             />
           </div>
 
-          <div className="mt-4">
+          <div className="mb-4">
             <InputLabel htmlFor="password" value="Password" />
             <TextInput
+              placeholder="Password"
               inputRef={passwordInputRef}
               disabled={isSubmitting}
               errorText={errors.password}
@@ -123,7 +125,7 @@ const Login: React.FC = () => {
             />
           </div>
 
-          <div className="mt-4">
+          <div>
             <PrimaryButton disabled={isSubmitting} type="submit" className="block w-full">
               {isSubmitting ? (
                 <div className="flex flex-row items-center justify-center">
@@ -143,7 +145,7 @@ const Login: React.FC = () => {
 
         <p className="mt-4">
           <Link className="text-sm font-medium text-primary-600 hover:underline" href="/register">
-            Ainda não tens uma conta?
+            Ainda não tens conta?
           </Link>
         </p>
       </div>

@@ -8,7 +8,7 @@ interface InputLabelProps extends LabelHTMLAttributes<HTMLLabelElement> {
 
 const InputLabel: React.FC<InputLabelProps> = ({ value, className, ref }) => {
   return (
-    <label ref={ref} className={`block text-sm text-gray-700 dark:text-white ${className}`}>
+    <label ref={ref} className={`mb-2 block text-sm text-gray-700 dark:text-white ${className}`}>
       {value}
     </label>
   );

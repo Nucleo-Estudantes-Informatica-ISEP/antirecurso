@@ -6,8 +6,8 @@ import { AuthContextProvider } from '@/contexts/AuthContext';
 import '@/styles/globals.css';
 
 export const metadata = {
-  title: 'Anti Recurso',
-  description: 'Anti Recurso | ISEP'
+  title: 'AntiRecurso',
+  description: 'AntiRecurso | NEI-ISEP'
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

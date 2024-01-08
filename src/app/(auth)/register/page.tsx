@@ -118,12 +118,13 @@ const Register: React.FC = () => {
   return (
     <div className="relative flex flex-col items-center justify-center w-11/12 max-w-md px-4 py-12 sm:p-12 md:w-1/2 h-full">
       <div className="w-full dark:text-white">
-        <h1 className="mb-4 text-xl font-semibold ">Criar conta</h1>
+        <h1 className="mb-12 text-2xl font-semibold">Bem-vindo ao AntiRecurso!</h1>
 
         <form onSubmit={handleSubmit}>
-          <div className="mt-1">
+          <div>
             <InputLabel htmlFor="name" value="Nome" />
             <TextInput
+              placeholder="Nome"
               disabled={isSubmitting}
               type="text"
               inputRef={nameInputRef}
@@ -133,9 +134,10 @@ const Register: React.FC = () => {
             />
           </div>
 
-          <div className="mt-1">
+          <div>
             <InputLabel htmlFor="email" value="Email" />
             <TextInput
+              placeholder="Email"
               inputRef={emailInputRef}
               disabled={isSubmitting}
               className="block w-full"
@@ -143,9 +145,10 @@ const Register: React.FC = () => {
             />
           </div>
 
-          <div className="mt-1">
+          <div>
             <InputLabel htmlFor="password" value="Password" />
             <TextInput
+              placeholder="Password"
               inputRef={passwordInputRef}
               disabled={isSubmitting}
               errorText={errors.password}
@@ -154,9 +157,10 @@ const Register: React.FC = () => {
             />
           </div>
 
-          <div className="mt-1">
+          <div>
             <InputLabel htmlFor="password_confirmation" value="Confirmar Password" />
             <TextInput
+              placeholder="Repete a Password"
               inputRef={passwordConfirmationInputRef}
               disabled={isSubmitting}
               errorText={errors.password_confirmation}
@@ -201,11 +205,11 @@ const Register: React.FC = () => {
           </div>
         </form>
 
-        <hr className="my-5" />
+        <hr className="my-8" />
 
-        <p className="mt-2">
+        <p className="mt-4">
           <Link className="text-sm font-medium text-primary-600 hover:underline" href="/login">
-            Já tens uma conta?
+            Já tens conta?
           </Link>
         </p>
       </div>

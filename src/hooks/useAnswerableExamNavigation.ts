@@ -150,8 +150,8 @@ export default function useAnswerableExamNavigation({
 
       if (!hasAnsweredAllQuestions()) {
         const confirmed = await swal({
-          title: 'Não respondeu a todas as questões do exame.',
-          text: 'Tem a certeza que quer terminar o exame?',
+          title: 'Não respondeste a todas as questões do exame.',
+          text: 'Tens a certeza que queres terminar o exame?',
           icon: 'warning',
           buttons: ['Cancelar', 'Continuar'],
           className: theme === 'dark' ? 'swal-dark' : ''
@@ -161,7 +161,7 @@ export default function useAnswerableExamNavigation({
       }
 
       const confirmed = await swal({
-        title: 'Tem a certeza que quer terminar o exame?',
+        title: 'Tens a certeza que queres terminar o exame?',
         icon: 'warning',
         buttons: ['Não', 'Sim'],
         className: theme === 'dark' ? 'swal-dark' : ''

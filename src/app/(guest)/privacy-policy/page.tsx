@@ -1,7 +1,7 @@
 const PrivacyPolicy: React.FC = () => {
   return (
     <section className="w-full text-sm md:text-md px-5 md:px-24 md:pb-24 pb-48 mt-5">
-      <h1 className="text-primary font-black text-xl">Política de Privacidade</h1>
+      <h1 className="text-primary font-black text-2xl">Política de Privacidade</h1>
       <div className="flex flex-col h-full gap-5 text-base">
         <article className="mt-5">
           <h3 className="font-bold text-primary">
@@ -18,8 +18,13 @@ const PrivacyPolicy: React.FC = () => {
             nomeadamente o Regulamento (UE) 2016/679 do Parlamento Europeu e do Conselho, de 27 de
             Abril de 2016. O AntiRecurso é uma aplicação que auxilia os alunos pertencentes ao
             Departamento de Engenharia Informática do ISEP a estudarem de maneira mais simples e
-            eficaz para os exames de certas Unidades Curriculares. Responsável pelo tratamento O
-            NEI-ISEP é a organização responsável pelo tratamento dos seus dados pessoais. Poderá
+            eficaz para os exames de certas Unidades Curriculares.
+          </span>
+        </article>
+        <article>
+          <h3 className="mt-2 font-bold text-primary">Responsável pelo tratamento</h3>
+          <span>
+            O NEI-ISEP é a organização responsável pelo tratamento dos seus dados pessoais. Poderá
             entrar em contacto com o núcleo através do email{' '}
             <a
               className="text-blue-700 dark:text-blue-300 hover:underline"

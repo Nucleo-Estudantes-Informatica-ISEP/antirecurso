@@ -1,7 +1,7 @@
 const CookiePolicy: React.FC = () => {
   return (
     <section className="w-full text-sm md:text-md px-5 md:px-24 md:pb-24 pb-48 mt-5">
-      <h1 className="text-primary font-black text-xl">Política de Cookies</h1>
+      <h1 className="text-primary font-black text-2xl">Política de Cookies</h1>
       <div className="flex flex-col h-full gap-5 text-base">
         <article className="mt-5">
           <p>

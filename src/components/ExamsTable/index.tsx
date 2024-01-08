@@ -11,7 +11,7 @@ interface ExamsTableProps {
 
 const ExamsTable: React.FC<ExamsTableProps> = ({ previousExamResponse }) => {
   return (
-    <table className="w-1/2 text-sm text-center">
+    <table className="w-full lg:w-1/2 text-sm text-center">
       <TableHeading />
       <tbody>
         {previousExamResponse.data.map((answer) => (

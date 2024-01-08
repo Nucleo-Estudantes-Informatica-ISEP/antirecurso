@@ -13,7 +13,11 @@ const Hero: React.FC = () => {
           <span className="text-primary">recurso</span>?
         </p>
         <p className="mt-5 text-lg">
-          Para quê fazer isso quando tens o <span className="text-primary">Anti</span>recurso?
+          Para quê fazer isso quando tens o{' '}
+          <span className="font-bold">
+            <span className="text-primary">Anti</span>Recurso
+          </span>
+          ?
         </p>
 
         <Link href="/exams" className="mt-10">
