@@ -48,7 +48,7 @@ const PreviousExamsTable: React.FC<PreviousExamsTableProps> = ({ token }) => {
     }
 
     fetchData();
-  }, [fetchUrl, router]);
+  }, [fetchUrl, router, theme, token]);
 
   return (
     <section className="mt-5 w-full md:px-16 flex flex-col place-items-center px-6">

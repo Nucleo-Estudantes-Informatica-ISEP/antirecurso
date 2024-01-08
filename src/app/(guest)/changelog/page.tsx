@@ -23,7 +23,13 @@ const Changelog: React.FC = () => {
             <span className="font-bold text-primary align-middle">ASIST</span> passa a ter 50
             perguntas.
           </span>,
-          'Adição da política de privacidade e de cookies no menu de sobre'
+          'Adição da política de privacidade e de cookies no menu de sobre',
+          <span key="1.3.6-exam-mode">
+            Adicionado o <span className="font-bold text-primary align-middle">modo do exame</span>
+            na tabela de histórico no perfil (exames anteriores ao dia de hoje são marcados como
+            <span className="text-primary italic">default</span> por defeito). Eventualmente, vamos
+            usar esta informação para complementar o scoreboard e dar sugestões de exames a fazer.
+          </span>
         ]}
       />
       <ChangelogVersion

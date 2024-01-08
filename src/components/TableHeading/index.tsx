@@ -11,6 +11,9 @@ const TableHeading: React.FC = () => {
         <th scope="col" className="text-xs px-4 py-3">
           Data
         </th>
+        <th scope="col" className="text-xs px-4 py-3">
+          Modo
+        </th>
       </tr>
     </thead>
   );

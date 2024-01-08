@@ -4,4 +4,5 @@ export default interface Answer {
   user_name: string;
   subject: string;
   created_at: string;
+  mode: string;
 }
