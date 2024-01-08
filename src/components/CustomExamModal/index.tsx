@@ -39,7 +39,7 @@ const CustomExamModal: React.FC<ModalProps> = ({ isVisible, setIsVisible, title,
   }, [setIsVisible]);
 
   const handleSaveClick = () => {
-    if (numberOfQuestions && discount) {
+    if (numberOfQuestions != null && discount != null) {
       setIsVisible(false);
       router.push(
         `/exams/${params.id}/answer/${params.mode}?n_of_questions=${numberOfQuestions}&penalizing_factor=${discount}`
