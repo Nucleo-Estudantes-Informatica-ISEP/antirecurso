@@ -19,8 +19,9 @@ const Changelog: React.FC = () => {
           'Correção de margens em toda a plataforma',
           'Correção de questões de usabilidade no menu de autenticação em modo web',
           <span key="1.3.6-asist-questions">
-            <span className="text-primary font-bod">Modo realista</span> dos exames de
-            <span className="font-bold text-primary">ASIST</span> passa a ter 50 perguntas.
+            <span className="text-primary font-bold align-middle">Modo realista</span> dos exames de{' '}
+            <span className="font-bold text-primary align-middle">ASIST</span> passa a ter 50
+            perguntas.
           </span>,
           'Adição da política de privacidade e de cookies no menu de sobre'
         ]}
