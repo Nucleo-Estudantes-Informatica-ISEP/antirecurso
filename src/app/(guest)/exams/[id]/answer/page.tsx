@@ -87,7 +87,7 @@ const Exams: React.FC<ExamAnswerPageProps> = ({ params }) => {
         <span className="text-primary">exame</span>
       </p>
 
-      <section className="grid px-6 mt-12 gap-x-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-y-10 md:gap-x-10 md:px-16">
+      <section className="grid px-6 my-8 gap-x-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-y-10 md:gap-x-10 md:px-16">
         {modes.map((mode) =>
           mode.name === 'Modo Personalizado' ? (
             <>

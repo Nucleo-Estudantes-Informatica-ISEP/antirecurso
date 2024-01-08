@@ -14,7 +14,7 @@ const Slider: React.FC<SliderProps> = ({ min, max, value, onChange }) => {
         max={max}
         value={value}
         onChange={(e) => onChange(parseInt(e.target.value))}
-        className="w-full h-2 bg-gray-200 rounded-full appearance-none cursor-pointer"
+        className="w-full h-2 bg-gray-300 dark:bg-gray-400 rounded-full appearance-none cursor-pointer"
       />
     </div>
   );

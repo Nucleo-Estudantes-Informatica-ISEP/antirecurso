@@ -18,7 +18,7 @@ const ScoreIndicator: React.FC<ScoreIndicatorProps> = ({ score, maxScore = 100, 
           <span>{score}</span> em <span>{maxScore}</span>
         </span>
         <span className="valores">
-          <span>{toFixed((score * 20) / 100, 1)}</span> valores
+          <span>{toFixed(score / 5, 1)}</span> valores
         </span>
       </div>
     </div>
