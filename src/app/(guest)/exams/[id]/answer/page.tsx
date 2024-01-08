@@ -62,7 +62,9 @@ const modes = [
     name: 'Modo Personalizado',
     description: 'Cria um exame com as características que quiseres!',
     slug: 'custom',
-    icon: '⚙️'
+    icon: '⚙️',
+    needsAuth: true,
+    comingSoon: false
   },
   {
     id: 7,
