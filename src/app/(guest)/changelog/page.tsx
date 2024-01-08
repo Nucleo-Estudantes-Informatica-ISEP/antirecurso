@@ -25,14 +25,14 @@ const Changelog: React.FC = () => {
           </span>,
           'Adição da política de privacidade e de cookies no menu de sobre',
           <span key="1.3.6-exam-mode">
-            Adicionado o <span className="font-bold text-primary align-middle">modo do exame</span>
+            Adicionado o <span className="font-bold text-primary align-middle">modo do exame </span>
             na tabela de histórico no perfil (exames anteriores ao dia de hoje são marcados como
-            <span className="text-primary italic">default</span> por defeito). Eventualmente, vamos
-            usar esta informação para criar scoreboards específicos para cada modo de exame.
+            <span className="text-primary italic"> default </span> por defeito). Eventualmente,
+            vamos usar esta informação para criar scoreboards específicos para cada modo de exame.
           </span>,
           'Adicionado o chart com a distribuição de tipos de exame realizados na página de estatísticas',
           <span key="1.3.6-suggested-exam">
-            Adicionado o <span className="font-bold text-primary align-middle">modo sugerido</span>
+            Adicionado o <span className="font-bold text-primary align-middle">modo sugerido </span>
             na página de estatísticas. Este modo é calculado com base nas estatísticas dos teus
             últimos exames.
           </span>,
