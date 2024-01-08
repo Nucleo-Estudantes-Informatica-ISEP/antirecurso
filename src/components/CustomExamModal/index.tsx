@@ -70,7 +70,7 @@ const CustomExamModal: React.FC<ModalProps> = ({ isVisible, setIsVisible, title,
               <h2 className="w-full font-bold mb-6 text-lg text-center md:text-left">
                 Número de Questões
               </h2>
-              <Slider min={1} max={50} value={numberOfQuestions} onChange={setNumberOfQuestions} />
+              <Slider min={5} max={50} value={numberOfQuestions} onChange={setNumberOfQuestions} />
               <span className="mt-2">
                 Responde a{' '}
                 <span className="text-primary md:text-lg font-black">{numberOfQuestions}</span>{' '}
