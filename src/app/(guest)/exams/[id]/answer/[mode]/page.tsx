@@ -71,7 +71,8 @@ const Exam: React.FC<ExamPageProps> = ({ params }) => {
       answers: [...Array.from({ length: questions.length }, (_, i) => i)].map((i) => ({
         question_id: questions[i].id,
         selected_option: answers.get(i) || null
-      }))
+      })),
+      time: examTime
     };
 
     const url =
@@ -122,11 +123,9 @@ const Exam: React.FC<ExamPageProps> = ({ params }) => {
       setSubject(await getSubjectNameById(parseInt(params.id)));
     }
 
-    if (nOfQuestions !== undefined && nOfQuestions !== null) {
+    if (nOfQuestions !== undefined && nOfQuestions !== null)
       getExam(parseInt(params.id), params.mode, parseInt(nOfQuestions as string));
-    } else {
-      getExam(parseInt(params.id), params.mode);
-    }
+    else getExam(parseInt(params.id), params.mode);
 
     setSubjectName();
   }, [params.id, params.mode, router, setQuestions, session.token, theme, nOfQuestions]);

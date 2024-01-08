@@ -5,4 +5,5 @@ export default interface Answer {
   subject: string;
   created_at: string;
   mode: string;
+  time: number;
 }

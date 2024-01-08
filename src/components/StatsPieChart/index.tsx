@@ -10,9 +10,18 @@ interface StatsPieChartProps {
   labels: string[];
   data: number[];
   text: string;
+  backgroundColor: string[];
+  borderColor: string[];
 }
 
-const StatsPieChart: React.FC<StatsPieChartProps> = ({ labels, data, text, ...props }) => {
+const StatsPieChart: React.FC<StatsPieChartProps> = ({
+  labels,
+  data,
+  text,
+  backgroundColor,
+  borderColor,
+  ...props
+}) => {
   const { theme } = useTheme();
 
   const options: ChartOptions<'pie'> = {
@@ -25,19 +34,15 @@ const StatsPieChart: React.FC<StatsPieChartProps> = ({ labels, data, text, ...pr
       {
         label: text,
         data,
-        backgroundColor: [
-          'rgba(50, 229, 50, 0.8)',
-          'rgba(255, 22, 12, 0.8)',
-          'rgba(100, 100, 100, 0.8)'
-        ],
-        borderColor: ['rgba(55, 220, 2, 1)', 'rgba(255, 22, 12, 1)', 'rgba(100, 100, 100, 1)'],
+        backgroundColor,
+        borderColor,
         borderWidth: 1
       }
     ]
   };
 
   return (
-    <div className="max-w-xs">
+    <div className="max-w-[320px]">
       <div className="h-full">
         <Pie options={options} data={d} {...props} />
       </div>

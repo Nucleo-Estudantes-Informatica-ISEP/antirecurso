@@ -1,8 +1,10 @@
 import GradeCalculatorContainer from '@/components/GradeCalculatorContainer';
 import StatsLineChart from '@/components/StatsLineChart';
 import StatsPieChart from '@/components/StatsPieChart';
+import { sanitizeMode } from '@/utils/sanitizeMode';
 import { cookies } from 'next/headers';
-import { FiInfo } from 'react-icons/fi';
+import Link from 'next/link';
+import { FiInfo, FiSettings } from 'react-icons/fi';
 import config from 'src/config';
 import { BASE_URL } from 'src/services/api';
 import ISubjectStats from 'src/types/SubjectStats';
@@ -36,25 +38,32 @@ const SubjectStats: React.FC<SubjectStatsProps> = async ({ params }) => {
         As tuas <span className="text-primary">estatísticas </span>
         de <span className="text-primary">{subjectName}</span>
       </p>
-      <div className="flex flex-col w-full gap-12 px-8 py-6 max-w-7xl">
+      <div className="flex flex-col w-full gap-12 px-8 py-6 max-w-[1440px]">
         <section className="flex flex-col h-full gap-y-6">
           <div className="flex items-center px-6 py-4 text-xl bg-gray-100 rounded-md gap-x-2 dark:bg-secondary-dark">
             <div className="flex items-center justify-center w-12 h-12">
               <FiInfo className="w-full" />
             </div>
-            <p className="text-xs md:text-lg">
+            <p className="text-xs md:text-lg align-middle">
               Das <span className="font-bold text-primary">{subjectStats.total_of_questions}</span>{' '}
               questões disponíveis respondeste a{' '}
               <span className="font-bold text-primary">{subjectStats.n_of_answers}</span>, ou seja{' '}
               <span className="font-bold text-primary">
                 {((subjectStats.n_of_answers / subjectStats.total_of_questions) * 100).toFixed(1)}%
               </span>
-              .
+              . Demoras, em média, cerca de{' '}
+              <span className="font-bold text-primary align-middle">
+                {Math.floor(subjectStats.mean_time / 60) > 0
+                  ? `${Math.floor(subjectStats.mean_time / 60)} minutos e`
+                  : ''}{' '}
+                {subjectStats.mean_time % 60} segundos
+              </span>{' '}
+              a responder a um exame.
             </p>
           </div>
         </section>
 
-        <div className="flex flex-col items-center justify-between px-6 py-4 bg-gray-100 rounded-md md:flex-row gap-y-8 md:gap-6 dark:bg-secondary-dark">
+        <div className="flex flex-col items-center justify-between p-6 bg-gray-100 rounded-md md:flex-row gap-y-8 md:gap-6 dark:bg-secondary-dark">
           <div className="flex flex-col items-center justify-center w-full gap-2">
             <div className="w-full py-1 text-white rounded-md bg-primary">
               <p>Número de Exames</p>
@@ -62,6 +71,8 @@ const SubjectStats: React.FC<SubjectStatsProps> = async ({ params }) => {
             <StatsPieChart
               labels={['Aprovado', 'Reprovado']}
               text="Nº de exames"
+              backgroundColor={['rgba(50, 229, 50, 0.8)', 'rgba(255, 22, 12, 0.8)']}
+              borderColor={['rgba(55, 220, 2, 1)', 'rgba(255, 22, 12, 1)']}
               data={[
                 subjectStats.n_of_exams_passed,
                 subjectStats.n_of_exams_taken - subjectStats.n_of_exams_passed
@@ -75,11 +86,49 @@ const SubjectStats: React.FC<SubjectStatsProps> = async ({ params }) => {
             <StatsPieChart
               labels={['Corretas', 'Incorretas', 'Não respondidas']}
               text="Nº de questões"
+              backgroundColor={[
+                'rgba(50, 229, 50, 0.8)',
+                'rgba(255, 22, 12, 0.8)',
+                'rgba(100, 100, 100, 0.8)'
+              ]}
+              borderColor={[
+                'rgba(55, 220, 2, 1)',
+                'rgba(255, 22, 12, 1)',
+                'rgba(100, 100, 100, 1)'
+              ]}
               data={[
                 subjectStats.n_of_correct,
                 subjectStats.n_of_wrong_answers,
                 subjectStats.total_of_questions - subjectStats.n_of_answers
               ]}
+            />
+          </div>
+          <div className="flex flex-col items-center justify-center w-full gap-2">
+            <div className="w-full py-1 text-white rounded-md bg-primary">
+              <p>Tipo de Exame</p>
+            </div>
+            <StatsPieChart
+              labels={Object.keys(subjectStats.mode_scores).map(
+                (mode) => sanitizeMode(mode).charAt(0).toUpperCase() + sanitizeMode(mode).slice(1)
+              )}
+              backgroundColor={[
+                'rgba(50, 229, 50, 0.8)',
+                'rgba(170, 0, 180, 0.8)',
+                'rgba(180, 22, 12, 0.8)',
+                'rgba(100, 100, 100, 0.8)',
+                'rgba(180, 180, 0, 0.8)',
+                'rgba(0, 200, 200, 0.8)'
+              ]}
+              borderColor={[
+                'rgba(55, 220, 2, 1)',
+                'rgba(180, 0, 180, 1)',
+                'rgba(180, 22, 12, 1)',
+                'rgba(100, 100, 100, 1)',
+                'rgba(180, 180, 0, 1)',
+                'rgba(0, 180, 180, 1)'
+              ]}
+              text="Nº de exames"
+              data={Object.values(subjectStats.mode_scores)}
             />
           </div>
         </div>
@@ -93,6 +142,23 @@ const SubjectStats: React.FC<SubjectStatsProps> = async ({ params }) => {
             data={subjectStats.user_scores.map((score) => (score.score * 20) / 100)}
           />
         </div>
+
+        <section className="flex flex-col h-full gap-y-6">
+          <div className="flex items-center px-6 py-4 text-xl bg-gray-100 rounded-md gap-x-2 dark:bg-secondary-dark">
+            <div className="flex items-center justify-center w-12 h-12">
+              <FiSettings className="w-full" />
+            </div>
+            <p className="text-xs md:text-lg">
+              Com base nos exames que respondeste, sugerimos-te que resolvas um exame do{' '}
+              <Link
+                href={`/exams/${params.id}/answer/${subjectStats.suggested_mode}`}
+                className="font-bold text-primary align-middle">
+                modo {sanitizeMode(subjectStats.suggested_mode)}
+              </Link>{' '}
+              para continuares a melhorar.
+            </p>
+          </div>
+        </section>
 
         <GradeCalculatorContainer subjectStats={subjectStats} />
       </div>

@@ -12,6 +12,9 @@ const TableHeading: React.FC = () => {
           Data
         </th>
         <th scope="col" className="text-xs px-4 py-3">
+          Tempo (m)
+        </th>
+        <th scope="col" className="text-xs px-4 py-3">
           Modo
         </th>
       </tr>

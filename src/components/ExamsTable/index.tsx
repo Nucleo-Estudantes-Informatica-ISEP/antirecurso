@@ -1,5 +1,6 @@
 import React from 'react';
 
+import { sanitizeMode } from '@/utils/sanitizeMode';
 import Link from 'next/link';
 import PreviousExamResponse from 'src/types/PreviousExamResponse';
 import { formatDateDDStrMonthYYYY } from 'src/utils/Date';
@@ -27,8 +28,15 @@ const ExamsTable: React.FC<ExamsTableProps> = ({ previousExamResponse }) => {
             <td className="w-1/5 px-2 py-2 text-xs md:text-base sm:px-6 sm:py-4">
               {formatDateDDStrMonthYYYY(answer.created_at)}
             </td>
+            <td className="w-1/6 px-2 py-2 text-xs md:text-base sm:px-6 sm:py-4 capitalize">
+              {answer.time
+                ? `${Math.floor(answer.time / 60)}:${answer.time % 60 < 10 ? '0' : ''}${
+                    answer.time % 60
+                  }`
+                : '--'}
+            </td>
             <td className="w-1/5 px-2 py-2 text-xs md:text-base sm:px-6 sm:py-4 capitalize">
-              {answer.mode}
+              {sanitizeMode(answer.mode)}
             </td>
           </tr>
         ))}

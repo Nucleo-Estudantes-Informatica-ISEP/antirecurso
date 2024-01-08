@@ -28,8 +28,16 @@ const Changelog: React.FC = () => {
             Adicionado o <span className="font-bold text-primary align-middle">modo do exame</span>
             na tabela de histórico no perfil (exames anteriores ao dia de hoje são marcados como
             <span className="text-primary italic">default</span> por defeito). Eventualmente, vamos
-            usar esta informação para complementar o scoreboard e dar sugestões de exames a fazer.
-          </span>
+            usar esta informação para criar scoreboards específicos para cada modo de exame.
+          </span>,
+          'Adicionado o chart com a distribuição de tipos de exame realizados na página de estatísticas',
+          <span key="1.3.6-suggested-exam">
+            Adicionado o <span className="font-bold text-primary align-middle">modo sugerido</span>
+            na página de estatísticas. Este modo é calculado com base nas estatísticas dos teus
+            últimos exames.
+          </span>,
+          'Adicionado o tempo de realização do exame na tabela de histórico no perfil',
+          'Adicionado tempo médio de realização de exames na página de estatísticas'
         ]}
       />
       <ChangelogVersion
@@ -204,14 +212,14 @@ const Changelog: React.FC = () => {
         title="v1.2.0 Estatísticas 📊"
         date={new Date(2023, 5, 26)}
         updates={[
-          'Adição de estatísticas de utilizador para cada cadeira',
+          'Adição de estatísticas de utilizador para cada UC',
           'Modo Perguntas Erradas',
           'Modo Perguntas Novas',
           'Calculadora de média na página de estatísticas',
           'Bloqueio de exames de certos modos (realista, novas e erradas) a utilizadores sem conta'
         ]}>
         Adição de novas funcionalidades como a calculadora de média e a possibilidade de ver as
-        estatísticas de cada cadeira.
+        estatísticas de cada UC.
       </ChangelogVersion>
       <ChangelogVersion
         title="v1.1.1 🛠️"
