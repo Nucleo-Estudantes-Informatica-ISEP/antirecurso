@@ -2,9 +2,9 @@
 
 import { useContext, useEffect, useState } from 'react';
 
+import { useTheme } from 'next-themes';
 import Image from 'next/image';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { useTheme } from 'next-themes';
 import swal from 'sweetalert';
 
 import Skeleton from 'react-loading-skeleton';
@@ -36,10 +36,8 @@ const N_SKELETON_OPTIONS = 4;
 
 const Exam: React.FC<ExamPageProps> = ({ params }) => {
   const router = useRouter();
-  // Use the hook to get the search parameters
   const searchParams = useSearchParams();
 
-  // Access a specific parameter
   const nOfQuestions = searchParams.get('n_of_questions');
   const penalizingFactor = searchParams.get('penalizing_factor');
 
@@ -76,30 +74,19 @@ const Exam: React.FC<ExamPageProps> = ({ params }) => {
       }))
     };
 
-    let res;
+    const url =
+      params.mode === 'custom' && nOfQuestions && penalizingFactor
+        ? `${BASE_URL}/exams/verify?mode=${params.mode}&n_of_questions=${nOfQuestions}&penalizing_factor=${penalizingFactor}`
+        : `${BASE_URL}/exams/verify?mode=${params.mode}`;
 
-    if (nOfQuestions && penalizingFactor) {
-      res = await fetch(
-        `${BASE_URL}/exams/verify?mode=${params.mode}&n_of_questions=${nOfQuestions}&penalizing_factor=${penalizingFactor}`,
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${session.token}`
-          },
-          body: JSON.stringify(data)
-        }
-      );
-    } else {
-      res = await fetch(`${BASE_URL}/exams/verify?mode=${params.mode}`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${session.token}`
-        },
-        body: JSON.stringify(data)
-      });
-    }
+    const res = await fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${session.token}`
+      },
+      body: JSON.stringify(data)
+    });
 
     if (res.status === 200) {
       setExamResult(await res.json());

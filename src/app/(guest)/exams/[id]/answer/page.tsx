@@ -105,7 +105,7 @@ const Exams: React.FC<ExamAnswerPageProps> = ({ params }) => {
               <CustomExamModal
                 setIsVisible={setIsCustomExamModalOpen}
                 isVisible={isCustomExamModalOpen}
-                title={`Edita aqui o teu exame:`}
+                title="Personaliza o teu exame"
                 onClose={() => setIsCustomExamModalOpen(false)}
                 params={{ id: Number(params.id), mode: mode.slug }}
               />
