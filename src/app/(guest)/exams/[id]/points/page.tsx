@@ -7,13 +7,12 @@ import Link from 'next/link';
 import PrimaryButton from '@/components/PrimaryButton';
 import { ExamContext } from 'src/contexts/ExamContext';
 
+import ScoreIndicator from '@/components/ScoreIndicator';
 import useSession from '@/hooks/useSession';
 import { useTheme } from 'next-themes';
 import { useRouter } from 'next/navigation';
 import ReactCanvasConfetti from 'react-canvas-confetti';
-import toFixed from 'src/utils/toFixed';
 import swal from 'sweetalert';
-import ScoreIndicator from '@/components/ScoreIndicator';
 
 const Points: React.FC = () => {
   const session = useSession();
