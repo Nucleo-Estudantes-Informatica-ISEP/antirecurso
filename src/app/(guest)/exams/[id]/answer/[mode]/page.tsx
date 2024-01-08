@@ -46,7 +46,7 @@ const Exam: React.FC<ExamPageProps> = ({ params }) => {
   const session = useSession();
   const { theme } = useTheme();
 
-  const { setExamResult } = useContext(ExamContext);
+  const { setExamResult, examTime, setExamTime } = useContext(ExamContext);
   const {
     answers,
     submit,
@@ -131,8 +131,19 @@ const Exam: React.FC<ExamPageProps> = ({ params }) => {
     setSubjectName();
   }, [params.id, params.mode, router, setQuestions, session.token, theme, nOfQuestions]);
 
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setExamTime((prev) => prev + 1);
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [setExamTime]);
+
   return (
-    <section className="flex flex-col items-center overflow-x-scroll">
+    <section className="flex flex-col items-center overflow-x-scroll relative">
+      <span className="-top-1 left-8 absolute font-bold text-2xl align-middle">
+        {Math.floor(examTime / 60)}:{examTime % 60 < 10 ? `0${examTime % 60}` : examTime % 60}
+      </span>
       <p className="px-4 my-5 ml-5 text-xl font-bold text-center uppercase">
         Exame de{' '}
         <span className="text-primary">{subject ? subject : <Skeleton width={100} />}</span>

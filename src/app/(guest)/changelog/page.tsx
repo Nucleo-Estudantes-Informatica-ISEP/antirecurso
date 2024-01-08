@@ -15,6 +15,7 @@ const Changelog: React.FC = () => {
             pergunta que errares!
           </span>,
           'Novo sistema de display de score no final do exame',
+          'Adicionado contagem de tempo de realização do exame',
           'Correção de margens em toda a plataforma',
           'Correção de questões de usabilidade no menu de autenticação em modo web',
           <span key="1.3.6-asist-questions">
