@@ -81,7 +81,7 @@ const CustomExamModal: React.FC<ModalProps> = ({ isVisible, setIsVisible, title,
               <h2 className="w-full font-bold mb-6 text-lg text-center md:text-left">
                 Penalização nas perguntas
               </h2>
-              <div className="w-full border-gray-400 border h-full md:h-10 flex flex-col md:flex-row items-center justify-center rounded-lg">
+              <div className="w-full border-gray-400 border h-full md:h-12 text-sm md:text-base flex flex-col md:flex-row items-center justify-center rounded-lg">
                 {discounts.map((d, i) => (
                   <button
                     className={`${
