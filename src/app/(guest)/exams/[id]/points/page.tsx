@@ -7,19 +7,18 @@ import Link from 'next/link';
 import PrimaryButton from '@/components/PrimaryButton';
 import { ExamContext } from 'src/contexts/ExamContext';
 
+import ScoreIndicator from '@/components/ScoreIndicator';
 import useSession from '@/hooks/useSession';
 import { useTheme } from 'next-themes';
 import { useRouter } from 'next/navigation';
 import ReactCanvasConfetti from 'react-canvas-confetti';
-import toFixed from 'src/utils/toFixed';
 import swal from 'sweetalert';
-import ScoreIndicator from '@/components/ScoreIndicator';
 
 const Points: React.FC = () => {
   const session = useSession();
   const router = useRouter();
   const [fire, setFire] = useState(false);
-  const { examResult } = useContext(ExamContext);
+  const { examResult, examTime } = useContext(ExamContext);
 
   const { theme } = useTheme();
 
@@ -54,10 +53,21 @@ const Points: React.FC = () => {
     return null;
   }
 
+  const minutes = Math.floor(examTime / 60);
+  const seconds = examTime % 60;
+
   return (
     <section className="flex flex-col items-center justify-center w-full text-center mb-8">
       <p className="px-4 ml-5 text-xl font-bold text-center uppercase my-5">
         Exame de <span className="text-primary">{examResult.subject}</span>
+      </p>
+
+      <p className="text-xl align-middle">
+        Demoraste{' '}
+        <span className="text-primary font-black align-middle">
+          {minutes ? `${minutes} minutos e` : ''} {examTime % 60} segundos
+        </span>{' '}
+        a responder ao exame.
       </p>
 
       <ScoreIndicator score={examResult.score} className="mt-16"></ScoreIndicator>

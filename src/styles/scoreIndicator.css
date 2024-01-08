@@ -22,7 +22,7 @@
 }
 
 .indicator::before {
-  content: "";
+  content: '';
   width: inherit;
   height: inherit;
   border: 45px solid rgba(211, 211, 211, 0.25);
@@ -59,7 +59,7 @@
   bottom: 0;
   transform: translateX(-50%);
   padding-bottom: 32px;
-  font-size: 1.1rem;
+  font-size: 1.2rem;
   font-weight: bold;
   color: #d35d19;
 }
@@ -69,12 +69,13 @@
   left: 50%;
   bottom: 0;
   transform: translateX(-50%);
-  font-size: 1.3rem;
+  font-size: 1.4rem;
   color: #d35d19;
 }
 
 span.result span:nth-child(1) {
-  font-size: 2.2rem;
+  font-weight: bold;
+  font-size: 2.3rem;
 }
 
 span.valores span:nth-child(1) {
@@ -84,5 +85,42 @@ span.valores span:nth-child(1) {
 @keyframes rotate-one {
   0% {
     transform: rotate(0);
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .indicator {
+    width: 250px;
+    height: 125px;
+  }
+
+  .indicator span.bar {
+    border: 30px solid;
+    border-top: none;
+    border-bottom-left-radius: 125px;
+    border-bottom-right-radius: 125px;
+    transform-origin: 50% 0;
+    border-color: #d35d19;
+  }
+
+  .indicator::before {
+    border: 30px solid rgba(211, 211, 211, 0.25);
+    border-bottom: none;
+    border-top-left-radius: 125px;
+    border-top-right-radius: 125px;
+    transform: translateX(-50%);
+  }
+
+  .indicator span.result {
+    padding-bottom: 20px;
+    font-size: 0.8rem;
+  }
+
+  .indicator span.valores {
+    font-size: 1rem;
+  }
+
+  span.result span:nth-child(1) {
+    font-size: 1.5rem;
   }
 }
