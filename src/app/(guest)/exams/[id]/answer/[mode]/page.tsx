@@ -158,11 +158,10 @@ const Exam: React.FC<ExamPageProps> = ({ params }) => {
           {subject ? subject : <Skeleton width={150} />}
         </span>
       </p>
-      <div className="w-full mb-12">
+      <div className="w-screen mb-12">
         {questions[0] ? (
           <ExamNumerationContainer>
-            {window.innerWidth > 1024 &&
-              questions.length > 15 &&
+            {questions.length > 15 &&
               Array.from({ length: questions.length * 0.75 }).map((_, i) => (
                 <div
                   key={i}
