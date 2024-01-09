@@ -12,30 +12,30 @@ interface ExamsTableProps {
 
 const ExamsTable: React.FC<ExamsTableProps> = ({ previousExamResponse }) => {
   return (
-    <table className="w-full lg:w-1/2 text-sm text-center">
+    <table className="w-5/6 lg:w-1/2 text-sm text-center overflow-x-scroll">
       <TableHeading />
       <tbody>
         {previousExamResponse.data.map((answer) => (
           <tr key={answer.id} className="bg-white border-b dark:bg-primary-dark">
-            <td className="w-2/5 px-2 py-2 text-xs sm:px-6 sm:py-4">
+            <td className="w-1/6 py-2 text-xs md:px-6 sm:py-4">
               <Link
                 href={`/exams/${answer.id}/review/`}
                 className="text-xs underline capitalize transition ease-in-out hover:text-primary md:text-base">
                 {answer.subject}
               </Link>
             </td>
-            <td className="w-1/5 px-2 py-2 text-xs md:text-base sm:px-6 sm:py-4">{answer.score}</td>
-            <td className="w-1/5 px-2 py-2 text-xs md:text-base sm:px-6 sm:py-4">
+            <td className="w-1/6 py-2 text-xs md:text-base md:px-6 sm:py-4">{answer.score}</td>
+            <td className="w-1/6 py-2 text-xs md:text-base md:px-6 sm:py-4">
               {formatDateDDStrMonthYYYY(answer.created_at)}
             </td>
-            <td className="w-1/6 px-2 py-2 text-xs md:text-base sm:px-6 sm:py-4 capitalize">
+            <td className="w-1/6 py-2 text-xs md:text-base md:px-6 sm:py-4 capitalize">
               {answer.time
                 ? `${Math.floor(answer.time / 60)}:${answer.time % 60 < 10 ? '0' : ''}${
                     answer.time % 60
                   }`
                 : '--'}
             </td>
-            <td className="w-1/5 px-2 py-2 text-xs md:text-base sm:px-6 sm:py-4 capitalize">
+            <td className="w-1/6 py-2 text-xs md:text-base md:px-6 sm:py-4 capitalize">
               {sanitizeMode(answer.mode)}
             </td>
           </tr>
