@@ -97,14 +97,11 @@ const Exam: React.FC<ExamPageProps> = ({ params }) => {
         className: theme === 'dark' ? 'swal-dark' : ''
       });
     }
-
-    setExamTime(0);
   }
 
   useEffect(() => {
     async function getExam(id: number, mode: string, n_of_questions?: number) {
       try {
-        console.log(id);
         const exam = await generateExam(id, mode, session.token, n_of_questions);
         if (exam === null) {
           swal('Ocorreu um erro ao carregar o exame.', 'Por favor tente novamente.', 'error', {
@@ -129,8 +126,18 @@ const Exam: React.FC<ExamPageProps> = ({ params }) => {
       getExam(parseInt(params.id), params.mode, parseInt(nOfQuestions as string));
     else getExam(parseInt(params.id), params.mode);
 
+    setExamTime(0);
     setSubjectName();
-  }, [params.id, params.mode, router, setQuestions, session.token, theme, nOfQuestions]);
+  }, [
+    params.id,
+    params.mode,
+    router,
+    setQuestions,
+    session.token,
+    theme,
+    nOfQuestions,
+    setExamTime
+  ]);
 
   useEffect(() => {
     const interval = setInterval(() => {
