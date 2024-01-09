@@ -97,6 +97,8 @@ const Exam: React.FC<ExamPageProps> = ({ params }) => {
         className: theme === 'dark' ? 'swal-dark' : ''
       });
     }
+
+    setExamTime(0);
   }
 
   useEffect(() => {
