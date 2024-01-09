@@ -148,19 +148,27 @@ const Exam: React.FC<ExamPageProps> = ({ params }) => {
   }, [setExamTime]);
 
   return (
-    <section className="flex flex-col items-center overflow-x-scroll relative">
+    <section className="flex flex-col items-center relative">
       <span className="-top-1 left-auto absolute font-bold text-lg md:text-xl align-middle">
         {Math.floor(examTime / 60)}:{examTime % 60 < 10 ? `0${examTime % 60}` : examTime % 60}
       </span>
       <p className="mt-10 mb-4 text-xl font-bold text-center uppercase">
         Exame de{' '}
         <span className="text-primary align-middle">
-          {subject ? subject : <Skeleton width={100} />}
+          {subject ? subject : <Skeleton width={150} />}
         </span>
       </p>
-      <div className="w-screen mb-12">
+      <div className="w-full mb-12">
         {questions[0] ? (
           <ExamNumerationContainer>
+            {window.innerWidth > 1024 &&
+              questions.length > 15 &&
+              Array.from({ length: questions.length * 0.75 }).map((_, i) => (
+                <div
+                  key={i}
+                  className="h-10 w-10 p-5 flex items-center justify-center rounded-full hover:cursor-pointer"
+                />
+              ))}
             <PrimaryButton
               className={`h-10 w-10 p-5 items-center !rounded-full flex justify-center mr-4 ${
                 currentQuestionIndex === 0 ? 'opacity-50' : ''

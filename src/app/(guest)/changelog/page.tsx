@@ -37,7 +37,8 @@ const Changelog: React.FC = () => {
             últimos exames.
           </span>,
           'Adicionado o tempo de realização do exame na tabela de histórico no perfil',
-          'Adicionado tempo médio de realização de exames na página de estatísticas'
+          'Adicionado tempo médio de realização de exames na página de estatísticas',
+          'Corrigido o problema de alinhamento do nº das questões ao realizar um exame não ser exibida corretamente em exames com mais de 15 perguntas'
         ]}
       />
       <ChangelogVersion
