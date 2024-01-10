@@ -84,6 +84,13 @@ const ReviewPage: React.FC<ExamPageProps> = ({ params }) => {
       <div className="mb-12">
         {examResult ? (
           <ExamNumerationContainer>
+            {examResult.questions.length > 15 &&
+              Array.from({ length: examResult.questions.length * 0.75 }).map((_, i) => (
+                <div
+                  key={i}
+                  className="h-10 w-10 p-5 flex items-center justify-center rounded-full hover:cursor-pointer"
+                />
+              ))}
             <PrimaryButton
               className={`h-10 w-10 p-5 items-center !rounded-full flex justify-center mr-4 ${
                 currentQuestionIndex === 0 ? 'opacity-50' : ''
