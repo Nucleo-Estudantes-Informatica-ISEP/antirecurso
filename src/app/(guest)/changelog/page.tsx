@@ -45,7 +45,8 @@ const Changelog: React.FC = () => {
           <span key="1.3.6-notes">
             Adicionado página de{' '}
             <span className="align-middle font-bold text-primary">resumos</span>. (Coming soon) 👀
-          </span>
+          </span>,
+          'Adicionada a informação de nota mínima e peso do exame na página de estatísticas da UC'
         ]}
       />
       <ChangelogVersion
