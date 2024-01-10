@@ -1,4 +1,5 @@
 import GradeCalculatorContainer from '@/components/GradeCalculatorContainer';
+import ScoreIndicator from '@/components/ScoreIndicator';
 import StatsLineChart from '@/components/StatsLineChart';
 import StatsPieChart from '@/components/StatsPieChart';
 import { sanitizeMode } from '@/utils/sanitizeMode';
@@ -39,29 +40,59 @@ const SubjectStats: React.FC<SubjectStatsProps> = async ({ params }) => {
         de <span className="text-primary">{subjectName}</span>
       </p>
       <div className="flex flex-col w-full gap-12 px-8 py-6 max-w-[1440px]">
-        <section className="flex flex-col h-full gap-y-6">
-          <div className="flex items-center px-6 py-4 text-xl bg-gray-100 rounded-md gap-x-2 dark:bg-secondary-dark">
-            <div className="flex items-center justify-center w-12 h-12">
-              <FiInfo className="w-full" />
-            </div>
-            <p className="text-xs md:text-lg align-middle">
-              Das <span className="font-bold text-primary">{subjectStats.total_of_questions}</span>{' '}
-              questões disponíveis respondeste a{' '}
-              <span className="font-bold text-primary">{subjectStats.n_of_answers}</span>, ou seja{' '}
-              <span className="font-bold text-primary">
-                {((subjectStats.n_of_answers / subjectStats.total_of_questions) * 100).toFixed(1)}%
-              </span>
-              . Demoras, em média, cerca de{' '}
-              <span className="font-bold text-primary align-middle">
-                {Math.floor(subjectStats.mean_time / 60) > 0
-                  ? `${Math.floor(subjectStats.mean_time / 60)} minutos e`
-                  : ''}{' '}
-                {subjectStats.mean_time % 60} segundos
-              </span>{' '}
-              a responder a um exame.
-            </p>
+        <div className="flex flex-col md:flex-row justify-between h-full gap-6">
+          <div className="flex flex-col justify-between items-stretch h-full gap-y-6">
+            <section className="flex flex-col">
+              <div className="flex items-center px-6 py-4 text-xl bg-gray-100 rounded-md gap-x-2 dark:bg-secondary-dark text-left">
+                <div className="flex items-center justify-center w-12 h-12">
+                  <FiInfo className="w-full" />
+                </div>
+                <p className="text-xs md:text-lg align-middle">
+                  Das{' '}
+                  <span className="font-bold text-primary">{subjectStats.total_of_questions}</span>{' '}
+                  questões disponíveis respondeste a{' '}
+                  <span className="font-bold text-primary">{subjectStats.n_of_answers}</span>, ou
+                  seja{' '}
+                  <span className="font-bold text-primary">
+                    {((subjectStats.n_of_answers / subjectStats.total_of_questions) * 100).toFixed(
+                      1
+                    )}
+                    %
+                  </span>
+                  . Demoras, em média, cerca de{' '}
+                  <span className="font-bold text-primary align-middle">
+                    {Math.floor(subjectStats.mean_time / 60) > 0
+                      ? `${Math.floor(subjectStats.mean_time / 60)} minutos e`
+                      : ''}{' '}
+                    {Math.floor(subjectStats.mean_time % 60)} segundos
+                  </span>{' '}
+                  a responder a um exame.
+                </p>
+              </div>
+            </section>
+
+            <section className="flex flex-col">
+              <div className="flex items-center px-6 py-4 text-xl bg-gray-100 rounded-md gap-x-2 dark:bg-secondary-dark text-left">
+                <div className="flex items-center justify-center w-12 h-12">
+                  <FiSettings className="w-full" />
+                </div>
+                <p className="text-xs md:text-lg">
+                  Com base nos exames que respondeste, sugerimos-te que resolvas um exame do{' '}
+                  <Link
+                    href={`/exams/${params.id}/answer/${subjectStats.suggested_mode}`}
+                    className="font-bold text-primary align-middle">
+                    modo {sanitizeMode(subjectStats.suggested_mode)}
+                  </Link>{' '}
+                  para continuares a melhorar.
+                </p>
+              </div>
+            </section>
           </div>
-        </section>
+
+          <div className="flex items-center justify-center px-12 py-5 bg-gray-100 rounded-md dark:bg-secondary-dark row-span-2">
+            <ScoreIndicator score={Number.parseFloat(subjectStats.average_grade)} />
+          </div>
+        </div>
 
         <div className="flex flex-col items-center justify-between p-6 bg-gray-100 rounded-md md:flex-row gap-y-8 md:gap-6 dark:bg-secondary-dark">
           <div className="flex flex-col items-center justify-center w-full gap-2">
@@ -142,23 +173,6 @@ const SubjectStats: React.FC<SubjectStatsProps> = async ({ params }) => {
             data={subjectStats.user_scores.map((score) => (score.score * 20) / 100)}
           />
         </div>
-
-        <section className="flex flex-col h-full gap-y-6">
-          <div className="flex items-center px-6 py-4 text-xl bg-gray-100 rounded-md gap-x-2 dark:bg-secondary-dark">
-            <div className="flex items-center justify-center w-12 h-12">
-              <FiSettings className="w-full" />
-            </div>
-            <p className="text-xs md:text-lg">
-              Com base nos exames que respondeste, sugerimos-te que resolvas um exame do{' '}
-              <Link
-                href={`/exams/${params.id}/answer/${subjectStats.suggested_mode}`}
-                className="font-bold text-primary align-middle">
-                modo {sanitizeMode(subjectStats.suggested_mode)}
-              </Link>{' '}
-              para continuares a melhorar.
-            </p>
-          </div>
-        </section>
 
         <GradeCalculatorContainer subjectStats={subjectStats} />
       </div>

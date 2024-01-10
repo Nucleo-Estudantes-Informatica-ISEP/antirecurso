@@ -20,14 +20,10 @@ const HamburgerProfileMenu: React.FC = () => {
     setIsOpen(false);
   }
 
-  // when clicking outside the menu, close it
   useEffect(() => {
-    if (isOpen) {
-      document.addEventListener('click', closeMenu);
-    }
-    return () => {
-      document.removeEventListener('click', closeMenu);
-    };
+    if (isOpen) document.addEventListener('click', closeMenu);
+
+    return () => document.removeEventListener('click', closeMenu);
   });
 
   return (

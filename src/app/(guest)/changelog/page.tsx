@@ -39,7 +39,13 @@ const Changelog: React.FC = () => {
           'Adicionado o tempo de realização do exame na tabela de histórico no perfil',
           'Adicionado tempo médio de realização de exames na página de estatísticas',
           'Corrigido o problema de alinhamento do nº das questões ao realizar um exame não ser exibida corretamente em exames com mais de 15 perguntas',
-          'Adicionados scoreboards para cada modo de exame'
+          'Adicionados scoreboards para cada modo de exame',
+          'Adicionada animação ao indicador de score de exame',
+          'Adicionado indicador de score com a média na página de estatísticas',
+          <span key="1.3.6-notes">
+            Adicionado página de{' '}
+            <span className="align-middle font-bold text-primary">resumos</span>. (Coming soon) 👀
+          </span>
         ]}
       />
       <ChangelogVersion

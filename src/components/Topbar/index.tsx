@@ -29,6 +29,7 @@ const Topbar: React.FC = () => {
           <TopbarLink href="/">Home</TopbarLink>
           <TopbarLink href="/exams">Exames</TopbarLink>
           <TopbarLink href="/scoreboard">Scoreboard</TopbarLink>
+          <TopbarLink href="/notes">Resumos</TopbarLink>
           <TopbarLink href="/about">Sobre</TopbarLink>
           <ThemeChanger />
         </div>
