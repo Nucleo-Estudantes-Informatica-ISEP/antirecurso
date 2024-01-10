@@ -22,7 +22,7 @@ const GradeCalculatorContainer: React.FC<GradeCalculatorProps> = ({ subjectStats
             {subjectStats.exam_weight * 100}%
           </span>
           <div className="text-center text-base md:block hidden">
-            A tua média é calculada com base neste peso.
+            A tua nota final é calculada com base neste peso.
           </div>
         </article>
         <article className="flex flex-col justify-between items-center gap-y-2 min-h-40 md:h-64 w-full max-w-lg p-8 text-xl bg-gray-100 rounded-md gap-x-2 dark:bg-secondary-dark text-left">
