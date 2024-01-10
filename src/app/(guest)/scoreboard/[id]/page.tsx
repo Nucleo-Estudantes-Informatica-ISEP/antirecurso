@@ -1,9 +1,16 @@
+'use client';
+
 import ScoreboardPodium from '@/components/ScoreboardPodium';
 import ScoreboardRow from '@/components/ScoreboardRow';
+import useSession from '@/hooks/useSession';
 import { BASE_URL } from '@/services/api';
-import getServerSession from '@/services/getServerSession';
 import Leaderboard from '@/types/Leaderboard';
 import getSubjectNameById from '@/utils/getSubjectNameById';
+import { sanitizeMode } from '@/utils/sanitizeMode';
+import { motion } from 'framer-motion';
+import { useEffect, useState } from 'react';
+import Skeleton from 'react-loading-skeleton';
+import 'react-loading-skeleton/dist/skeleton.css';
 
 interface ScoreboardPageProps {
   params: {
@@ -11,51 +18,82 @@ interface ScoreboardPageProps {
   };
 }
 
-// @ts-expect-error Server Component
-const ScoreboardPage: React.FC<ScoreboardPageProps> = async ({ params }) => {
-  async function fetchLeaderboard(): Promise<Leaderboard> {
-    const res = await fetch(`${BASE_URL}/subjects/${params.id}/scoreboard/all`, {
-      cache: 'no-cache'
-    });
-    return res.json();
-  }
+const examModes = ['custom', 'default', 'realistic', 'all', 'new', 'wrong', 'hard'];
 
-  const [subjectName, scoreboard, session] = await Promise.all([
-    getSubjectNameById(parseInt(params.id)),
-    fetchLeaderboard(),
-    getServerSession()
-  ]);
+const ScoreboardPage: React.FC<ScoreboardPageProps> = ({ params }) => {
+  const [mode, setMode] = useState<string>('all');
+  const [loading, setLoading] = useState<boolean>(false);
+  const [scoreboard, setScoreboard] = useState<Leaderboard | null>(null);
+  const [subjectName, setSubjectName] = useState<string | null>(null);
+  const { user } = useSession();
+
+  useEffect(() => {
+    async function fetchLeaderboard() {
+      setLoading(true);
+      const res = await fetch(`${BASE_URL}/subjects/${params.id}/scoreboard/${mode}`);
+      const data = await res.json();
+      setLoading(false);
+      setScoreboard(data);
+    }
+
+    async function fetchSubjectNameById(id: number) {
+      const s = await getSubjectNameById(id);
+      setSubjectName(s);
+    }
+
+    fetchLeaderboard();
+    fetchSubjectNameById(parseInt(params.id));
+  }, [mode, params.id]);
 
   return (
     <section className="flex flex-col items-center w-full mt-8">
+      <div className="flex flex-col md:flex-row items-center justify-center">
+        {examModes.map((m, i) => (
+          <button
+            key={i}
+            className={`${
+              mode === m ? 'bg-primary text-white' : 'text-primary'
+            } w-40 py-2 capitalize rounded-lg`}
+            onClick={() => setMode(m)}>
+            {sanitizeMode(m)}
+          </button>
+        ))}
+      </div>
+
       <p className="px-4 text-xl font-bold text-center uppercase my-5">
-        Scoreboard de <span className="text-primary">{subjectName}</span>
+        Scoreboard de{' '}
+        {subjectName ? (
+          <span className="text-primary">{subjectName}</span>
+        ) : (
+          <Skeleton width={150} />
+        )}
       </p>
 
-      <section className="grid w-full my-5 place-items-center">
-        {scoreboard.scores.length === 0 ? (
-          <p className="text-center">Sem nenhum utilizador registado</p>
-        ) : (
-          <>
-            <ScoreboardPodium
-              scores={scoreboard.scores}
-              uid={!session ? undefined : session.user.id}
-            />
-            <table className="text-sm text-center">
-              <tbody>
-                {scoreboard.scores.slice(3).map((line, key) => (
-                  <ScoreboardRow
-                    line={line}
-                    position={key + 4}
-                    key={key}
-                    highlight={!!session && session.user.id === line.user_id}
-                  />
-                ))}
-              </tbody>
-            </table>
-          </>
-        )}
-      </section>
+      {scoreboard !== null && !loading ? (
+        <motion.section className="grid w-full my-5 place-items-center">
+          {scoreboard.scores.length === 0 ? (
+            <p className="text-center">Sem nenhum utilizador registado</p>
+          ) : (
+            <>
+              <ScoreboardPodium scores={scoreboard.scores} uid={!user ? undefined : user.id} />
+              <table className="text-sm text-center">
+                <tbody>
+                  {scoreboard.scores.slice(3).map((line, key) => (
+                    <ScoreboardRow
+                      line={line}
+                      position={key + 4}
+                      key={key}
+                      highlight={!!user && user.id === line.user_id}
+                    />
+                  ))}
+                </tbody>
+              </table>
+            </>
+          )}
+        </motion.section>
+      ) : (
+        <Skeleton className="mt-3" height={40} width={600} count={30} />
+      )}
     </section>
   );
 };

@@ -1,6 +1,8 @@
 // create a function that maps a mode to a translation
 export const sanitizeMode = (mode: string): string => {
   switch (mode) {
+    case 'all':
+      return 'todos';
     case 'default':
       return 'aleatório';
     case 'new':

@@ -2,9 +2,10 @@ import { cookies } from 'next/headers';
 
 import config from '@/config';
 import { BASE_URL } from '@/services/api';
+import { Session } from '@/types/Session';
 import User from '@/types/User';
 
-const getServerSession = async () => {
+const getServerSession = async (): Promise<Session | null> => {
   const cookie = cookies().get(config.cookies.token);
   const token = cookie?.value as string;
   if (!token) return null;
