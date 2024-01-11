@@ -31,7 +31,7 @@ const GradeCalculatorContainer: React.FC<GradeCalculatorProps> = ({ subjectStats
             {subjectStats.min_grade} <span className="text-2xl">valores</span>
           </span>
           <div className="text-center text-base md:block hidden">
-            Se obtiveres uma nota inferior a este valor no exame, és reprovado automaticamente.
+            Se obtiveres uma nota inferior a este valor no exame és reprovado automaticamente.
           </div>
         </article>
       </section>

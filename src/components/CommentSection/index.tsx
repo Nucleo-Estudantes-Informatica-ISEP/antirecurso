@@ -72,10 +72,11 @@ const CommentSection: React.FC<CommentSectionProps> = ({
 
     if (res.status === 201)
       swal({
-        title: 'Reported!',
+        title: 'Reportado!',
         text: 'A tua denúncia foi enviada com sucesso!',
         icon: 'success',
-        className: theme === 'dark' ? 'swal-dark' : ''
+        className: theme === 'dark' ? 'swal-dark' : '',
+        timer: 2000
       });
     else
       swal({
