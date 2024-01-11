@@ -23,9 +23,15 @@ const discounts = [
   { value: 1, label: '100%' }
 ];
 
+const filters = [
+  { value: 'all', label: 'Todas' },
+  { value: 'new', label: 'Novas' }
+];
+
 const CustomExamModal: React.FC<ModalProps> = ({ isVisible, setIsVisible, title, params }) => {
   const [numberOfQuestions, setNumberOfQuestions] = useState(10);
   const [discount, setDiscount] = useState<number | null>(null);
+  const [filter, setFilter] = useState<string | null>(null);
 
   const router = useRouter();
 
@@ -42,7 +48,7 @@ const CustomExamModal: React.FC<ModalProps> = ({ isVisible, setIsVisible, title,
     if (numberOfQuestions && discount !== null) {
       setIsVisible(false);
       router.push(
-        `/exams/${params.id}/answer/${params.mode}?n_of_questions=${numberOfQuestions}&penalizing_factor=${discount}`
+        `/exams/${params.id}/answer/${params.mode}?n_of_questions=${numberOfQuestions}&penalizing_factor=${discount}&filter=${filter}`
       );
     } else {
       swal('Erro', 'Preencha todos os campos!', 'error');
@@ -101,6 +107,30 @@ const CustomExamModal: React.FC<ModalProps> = ({ isVisible, setIsVisible, title,
               </div>
               <span className="md:text-sm text-xs mt-2">
                 (Escolhe a percentagem de penalização para cada resposta errada)
+              </span>
+            </div>
+            <div className="flex flex-col items-center justify-between gap-x-8 w-full mt-6 h-full">
+              <h2 className="w-full font-bold mb-6 text-lg text-center md:text-left">Filtro</h2>
+              <div className="w-full border-gray-400 border h-full md:h-12 text-sm md:text-base flex flex-col md:flex-row items-center justify-center rounded-lg">
+                {filters.map((f, i) => (
+                  <button
+                    className={`${
+                      i === 0
+                        ? 'border-t-lg md:rounded-l-lg'
+                        : i === filters.length - 1
+                        ? 'border-b-lg md:rounded-r-lg border-t md:border-l'
+                        : 'border-t md:border-l'
+                    } md:border-x-gray-400 border-y-gray-400 md:border-y-0 w-full h-8 md:h-full hover:bg-primary hover:text-white
+                    ${filter === f.value ? 'bg-primary text-white' : 'bg-transparent'}
+                    `}
+                    key={f.value}
+                    onClick={() => setFilter(f.value)}>
+                    {f.label}
+                  </button>
+                ))}
+              </div>
+              <span className="md:text-sm text-xs mt-2">
+                (Aplica um filtro às questões do teu exame)
               </span>
             </div>
           </div>

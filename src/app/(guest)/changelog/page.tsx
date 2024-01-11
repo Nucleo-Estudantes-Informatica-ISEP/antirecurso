@@ -5,6 +5,36 @@ const Changelog: React.FC = () => {
   return (
     <section className="w-full text-sm md:text-md px-5 md:px-24 md:pb-24 pb-48 mt-5">
       <ChangelogVersion
+        title="v1.3.7 🤔"
+        date={new Date(2024, 0, 11)}
+        updates={[
+          <span key="1.3.7-forgot-password">
+            Adição de{' '}
+            <span className="text-primary font-bold align-middle">
+              recuperação de palavra-passe
+            </span>
+            . De momento o processo ainda não pode ser automatizado porque estamos à espera da
+            autorização do domínio para envio de emails 🙃, mas em breve estará disponível!
+            Entretanto, se precisarem de recuperar uma conta contactem-nos pelo nosso email de
+            support (disponível na página de{' '}
+            <Link className="underline text-primary" href="/about">
+              sobre
+            </Link>
+            ).
+          </span>,
+          <span key="1.3.7-bug">
+            Corrigido o bug em que a resposta certa era sempre a primeira opção. O problema só
+            esteve ativo durante a tarde de hoje (Obrigado{' '}
+            <span className="font-bold text-primary">Pedro Conceição</span>)
+          </span>,
+          <span key="1.3.7-custom">
+            Adicionado um filtro aos exames personalizados. Agora podes escolher se queres que o
+            exame seja composto por perguntas novas ou aleatórias! (Obrigado pela sugestão{' '}
+            <span className="font-bold text-primary">Diogo Teixeira</span>)
+          </span>
+        ]}
+      />
+      <ChangelogVersion
         title="v1.3.6 ⚙️"
         date={new Date(2024, 0, 8)}
         updates={[
