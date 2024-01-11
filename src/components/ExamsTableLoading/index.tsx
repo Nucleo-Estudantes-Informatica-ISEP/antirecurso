@@ -3,7 +3,7 @@ import TableHeading from '../TableHeading';
 
 const N_ITEMS_PER_PAGE = 10;
 
-const N_COLUMNS = 3;
+const N_COLUMNS = 5;
 
 const ExamTableLoading = () => {
   return (
