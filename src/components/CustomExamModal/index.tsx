@@ -138,7 +138,7 @@ const CustomExamModal: React.FC<ModalProps> = ({ isVisible, setIsVisible, title,
             name="Criar Exame"
             onClick={handleSaveClick}
             className="w-full mt-8 p-2 text-xl bg-primary rounded-md text-white disabled:bg-gray-300 dark:disabled:bg-gray-600 disabled:text-gray-500 font-bold enabled:hover:brightness-90 enabled:hover:text-white"
-            disabled={discount === null}>
+            disabled={discount === null || filter === null}>
             Criar exame
           </button>
         </div>
