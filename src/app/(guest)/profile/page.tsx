@@ -5,6 +5,7 @@ import UserProfileScoreboard from '@/components/UserProfileScoreboard';
 import getServerSession from '@/services/getServerSession';
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
+import swal from 'sweetalert';
 
 interface ProfileProps {
   params: {
@@ -15,7 +16,16 @@ interface ProfileProps {
 // @ts-expect-error Server Component
 const Profile: React.FC<ProfileProps> = async () => {
   const session = await getServerSession();
-  if (!session) redirect('/');
+  if (!session) {
+    fetch('/api/auth/logout', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    });
+    swal('Sessão expirada', 'A tua sessão expirou. Por favor, faz login novamente.', 'error');
+    redirect('/');
+  }
 
   const { token, user } = session;
 
