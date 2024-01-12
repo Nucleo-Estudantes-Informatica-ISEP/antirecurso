@@ -16,16 +16,7 @@ interface ProfileProps {
 // @ts-expect-error Server Component
 const Profile: React.FC<ProfileProps> = async () => {
   const session = await getServerSession();
-  if (!session) {
-    fetch('/api/auth/logout', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    });
-    swal('Sessão expirada', 'A tua sessão expirou. Por favor, faz login novamente.', 'error');
-    redirect('/');
-  }
+  if (!session) redirect('/');
 
   const { token, user } = session;
 
