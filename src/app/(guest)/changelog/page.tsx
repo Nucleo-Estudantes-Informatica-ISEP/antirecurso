@@ -31,6 +31,10 @@ const Changelog: React.FC = () => {
             Adicionado um filtro aos exames personalizados. Agora podes escolher se queres que o
             exame seja composto por perguntas novas ou aleatórias! (Obrigado pela sugestão{' '}
             <span className="font-bold text-primary">Diogo Teixeira</span>)
+          </span>,
+          <span key="1.3.7-theme-bug">
+            Corrigido problema em que ao alterar o tema a meio de um exame a order das perguntas era
+            (Obrigado pela sugestão <span className="font-bold text-primary">Diogo Teixeira</span>)
           </span>
         ]}
       />

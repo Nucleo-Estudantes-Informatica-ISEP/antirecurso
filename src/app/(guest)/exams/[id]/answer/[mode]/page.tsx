@@ -128,16 +128,8 @@ const Exam: React.FC<ExamPageProps> = ({ params }) => {
 
     setExamTime(0);
     setSubjectName();
-  }, [
-    params.id,
-    params.mode,
-    router,
-    setQuestions,
-    session.token,
-    theme,
-    nOfQuestions,
-    setExamTime
-  ]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [params.id, params.mode, router, setQuestions, session.token, nOfQuestions, setExamTime]);
 
   useEffect(() => {
     const interval = setInterval(() => {
