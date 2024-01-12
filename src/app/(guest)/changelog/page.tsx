@@ -20,7 +20,7 @@ const Changelog: React.FC = () => {
             <Link className="underline text-primary" href="/about">
               sobre
             </Link>
-            ).
+            ). (Update 12/01/2021: O processo já está automatizado!)
           </span>,
           <span key="1.3.7-bug">
             Corrigido o bug em que a resposta certa era sempre a primeira opção. O problema só
