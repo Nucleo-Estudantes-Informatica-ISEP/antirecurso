@@ -5,7 +5,7 @@ import { BASE_URL } from '@/services/api';
 // @ts-expect-error Server Component
 const ReportTable: React.FC = async () => {
     const reports = await fetchReports(`${BASE_URL}/question-reports`);
-    console.log(reports);
+
     return (
         <table className="table-auto">
             {reports.length === 0 ? (
