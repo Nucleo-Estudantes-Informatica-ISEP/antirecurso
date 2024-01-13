@@ -24,7 +24,7 @@ const reports: React.FC = async () => {
         <table className="table-auto">
           <thead>
             <tr>
-              <th className="px-4 py-2">ID</th>
+              <th className="px-4 py-2">d</th>
               <th className="px-4 py-2">Autor</th>
               <th className="px-4 py-2">Descrição</th>
               <th className="px-4 py-2">Question ID</th>
