@@ -40,6 +40,7 @@ const Exam: React.FC<ExamPageProps> = ({ params }) => {
 
   const nOfQuestions = searchParams.get('n_of_questions');
   const penalizingFactor = searchParams.get('penalizing_factor');
+  const filter = searchParams.get('filter');
 
   const [subject, setSubject] = useState('');
 
@@ -100,9 +101,9 @@ const Exam: React.FC<ExamPageProps> = ({ params }) => {
   }
 
   useEffect(() => {
-    async function getExam(id: number, mode: string, n_of_questions?: number) {
+    async function getExam(id: number, mode: string, n_of_questions?: number, filter?: string) {
       try {
-        const exam = await generateExam(id, mode, session.token, n_of_questions);
+        const exam = await generateExam(id, mode, session.token, n_of_questions, filter);
         if (exam === null) {
           swal('Ocorreu um erro ao carregar o exame.', 'Por favor tente novamente.', 'error', {
             className: theme === 'dark' ? 'swal-dark' : ''
@@ -123,7 +124,12 @@ const Exam: React.FC<ExamPageProps> = ({ params }) => {
     }
 
     if (nOfQuestions !== undefined && nOfQuestions !== null)
-      getExam(parseInt(params.id), params.mode, parseInt(nOfQuestions as string));
+      getExam(
+        parseInt(params.id),
+        params.mode,
+        parseInt(nOfQuestions as string),
+        filter ?? undefined
+      );
     else getExam(parseInt(params.id), params.mode);
 
     setExamTime(0);

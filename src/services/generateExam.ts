@@ -6,7 +6,8 @@ const generateExam = async (
   id: number,
   mode: string,
   token: string | null,
-  n_of_questions?: number
+  n_of_questions?: number,
+  filter?: string
 ): Promise<Question[] | null> => {
   if (config.mandatoryAuthModes.includes(mode)) {
     if (!token) return null;
@@ -23,7 +24,10 @@ const generateExam = async (
       return exam;
     } else {
       const res = await fetch(
-        BASE_URL + `/exams/generate/${id}?mode=${mode}&n_of_questions=${n_of_questions}`,
+        BASE_URL +
+          `/exams/generate/${id}?mode=${mode}&n_of_questions=${n_of_questions}${
+            filter ? `&filter=${filter}` : ''
+          }`,
         {
           method: 'GET',
           headers: {
