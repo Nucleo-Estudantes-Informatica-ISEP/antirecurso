@@ -8,9 +8,9 @@ const Exams: React.FC = async () => {
 
   return (
     <section className="flex flex-col items-center justify-center w-full text-center">
-      <p className="w-5/6 px-4 text-lg font-bold text-center uppercase md:text-xl">
-        <span className="text-primary">Escolhe</span> uma disciplina para fazer{' '}
-        <span className="text-primary">o exame</span>
+      <p className="w-5/6 px-4 text-lg font-bold text-center uppercase md:text-xl my-5">
+        <span className="text-primary">Escolhe</span> uma disciplina para fazer um{' '}
+        <span className="text-primary">exame</span>
       </p>
 
       <section className="grid grid-cols-2 gap-x-4 px-6 md:grid-cols-4 gap-y-10 md:gap-x-10 my-8 md:px-16">

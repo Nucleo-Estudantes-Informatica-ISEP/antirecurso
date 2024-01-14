@@ -3,11 +3,11 @@ import TableHeading from '../TableHeading';
 
 const N_ITEMS_PER_PAGE = 10;
 
-const N_COLUMNS = 3;
+const N_COLUMNS = 5;
 
 const ExamTableLoading = () => {
   return (
-    <table className="w-1/2 text-sm text-center">
+    <table className="w-full lg:w-1/2 text-sm text-center">
       <TableHeading />
       <tbody>
         <tr>

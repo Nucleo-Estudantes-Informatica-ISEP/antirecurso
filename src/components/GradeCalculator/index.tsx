@@ -22,7 +22,7 @@ const GradeCalculator: React.FC<GradeCalculatorProps> = ({ examGrade, weight, mi
     !frequency || !exam ? null : toFixed(frequency * (1 - weight) + exam * weight, 2);
 
   return (
-    <div className="flex flex-col items-center justify-center w-full p-4 mx-auto my-6 space-y-6">
+    <div className="flex flex-col items-center justify-center w-full p-4 mx-auto mb-6 gap-y-6">
       <div className="flex items-center justify-between w-full gap-x-2">
         <div className="h-0.5 w-1/3 bg-primary rounded opacity-70"></div>
         <h1 className="w-full mx-auto text-xl font-bold text-center md:text-3xl">

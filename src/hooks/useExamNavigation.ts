@@ -1,34 +1,40 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 export default function useExamNavigation<T>() {
   const [questions, setQuestions] = useState<T[]>([]);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [currentQuestion, setCurrentQuestion] = useState<T | null>(null);
 
-  function changeQuestion(i: number) {
-    if (i >= 0 && i < questions.length) setCurrentQuestionIndex(i);
-  }
+  const changeQuestion = useCallback(
+    (i: number) => {
+      if (i >= 0 && i < questions.length) setCurrentQuestionIndex(i);
+    },
+    [questions.length]
+  );
 
-  function handleKeyDown(e: KeyboardEvent) {
-    switch (e.key) {
-      case 'ArrowLeft':
-        e.preventDefault();
-        changeQuestion(currentQuestionIndex - 1);
-        break;
-      case 'ArrowRight':
-        e.preventDefault();
-        changeQuestion(currentQuestionIndex + 1);
-        break;
-    }
-  }
+  const handleKeyDown = useCallback(
+    (e: KeyboardEvent) => {
+      switch (e.key) {
+        case 'ArrowLeft':
+          e.preventDefault();
+          changeQuestion(currentQuestionIndex - 1);
+          break;
+        case 'ArrowRight':
+          e.preventDefault();
+          changeQuestion(currentQuestionIndex + 1);
+          break;
+      }
+    },
+    [changeQuestion, currentQuestionIndex]
+  );
 
-  function removeEventListener() {
+  const removeEventListener = useCallback(() => {
     window.removeEventListener('keydown', handleKeyDown);
-  }
+  }, [handleKeyDown]);
 
-  function addListener() {
+  const addListener = useCallback(() => {
     window.addEventListener('keydown', handleKeyDown);
-  }
+  }, [handleKeyDown]);
 
   useEffect(() => {
     addListener();

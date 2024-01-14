@@ -2,9 +2,9 @@
 
 import { useContext, useEffect, useState } from 'react';
 
-import Image from 'next/image';
-import { useRouter } from 'next/navigation';
 import { useTheme } from 'next-themes';
+import Image from 'next/image';
+import { useRouter, useSearchParams } from 'next/navigation';
 import swal from 'sweetalert';
 
 import Skeleton from 'react-loading-skeleton';
@@ -36,12 +36,18 @@ const N_SKELETON_OPTIONS = 4;
 
 const Exam: React.FC<ExamPageProps> = ({ params }) => {
   const router = useRouter();
+  const searchParams = useSearchParams();
+
+  const nOfQuestions = searchParams.get('n_of_questions');
+  const penalizingFactor = searchParams.get('penalizing_factor');
+  const filter = searchParams.get('filter');
+
   const [subject, setSubject] = useState('');
 
   const session = useSession();
   const { theme } = useTheme();
 
-  const { setExamResult } = useContext(ExamContext);
+  const { setExamResult, examTime, setExamTime } = useContext(ExamContext);
   const {
     answers,
     submit,
@@ -66,10 +72,16 @@ const Exam: React.FC<ExamPageProps> = ({ params }) => {
       answers: [...Array.from({ length: questions.length }, (_, i) => i)].map((i) => ({
         question_id: questions[i].id,
         selected_option: answers.get(i) || null
-      }))
+      })),
+      time: examTime
     };
 
-    const res = await fetch(`${BASE_URL}/exams/verify?mode=${params.mode}`, {
+    const url =
+      params.mode === 'custom' && nOfQuestions && penalizingFactor
+        ? `${BASE_URL}/exams/verify?mode=${params.mode}&n_of_questions=${nOfQuestions}&penalizing_factor=${penalizingFactor}`
+        : `${BASE_URL}/exams/verify?mode=${params.mode}`;
+
+    const res = await fetch(url, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -89,35 +101,71 @@ const Exam: React.FC<ExamPageProps> = ({ params }) => {
   }
 
   useEffect(() => {
-    async function getExam(id: number, mode: string) {
-      const exam = await generateExam(id, mode, session.token);
-      if (exam === null) {
-        swal('Ocorreu um erro ao carregar o exame.', 'Por favor tente novamente.', 'error', {
+    async function getExam(id: number, mode: string, n_of_questions?: number, filter?: string) {
+      try {
+        const exam = await generateExam(id, mode, session.token, n_of_questions, filter);
+        if (exam === null) {
+          swal('Ocorreu um erro ao carregar o exame.', 'Por favor tente novamente.', 'error', {
+            className: theme === 'dark' ? 'swal-dark' : ''
+          });
+          router.push('/exams');
+          return;
+        }
+        setQuestions(exam);
+      } catch (err) {
+        swal('Error', 'Por favor tente novamente.', 'error', {
           className: theme === 'dark' ? 'swal-dark' : ''
         });
-        router.push('/exams');
-        return;
       }
-      setQuestions(exam);
     }
 
     async function setSubjectName() {
       setSubject(await getSubjectNameById(parseInt(params.id)));
     }
 
-    getExam(parseInt(params.id), params.mode);
+    if (nOfQuestions !== undefined && nOfQuestions !== null)
+      getExam(
+        parseInt(params.id),
+        params.mode,
+        parseInt(nOfQuestions as string),
+        filter ?? undefined
+      );
+    else getExam(parseInt(params.id), params.mode);
+
+    setExamTime(0);
     setSubjectName();
-  }, [params.id, params.mode, router, setQuestions, session.token]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [params.id, params.mode, router, setQuestions, session.token, nOfQuestions, setExamTime]);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setExamTime((prev) => prev + 1);
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [setExamTime]);
 
   return (
-    <section className="flex flex-col items-center overflow-x-scroll">
-      <p className="px-4 mt-2 ml-5 text-xl font-bold text-center uppercase">
+    <section className="flex flex-col items-center relative">
+      <span className="-top-1 left-auto absolute font-bold text-lg md:text-xl align-middle">
+        {Math.floor(examTime / 60)}:{examTime % 60 < 10 ? `0${examTime % 60}` : examTime % 60}
+      </span>
+      <p className="mt-10 mb-4 text-xl font-bold text-center uppercase">
         Exame de{' '}
-        <span className="text-primary">{subject ? subject : <Skeleton width={100} />}</span>
+        <span className="text-primary align-middle">
+          {subject ? subject : <Skeleton width={150} />}
+        </span>
       </p>
       <div className="w-screen mb-12">
         {questions[0] ? (
           <ExamNumerationContainer>
+            {questions.length > 15 &&
+              Array.from({ length: questions.length * 0.75 }).map((_, i) => (
+                <div
+                  key={i}
+                  className="h-10 w-10 p-5 flex items-center justify-center rounded-full hover:cursor-pointer"
+                />
+              ))}
             <PrimaryButton
               className={`h-10 w-10 p-5 items-center !rounded-full flex justify-center mr-4 ${
                 currentQuestionIndex === 0 ? 'opacity-50' : ''

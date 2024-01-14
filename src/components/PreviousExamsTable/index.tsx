@@ -51,7 +51,7 @@ const PreviousExamsTable: React.FC<PreviousExamsTableProps> = ({ token }) => {
   }, [fetchUrl, router, theme, token]);
 
   return (
-    <section className="mt-5 w-full md:px-16 flex flex-col place-items-center">
+    <section className="mt-5 w-full md:px-16 flex flex-col place-items-center px-6">
       {previousExamResponse === undefined ? (
         <ExamTableLoading />
       ) : previousExamResponse.data.length ? (
@@ -60,7 +60,7 @@ const PreviousExamsTable: React.FC<PreviousExamsTableProps> = ({ token }) => {
           <Pagination metadata={previousExamResponse?.meta} setFetchUrl={setFetchUrl} />
         </>
       ) : (
-        <p>Não realizaste nenhum exame.</p>
+        <p>Ainda não realizaste nenhum exame...</p>
       )}
     </section>
   );

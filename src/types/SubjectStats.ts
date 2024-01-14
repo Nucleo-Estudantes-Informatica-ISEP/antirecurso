@@ -15,4 +15,15 @@ export default interface SubjectStats {
   percentage_of_exams_passed: string;
   percentage_of_correct_answers: string;
   percentage_of_questions_seen: string;
+  mode_scores: {
+    random: number;
+    new: number;
+    realistic: number;
+    wrong: number;
+    hard: number;
+    custom: number;
+  };
+  suggested_mode: string;
+  times: number[];
+  mean_time: number;
 }

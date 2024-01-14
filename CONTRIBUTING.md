@@ -1,4 +1,4 @@
-# Welcome to Anti Recurso contributing guide <!-- omit in toc -->
+# Welcome to AntiRecurso contributing guide <!-- omit in toc -->
 
 Thank you for investing your time in contributing to our project! Any contribution you make will be reflected on [AntiRecurso](http://antirecurso.nei-isep.org) website :sparkles:.
 

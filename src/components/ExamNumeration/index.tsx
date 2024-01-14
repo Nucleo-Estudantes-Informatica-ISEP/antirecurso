@@ -2,7 +2,7 @@
 
 import { motion } from 'framer-motion';
 import { useTheme } from 'next-themes';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef } from 'react';
 
 interface ExamNumerationProps {
   wasAnswered?: boolean;
@@ -22,16 +22,11 @@ const ExamNumeration: React.FC<ExamNumerationProps> = ({
   align
 }) => {
   const ref = useRef<HTMLDivElement>(null);
-  const width = window.innerWidth; // only works on client
   const { theme } = useTheme();
-
-  const [questionInView, setQuestionInView] = useState<HTMLElement>();
 
   useEffect(() => {
     if (active) {
-      setQuestionInView(questionInView);
       if (!ref.current) return;
-      if (width > 1280) return; // workaround please fix
 
       ref.current.scrollIntoView({
         behavior: 'smooth',
@@ -39,7 +34,7 @@ const ExamNumeration: React.FC<ExamNumerationProps> = ({
         inline: align
       });
     }
-  }, [active, questionInView, align, width]);
+  }, [active, align]);
 
   const background = theme === 'dark' ? '#222026' : '#fff';
 
@@ -48,7 +43,13 @@ const ExamNumeration: React.FC<ExamNumerationProps> = ({
       animate={{
         opacity: [0, 1],
         scale: active ? [1, 1.05] : [0.8, 1],
-        background: active ? '#d35d19' : wasAnswered ? '#d35d1970' : isWrong ? '#f00' : background
+        background: active
+          ? '#d35d19'
+          : wasAnswered
+          ? '#d35d1970'
+          : isWrong
+          ? '#ee4433'
+          : background
       }}
       transition={{
         duration: 0.2,
@@ -59,7 +60,7 @@ const ExamNumeration: React.FC<ExamNumerationProps> = ({
         }
       }}
       style={{
-        border: active ? 'none' : wasAnswered ? 'none' : '1px solid #d35d19',
+        border: active ? 'none' : wasAnswered ? 'none' : isWrong ? 'f00' : '1px solid #d35d19',
         color: active ? background : wasAnswered ? '#d35d19' : isWrong ? background : '#d35d19'
       }}
       ref={ref}

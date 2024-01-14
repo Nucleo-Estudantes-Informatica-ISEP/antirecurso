@@ -72,10 +72,11 @@ const CommentSection: React.FC<CommentSectionProps> = ({
 
     if (res.status === 201)
       swal({
-        title: 'Reported!',
+        title: 'Reportado!',
         text: 'A tua denúncia foi enviada com sucesso!',
         icon: 'success',
-        className: theme === 'dark' ? 'swal-dark' : ''
+        className: theme === 'dark' ? 'swal-dark' : '',
+        timer: 2000
       });
     else
       swal({
@@ -87,7 +88,7 @@ const CommentSection: React.FC<CommentSectionProps> = ({
   }
 
   return (
-    <section className="px-5 mt-14 mb-28 md:mb-14 md:px-32">
+    <section className="px-5 mt-12 mb-28 md:mb-14 md:px-32">
       <div>
         {!session.user ? (
           <p className="w-5/6 text-center md:text-start">
@@ -96,7 +97,7 @@ const CommentSection: React.FC<CommentSectionProps> = ({
             </Link>{' '}
             ou{' '}
             <Link href="/login" target="_blank" className="font-semibold text-primary">
-              entra numa conta
+              entra na tua conta
             </Link>{' '}
             para poderes comentar e reportar possíveis erros!
           </p>
@@ -109,6 +110,7 @@ const CommentSection: React.FC<CommentSectionProps> = ({
                 rows={3}
                 id="comment"
                 name="comment"
+                placeholder="Escreve aqui o teu comentário..."
                 onFocus={() => {
                   document.addEventListener('keydown', (e) => {
                     if (e.key === 'Enter' && e.ctrlKey) {

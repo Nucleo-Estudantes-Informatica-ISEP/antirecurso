@@ -8,7 +8,7 @@ const Scoreboard: React.FC = async () => {
 
   return (
     <section className="w-full flex flex-col items-center text-center mt-8">
-      <p className="text-lg w-5/6 md:text-xl font-bold uppercase text-center px-4">
+      <p className="w-5/6 px-4 text-lg font-bold text-center uppercase md:text-xl my-5">
         <span className="text-primary">Escolhe</span> uma disciplina para ver o{' '}
         <span className="text-primary">scoreboard</span>
       </p>

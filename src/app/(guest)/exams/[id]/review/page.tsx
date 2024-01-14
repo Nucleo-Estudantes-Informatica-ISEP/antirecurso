@@ -11,10 +11,10 @@ import ExamNumeration from '@/components/ExamNumeration';
 import ExamNumerationContainer from '@/components/ExamNumerationContainer';
 import PrimaryButton from '@/components/PrimaryButton';
 import QuestionReview from '@/components/QuestionReview';
+import useSession from '@/hooks/useSession';
 import sampleImage from 'public/images/sample.webp';
 import useExamReviewNavigation from 'src/hooks/useExamReviewNavigation';
 import { BASE_URL } from 'src/services/api';
-import useSession from '@/hooks/useSession';
 
 interface ExamPageProps {
   params: {
@@ -75,15 +75,22 @@ const ReviewPage: React.FC<ExamPageProps> = ({ params }) => {
 
   return (
     <section className="flex flex-col items-center overflow-x-scroll ">
-      <p className="px-4 mt-10 ml-5 text-xl font-bold text-center uppercase">
+      <p className="px-4 my-5 ml-5 text-xl font-bold text-center uppercase">
         Exame de{' '}
         <span className="text-primary">
-          {examResult?.subject ? examResult.subject : <Skeleton width={100} />}
+          {examResult?.subject ? examResult.subject : <Skeleton width={150} />}
         </span>
       </p>
       <div className="mb-12">
         {examResult ? (
           <ExamNumerationContainer>
+            {examResult.questions.length > 15 &&
+              Array.from({ length: examResult.questions.length * 0.75 }).map((_, i) => (
+                <div
+                  key={i}
+                  className="h-10 w-10 p-5 flex items-center justify-center rounded-full hover:cursor-pointer"
+                />
+              ))}
             <PrimaryButton
               className={`h-10 w-10 p-5 items-center !rounded-full flex justify-center mr-4 ${
                 currentQuestionIndex === 0 ? 'opacity-50' : ''
