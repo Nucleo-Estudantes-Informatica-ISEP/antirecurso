@@ -48,7 +48,7 @@ const SubjectStats: React.FC<SubjectStatsProps> = async ({ params }) => {
                   <FiInfo className="w-full" />
                 </div>
                 <p className="text-xs md:text-lg align-middle">
-                  Das{' '}
+                  Já respondeste a {subjectStats.n_of_exams_taken} exames. Das{' '}
                   <span className="font-bold text-primary">{subjectStats.total_of_questions}</span>{' '}
                   questões disponíveis respondeste a{' '}
                   <span className="font-bold text-primary">{subjectStats.n_of_answers}</span>, ou

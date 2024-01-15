@@ -35,7 +35,9 @@ const Changelog: React.FC = () => {
           <span key="1.3.7-theme-bug">
             Corrigido problema em que ao alterar o tema a meio de um exame a order das perguntas era
             (Obrigado pela sugestão <span className="font-bold text-primary">Diogo Teixeira</span>)
-          </span>
+          </span>,
+          'Adicionado o número total de exames respondidos pelo utilizador a cada UC na página de estatísticas',
+          'Adicionado o número total de exames respondidos na plataforma no leaderboard da UC'
         ]}
       />
       <ChangelogVersion
