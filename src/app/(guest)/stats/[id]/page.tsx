@@ -61,7 +61,7 @@ const SubjectStats: React.FC<SubjectStatsProps> = ({ params }) => {
                   <FiInfo className="w-full" />
                 </div>
                 {subjectStats === undefined ? (
-                  <Skeleton width={500} />
+                  <Skeleton width={800} />
                 ) : (
                   <p className="text-xs md:text-lg align-middle">
                     Já respondeste a {subjectStats.n_of_exams_taken} exames. Das{' '}
@@ -97,7 +97,7 @@ const SubjectStats: React.FC<SubjectStatsProps> = ({ params }) => {
                   <FiSettings className="w-full" />
                 </div>
                 {subjectStats === undefined ? (
-                  <Skeleton width={500} />
+                  <Skeleton width={800} />
                 ) : (
                   <p className="text-xs md:text-lg">
                     Com base nos exames que respondeste, sugerimos-te que resolvas um exame do{' '}
@@ -115,7 +115,7 @@ const SubjectStats: React.FC<SubjectStatsProps> = ({ params }) => {
 
           <div className="flex items-center justify-center px-12 py-5 bg-gray-100 rounded-md dark:bg-secondary-dark row-span-2">
             {subjectStats === undefined ? (
-              <Skeleton width={300} height={300} circle={true} />
+              <Skeleton width={150} height={150} circle={true} />
             ) : (
               <ScoreIndicator score={Number.parseFloat(subjectStats.average_grade)} />
             )}
@@ -123,7 +123,7 @@ const SubjectStats: React.FC<SubjectStatsProps> = ({ params }) => {
         </div>
 
         {subjectStats === undefined ? (
-          <Skeleton width={1000} height={200} />
+          <Skeleton width={1000} height={100} />
         ) : (
           <div className="flex flex-col items-center justify-between p-6 bg-gray-100 rounded-md md:flex-row gap-y-8 md:gap-6 dark:bg-secondary-dark">
             <div className="flex flex-col items-center justify-center w-full gap-2">
