@@ -5,6 +5,27 @@ const Changelog: React.FC = () => {
   return (
     <section className="w-full text-sm md:text-md px-5 md:px-24 md:pb-24 pb-48 mt-5">
       <ChangelogVersion
+        title="v1.3.8 🙃"
+        date={new Date(2024, 0, 20)}
+        updates={[
+          <span key="1.3.7-forgot-password">
+            Adição de <span className="text-primary font-bold align-middle">170</span> perguntas de{' '}
+            <span className="text-primary font-bold align-middle">SGRAI</span> (Obrigado{' '}
+            <span className="font-bold text-primary">André Barros</span>,{' '}
+            <span className="font-bold text-primary">Carlos Lopes</span>,{' '}
+            <span className="font-bold text-primary">Filipe Almeida</span>,{' '}
+            <span className="font-bold text-primary">João Casemiro</span>,{' '}
+            <span className="font-bold text-primary">Ricardo Moreira</span>,{' '}
+            <span className="font-bold text-primary">Rita Sobral</span>,{' '}
+            <span className="font-bold text-primary">Tomás Lopes</span>).
+          </span>
+        ]}>
+        A implementação do sistema de partilha de resumos está a demorar um bocado mais do que o
+        esperado, esperamos ter novidades no início da época de recurso 🫠. <br />
+        <br />
+        Obrigado a todos os que partilharam os seus resumos connosco!
+      </ChangelogVersion>
+      <ChangelogVersion
         title="v1.3.7 🤔"
         date={new Date(2024, 0, 11)}
         updates={[
