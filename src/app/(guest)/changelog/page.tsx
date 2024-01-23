@@ -8,7 +8,7 @@ const Changelog: React.FC = () => {
         title="v1.3.8 🙃"
         date={new Date(2024, 0, 20)}
         updates={[
-          <span key="1.3.7-forgot-password">
+          <span key="1.3.8-sgrai-questions">
             Adição de <span className="text-primary font-bold align-middle">170</span> perguntas de{' '}
             <span className="text-primary font-bold align-middle">SGRAI</span> (Obrigado{' '}
             <span className="font-bold text-primary">André Barros</span>,{' '}
@@ -17,7 +17,9 @@ const Changelog: React.FC = () => {
             <span className="font-bold text-primary">João Casemiro</span>,{' '}
             <span className="font-bold text-primary">Ricardo Moreira</span>,{' '}
             <span className="font-bold text-primary">Rita Sobral</span>,{' '}
-            <span className="font-bold text-primary">Tomás Lopes</span>).
+            <span className="font-bold text-primary">Tomás Lopes</span>). (Update 23/01/2023 -
+            Adicionadas <span className="text-primary font-bold">+42 perguntas</span> dos Kahoots
+            das aulas TP{"'"}s)
           </span>
         ]}>
         A implementação do sistema de partilha de resumos está a demorar um bocado mais do que o
