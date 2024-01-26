@@ -1,29 +1,28 @@
 "use client";
 
 import Report from '@/types/Report';
-import { useState } from 'react';
 
 type TableProps = {
     reports: Report[];
+    selectedReports: number[];
+    setSelectedReports: React.Dispatch<React.SetStateAction<number[]>>;
 };
 
 
-const ReportTable: React.FC<TableProps> = ({ reports }) => {
-
-    const [selectedRows, setSelectedRows] = useState<number[]>([]);
+const ReportTable: React.FC<TableProps> = ({ reports, selectedReports, setSelectedReports}) => {
 
     const toggleRow = (id: number) => {
-        setSelectedRows((prevSelectedRows) =>
-            prevSelectedRows.includes(id)
-                ? prevSelectedRows.filter((rowId) => rowId !== id)
-                : [...prevSelectedRows, id]
+        setSelectedReports((prevselectedReports) =>
+            prevselectedReports.includes(id)
+                ? prevselectedReports.filter((rowId) => rowId !== id)
+                : [...prevselectedReports, id]
         );
     };
 
     const handleSelectAll = () => {
         const allRowIds = reports.map((row) => row.id);
-        setSelectedRows((prevSelectedRows) =>
-            prevSelectedRows.length === allRowIds.length ? [] : allRowIds
+        setSelectedReports((prevselectedReports) =>
+            prevselectedReports.length === allRowIds.length ? [] : allRowIds
         );
     };
 
@@ -43,7 +42,7 @@ const ReportTable: React.FC<TableProps> = ({ reports }) => {
                             <th className="px-4 py-2">
                                 <input
                                     type="checkbox"
-                                    checked={selectedRows.length === reports.length}
+                                    checked={selectedReports.length === reports.length}
                                     onChange={handleSelectAll}
                                 />
                             </th>
@@ -59,12 +58,12 @@ const ReportTable: React.FC<TableProps> = ({ reports }) => {
                         {reports.map((report: Report) => (
                             <tr
                                 key={report.id}
-                                className={selectedRows.includes(report.id) ? 'bg-blue-200' : ''}
+                                className={selectedReports.includes(report.id) ? 'bg-blue-200' : ''}
                             >
                                 <td className="border px-4 py-2">
                                     <input
                                         type="checkbox"
-                                        checked={selectedRows.includes(report.id)}
+                                        checked={selectedReports.includes(report.id)}
                                         onChange={() => toggleRow(report.id)}
                                     />
                                 </td>
