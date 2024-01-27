@@ -6,6 +6,7 @@ import { BASE_URL } from 'src/services/api';
 import useSession from '@/hooks/useSession';
 import { useTheme } from 'next-themes';
 import { useState, useEffect } from 'react';
+import { useQueryParamsManager } from '@/hooks/useQueryParamsManager';
 import swal from 'sweetalert';
 import Skeleton from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css';
@@ -15,14 +16,21 @@ const Reports: React.FC = () => {
 
   const { theme } = useTheme();
   const session = useSession();
-  const [endpoint, setEndpoint] = useState<string>(`${BASE_URL}/question-reports`);
+
+  // search params
+  const searchParams = useQueryParamsManager();
+
+  const [endpoint, setEndpoint] = useState<string | null>(null);
   // conditional data fetching https://swr.vercel.app/docs/conditional-fetching
   const { data, error, isLoading } = useSWR(
-    session.token ? [endpoint, session.token as string] : null,
-    ([url, token]) => fetcher(url, token)
+    session.token && endpoint ? [endpoint, session.token as string] : null,
+    ([url, token]) => fetcher(url, token),
+    { revalidateOnFocus: false }
   );
 
   // logic
+  const [filterAll, setFilterAll] = useState<boolean>(true);
+  const [filterSolved, setFilterSolved] = useState<boolean>(false);
   const [selectedReports, setSelectedReports] = useState<number[]>([]);
   const [sortBy, setSortBy] = useState<{ key: string; desc: boolean }>({
     key: 'created_at',
@@ -31,6 +39,7 @@ const Reports: React.FC = () => {
 
   // solve reports
   const handleMarkAsResolve = async () => {
+    if (selectedReports.length === 0) return;
 
     const res = await fetch(BASE_URL + '/question-reports/review', {
       method: 'POST',
@@ -67,31 +76,90 @@ const Reports: React.FC = () => {
     }
   };
 
-  // delete reports
-  const handleDelete = async () => {
-    if (selectedReports.length === 0) return;
-  };
+  const handleActionCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>, action: string) => {
+
+    // update the query parameter
+    if (action === "solved") {
+      // add the "solved" query parameter
+      searchParams.set('solved', e.target.checked ? 'true' : 'false')
+      setFilterAll(false);
+      setFilterSolved(e.target.checked);
+    } else {
+      // remove the "solved" query parameter
+      searchParams.remove('solved')
+      setFilterAll(e.target.checked);
+      setFilterSolved(false);
+    }
+  }
 
   // when sortBy changes, update endpoint and revalidate data
   useEffect(() => {
-    setEndpoint(`${BASE_URL}/question-reports?sort=${sortBy.key}&desc=${sortBy.desc}`);
-    mutate([endpoint, session.token as string]);
+    // append sort query params to endpoint
+    searchParams.setBulk({
+      sort: sortBy.key,
+      order: sortBy.desc ? 'desc' : 'asc'
+    });
   }, [sortBy]);
+
+  // when search params change, update endpoint
+  useEffect(() => {
+    setEndpoint(`${BASE_URL}/question-reports?${searchParams.queryParams}`);
+
+    // mutate([endpoint, session.token as string]);
+  }, [searchParams.queryParams]);
+
+  // on mount get the query params from the url
+  useEffect(() => {
+    searchParams.setQueryParams(new URLSearchParams(window.location.search));
+    
+    // set the filter checkboxes
+    const solved = searchParams.queryParams.get('solved');
+    if (solved) {
+      setFilterAll(false);
+      setFilterSolved(solved === 'true');
+    }
+
+    // set the sort by and order
+    const sort = searchParams.queryParams.get('sort');
+    const order = searchParams.queryParams.get('order');
+    if (sort && order) {
+      setSortBy({ key: sort, desc: order === 'desc' });
+    }else{
+      setSortBy({ key: 'created_at', desc: true });
+    }
+  }, []);
 
   return (
     <div className="w-full h-full mt-4 flex flex-col items-center justify-center">
       <h2 className="text-4xl font-black">Reports</h2>
+      <div className="w-3/4 flex gap-6 my-4 border bg-gray-400 dark:bg-gray-700 items-center justify-center">
+        <input
+          type="checkbox"
+          name="all"
+          id="all"
+          checked={filterAll}
+          onChange={(e) => handleActionCheckboxChange(e, "all")}
+        />
+        <label htmlFor="all" className="text-white">
+          Todos
+        </label>
+        <input
+          type="checkbox"
+          name="solved"
+          id="solved"
+          checked={filterSolved}
+          onChange={(e) => handleActionCheckboxChange(e, "solved")}
+        />
+        <label htmlFor="solved" className="text-white">
+          Resolvido
+        </label>
+      </div>
       <div className="flex gap-x-2">
         <button
           className="bg-gray-400 hover:bg-gray-500 text-white px-4 py-2 rounded-md shadow-md"
           onClick={handleMarkAsResolve}
         >
           Resolver
-        </button>
-        <button className="bg-red-500 hover:bg-red-500 text-white px-4 py-2 rounded-md shadow-md"
-          onClick={handleDelete}
-        >
-          Apagar
         </button>
       </div>
       <div className="flex flex-col w-3/4">
