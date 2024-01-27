@@ -37,7 +37,7 @@ const Reports: React.FC = () => {
     desc: true
   });
 
-  // solve reports
+  // handle solve reports
   const handleMarkAsResolve = async () => {
     if (selectedReports.length === 0) return;
 
@@ -76,6 +76,7 @@ const Reports: React.FC = () => {
     }
   };
 
+  // handle filter checkboxes
   const handleActionCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>, action: string) => {
 
     // update the query parameter
