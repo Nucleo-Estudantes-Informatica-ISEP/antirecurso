@@ -1,32 +1,32 @@
 "use client";
 
-import useSWR from 'swr';
+import useSWR, { mutate } from 'swr';
 import { fetcher } from '@/utils/SWRFetcher';
 import { BASE_URL } from 'src/services/api';
 import useSession from '@/hooks/useSession';
 import { useTheme } from 'next-themes';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import swal from 'sweetalert';
 import Skeleton from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css';
-import ReportTable from '@/components/ReportSection/ReportTable';
-import Report from '@/types/Report';
+import ReportTable from '@/components/ReportTable';
 
 const Reports: React.FC = () => {
-  // main
+
   const { theme } = useTheme();
   const session = useSession();
-  // detected a problem that, if the user
+  const [endpoint, setEndpoint] = useState<string>(`${BASE_URL}/question-reports`);
+  // conditional data fetching https://swr.vercel.app/docs/conditional-fetching
   const { data, error, isLoading } = useSWR(
-    session.token ? [`${BASE_URL}/question-reports`, session.token as string] : null,
+    session.token ? [endpoint, session.token as string] : null,
     ([url, token]) => fetcher(url, token)
   );
 
   // logic
   const [selectedReports, setSelectedReports] = useState<number[]>([]);
   const [sortBy, setSortBy] = useState<{ key: string; desc: boolean }>({
-    key: 'id',
-    desc: false
+    key: 'created_at',
+    desc: true
   });
 
   // solve reports
@@ -44,6 +44,10 @@ const Reports: React.FC = () => {
     });
 
     if (res.status === 200) {
+
+      // revalidate data
+      mutate([endpoint, session.token as string]);
+
       swal({
         title: 'Resolvido!',
         text: `${selectedReports.length > 1 ? 'Os reports foram marcados como resolvidos' : 'O report foi marcado como resolvido'}.`,
@@ -68,6 +72,12 @@ const Reports: React.FC = () => {
     if (selectedReports.length === 0) return;
   };
 
+  // when sortBy changes, update endpoint and revalidate data
+  useEffect(() => {
+    setEndpoint(`${BASE_URL}/question-reports?sort=${sortBy.key}&desc=${sortBy.desc}`);
+    mutate([endpoint, session.token as string]);
+  }, [sortBy]);
+
   return (
     <div className="w-full h-full mt-4 flex flex-col items-center justify-center">
       <h2 className="text-4xl font-black">Reports</h2>
@@ -85,11 +95,13 @@ const Reports: React.FC = () => {
         </button>
       </div>
       <div className="flex flex-col w-3/4">
-        {isLoading ? (<Skeleton count={10} />)
-          : error ? (<>
-            <h1 className="text-2xl font-bold">Erro ao carregar reports</h1>
-            <p className="text-lg">Por favor, tente novamente mais tarde.</p>
-          </>) :
+        {isLoading ? (<Skeleton count={5} />)
+          : error ? (
+            <div className="w-full h-full mt-4 flex flex-col items-center justify-center">
+              <h1 className="text-2xl font-bold">Erro ao carregar reports</h1>
+              <p className="text-lg">Por favor, tente novamente mais tarde.</p>
+            </div>
+          ) :
             (<ReportTable
               reports={data ?? []}
               selectedReports={selectedReports}

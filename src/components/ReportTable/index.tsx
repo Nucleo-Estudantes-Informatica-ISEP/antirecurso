@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from 'react';
 import Report from '@/types/Report';
 import { FaArrowUp, FaArrowDown } from 'react-icons/fa';
 
@@ -15,10 +14,33 @@ type TableProps = {
     }>>;
 };
 
+type Collumn = {
+    name: string;
+    key: string;
+};
 
 const ReportTable: React.FC<TableProps> = ({ reports, selectedReports, setSelectedReports, sortBy, setSortBy }) => {
 
-    const collumns = ['ID', 'Autor', 'Descrição', 'ID Questão', 'Criado em', 'Resolvido'];
+    const collumns = [{
+        name: 'ID',
+        key: 'id'
+    }, {
+        name: 'Autor',
+        key: 'user_id'
+    }, {
+        name: 'Descrição',
+        key: 'reason'
+    }, {
+        name: 'ID Questão',
+        key: 'question_id'
+    }, {
+        name: 'Criado em',
+        key: 'created_at'
+    }, {
+        name: 'Resolvido',
+        key: 'solved'
+    }];
+    
 
     // select a single row
     const toggleRow = (id: number) => {
@@ -38,12 +60,12 @@ const ReportTable: React.FC<TableProps> = ({ reports, selectedReports, setSelect
     };
 
     // sort table
-    const handleSort = (collumn: string) => {
-        let desc = false;
-        if (sortBy.key === collumn && sortBy.desc) {
-            desc = true;
+    const handleSort = (collumn: Collumn) => {
+        let desc = true;
+        if (sortBy.key === collumn.key && sortBy.desc) {
+            desc = false;
         }
-        setSortBy({ key: collumn, desc });
+        setSortBy({ key: collumn.key, desc });
     };
 
     return (
@@ -65,14 +87,14 @@ const ReportTable: React.FC<TableProps> = ({ reports, selectedReports, setSelect
                                     onChange={handleSelectAll}
                                 />
                             </th>
-                            {collumns.map((collumn: string) => (
+                            {collumns.map((collumn: Collumn) => (
                                 <th
                                     className="px-4 py-2 cursor-pointer"
                                     onClick={() => handleSort(collumn)}
-                                    key={collumn}
+                                    key={collumn.key}
                                 >
-                                    {collumn}
-                                    {sortBy.key === collumn &&
+                                    {collumn.name}
+                                    {sortBy.key === collumn.key &&
                                         (!sortBy.desc ? (
                                             <FaArrowUp className="inline ml-1" />
                                         ) : (
