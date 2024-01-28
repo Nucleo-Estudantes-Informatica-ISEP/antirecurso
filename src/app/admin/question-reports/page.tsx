@@ -95,7 +95,7 @@ const Reports: React.FC = () => {
 
   // when sortBy changes, update endpoint and revalidate data
   useEffect(() => {
-    // append sort query params to endpoint
+    // append sort query params
     searchParams.setBulk({
       sort: sortBy.key,
       order: sortBy.desc ? 'desc' : 'asc'
@@ -105,14 +105,10 @@ const Reports: React.FC = () => {
   // when search params change, update endpoint
   useEffect(() => {
     setEndpoint(`${BASE_URL}/question-reports?${searchParams.queryParams}`);
-
-    // mutate([endpoint, session.token as string]);
   }, [searchParams.queryParams]);
 
-  // on mount get the query params from the url
+  // on mount set the filter checkboxes and sort by
   useEffect(() => {
-    searchParams.setQueryParams(new URLSearchParams(window.location.search));
-    
     // set the filter checkboxes
     const solved = searchParams.queryParams.get('solved');
     if (solved) {
@@ -125,7 +121,7 @@ const Reports: React.FC = () => {
     const order = searchParams.queryParams.get('order');
     if (sort && order) {
       setSortBy({ key: sort, desc: order === 'desc' });
-    }else{
+    } else {
       setSortBy({ key: 'created_at', desc: true });
     }
   }, []);

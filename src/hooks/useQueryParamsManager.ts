@@ -10,13 +10,13 @@ export const useQueryParamsManager = () => {
 
     // if exists, update, else add
     const set = (key: string, value: any) => {
-        const params = new URLSearchParams(searchParams.toString())
+        const params = new URLSearchParams(queryParams.toString())
         params.set(key, value);
         setQueryParams(params);;
     }
 
     const setBulk = (params: { [key: string]: any }) => {
-        const paramsObj = new URLSearchParams(searchParams.toString())
+        const paramsObj = new URLSearchParams(queryParams.toString())
         Object.keys(params).forEach(key => {
             paramsObj.set(key, params[key]);
         })
@@ -24,26 +24,31 @@ export const useQueryParamsManager = () => {
     }
 
     const remove = (key: string) => {
-        const params = new URLSearchParams(searchParams.toString())
+        const params = new URLSearchParams(queryParams.toString())
         params.delete(key);
         setQueryParams(params);
     }
 
     const clear = () => {
-        const params = new URLSearchParams(searchParams.toString())
+        const params = new URLSearchParams(queryParams.toString())
         params.forEach((_, key) => {
             params.delete(key);
         })
         setQueryParams(params);
     }
 
+    // update url
     useEffect(() => {
         replace(`${pathname}?${queryParams.toString()}`);
     }, [queryParams])
 
+    // on mount, set query params
+    useEffect(() => {
+        setQueryParams(new URLSearchParams(searchParams));
+    }, [])
+
     return {
         queryParams,
-        setQueryParams,
         set,
         setBulk,
         remove,
