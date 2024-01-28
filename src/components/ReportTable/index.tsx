@@ -12,6 +12,8 @@ type TableProps = {
         key: string;
         desc: boolean;
     }>>;
+    handleOpenModal: (report: Report) => void;
+
 };
 
 type Collumn = {
@@ -19,7 +21,7 @@ type Collumn = {
     key: string;
 };
 
-const ReportTable: React.FC<TableProps> = ({ reports, selectedReports, setSelectedReports, sortBy, setSortBy }) => {
+const ReportTable: React.FC<TableProps> = ({ reports, selectedReports, setSelectedReports, sortBy, setSortBy, handleOpenModal }) => {
 
     const collumns = [{
         name: 'ID',
@@ -40,7 +42,6 @@ const ReportTable: React.FC<TableProps> = ({ reports, selectedReports, setSelect
         name: 'Resolvido',
         key: 'solved'
     }];
-    
 
     // select a single row
     const toggleRow = (id: number) => {
@@ -108,7 +109,7 @@ const ReportTable: React.FC<TableProps> = ({ reports, selectedReports, setSelect
                         {reports.map((report: Report) => (
                             <tr
                                 key={report.id}
-                                className={selectedReports.includes(report.id) ? 'bg-blue-200' : ''}
+                                className={selectedReports.includes(report.id) ? 'bg-blue-200 cursor-pointer' : 'cursor-pointer'}
                             >
                                 <td className="border px-4 py-2">
                                     <input
@@ -117,13 +118,14 @@ const ReportTable: React.FC<TableProps> = ({ reports, selectedReports, setSelect
                                         onChange={() => toggleRow(report.id)}
                                     />
                                 </td>
-                                <td className="border px-4 py-2">{report.id}</td>
-                                <td className="border px-4 py-2">{report.user}</td>
-                                <td className="border px-4 py-2">{report.reason}</td>
-                                <td className="border px-4 py-2">{report.question.id}</td>
-                                <td className="border px-4 py-2">{report.created_at}</td>
-                                <td className="border px-4 py-2">{report.solved == 1 ? 'Sim' : 'Não'}</td>
-
+                                <td className="border px-4 py-2" onClick={() => handleOpenModal(report)}>{report.id}</td>
+                                <td className="border px-4 py-2" onClick={() => handleOpenModal(report)}>{report.user}</td>
+                                <td className="border px-4 py-2" onClick={() => handleOpenModal(report)}>{report.reason}</td>
+                                <td className="border px-4 py-2" onClick={() => handleOpenModal(report)}>
+                                    {report.question.id}
+                                </td>
+                                <td className="border px-4 py-2" onClick={() => handleOpenModal(report)}>{report.created_at}</td>
+                                <td className="border px-4 py-2" onClick={() => handleOpenModal(report)}>{report.solved == 1 ? 'Sim' : 'Não'}</td>
                             </tr>
                         ))}
                     </tbody>
