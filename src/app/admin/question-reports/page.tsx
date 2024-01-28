@@ -11,6 +11,8 @@ import swal from 'sweetalert';
 import Skeleton from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css';
 import ReportTable from '@/components/ReportTable';
+import ReportModal from '@/components/ReportModal';
+import Report from '@/types/Report';
 
 const Reports: React.FC = () => {
 
@@ -37,9 +39,13 @@ const Reports: React.FC = () => {
     desc: true
   });
 
-  // handle solve reports
-  const handleMarkAsResolve = async () => {
-    if (selectedReports.length === 0) return;
+  // modal
+  const [isReportModalOpen, setIsReportModalOpen] = useState(false);
+  const [reportClicked, setReportClicked] = useState<Report | null>(null);
+
+  // handle solve reports - optional param for calling the function from the modal
+  const handleMarkAsResolve = async (reportId?: number) => {
+    if (selectedReports.length === 0 && !reportId) return;
 
     const res = await fetch(BASE_URL + '/question-reports/review', {
       method: 'POST',
@@ -48,7 +54,7 @@ const Reports: React.FC = () => {
         Authorization: `Bearer ${session.token}`
       },
       body: JSON.stringify({
-        question_ids: selectedReports,
+        question_ids: [reportId] ?? selectedReports,
       })
     });
 
@@ -93,6 +99,11 @@ const Reports: React.FC = () => {
     }
   }
 
+  const handleOpenModal = (report: Report) => {
+    setReportClicked(report);
+    setIsReportModalOpen(true);
+  }
+
   // when sortBy changes, update endpoint and revalidate data
   useEffect(() => {
     // append sort query params
@@ -127,56 +138,69 @@ const Reports: React.FC = () => {
   }, []);
 
   return (
-    <div className="w-full h-full mt-4 flex flex-col items-center justify-center">
-      <h2 className="text-4xl font-black">Reports</h2>
-      <div className="w-3/4 flex gap-6 my-4 border bg-gray-400 dark:bg-gray-700 items-center justify-center">
-        <input
-          type="checkbox"
-          name="all"
-          id="all"
-          checked={filterAll}
-          onChange={(e) => handleActionCheckboxChange(e, "all")}
-        />
-        <label htmlFor="all" className="text-white">
-          Todos
-        </label>
-        <input
-          type="checkbox"
-          name="solved"
-          id="solved"
-          checked={filterSolved}
-          onChange={(e) => handleActionCheckboxChange(e, "solved")}
-        />
-        <label htmlFor="solved" className="text-white">
-          Resolvido
-        </label>
-      </div>
-      <div className="flex gap-x-2">
-        <button
-          className="bg-gray-400 hover:bg-gray-500 text-white px-4 py-2 rounded-md shadow-md"
-          onClick={handleMarkAsResolve}
-        >
-          Resolver
-        </button>
-      </div>
-      <div className="flex flex-col w-3/4">
-        {isLoading ? (<Skeleton count={5} />)
-          : error ? (
-            <div className="w-full h-full mt-4 flex flex-col items-center justify-center">
-              <h1 className="text-2xl font-bold">Erro ao carregar reports</h1>
-              <p className="text-lg">Por favor, tente novamente mais tarde.</p>
-            </div>
-          ) :
-            (<ReportTable
-              reports={data ?? []}
-              selectedReports={selectedReports}
-              setSelectedReports={setSelectedReports}
-              sortBy={sortBy}
-              setSortBy={setSortBy} />)
-        }
+    <>
 
+      <ReportModal
+        setIsVisible={setIsReportModalOpen}
+        isVisible={isReportModalOpen}
+        report={reportClicked}
+        solveReport={handleMarkAsResolve}
+      />
+
+      <div className="w-full h-full mt-4 flex flex-col items-center justify-center">
+        <h2 className="text-4xl font-black">Reports</h2>
+        <div className="w-3/4 flex gap-6 my-4 border bg-gray-400 dark:bg-gray-700 items-center justify-center">
+          <input
+            type="checkbox"
+            name="all"
+            id="all"
+            checked={filterAll}
+            onChange={(e) => handleActionCheckboxChange(e, "all")}
+          />
+          <label htmlFor="all" className="text-white">
+            Todos
+          </label>
+          <input
+            type="checkbox"
+            name="solved"
+            id="solved"
+            checked={filterSolved}
+            onChange={(e) => handleActionCheckboxChange(e, "solved")}
+          />
+          <label htmlFor="solved" className="text-white">
+            Resolvido
+          </label>
+        </div>
+        <div className="flex gap-x-2">
+          <button
+            className="bg-gray-400 hover:bg-gray-500 text-white px-4 py-2 rounded-md shadow-md"
+            onClick={() => handleMarkAsResolve()}
+          >
+            Resolver
+          </button>
+        </div>
+        <div className="flex flex-col w-3/4">
+          {isLoading ? (<Skeleton count={5} />)
+            : error ? (
+              <div className="w-full h-full mt-4 flex flex-col items-center justify-center">
+                <h1 className="text-2xl font-bold">Erro ao carregar reports</h1>
+                <p className="text-lg">Por favor, tente novamente mais tarde.</p>
+              </div>
+            ) :
+              (<ReportTable
+                reports={data ?? []}
+                selectedReports={selectedReports}
+                setSelectedReports={setSelectedReports}
+                sortBy={sortBy}
+                setSortBy={setSortBy}
+                handleOpenModal={handleOpenModal}
+
+              />)
+          }
+
+        </div>
       </div>
-    </div>
+    </>
   );
 };
 
