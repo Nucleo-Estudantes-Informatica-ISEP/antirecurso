@@ -78,7 +78,7 @@ const ReportTable: React.FC<TableProps> = ({ reports, selectedReports, setSelect
 
     return (
         <div className="relative overflow-x-auto shadow-md pt-4">
-            <table className="table-fixed w-full text-left rtl:text-right text-gray-500 dark:text-gray-400">
+            <table className="table-fixed w-full text-left rtl:text-right text-gray-800 dark:text-gray-300">
                 {reports.length === 0 ? (
                     <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                         <tr>
