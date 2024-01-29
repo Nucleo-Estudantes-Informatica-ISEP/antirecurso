@@ -35,7 +35,7 @@ const ReportTable: React.FC<TableProps> = ({ reports, selectedReports, setSelect
     }, {
         name: 'Razão',
         key: 'reason',
-        w: 'w-52'
+        w: 'w-32'
     }, {
         name: 'ID Questão',
         key: 'question_id',
@@ -77,12 +77,12 @@ const ReportTable: React.FC<TableProps> = ({ reports, selectedReports, setSelect
     };
 
     return (
-        <div className="relative overflow-x-auto shadow-md ">
+        <div className="relative overflow-x-auto shadow-md pt-4">
             <table className="table-fixed w-full text-left rtl:text-right text-gray-500 dark:text-gray-400">
                 {reports.length === 0 ? (
                     <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                         <tr>
-                            <th className="px-4 py-2">Nenhum report encontrado</th>
+                            <th className="px-4 py-3">Nenhum report encontrado</th>
                         </tr>
                     </thead>
                 ) : (
@@ -120,21 +120,21 @@ const ReportTable: React.FC<TableProps> = ({ reports, selectedReports, setSelect
                                     className={selectedReports.includes(report.id) ? 'cursor-pointer dark:bg-gray-600 bg-blue-200 border-b dark:border-gray-700'
                                         : 'cursor-pointer bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600'}
                                 >
-                                    <td className="px-4 py-2">
+                                    <td className="px-4 py-3">
                                         <input
                                             type="checkbox"
                                             checked={selectedReports.includes(report.id)}
                                             onChange={() => toggleRow(report.id)}
                                         />
                                     </td>
-                                    <td className="px-6 py-2" onClick={() => handleOpenModal(report)}>{report.id}</td>
-                                    <td className="px-6 py-2" onClick={() => handleOpenModal(report)}>{report.user}</td>
-                                    <td className="px-6 py-2 truncate" onClick={() => handleOpenModal(report)}>{report.reason}</td>
-                                    <td className="px-6 py-2" onClick={() => handleOpenModal(report)}>
+                                    <td className="px-6 py-3" onClick={() => handleOpenModal(report)}>{report.id}</td>
+                                    <td className="px-6 py-3" onClick={() => handleOpenModal(report)}>{report.user}</td>
+                                    <td className="px-6 py-3 truncate" onClick={() => handleOpenModal(report)}>{report.reason}</td>
+                                    <td className="px-6 py-3" onClick={() => handleOpenModal(report)}>
                                         {report.question.id}
                                     </td>
-                                    <td className="px-6 py-2" onClick={() => handleOpenModal(report)}>{report.created_at}</td>
-                                    <td className="px-6 py-2" onClick={() => handleOpenModal(report)}>{report.solved == 1 ? 'Sim' : 'Não'}</td>
+                                    <td className="px-6 py-3" onClick={() => handleOpenModal(report)}>{report.created_at}</td>
+                                    <td className="px-6 py-3" onClick={() => handleOpenModal(report)}>{report.solved == 1 ? 'Sim' : 'Não'}</td>
                                 </tr>
                             ))}
                         </tbody>
@@ -145,12 +145,12 @@ const ReportTable: React.FC<TableProps> = ({ reports, selectedReports, setSelect
                 <nav className="flex flex-row items-center justify-between p-4"
                     aria-label="Table navigation">
                       <p className="text-sm">
-                        <span className="font-normal text-gray-500 dark:text-gray-400">Reports selecionados:</span>
-                        <span className="font-semibold text-gray-900 dark:text-white">{selectedReports.length}</span>
+                        <span className="font-normal text-gray-500 dark:text-gray-400">Selecionados:</span>
+                        <span className="font-semibold text-gray-900 dark:text-white pl-1">{selectedReports.length}</span>
                     </p>
                     <p className="text-sm">
-                        <span className="font-normal text-gray-500 dark:text-gray-400">Total reports:</span>
-                        <span className="font-semibold text-gray-900 dark:text-white">{reports.length}</span>
+                        <span className="font-normal text-gray-500 dark:text-gray-400">Total:</span>
+                        <span className="font-semibold text-gray-900 dark:text-white pl-1">{reports.length}</span>
                     </p>
                 </nav>
             </div>

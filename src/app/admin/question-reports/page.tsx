@@ -14,6 +14,11 @@ import ReportTable from '@/components/ReportTable';
 import ReportModal from '@/components/ReportModal';
 import Report from '@/types/Report';
 
+type Filter = {
+  name: string;
+  value: string;
+}
+
 const Reports: React.FC = () => {
 
   const { theme } = useTheme();
@@ -31,8 +36,17 @@ const Reports: React.FC = () => {
   );
 
   // logic
-  const [filterAll, setFilterAll] = useState<boolean>(true);
-  const [filterSolved, setFilterSolved] = useState<boolean>(false);
+  const filters = [{
+    name: 'Todos',
+    value: 'all'
+  }, {
+    name: 'Resolvidos',
+    value: 'solved'
+  }, {
+    name: 'Não resolvidos',
+    value: 'notSolved'
+  }];
+  const [filter, setFilter] = useState<string>(filters[0].value);
   const [selectedReports, setSelectedReports] = useState<number[]>([]);
   const [sortBy, setSortBy] = useState<{ key: string; desc: boolean }>({
     key: 'created_at',
@@ -54,7 +68,7 @@ const Reports: React.FC = () => {
         Authorization: `Bearer ${session.token}`
       },
       body: JSON.stringify({
-        question_ids: [reportId] ?? selectedReports,
+        question_ids: reportId ? [reportId] : selectedReports,
       })
     });
 
@@ -83,19 +97,23 @@ const Reports: React.FC = () => {
   };
 
   // handle filter checkboxes
-  const handleActionCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>, action: string) => {
+  const handleChangeFilter = (e: React.ChangeEvent<HTMLSelectElement>) => {
 
-    // update the query parameter
-    if (action === "solved") {
-      // add the "solved" query parameter
-      searchParams.set('solved', e.target.checked ? 'true' : 'false')
-      setFilterAll(false);
-      setFilterSolved(e.target.checked);
-    } else {
-      // remove the "solved" query parameter
-      searchParams.remove('solved')
-      setFilterAll(e.target.checked);
-      setFilterSolved(false);
+    // update filter state
+    setFilter(e.target.value);
+
+    switch (e.target.value) {
+      case "all":
+        searchParams.remove('solved')
+        break;
+      case "solved":
+        searchParams.set('solved', 'true')
+        break;
+      case "notSolved":
+        searchParams.set('solved', 'false')
+        break;
+      default:
+        break;
     }
   }
 
@@ -123,8 +141,7 @@ const Reports: React.FC = () => {
     // set the filter checkboxes
     const solved = searchParams.queryParams.get('solved');
     if (solved) {
-      setFilterAll(false);
-      setFilterSolved(solved === 'true');
+      setFilter(solved === 'true' ? 'solved' : 'notSolved');
     }
 
     // set the sort by and order
@@ -139,7 +156,6 @@ const Reports: React.FC = () => {
 
   return (
     <>
-
       <ReportModal
         setIsVisible={setIsReportModalOpen}
         isVisible={isReportModalOpen}
@@ -149,27 +165,14 @@ const Reports: React.FC = () => {
 
       <div className="w-full h-full mt-4 flex flex-col items-center justify-center">
         <h2 className="text-4xl font-black">Reports</h2>
-        <div className="w-3/4 flex gap-6 my-4 border bg-gray-400 dark:bg-gray-700 items-center justify-center">
-          <input
-            type="checkbox"
-            name="all"
-            id="all"
-            checked={filterAll}
-            onChange={(e) => handleActionCheckboxChange(e, "all")}
-          />
-          <label htmlFor="all" className="text-white">
-            Todos
-          </label>
-          <input
-            type="checkbox"
-            name="solved"
-            id="solved"
-            checked={filterSolved}
-            onChange={(e) => handleActionCheckboxChange(e, "solved")}
-          />
-          <label htmlFor="solved" className="text-white">
-            Resolvido
-          </label>
+        <div className="w-3/4 py-2 flex gap-6 my-4 bg-gray-100 dark:bg-gray-700 items-center justify-center">
+          <select id="filters" className="w-44 bg-gray-50 border border-gray-300 text-gray-900 text-sm focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+            onChange={(e) => handleChangeFilter(e)}
+          >
+            {filters.map((f: Filter) => (
+              <option key={f.value} value={f.value} defaultChecked={f.value === filter}>{f.name}</option>
+            ))}
+          </select>
         </div>
         <div className="flex gap-x-2">
           <button
