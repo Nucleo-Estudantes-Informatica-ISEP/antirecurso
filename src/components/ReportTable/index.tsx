@@ -19,28 +19,35 @@ type TableProps = {
 type Collumn = {
     name: string;
     key: string;
+    w: string;
 };
 
 const ReportTable: React.FC<TableProps> = ({ reports, selectedReports, setSelectedReports, sortBy, setSortBy, handleOpenModal }) => {
 
     const collumns = [{
         name: 'ID',
-        key: 'id'
+        key: 'id',
+        w: 'w-1'
     }, {
         name: 'Autor',
-        key: 'user_id'
+        key: 'user_id',
+        w: 'w-12'
     }, {
-        name: 'Descrição',
-        key: 'reason'
+        name: 'Razão',
+        key: 'reason',
+        w: 'w-52'
     }, {
         name: 'ID Questão',
-        key: 'question_id'
+        key: 'question_id',
+        w: 'w-1'
     }, {
         name: 'Criado em',
-        key: 'created_at'
+        key: 'created_at',
+        w: 'w-12'
     }, {
         name: 'Resolvido',
-        key: 'solved'
+        key: 'solved',
+        w: 'w-12'
     }];
 
     // select a single row
@@ -70,69 +77,84 @@ const ReportTable: React.FC<TableProps> = ({ reports, selectedReports, setSelect
     };
 
     return (
-        <table className="min-w-full border border-gray-300">
-            {reports.length === 0 ? (
-                <thead>
-                    <tr>
-                        <th className="px-4 py-2">Nenhum report encontrado</th>
-                    </tr>
-                </thead>
-            ) : (
-                <>
-                    <thead>
+        <div className="relative overflow-x-auto shadow-md ">
+            <table className="table-fixed w-full text-left rtl:text-right text-gray-500 dark:text-gray-400">
+                {reports.length === 0 ? (
+                    <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                         <tr>
-                            <th className="px-4 py-2">
-                                <input
-                                    type="checkbox"
-                                    checked={selectedReports.length === reports.length}
-                                    onChange={handleSelectAll}
-                                />
-                            </th>
-                            {collumns.map((collumn: Collumn) => (
-                                <th
-                                    className="px-4 py-2 cursor-pointer"
-                                    onClick={() => handleSort(collumn)}
-                                    key={collumn.key}
-                                >
-                                    {collumn.name}
-                                    {sortBy.key === collumn.key &&
-                                        (!sortBy.desc ? (
-                                            <FaArrowUp className="inline ml-1" />
-                                        ) : (
-                                            <FaArrowDown className="inline ml-1" />
-                                        ))}
-                                </th>
-                            ))}
+                            <th className="px-4 py-2">Nenhum report encontrado</th>
                         </tr>
                     </thead>
-                    <tbody>
-                        {reports.map((report: Report) => (
-                            <tr
-                                key={report.id}
-                                className={selectedReports.includes(report.id) ? 'bg-blue-200 cursor-pointer' : 'cursor-pointer'}
-                            >
-                                <td className="border px-4 py-2">
+                ) : (
+                    <>
+                        <thead className="text-xs text-gray-700 uppercase bg-gray-100 dark:bg-gray-700 dark:text-gray-400">
+                            <tr>
+                                <th className="px-4 py-4 w-1">
                                     <input
                                         type="checkbox"
-                                        checked={selectedReports.includes(report.id)}
-                                        onChange={() => toggleRow(report.id)}
+                                        checked={selectedReports.length === reports.length}
+                                        onChange={handleSelectAll}
                                     />
-                                </td>
-                                <td className="border px-4 py-2" onClick={() => handleOpenModal(report)}>{report.id}</td>
-                                <td className="border px-4 py-2" onClick={() => handleOpenModal(report)}>{report.user}</td>
-                                <td className="border px-4 py-2" onClick={() => handleOpenModal(report)}>{report.reason}</td>
-                                <td className="border px-4 py-2" onClick={() => handleOpenModal(report)}>
-                                    {report.question.id}
-                                </td>
-                                <td className="border px-4 py-2" onClick={() => handleOpenModal(report)}>{report.created_at}</td>
-                                <td className="border px-4 py-2" onClick={() => handleOpenModal(report)}>{report.solved == 1 ? 'Sim' : 'Não'}</td>
+                                </th>
+                                {collumns.map((collumn: Collumn) => (
+                                    <th
+                                        className={`cursor-pointer px-6 py-4 ${collumn.w}`}
+                                        onClick={() => handleSort(collumn)}
+                                        key={collumn.key}
+                                    >
+                                        {collumn.name}
+                                        {sortBy.key === collumn.key &&
+                                            (!sortBy.desc ? (
+                                                <FaArrowUp className="inline ml-1" />
+                                            ) : (
+                                                <FaArrowDown className="inline ml-1" />
+                                            ))}
+                                    </th>
+                                ))}
                             </tr>
-                        ))}
-                    </tbody>
-                </>
-            )}
-
-        </table>
+                        </thead>
+                        <tbody>
+                            {reports.map((report: Report) => (
+                                <tr
+                                    key={report.id}
+                                    className={selectedReports.includes(report.id) ? 'cursor-pointer dark:bg-gray-600 bg-blue-200 border-b dark:border-gray-700'
+                                        : 'cursor-pointer bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600'}
+                                >
+                                    <td className="px-4 py-2">
+                                        <input
+                                            type="checkbox"
+                                            checked={selectedReports.includes(report.id)}
+                                            onChange={() => toggleRow(report.id)}
+                                        />
+                                    </td>
+                                    <td className="px-6 py-2" onClick={() => handleOpenModal(report)}>{report.id}</td>
+                                    <td className="px-6 py-2" onClick={() => handleOpenModal(report)}>{report.user}</td>
+                                    <td className="px-6 py-2 truncate" onClick={() => handleOpenModal(report)}>{report.reason}</td>
+                                    <td className="px-6 py-2" onClick={() => handleOpenModal(report)}>
+                                        {report.question.id}
+                                    </td>
+                                    <td className="px-6 py-2" onClick={() => handleOpenModal(report)}>{report.created_at}</td>
+                                    <td className="px-6 py-2" onClick={() => handleOpenModal(report)}>{report.solved == 1 ? 'Sim' : 'Não'}</td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </>
+                )}
+            </table>
+            <div className="relative overflow-hidden bg-white shadow-md dark:bg-gray-800">
+                <nav className="flex flex-row items-center justify-between p-4"
+                    aria-label="Table navigation">
+                      <p className="text-sm">
+                        <span className="font-normal text-gray-500 dark:text-gray-400">Reports selecionados:</span>
+                        <span className="font-semibold text-gray-900 dark:text-white">{selectedReports.length}</span>
+                    </p>
+                    <p className="text-sm">
+                        <span className="font-normal text-gray-500 dark:text-gray-400">Total reports:</span>
+                        <span className="font-semibold text-gray-900 dark:text-white">{reports.length}</span>
+                    </p>
+                </nav>
+            </div>
+        </div>
     );
 };
 

@@ -38,7 +38,7 @@ const ReportModal: React.FC<ModalProps> = ({ isVisible, setIsVisible, report, so
           <div className="h-full w-full">
             <div className="flex flex-col justify-between mb-12">
               <h2 className="w-full font-bold mb-6 text-lg  md:text-left">
-                Descrição do report
+              Razão do report
               </h2>
               <span >
                 {report?.reason}
