@@ -74,7 +74,7 @@ const ReportModal: React.FC<ModalProps> = ({ isVisible, setIsVisible, report, so
                   {report?.email}
                 </p>
                 <p>
-                  {report?.updated_at}
+                  {report?.created_at}
                 </p>
               </div>
               {report?.solved && (
