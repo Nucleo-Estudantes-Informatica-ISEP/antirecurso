@@ -60,7 +60,7 @@ const ScoreboardPage: React.FC<ScoreboardPageProps> = ({ params }) => {
         ))}
       </div>
 
-      <p className="px-4 text-xl font-bold text-center uppercase my-5">
+      <p className="px-4 text-xl font-bold text-center uppercase mt-8 mb-5">
         Scoreboard de{' '}
         {subjectName ? (
           <span className="text-primary">{subjectName}</span>
@@ -94,6 +94,17 @@ const ScoreboardPage: React.FC<ScoreboardPageProps> = ({ params }) => {
       ) : (
         <Skeleton className="mt-3" height={40} width={600} count={30} />
       )}
+      <h3 className="font-bold text-xl md:text-3xl mt-4">
+        Total de exames realizados:{' '}
+        <span className="text-primary font-bold">{scoreboard?.total}</span>
+      </h3>
+      <p className="md:text-base text-sm text-slate-500 text-center mx-4 my-4">
+        Nota: Para estares presente no scoreboard deves pertencer ter respondido, no mínimo, a{' '}
+        <span className="font-bold text-primary align-middle">{scoreboard?.min_answers}</span>{' '}
+        exames e estar entre as{' '}
+        <span className="font-bold text-primary align-middle">{scoreboard?.limit}</span> melhores
+        médias.
+      </p>
     </section>
   );
 };

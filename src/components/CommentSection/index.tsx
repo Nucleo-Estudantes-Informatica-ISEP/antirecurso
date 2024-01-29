@@ -48,7 +48,7 @@ const CommentSection: React.FC<CommentSectionProps> = ({
     if (!questionId || !session.user) return;
 
     const result = await swal({
-      text: 'O que está errado com esta pergunta?',
+      text: 'O que está errado com esta pergunta? Tenta ser o mais explicito possível.',
       content: {
         element: 'input'
       },
