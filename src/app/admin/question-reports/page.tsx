@@ -184,7 +184,9 @@ const Reports: React.FC = () => {
           </button>
         </div>
         <div className="flex flex-col w-3/4">
-          {isLoading ? (<Skeleton count={5} />)
+          {/* needs to be like this cuz data can be null while the session request is pending. 
+            TODO: implement SWR on session fetching and pass its isLoading to the context so it can be used as well*/}
+          {isLoading || data === undefined || data === null ? (<Skeleton count={5} />)
             : error ? (
               <div className="w-full h-full mt-4 flex flex-col items-center justify-center">
                 <h1 className="text-2xl font-bold">Erro ao carregar reports</h1>
