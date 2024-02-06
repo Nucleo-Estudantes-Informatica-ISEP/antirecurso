@@ -6,8 +6,11 @@ import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import LogoutButton from '../LogoutButton';
 import PrimaryButton from '../PrimaryButton';
+import useCallbackUrl from '@/hooks/useCallbackUrl';
 
 const HamburgerProfileMenu: React.FC = () => {
+  const pathname = useCallbackUrl();
+
   const [isOpen, setIsOpen] = useState(false);
 
   const session = useSession();
@@ -44,12 +47,12 @@ const HamburgerProfileMenu: React.FC = () => {
                 </>
               ) : (
                 <>
-                  <Link href="/login">
+                  <Link href={`/login?callbackUrl=${pathname}`}>
                     <PrimaryButton onClick={closeMenu} className="w-full">
                       Iniciar sessão
                     </PrimaryButton>
                   </Link>
-                  <Link href="/register">
+                  <Link href={`/register?callbackUrl=${pathname}`}>
                     <PrimaryButton onClick={closeMenu} className="w-full">
                       Criar uma conta
                     </PrimaryButton>
