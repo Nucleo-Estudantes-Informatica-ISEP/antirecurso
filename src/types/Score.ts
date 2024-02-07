@@ -6,4 +6,5 @@ export default interface Score {
   subject_id: number;
   subject: string;
   exams: number;
+  show_scoreboard: boolean;
 }

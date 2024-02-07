@@ -98,11 +98,10 @@ const ScoreboardPage: React.FC<ScoreboardPageProps> = ({ params }) => {
         Total de exames realizados:{' '}
         <span className="text-primary font-bold">{scoreboard?.total}</span>
       </h3>
-      <p className="md:text-base text-sm text-slate-500 text-center mx-4 my-4">
+      <p className="md:text-base text-sm text-slate-500 text-center mx-4 my-4 align-middle">
         Nota: Para estares presente no scoreboard deves pertencer ter respondido, no mínimo, a{' '}
-        <span className="font-bold text-primary align-middle">{scoreboard?.min_answers}</span>{' '}
-        exames e estar entre as{' '}
-        <span className="font-bold text-primary align-middle">{scoreboard?.limit}</span> melhores
+        <span className="font-bold text-primary">{scoreboard?.min_answers}</span> exames e estar
+        entre as <span className="font-bold text-primary">{scoreboard?.limit}</span> melhores
         médias.
       </p>
     </section>

@@ -5,6 +5,43 @@ const Changelog: React.FC = () => {
   return (
     <section className="w-full text-sm md:text-md px-5 md:px-24 md:pb-24 pb-48 mt-5">
       <ChangelogVersion
+        title="v1.4.0 📚"
+        date={new Date(2024, 1, 2)}
+        updates={[
+          <span className="align-middle" key="1.4.0-notes">
+            Adição da página de <span className="font-bold text-primary">resumos</span>
+          </span>,
+          <span key="1.4.0-scoreboard-visibility">
+            Adição da opção de tornar o teu score privado/público na página de perfil (Obrigado pela
+            sugestão{' '}
+            <Link
+              className="underline text-primary"
+              href="https://github.com/dimaguy"
+              target="_blank"
+              rel="noreferrer">
+              Afonso Sequeira
+            </Link>
+            ).
+          </span>,
+          <span className="align-middle" key="1.4.0-scoreboard-place">
+            Posição no <span className="font-bold text-primary">scoreboard</span> agora é visível na
+            página de estatísticas de cada UC (Obrigado{' '}
+            <Link
+              className="underline text-primary"
+              href="https://github.com/andrefbarros"
+              target="_blank"
+              rel="noreferrer">
+              André Barros
+            </Link>
+            ).
+          </span>,
+          <span className="align-middle" key="1.4.0-questions">
+            Corrigido o problema de arredondamento no peso do exame na página de estatísitcas
+            (Obrigado <span className="font-bold text-primary">Bruna Costa</span>).
+          </span>
+        ]}
+      />
+      <ChangelogVersion
         title="v1.3.8 🙃"
         date={new Date(2024, 0, 20)}
         updates={[
@@ -19,7 +56,7 @@ const Changelog: React.FC = () => {
             <span className="font-bold text-primary">Rita Sobral</span>,{' '}
             <span className="font-bold text-primary">Tomás Lopes</span>). (Update 23/01/2023 -
             Adicionadas <span className="text-primary font-bold">+42 perguntas</span> dos Kahoots
-            das aulas TP{"'"}s)
+            das aulas TP{"'"}s).
           </span>
         ]}>
         A implementação do sistema de partilha de resumos está a demorar um bocado mais do que o
