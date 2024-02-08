@@ -36,12 +36,14 @@ const UserProfileScoreboard: React.FC<UsePreviousExamsTableProps> = ({ user }) =
       });
       if (!res.ok) {
         swal('Ocorreu um erro ao alterar a visibilidade!', {
-          icon: 'error'
+          icon: 'error',
+          timer: 1500
         });
         return;
       }
       swal('A visibilidade foi alterada com sucesso!', {
-        icon: 'success'
+        icon: 'success',
+        timer: 1500
       });
       const s = scores.map((score) => {
         if (score.subject_id === subjectId) {
