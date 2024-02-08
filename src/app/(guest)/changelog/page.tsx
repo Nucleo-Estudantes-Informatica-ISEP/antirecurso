@@ -36,7 +36,7 @@ const Changelog: React.FC = () => {
             ).
           </span>,
           <span className="align-middle" key="1.4.0-questions">
-            Corrigido o problema de arredondamento no peso do exame na página de estatísitcas
+            Corrigido o problema de arredondamento no peso do exame na página de estatísticas{' '}
             (Obrigado <span className="font-bold text-primary">Bruna Costa</span>).
           </span>
         ]}
