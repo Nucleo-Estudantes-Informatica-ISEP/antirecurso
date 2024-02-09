@@ -25,10 +25,10 @@ const HamburgerMenu: React.FC = () => {
   // when clicking outside the menu, close it
   useEffect(() => {
     if (isOpen) {
-      document.querySelector('main')!.addEventListener('click', closeMenu);
+      document.querySelector('main')?.addEventListener('click', closeMenu);
     }
     return () => {
-      document.querySelector('main')!.removeEventListener('click', closeMenu);
+      document.querySelector('main')?.removeEventListener('click', closeMenu);
     };
   });
 

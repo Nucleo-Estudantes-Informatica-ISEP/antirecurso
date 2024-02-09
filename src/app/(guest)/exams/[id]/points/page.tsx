@@ -65,7 +65,7 @@ const Points: React.FC = () => {
       <p className="text-lg md:text-xl align-middle mx-6">
         Demoraste{' '}
         <span className="text-primary font-black align-middle">
-          {minutes ? `${minutes} minutos e` : ''} {examTime % 60} segundos
+          {minutes ? `${minutes} minutos e` : ''} {seconds} segundos
         </span>{' '}
         a responder ao exame.
       </p>
