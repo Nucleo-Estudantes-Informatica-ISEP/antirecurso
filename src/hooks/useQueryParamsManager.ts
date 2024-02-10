@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { usePathname, useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
@@ -9,7 +10,7 @@ export const useQueryParamsManager = () => {
   const [queryParams, setQueryParams] = useState<URLSearchParams>(searchParams);
 
   // if exists, update, else add
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // eslint-disable-next-line
   const set = (key: string, value: any) => {
     const params = new URLSearchParams(queryParams.toString());
     params.set(key, value);
