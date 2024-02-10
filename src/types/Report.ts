@@ -8,7 +8,7 @@ export default interface Report {
     title: string;
     exam: string;
     correct_option: string;
-    options:{
+    options: {
       name: string;
       order: string;
     }[];
