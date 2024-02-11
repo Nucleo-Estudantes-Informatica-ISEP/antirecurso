@@ -34,9 +34,25 @@ const ReportModal: React.FC<ModalProps> = ({ isVisible, setIsVisible, report, so
     if (editingQuestionTitle) setEditingQuestionTitle(false);
   };
 
-  // handle input change for option
-  const handleOptionInputChange = (event: React.ChangeEvent<HTMLTextAreaElement>, index: number) => {
-    // Handle input change for option
+  // handle input change for question title
+  const handleOnBlurQuestionTitle = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setQuestionTitle(event.target.value);
+    setEditingQuestionTitle(false)
+  };
+
+  // handle onBlur change for option
+  const handleOnBlurOption = (event: React.ChangeEvent<HTMLTextAreaElement>, index: number) => {
+    setOptions((prevOptions) => {
+      const newOptions = [...prevOptions];
+      newOptions[index].name = event.target.value;
+      return newOptions;
+    });
+    setEditingOption(null);
+  };
+
+  // handle set correct option
+  const handleSetCorrectOption = (index: number) => {
+    setCorrectOption(options[index].order);
   };
 
   // When the report changes, update the form
@@ -88,15 +104,14 @@ const ReportModal: React.FC<ModalProps> = ({ isVisible, setIsVisible, report, so
                 {editingQuestionTitle ? (
                   <textarea
                     className="w-full px-1.5 md:px-4 py-2 md:py-3 rounded bg-transparent border"
-                    // ref={textAreaRef}
                     rows={2}
-                    value={questionTitle}
+                    defaultValue={questionTitle}
                     onChange={(e) => setQuestionTitle(e.target.value)}
-                    onBlur={() => setEditingQuestionTitle(false)}
+                    onBlur={(e) => handleOnBlurQuestionTitle(e)}
                   />
                 ) : (
                   <>
-                    {report?.question.title} <FaEdit className="mx-8 cursor-pointer" title="Editar" />
+                    {questionTitle} <FaEdit className="mx-8 cursor-pointer" title="Editar" />
                   </>
                 )}
 
@@ -113,9 +128,8 @@ const ReportModal: React.FC<ModalProps> = ({ isVisible, setIsVisible, report, so
                       <textarea
                         className="w-full px-1.5 md:px-4 py-2 md:py-3 rounded bg-transparent border focus:outline-none focus:border-none"
                         rows={4}
-                        value={option.name}
-                        onChange={(event) => handleOptionInputChange(event, index)}
-                        onBlur={() => setEditingOption(null)}
+                        defaultValue={option.name}
+                        onBlur={(e) => handleOnBlurOption(e, index)}
                       />
                     ) : (
                       option.name
@@ -123,7 +137,9 @@ const ReportModal: React.FC<ModalProps> = ({ isVisible, setIsVisible, report, so
                   </div>
 
                   <div className="mt-2 ml-4 cursor-pointer">
-                    <Check title="Marcar como correta" />
+                    <Check title="Marcar como correta"
+                      onClick={() => handleSetCorrectOption(index)}
+                    />
                   </div>
 
                 </div>
