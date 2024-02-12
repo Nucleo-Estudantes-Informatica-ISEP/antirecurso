@@ -121,6 +121,13 @@ const Reports: React.FC = () => {
     }
   }
 
+  // handle reset filters
+  const handleResetFilters = () => {
+    searchParams.remove('solved');
+    setFilter('all');
+    setSortBy({ key: 'created_at', desc: true });
+  }
+
   const handleOpenModal = (report: Report) => {
     setReportClicked(report);
     setIsReportModalOpen(true);
@@ -179,10 +186,16 @@ const Reports: React.FC = () => {
               <option key={f.value} value={f.value}>{f.name}</option>
             ))}
           </select>
+          <button
+            className="bg-gray-400 hover:bg-gray-500 text-white px-4 py-2 shadow-md"
+            onClick={() => handleResetFilters()}
+          >
+            Repor Filtros
+          </button>
         </div>
         <div className="flex gap-x-2">
           <button
-            className="bg-gray-400 hover:bg-gray-500 text-white px-4 py-2 rounded-md shadow-md"
+            className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 shadow-md"
             onClick={() => handleMarkAsResolve()}
           >
             Resolver
