@@ -57,8 +57,11 @@ const ReportModal: React.FC<ModalProps> = ({ isVisible, setIsVisible, report, so
 
   // When the report changes, update the form
   useEffect(() => {
+    console.log("ddd");
     if (report) {
       // update form
+      setEditingQuestionTitle(false);
+      setEditingOption(null);
       setQuestionTitle(report.question.title);
       setOptions(report.question.options);
       setCorrectOption(report.question.correct_option);
@@ -101,7 +104,7 @@ const ReportModal: React.FC<ModalProps> = ({ isVisible, setIsVisible, report, so
                 Questão
               </h2>
               <span className="pb-4 flex" onClick={handleQuestionEdit}>
-                {editingQuestionTitle ? (
+                {editingQuestionTitle && !report?.solved ? (
                   <textarea
                     className="w-full px-1.5 md:px-4 py-2 md:py-3 rounded bg-transparent border"
                     rows={2}
@@ -124,7 +127,7 @@ const ReportModal: React.FC<ModalProps> = ({ isVisible, setIsVisible, report, so
                     onClick={() => handleOptionEdit(index)}
                     title="Editar"
                   >
-                    {editingOption === index ? (
+                    {editingOption === index && !report?.solved ? (
                       <textarea
                         className="w-full px-1.5 md:px-4 py-2 md:py-3 rounded bg-transparent border focus:outline-none focus:border-none"
                         rows={4}
@@ -136,19 +139,23 @@ const ReportModal: React.FC<ModalProps> = ({ isVisible, setIsVisible, report, so
                     )}
                   </div>
 
-                  <div className="mt-2 ml-4 cursor-pointer">
-                    <Check title="Marcar como correta"
-                      onClick={() => handleSetCorrectOption(index)}
-                    />
-                  </div>
+                  {!report?.solved && (
+                    <div className="mt-2 ml-4 cursor-pointer">
+                      <Check title="Marcar como correta"
+                        onClick={() => handleSetCorrectOption(index)}
+                      />
+                    </div>
+                  )}
 
                 </div>
               ))}
             </div>
 
-            <div className="flex items-left mb-12">
-              <button className="w-full p-2 mr-8 text-xl bg-primary rounded-md text-white font-bold hover:brightness-90 hover:text-white ">Salvar</button>
-            </div>
+            {!report?.solved && (
+              <div className="flex items-left mb-12">
+                <button className="w-full p-2 mr-8 text-xl bg-primary rounded-md text-white font-bold hover:brightness-90 hover:text-white ">Salvar</button>
+              </div>
+            )}
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               <div className="flex flex-col  mb-12">
