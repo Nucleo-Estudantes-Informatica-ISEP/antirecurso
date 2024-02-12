@@ -75,7 +75,7 @@ const Reports: React.FC = () => {
     if (res.status === 200) {
 
       // revalidate data
-      mutate([endpoint, session.token as string]);
+      revalidateReports();
 
       swal({
         title: 'Resolvido!',
@@ -95,6 +95,10 @@ const Reports: React.FC = () => {
       });
     }
   };
+
+  const revalidateReports = () => {
+    mutate([endpoint, session.token as string]);
+  }
 
   // handle filter checkboxes
   const handleChangeFilter = (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -161,6 +165,7 @@ const Reports: React.FC = () => {
         isVisible={isReportModalOpen}
         report={reportClicked}
         solveReport={handleMarkAsResolve}
+        revalidateReports={revalidateReports}
       />
 
       <div className="w-full h-full mt-4 flex flex-col items-center justify-center">

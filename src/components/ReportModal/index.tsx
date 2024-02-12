@@ -1,19 +1,26 @@
 "use client";
 
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState } from 'react';
 import Report from '@/types/Report';
 import Option from '@/types/Option';
 import { Check } from '@/styles/Icons';
 import { FaEdit } from "react-icons/fa";
+import swal from 'sweetalert';
+import { BASE_URL } from '@/services/api';
+import useSession from '@/hooks/useSession';
+import { useTheme } from 'next-themes';
 
 interface ModalProps {
   isVisible?: boolean;
   setIsVisible: React.Dispatch<React.SetStateAction<boolean>>;
   report: Report | null;
   solveReport: (reportId: number) => void;
+  revalidateReports: () => void;
 }
 
-const ReportModal: React.FC<ModalProps> = ({ isVisible, setIsVisible, report, solveReport }) => {
+const ReportModal: React.FC<ModalProps> = ({ isVisible, setIsVisible, report, solveReport, revalidateReports }) => {
+  const session = useSession();
+  const { theme } = useTheme();
 
   // form
   const [questionTitle, setQuestionTitle] = useState<string>(report?.question.title ?? '');
@@ -55,9 +62,50 @@ const ReportModal: React.FC<ModalProps> = ({ isVisible, setIsVisible, report, so
     setCorrectOption(options[index].order);
   };
 
-  // When the report changes, update the form
+  // handle solve reports - optional param for calling the function from the modal
+  const handleFixQuestion = async () => {
+    if (!report) return;
+
+    const res = await fetch(BASE_URL + '/questions/' + report.question.id, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${session.token}`
+      },
+      body: JSON.stringify({
+        correct_option: correctOption,
+        question: questionTitle,
+        options: options
+      })
+    });
+
+    if (res.status === 200) {
+
+      // revalidate data
+      revalidateReports();
+
+      swal({
+        title: 'Salvo!',
+        text: 'As tuas alterações foram salvas com sucesso!',
+        icon: 'success',
+        className: theme === 'dark' ? 'swal-dark' : '',
+        timer: 2000
+      });
+
+    }
+    else {
+      swal({
+        title: 'Erro!',
+        text: 'Algo correu mal ao salvar as tuas alterações. Por favor, tenta novamente.',
+        icon: 'error',
+        className: theme === 'dark' ? 'swal-dark' : ''
+      });
+    }
+  };
+
+
+  // When the report changes, update the form and reset the editing states
   useEffect(() => {
-    console.log("ddd");
     if (report) {
       // update form
       setEditingQuestionTitle(false);
@@ -113,9 +161,9 @@ const ReportModal: React.FC<ModalProps> = ({ isVisible, setIsVisible, report, so
                     onBlur={(e) => handleOnBlurQuestionTitle(e)}
                   />
                 ) : (
-                  <>
-                    {questionTitle} <FaEdit className="mx-8 cursor-pointer" title="Editar" />
-                  </>
+                  <div className="flex cursor-pointer" title="Editar">
+                    {questionTitle} <FaEdit className="mx-8" />
+                  </div>
                 )}
 
               </span>
@@ -153,7 +201,7 @@ const ReportModal: React.FC<ModalProps> = ({ isVisible, setIsVisible, report, so
 
             {!report?.solved && (
               <div className="flex items-left mb-12">
-                <button className="w-full p-2 mr-8 text-xl bg-primary rounded-md text-white font-bold hover:brightness-90 hover:text-white ">Salvar</button>
+                <button className="w-full p-2 mr-8 text-xl bg-primary rounded-md text-white font-bold hover:brightness-90 hover:text-white" onClick={handleFixQuestion}>Salvar</button>
               </div>
             )}
 
