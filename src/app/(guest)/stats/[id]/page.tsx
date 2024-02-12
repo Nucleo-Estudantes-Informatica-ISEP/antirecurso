@@ -12,7 +12,7 @@ import { FiInfo, FiSettings } from 'react-icons/fi';
 import Skeleton from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css';
 import { BASE_URL } from 'src/services/api';
-import ISubjectStats from 'src/types/SubjectStats';
+import SubjectStats from 'src/types/SubjectStats';
 import getSubjectNameById from 'src/utils/getSubjectNameById';
 
 interface SubjectStatsProps {
@@ -23,7 +23,7 @@ interface SubjectStatsProps {
 
 const SubjectStats: React.FC<SubjectStatsProps> = ({ params }) => {
   const [subjectName, setSubjectName] = useState('');
-  const [subjectStats, setSubjectStats] = useState<ISubjectStats>();
+  const [subjectStats, setSubjectStats] = useState<SubjectStats>();
   const { token } = useSession();
 
   useEffect(() => {
@@ -39,7 +39,7 @@ const SubjectStats: React.FC<SubjectStatsProps> = ({ params }) => {
         },
         cache: 'no-store'
       });
-      const sStats: ISubjectStats = await res.json();
+      const sStats: SubjectStats = await res.json();
       setSubjectStats(sStats);
     }
 
@@ -119,6 +119,21 @@ const SubjectStats: React.FC<SubjectStatsProps> = ({ params }) => {
             ) : (
               <ScoreIndicator score={Number.parseFloat(subjectStats.average_grade)} />
             )}
+          </div>
+          <div className="flex items-center w-full px-4 py-6 md:max-w-xs bg-gray-100 rounded-md dark:bg-secondary-dark row-span-2 flex-col justify-between">
+            <h2 className="text-xl md:text-3xl uppercase text-primary font-semibold">Ranking</h2>
+            {subjectStats === undefined ? (
+              <Skeleton width={150} height={150} circle={true} />
+            ) : subjectStats.place_in_scoreboard === null ? (
+              <span className="text-center text-base">Não tens posição no scoreboard.</span>
+            ) : (
+              <div>
+                <span className="text-center font-black text-3xl md:text-5xl lg:text-7xl">
+                  # {subjectStats.place_in_scoreboard}
+                </span>
+              </div>
+            )}
+            <div />
           </div>
         </div>
 
@@ -209,7 +224,6 @@ const SubjectStats: React.FC<SubjectStatsProps> = ({ params }) => {
                 data={subjectStats.user_scores.map((score) => (score.score * 20) / 100)}
               />
             </div>
-
             <GradeCalculatorContainer subjectStats={subjectStats} />
           </>
         )}

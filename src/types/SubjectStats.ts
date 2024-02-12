@@ -26,4 +26,5 @@ export default interface SubjectStats {
   suggested_mode: string;
   times: number[];
   mean_time: number;
+  place_in_scoreboard: number | null;
 }

@@ -1,5 +1,6 @@
 'use client';
 
+import toFixed from '@/utils/toFixed';
 import GradeCalculatorContextProvider from 'src/contexts/GradeCalculatorContext';
 import GoalGradeCalculator from '../GoalGradeCalculator';
 import GradeCalculator from '../GradeCalculator';
@@ -19,7 +20,7 @@ const GradeCalculatorContainer: React.FC<GradeCalculatorProps> = ({ subjectStats
         <article className="flex flex-col justify-between items-center gap-y-2 min-h-40 md:h-64 w-full max-w-lg p-8 text-xl bg-gray-100 rounded-md gap-x-2 dark:bg-secondary-dark text-left">
           <h2 className="text-xl md:text-3xl font-bold text-center">Peso do Exame</h2>
           <span className="font-bold text-primary align-middle text-3xl md:text-4xl text-center">
-            {subjectStats.exam_weight * 100}%
+            {toFixed(subjectStats.exam_weight * 100, 2)}%
           </span>
           <div className="text-center text-base md:block hidden">
             A tua nota final é calculada com base neste peso.

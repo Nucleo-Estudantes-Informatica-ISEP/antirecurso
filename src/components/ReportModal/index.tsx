@@ -207,33 +207,17 @@ const ReportModal: React.FC<ModalProps> = ({ isVisible, setIsVisible, report, so
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               <div className="flex flex-col  mb-12">
-                <h2 className="w-full font-bold mb-6 text-lg ">
-                  Reportado por
-                </h2>
-                <p>
-                  {report?.user}
-                </p>
-                <p>
-                  {report?.email}
-                </p>
-                <p>
-                  {report?.created_at}
-                </p>
+                <h2 className="w-full font-bold mb-6 text-lg ">Reportado por</h2>
+                <p>{report?.user}</p>
+                <p>{report?.email}</p>
+                <p>{report?.created_at}</p>
               </div>
               {report?.solved && (
                 <div className="flex flex-col mb-12">
-                  <h2 className="w-full font-bold mb-6 text-lg">
-                    Resolvido por
-                  </h2>
-                  <p>
-                    {report?.reviewed_by?.name}
-                  </p>
-                  <p>
-                    {report?.reviewed_by?.email}
-                  </p>
-                  <p>
-                    {report?.reviewed_at}
-                  </p>
+                  <h2 className="w-full font-bold mb-6 text-lg">Resolvido por</h2>
+                  <p>{report?.reviewed_by?.name}</p>
+                  <p>{report?.reviewed_by?.email}</p>
+                  <p>{report?.reviewed_at}</p>
                 </div>
               )}
             </div>

@@ -44,7 +44,7 @@ const GradeCalculator: React.FC<GradeCalculatorProps> = ({ examGrade, weight, mi
               if (value.match(/^\d{1,}(\.\d{0,2})?$/)) {
                 if (parseFloat(value) < 0) return setFrequency(0);
                 if (parseFloat(value) > MAX_GRADE) return setFrequency(MAX_GRADE);
-                setFrequency(parseFloat(value));
+                setFrequency(toFixed(parseFloat(value), 2));
               }
             }}
             step={0.1}
@@ -66,7 +66,7 @@ const GradeCalculator: React.FC<GradeCalculatorProps> = ({ examGrade, weight, mi
               if (val) {
                 if (parseFloat(value) < 0) return setExam(0);
                 if (parseFloat(value) > MAX_GRADE) return setExam(MAX_GRADE);
-                setExam(parseFloat(value));
+                setExam(toFixed(parseFloat(value), 2));
               }
             }}
             step={0.1}

@@ -5,7 +5,6 @@ import UserProfileScoreboard from '@/components/UserProfileScoreboard';
 import getServerSession from '@/services/getServerSession';
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
-import swal from 'sweetalert';
 
 interface ProfileProps {
   params: {
