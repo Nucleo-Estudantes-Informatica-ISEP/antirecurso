@@ -4,8 +4,15 @@ import Image from 'next/image';
 import Link from 'next/link';
 import HamburgerMenu from '../HamburgerMenu';
 import HamburgerProfileMenu from '../HamburguerProfileMenu';
-import ThemeChanger from '../Theme/ThemeChanger';
 import TopbarLink from '../TopbarLink';
+
+export const topBarLinks = {
+  Home: '/',
+  Exames: '/exams',
+  Scoreboard: '/scoreboard',
+  Resumos: '/notes',
+  Sobre: '/about'
+};
 
 const Topbar: React.FC = () => {
   return (
@@ -26,12 +33,11 @@ const Topbar: React.FC = () => {
 
       <div className="hidden md:flex md:items-center">
         <div className="flex items-center gap-x-5">
-          <TopbarLink href="/">Home</TopbarLink>
-          <TopbarLink href="/exams">Exames</TopbarLink>
-          <TopbarLink href="/scoreboard">Scoreboard</TopbarLink>
-          <TopbarLink href="/notes">Resumos</TopbarLink>
-          <TopbarLink href="/about">Sobre</TopbarLink>
-          <ThemeChanger />
+          {Object.entries(topBarLinks).map(([label, href], index) => (
+            <TopbarLink key={index} href={href}>
+              {label}
+            </TopbarLink>
+          ))}
         </div>
 
         <div className="ml-6">
