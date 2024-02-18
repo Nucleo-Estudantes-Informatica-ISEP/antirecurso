@@ -1,10 +1,10 @@
 import Link from 'next/link';
 
-import { fetchSubjects } from 'src/services';
+import { fetchSubjectsWithQuestions } from '@/services/fetchSubjects';
 
 // @ts-expect-error Server Component
 const Exams: React.FC = async () => {
-  const subjects = await fetchSubjects();
+  const subjects = await fetchSubjectsWithQuestions();
 
   return (
     <section className="flex flex-col items-center justify-center w-full text-center">

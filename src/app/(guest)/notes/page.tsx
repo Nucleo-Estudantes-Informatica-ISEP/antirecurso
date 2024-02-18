@@ -1,5 +1,5 @@
 import config from '@/config';
-import { fetchSubjects } from '@/services';
+import { fetchSubjects } from '@/services/fetchSubjects';
 import { cookies } from 'next/headers';
 import Link from 'next/link';
 
