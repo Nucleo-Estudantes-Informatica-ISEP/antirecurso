@@ -8,9 +8,9 @@ const Changelog: React.FC = () => {
         title="v1.4.1 📂"
         date={new Date(2024, 1, 18)}
         updates={[
-          <span className="align-middle" key="1.4.0-notes">
-            Adição de novas Unidades Curriculares na página de{' '}
-            <span className="font-bold text-primary">resumos</span>
+          <span className="align-middle" key="1.4.1-notes">
+            Adicionadas <span className="font-bold text-primary">+6</span> Unidades Curriculares na{' '}
+            secção de <span className="font-bold text-primary">resumos</span>.
           </span>
         ]}
       />
