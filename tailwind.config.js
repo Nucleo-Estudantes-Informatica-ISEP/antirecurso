@@ -12,6 +12,7 @@ module.exports = {
   ],
   theme: {
     themeVariants: ['dark'],
+    defaultTheme: 'dark',
     Forms: (theme) => ({
       default: {
         'input, textarea': {
