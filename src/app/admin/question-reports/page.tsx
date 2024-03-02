@@ -102,7 +102,7 @@ const Reports: React.FC = () => {
 
   const revalidateReports = () => {
     mutate([endpoint, session.token as string]);
-  }
+  };
 
   // handle filter checkboxes
   const handleChangeFilter = (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -129,7 +129,7 @@ const Reports: React.FC = () => {
     searchParams.remove('solved');
     setFilter('all');
     setSortBy({ key: 'created_at', desc: true });
-  }
+  };
 
   const handleOpenModal = (report: Report) => {
     setReportClicked(report);
@@ -194,16 +194,14 @@ const Reports: React.FC = () => {
           </select>
           <button
             className="bg-gray-400 hover:bg-gray-500 text-white px-4 py-2 shadow-md"
-            onClick={() => handleResetFilters()}
-          >
+            onClick={() => handleResetFilters()}>
             Repor Filtros
           </button>
         </div>
         <div className="flex gap-x-2">
           <button
             className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 shadow-md"
-            onClick={() => handleMarkAsResolve()}
-          >
+            onClick={() => handleMarkAsResolve()}>
             Resolver
           </button>
         </div>

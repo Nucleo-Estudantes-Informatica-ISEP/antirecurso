@@ -1,4 +1,4 @@
-import Option from "./Option";
+import Option from './Option';
 
 export default interface Report {
   id: number;
@@ -11,7 +11,7 @@ export default interface Report {
     image: string;
     exam: string;
     correct_option: string;
-    options:Option[];
+    options: Option[];
   };
   created_at: string;
   updated_at: string;
