@@ -77,7 +77,7 @@ const Reports: React.FC = () => {
 
     if (res.status === 200) {
       // revalidate data
-      mutate([endpoint, session.token as string]);
+      revalidateReports();
 
       swal({
         title: 'Resolvido!',
@@ -100,6 +100,10 @@ const Reports: React.FC = () => {
     }
   };
 
+  const revalidateReports = () => {
+    mutate([endpoint, session.token as string]);
+  }
+
   // handle filter checkboxes
   const handleChangeFilter = (e: React.ChangeEvent<HTMLSelectElement>) => {
     // update filter state
@@ -119,6 +123,13 @@ const Reports: React.FC = () => {
         break;
     }
   };
+
+  // handle reset filters
+  const handleResetFilters = () => {
+    searchParams.remove('solved');
+    setFilter('all');
+    setSortBy({ key: 'created_at', desc: true });
+  }
 
   const handleOpenModal = (report: Report) => {
     setReportClicked(report);
@@ -164,6 +175,7 @@ const Reports: React.FC = () => {
         isVisible={isReportModalOpen}
         report={reportClicked}
         solveReport={handleMarkAsResolve}
+        revalidateReports={revalidateReports}
       />
 
       <div className="w-full h-full mt-4 flex flex-col items-center justify-center">
@@ -180,11 +192,18 @@ const Reports: React.FC = () => {
               </option>
             ))}
           </select>
+          <button
+            className="bg-gray-400 hover:bg-gray-500 text-white px-4 py-2 shadow-md"
+            onClick={() => handleResetFilters()}
+          >
+            Repor Filtros
+          </button>
         </div>
         <div className="flex gap-x-2">
           <button
-            className="bg-gray-400 hover:bg-gray-500 text-white px-4 py-2 rounded-md shadow-md"
-            onClick={() => handleMarkAsResolve()}>
+            className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 shadow-md"
+            onClick={() => handleMarkAsResolve()}
+          >
             Resolver
           </button>
         </div>

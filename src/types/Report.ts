@@ -1,3 +1,5 @@
+import Option from "./Option";
+
 export default interface Report {
   id: number;
   user: string;
@@ -6,12 +8,10 @@ export default interface Report {
   question: {
     id: number;
     title: string;
+    image: string;
     exam: string;
     correct_option: string;
-    options: {
-      name: string;
-      order: string;
-    }[];
+    options:Option[];
   };
   created_at: string;
   updated_at: string;
