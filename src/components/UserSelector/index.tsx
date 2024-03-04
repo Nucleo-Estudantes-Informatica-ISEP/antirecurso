@@ -8,6 +8,7 @@ import { BASE_URL } from '@/services/api';
 import User from '@/types/User';
 import Image from 'next/image';
 import LoadingSpinner from '../LoadingSpinner';
+import useSWR from 'swr';
 
 interface UserSelectorProps {
   selected: User | null;
@@ -15,51 +16,24 @@ interface UserSelectorProps {
 }
 
 const UserSelector: React.FC<UserSelectorProps> = ({ selected, setSelected }) => {
-  const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [timeoutVar, setTimeoutVar] = useState<NodeJS.Timeout>();
-  const [result, setResult] = useState<User[]>();
-  const [controller, setController] = useState<AbortController>();
+  const [query, setQuery] = useState<string>('');
+
+  const fetcher = (url: RequestInfo | URL) => {
+    if (!query.length) return;
+    return fetch(url, { headers: { Authorization: 'Bearer ' + token } }).then((res) => res.json());
+  };
+
+  const { data, isLoading } = useSWR(BASE_URL + `/search?query=${query}`, fetcher, {
+    keepPreviousData: true
+  });
+
+  const users = data && !!query.length ? data.data : null;
 
   const { token } = useSession();
 
-  const queryUsers = async (query: string) => {
-    const c = new AbortController();
-    setController(c);
-    try {
-      const res = await fetch(BASE_URL + '/search?query=' + query, {
-        headers: { Authorization: 'Bearer ' + token },
-        signal: c.signal
-      });
-      const data = await res.json();
-      setController(undefined);
-      setResult(data.data);
-      setIsLoading(false);
-    } catch (error) {
-      if (error instanceof Error && error.name === 'AbortError') console.log('request aborted');
-    }
-  };
-
-  const handleQueryChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const query = e.target.value.trim();
-
-    if (controller) controller.abort();
-    if (timeoutVar) clearTimeout(timeoutVar);
-
-    if (query.length < 2) {
-      setResult(undefined);
-      return setIsLoading(false);
-    }
-
-    setIsLoading(true);
-
-    const t = setTimeout(() => queryUsers(query), 500);
-
-    setTimeoutVar(t);
-  };
-
   const handleSelectUser = async (user: User) => {
     setSelected(user);
-    setResult(undefined);
+    setQuery('');
   };
 
   return (
@@ -85,7 +59,7 @@ const UserSelector: React.FC<UserSelectorProps> = ({ selected, setSelected }) =>
           <input
             type="text"
             className="w-full px-1.5 md:px-4 py-2 rounded bg-transparent border"
-            onChange={handleQueryChange}
+            onChange={(e) => setQuery(e.target.value)}
             placeholder="Search"
           />
           <div className="relative">
@@ -95,11 +69,11 @@ const UserSelector: React.FC<UserSelectorProps> = ({ selected, setSelected }) =>
               </div>
             ) : (
               <div className="absolute bg-gray-700 rounded-md drop-shadow-lg font-bold">
-                {result &&
-                  (!result.length ? (
+                {users &&
+                  (!users.length ? (
                     <div className="w-52 px-4 py-2 text-center">No results.</div>
                   ) : (
-                    result?.map((r) => (
+                    users?.map((r: User) => (
                       <div
                         className="flex items-center gap-2 px-4 py-4 w-64 cursor-pointer hover:bg-gray-600 transition-colors rounded-md"
                         key={r.id}
