@@ -15,12 +15,18 @@ import {
   FaThumbsUp as ThumbsUp,
   FaUserCircle as User,
   FaTrashAlt as Trash,
-  FaFilePdf as Pdf
+  FaFilePdf as Pdf,
+  FaHome as Home
 } from 'react-icons/fa';
 
 import { CgSpinner as LSpinner } from 'react-icons/cg';
 
-import { MdOutlineOpenInNew as Preview, MdFileUpload as Upload } from 'react-icons/md';
+import {
+  MdOutlineOpenInNew as Preview,
+  MdFileUpload as Upload,
+  MdMessage as Message,
+  MdStickyNote2 as Note
+} from 'react-icons/md';
 
 export {
   Menu,
@@ -39,5 +45,8 @@ export {
   Preview,
   Upload,
   Pdf,
-  LSpinner
+  LSpinner,
+  Home,
+  Message,
+  Note
 };

@@ -185,10 +185,10 @@ const NoteModal: React.FC<ModalProps> = ({ isVisible, setIsVisible, subjects }) 
 
   return (
     <div
-      className={`fixed left-0 top-0 h-screen w-full bg-gray-500/60 z-20 items-center justify-center ${
+      className={`fixed left-0 top-0 h-screen w-full bg-gray-500/60 z-40 items-center justify-center ${
         isVisible ? 'fixed' : 'hidden'
       }`}>
-      <div className="fixed left-0 z-20 flex h-screen w-full outline-none items-center justify-center overflow-y-auto">
+      <div className="fixed left-0 z-40 flex h-screen w-full outline-none items-center justify-center overflow-y-auto">
         <div
           className={`flex flex-col w-full md:w-1/2 rounded-lg lg:px-32 bg-gray-200 dark:bg-gray-700 items-center justify-around relative overflow-x-hidden overflow-y-scroll`}>
           <button
