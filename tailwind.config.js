@@ -190,7 +190,8 @@ module.exports = {
           dark: '#222026'
         }
       }
-    }
+    },
+    important: true
   },
   variants: {
     backgroundColor: ['hover', 'focus', 'active', 'odd'],

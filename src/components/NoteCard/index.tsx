@@ -35,14 +35,17 @@ const NoteCard: React.FC<NoteCardParams> = ({ note }) => {
   }
 
   async function handleVisitNote(note: Note) {
-    const res = await fetch(BASE_URL + '/notes/' + note.id, {
+    const res = await fetch(BASE_URL + '/notes/' + note.id + '/view', {
+      method: 'POST',
       headers: {
         Authorization: `Bearer ${token}`
       }
     });
     if (!res.ok) swal('Erro', 'Não foi possível registar a visita ao resumo', 'error');
 
-    window.open(note.url, '_blank');
+    const data = await res.json();
+
+    window.open(data.url, '_blank');
   }
 
   return (
@@ -80,7 +83,7 @@ const NoteCard: React.FC<NoteCardParams> = ({ note }) => {
         <div className="flex md:items-center items-end justify-end gap-x-6 flex-col md:flex-row">
           {note.n_pages && (
             <span className="flex items-center justify-center gap-x-1.5 text-base font-light">
-              ({note.n_pages} <span>páginas</span>)
+              <span>({note.n_pages} páginas)</span>
             </span>
           )}
           <span className="flex items-center justify-center gap-x-1.5 text-base font-light">

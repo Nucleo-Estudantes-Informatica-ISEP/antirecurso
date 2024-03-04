@@ -13,8 +13,14 @@ import {
   FaRegThumbsUp as ThumbsUpOutline,
   FaSpinner as Spinner,
   FaThumbsUp as ThumbsUp,
-  FaUserCircle as User
+  FaUserCircle as User,
+  FaTrashAlt as Trash,
+  FaFilePdf as Pdf
 } from 'react-icons/fa';
+
+import { CgSpinner as LSpinner } from 'react-icons/cg';
+
+import { MdOutlineOpenInNew as Preview, MdFileUpload as Upload } from 'react-icons/md';
 
 export {
   Menu,
@@ -28,5 +34,10 @@ export {
   ThumbsUp,
   ThumbsUpOutline,
   EyeSplash,
-  EyeSlash
+  EyeSlash,
+  Trash,
+  Preview,
+  Upload,
+  Pdf,
+  LSpinner
 };

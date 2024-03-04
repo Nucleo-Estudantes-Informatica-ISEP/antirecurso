@@ -36,6 +36,11 @@ const admin: React.FC<AdminLayoutProps> = ({ children }) => {
                 📊 Charts
               </Link>
             </li>
+            <li className="text-lg">
+              <Link className="hover:text-primary" href="/admin/notes">
+                📜 Notes
+              </Link>
+            </li>
           </ul>
         </aside>
         <main className="ml-16 relative w-full h-full flex">{children}</main>
