@@ -119,38 +119,20 @@ const NoteModal: React.FC<ModalProps> = ({ isVisible, setIsVisible, subjects }) 
 
       setIsFileLoading(true);
 
-      const signed = await getSignedUrl('notes', file.type, session.token as string);
-      if (!signed) {
-        swal('Oops!', 'Ocorreu um erro no upload (getSignedUrl).', 'error', {
-          className: theme === 'dark' ? 'swal-dark' : ''
-        });
-        return setIsFileLoading(false);
-      }
-
-      if (file.size > signed.maxSize) {
-        swal('Oops!', 'O ficheiro é demasiado grande.', 'error', {
-          className: theme === 'dark' ? 'swal-dark' : ''
-        });
-        return setIsFileLoading(false);
-      }
-
-      const res = await uploadToBucket(signed, file);
-
-      if (res.status !== 200) {
-        swal('Oops!', 'Ocorreu um erro no upload (bucket).', 'error', {
-          className: theme === 'dark' ? 'swal-dark' : ''
-        });
-        return setIsFileLoading(false);
-      }
-
-      const previewUrl = URL.createObjectURL(file);
-
       try {
-        console.time('readpdf');
+        const signed = await getSignedUrl('notes', file.type, session.token as string);
+        if (!signed) throw new Error('Ocorreu um erro no upload (getSignedUrl).');
+
+        if (file.size > signed.maxSize) throw new Error('O ficheiro é demasiado grande.');
+
+        const res = await uploadToBucket(signed, file);
+        if (res.status !== 200) throw new Error('Ocorreu um erro no upload (bucket).');
+
+        const previewUrl = URL.createObjectURL(file);
+
         const arrayBuffer = await readFile(file);
         const document = await PDFDocument.load(arrayBuffer);
         const pages = document.getPageCount();
-        console.timeEnd('readpdf');
 
         setUploadedFile({
           id: signed.id,
@@ -159,15 +141,16 @@ const NoteModal: React.FC<ModalProps> = ({ isVisible, setIsVisible, subjects }) 
           pages
         });
       } catch (error) {
-        swal(
-          'Oops!',
-          'Não foi possível ler o pdf, verifica se o ficheiro está corrompido.',
-          'error',
-          {
-            className: theme === 'dark' ? 'swal-dark' : ''
-          }
-        );
         console.log(error);
+        if (error instanceof Error) {
+          let msg = error.message;
+          if (msg === '_this.catalog is undefined')
+            msg = 'Não foi possível ler o pdf, verifica se o ficheiro está corrompido.';
+
+          swal('Oops!', msg, 'error', {
+            className: theme === 'dark' ? 'swal-dark' : ''
+          });
+        }
       }
 
       setIsFileLoading(false);

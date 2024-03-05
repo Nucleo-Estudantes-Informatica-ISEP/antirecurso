@@ -1,18 +1,22 @@
 'use client';
 
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import swal from 'sweetalert';
 import { useTheme } from 'next-themes';
+import Image from 'next/image';
+import moment from 'moment';
+import 'moment/locale/pt';
 
 import { fetchSubjects } from '@/services/fetchSubjects';
 import fetchNotes from '@/services/fetchNotes';
 import useSession from '@/hooks/useSession';
 import Note from '@/types/Note';
-import NoteCard from '@/components/NoteCard';
 import PrimaryButton from '@/components/PrimaryButton';
 import NoteModal from '@/components/NoteModal';
 import SelectInput, { InputSelectOption } from '@/components/SelectInput';
 import LoadingSpinner from '@/components/LoadingSpinner';
+import { Eye, Pencil } from '@/styles/Icons';
+import { BASE_URL } from '@/services/api';
 
 const NotesPage: React.FC = () => {
   const { theme } = useTheme();
@@ -28,7 +32,9 @@ const NotesPage: React.FC = () => {
   const getSubjects = useCallback(async () => {
     try {
       const rawSubjects = await fetchSubjects();
-      const options = rawSubjects.map((s) => ({ value: s.id, label: s.name }));
+      const options = rawSubjects
+        .map((s) => ({ value: s.id, label: s.name }))
+        .sort((a, b) => a.label.localeCompare(b.label));
       setSubjects(options);
     } catch (error) {
       swal('Oops!', 'Não foi possível obter as disciplinas.', 'error', {
@@ -69,11 +75,113 @@ const NotesPage: React.FC = () => {
     setIsModalOpen(true);
   };
 
+  const handleOpenPreview = async (id: number) => {
+    const res = await fetch(`${BASE_URL}/notes/${id}/view`, {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${session.token}` }
+    });
+    if (!res.ok) swal('Erro', 'Não foi abrir a pré-visualização', 'error');
+    const data = await res.json();
+    window.open(data.url, '_blank');
+  };
+
+  moment.locale('pt');
+
   return (
     <>
-      <div className="h-full mt-4 flex flex-col items-center justify-center flex-1">
-        <h2 className="text-4xl font-black">Notes</h2>
-        <PrimaryButton className="mb-2" onClick={handleUploadClick}>
+      <div className="">
+        <h1 className="text-4xl font-bold mb-4">Notes</h1>
+
+        {isLoading ? (
+          <div>
+            <LoadingSpinner className="text-xl" />
+          </div>
+        ) : !selectedSubject ? (
+          <p>Seleciona uma disciplina.</p>
+        ) : !notes || !notes.length ? (
+          <p>Não existem resumos para a disciplina selecionada.</p>
+        ) : (
+          <div className="bg-gray-700 rounded-md p-4 drop-shadow-md">
+            <div className="overflow-x-scroll">
+              <table className="w-full text-left">
+                <thead className="font-bold">
+                  <tr>
+                    <th className="p-3">
+                      <span>Título</span>
+                    </th>
+                    <th className="p-3">
+                      <span>Autor</span>
+                    </th>
+                    <th className="p-3">
+                      <span>Páginas</span>
+                    </th>
+                    <th className="p-3">
+                      <span>Likes</span>
+                    </th>
+                    <th className="p-3">
+                      <span>Views</span>
+                    </th>
+                    <th className="p-3">
+                      <span>Criado</span>
+                    </th>
+                    <th className="p-3"></th>
+                    <th className="p-3"></th>
+                  </tr>
+                </thead>
+                <tbody className="[&_span]:font-normal">
+                  {notes?.map((n) => (
+                    <tr key={n.id} className="odd:bg-gray-600 hover:bg-gray-500 transition-colors">
+                      <th className="p-3 truncate">
+                        <span>{n.title}</span>
+                      </th>
+                      <th className="p-3 truncate text-ellipsis">
+                        <div className="flex flex-row gap-2 items-center">
+                          <Image
+                            className="w-6 md:w-8 rounded-full aspect-square"
+                            src={`https://gravatar.com/avatar/${n.user.avatar}?s=64&d=identicon`}
+                            alt={n.user.name}
+                            loading="lazy"
+                            width={24}
+                            height={24}
+                            title={n.user.name}
+                          />
+                          <span>{n.user.name}</span>
+                        </div>
+                      </th>
+                      <th className="p-3">
+                        <span>{n.n_pages || '-'}</span>
+                      </th>
+                      <th className="p-3">
+                        <span>{n.likes}</span>
+                      </th>
+                      <th className="p-3">
+                        <span>{n.views}</span>
+                      </th>
+                      <th className="p-3">
+                        <span>{moment(n.created_at).fromNow()}</span>
+                      </th>
+                      <th
+                        className="p-3 cursor-pointer hover:text-primary transition-colors"
+                        onClick={() => handleOpenPreview(n.id)}>
+                        <div className="flex justify-center">
+                          <Eye />
+                        </div>
+                      </th>
+                      <th className="p-3 cursor-pointer hover:text-primary transition-colors text-center">
+                        {/* onClick={() => handleEdit(n.id)}> */}
+                        <div className="flex justify-center">
+                          <Pencil />
+                        </div>
+                      </th>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        )}
+
+        <PrimaryButton className="my-2" onClick={handleUploadClick}>
           Upload
         </PrimaryButton>
         {!subjects ? (
@@ -87,23 +195,6 @@ const NotesPage: React.FC = () => {
             className="w-full mb-4"
             onChange={handleSubjectChange}
           />
-        )}
-
-        {isLoading ? (
-          <div>
-            <LoadingSpinner className="text-xl" />
-          </div>
-        ) : (
-          selectedSubject &&
-          (!notes || !notes.length ? (
-            <p>Notes not found.</p>
-          ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 justify-items-center w-full items-center gap-16">
-              {notes?.map((n) => (
-                <NoteCard note={n} key={n.id} />
-              ))}
-            </div>
-          ))
         )}
       </div>
 

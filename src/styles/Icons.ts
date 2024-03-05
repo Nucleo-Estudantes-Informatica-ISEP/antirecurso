@@ -16,7 +16,10 @@ import {
   FaUserCircle as User,
   FaTrashAlt as Trash,
   FaFilePdf as Pdf,
-  FaHome as Home
+  FaHome as Home,
+  FaChevronLeft as LeftArrow,
+  FaChevronRight as RightArrow,
+  FaPencilAlt as Pencil
 } from 'react-icons/fa';
 
 import { CgSpinner as LSpinner } from 'react-icons/cg';
@@ -48,5 +51,8 @@ export {
   LSpinner,
   Home,
   Message,
-  Note
+  Note,
+  LeftArrow,
+  RightArrow,
+  Pencil
 };
