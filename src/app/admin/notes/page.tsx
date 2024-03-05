@@ -15,7 +15,7 @@ import PrimaryButton from '@/components/PrimaryButton';
 import NoteModal from '@/components/NoteModal';
 import SelectInput, { InputSelectOption } from '@/components/SelectInput';
 import LoadingSpinner from '@/components/LoadingSpinner';
-import { Eye, Pencil } from '@/styles/Icons';
+import { Add, Eye, Pencil } from '@/styles/Icons';
 import { BASE_URL } from '@/services/api';
 
 const NotesPage: React.FC = () => {
@@ -92,17 +92,40 @@ const NotesPage: React.FC = () => {
       <div className="">
         <h1 className="text-4xl font-bold mb-4">Notes</h1>
 
-        {isLoading ? (
-          <div>
-            <LoadingSpinner className="text-xl" />
+        <div className="bg-gray-700 rounded-md p-4 drop-shadow-md">
+          <div className="flex items-center mb-4">
+            <span className="mr-2">Filtrar: </span>
+            {!subjects ? (
+              <div>
+                <LoadingSpinner className="text-xl" />
+              </div>
+            ) : (
+              <div className="w-72 mr-4">
+                <SelectInput
+                  placeholder="Disciplina"
+                  options={subjects}
+                  className="flex w-full"
+                  onChange={handleSubjectChange}
+                />
+              </div>
+            )}
+            <button
+              className="rounded-md bg-primary p-1 ml-auto text-2xl"
+              onClick={handleUploadClick}>
+              <Add />
+            </button>
           </div>
-        ) : !selectedSubject ? (
-          <p>Seleciona uma disciplina.</p>
-        ) : !notes || !notes.length ? (
-          <p>Não existem resumos para a disciplina selecionada.</p>
-        ) : (
-          <div className="bg-gray-700 rounded-md p-4 drop-shadow-md">
-            <div className="overflow-x-scroll">
+
+          <div className="overflow-x-scroll">
+            {isLoading ? (
+              <div>
+                <LoadingSpinner className="text-xl" />
+              </div>
+            ) : !selectedSubject ? (
+              <p>Seleciona uma disciplina.</p>
+            ) : !notes || !notes.length ? (
+              <p>Não existem resumos para a disciplina selecionada.</p>
+            ) : (
               <table className="w-full text-left">
                 <thead className="font-bold">
                   <tr>
@@ -160,42 +183,26 @@ const NotesPage: React.FC = () => {
                       <th className="p-3">
                         <span>{moment(n.created_at).fromNow()}</span>
                       </th>
-                      <th
-                        className="p-3 cursor-pointer hover:text-primary transition-colors"
-                        onClick={() => handleOpenPreview(n.id)}>
-                        <div className="flex justify-center">
+                      <th>
+                        <button
+                          className="hover:text-primary transition-colors p-3"
+                          onClick={() => handleOpenPreview(n.id)}>
                           <Eye />
-                        </div>
+                        </button>
                       </th>
-                      <th className="p-3 cursor-pointer hover:text-primary transition-colors text-center">
+                      <th>
                         {/* onClick={() => handleEdit(n.id)}> */}
-                        <div className="flex justify-center">
+                        <button className="hover:text-primary transition-colors p-3">
                           <Pencil />
-                        </div>
+                        </button>
                       </th>
                     </tr>
                   ))}
                 </tbody>
               </table>
-            </div>
+            )}
           </div>
-        )}
-
-        <PrimaryButton className="my-2" onClick={handleUploadClick}>
-          Upload
-        </PrimaryButton>
-        {!subjects ? (
-          <div>
-            <LoadingSpinner className="text-xl" />
-          </div>
-        ) : (
-          <SelectInput
-            placeholder="Select a subject."
-            options={subjects}
-            className="w-full mb-4"
-            onChange={handleSubjectChange}
-          />
-        )}
+        </div>
       </div>
 
       <NoteModal isVisible={isModalOpen} setIsVisible={setIsModalOpen} subjects={subjects} />

@@ -28,7 +28,8 @@ import {
   MdOutlineOpenInNew as Preview,
   MdFileUpload as Upload,
   MdMessage as Message,
-  MdStickyNote2 as Note
+  MdStickyNote2 as Note,
+  MdOutlineAdd as Add
 } from 'react-icons/md';
 
 export {
@@ -54,5 +55,6 @@ export {
   Note,
   LeftArrow,
   RightArrow,
-  Pencil
+  Pencil,
+  Add
 };

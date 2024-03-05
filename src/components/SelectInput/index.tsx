@@ -24,7 +24,7 @@ const SelectInput: React.FC<InputSelectProps> = ({
   ...rest
 }) => {
   return (
-    <div className="flex w-full flex-col">
+    <>
       {name && (
         <label
           className={`text-slate-700 md:text-lg ${center ? ' mb-4 text-center' : ''}`}
@@ -50,7 +50,7 @@ const SelectInput: React.FC<InputSelectProps> = ({
             </option>
           ))}
       </select>
-    </div>
+    </>
   );
 };
 
