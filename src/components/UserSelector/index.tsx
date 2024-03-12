@@ -36,6 +36,11 @@ const UserSelector: React.FC<UserSelectorProps> = ({ selected, setSelected }) =>
     setQuery('');
   };
 
+  const handleDeselect = async () => {
+    setSelected(null);
+    // TODO: focus on input on next rerender
+  };
+
   return (
     <div>
       {selected ? (
@@ -50,9 +55,9 @@ const UserSelector: React.FC<UserSelectorProps> = ({ selected, setSelected }) =>
             className="rounded-full aspect-square"
           />
           <span className="font-bold">{selected.name}</span>
-          <span onClick={() => setSelected(null)} className="cursor-pointer ml-auto text-red-500">
+          <button onClick={handleDeselect} className="cursor-pointer ml-auto text-red-500">
             X
-          </span>
+          </button>
         </div>
       ) : (
         <>
@@ -74,7 +79,7 @@ const UserSelector: React.FC<UserSelectorProps> = ({ selected, setSelected }) =>
                     <div className="w-52 px-4 py-2 text-center">No results.</div>
                   ) : (
                     users?.map((r: User) => (
-                      <div
+                      <button
                         className="flex items-center gap-2 px-4 py-4 w-64 cursor-pointer hover:bg-gray-600 transition-colors rounded-md"
                         key={r.id}
                         onClick={() => handleSelectUser(r)}>
@@ -88,7 +93,7 @@ const UserSelector: React.FC<UserSelectorProps> = ({ selected, setSelected }) =>
                           className="rounded-full aspect-square"
                         />
                         <span>{r.name}</span>
-                      </div>
+                      </button>
                     ))
                   ))}
               </div>
