@@ -19,7 +19,7 @@ const SubjectNotes: React.FC<SubjectNotesProps> = async ({ params }) => {
   }
 
   const notes = await fetchNotes(params.id, token);
-  const subject = notes[0]?.subject.name;
+  const subject = notes.data[0]?.subject.name;
 
   return (
     <section className="flex flex-col items-center gap-y-8 py-8 w-full text-center px-6 md:px-16 relative">
@@ -29,7 +29,7 @@ const SubjectNotes: React.FC<SubjectNotesProps> = async ({ params }) => {
         </p>
       )}
 
-      {notes.length === 0 ? (
+      {notes.data.length === 0 ? (
         <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 gap-y-4 flex flex-col">
           <p className="text-xl font-bold">
             Parece que ainda não há nenhum <span className="font-bold text-primary">resumo</span>{' '}
@@ -46,7 +46,7 @@ const SubjectNotes: React.FC<SubjectNotesProps> = async ({ params }) => {
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 justify-items-center w-full items-center gap-16">
-          {notes.map((note) => (
+          {notes.data.map((note) => (
             <NoteCard key={note.id} note={note} />
           ))}
         </div>

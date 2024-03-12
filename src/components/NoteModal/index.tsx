@@ -1,9 +1,10 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { Dispatch, SetStateAction, useCallback, useEffect, useRef, useState } from 'react';
 import { useTheme } from 'next-themes';
 import { PDFDocument } from 'pdf-lib';
 import swal from 'sweetalert';
+import { KeyedMutator } from 'swr';
 
 import useSession from '@/hooks/useSession';
 import PrimaryButton from '@/components/PrimaryButton';
@@ -16,14 +17,17 @@ import UserSelector from '@/components/UserSelector';
 import User from '@/types/User';
 import { readFile } from '@/utils/files';
 import { BASE_URL } from '@/services/api';
+import Note from '@/types/Note';
 
 interface ModalProps {
-  isVisible?: boolean;
   setIsVisible: React.Dispatch<React.SetStateAction<boolean>>;
   subjects?: InputSelectOption[];
+  mutate: KeyedMutator<string>;
+  edit?: Note;
+  setEdit: Dispatch<SetStateAction<Note | undefined>>;
 }
 
-const NoteModal: React.FC<ModalProps> = ({ isVisible, setIsVisible, subjects }) => {
+const NoteModal: React.FC<ModalProps> = ({ setIsVisible, subjects, mutate, edit, setEdit }) => {
   const session = useSession();
   const { theme } = useTheme();
 
@@ -36,6 +40,14 @@ const NoteModal: React.FC<ModalProps> = ({ isVisible, setIsVisible, subjects }) 
   const [uploadedFile, setUploadedFile] = useState<UploadedFile>();
 
   const [author, setAuthor] = useState<User | null>(null);
+
+  const handleClose = useCallback(() => {
+    setIsVisible(false);
+    setUploadedFile(undefined);
+    setAuthor(null);
+    setEdit(undefined);
+    mutate();
+  }, [setIsVisible, setEdit, mutate]);
 
   const handleSubmit = async () => {
     const title = titleRef.current?.value;
@@ -56,7 +68,7 @@ const NoteModal: React.FC<ModalProps> = ({ isVisible, setIsVisible, subjects }) 
         className: theme === 'dark' ? 'swal-dark' : ''
       });
 
-    if (isFileLoading || !uploadedFile)
+    if (!edit && (isFileLoading || !uploadedFile))
       return swal('Oops!', 'Tens de carregar um ficheiro.', 'error', {
         className: theme === 'dark' ? 'swal-dark' : ''
       });
@@ -67,13 +79,13 @@ const NoteModal: React.FC<ModalProps> = ({ isVisible, setIsVisible, subjects }) 
       });
 
     const res = await fetch(BASE_URL + '/subjects/' + subject + '/notes', {
-      method: 'POST',
+      method: !edit ? 'POST' : 'PATCH',
       body: JSON.stringify({
-        upload_id: uploadedFile.id,
+        upload_id: uploadedFile?.id,
         author_id: author.id,
         title,
         description,
-        n_pages: uploadedFile.pages
+        n_pages: uploadedFile?.pages
       }),
       headers: {
         Accept: 'application/json',
@@ -99,14 +111,7 @@ const NoteModal: React.FC<ModalProps> = ({ isVisible, setIsVisible, subjects }) 
       className: theme === 'dark' ? 'swal-dark' : '',
       timer: 2000
     });
-    setIsVisible(false);
-
-    // clear
-    titleRef.current.value = '';
-    descRef.current.value = '';
-    setSubject(undefined);
-    setUploadedFile(undefined);
-    setAuthor(null);
+    handleClose();
   };
 
   const handleSubjectChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -159,28 +164,30 @@ const NoteModal: React.FC<ModalProps> = ({ isVisible, setIsVisible, subjects }) 
 
   useEffect(() => {
     const closeWithEsc = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') setIsVisible(false);
+      if (e.key === 'Escape') handleClose();
     };
     window.addEventListener('keydown', closeWithEsc);
 
+    if (edit) {
+      setAuthor(edit.user);
+      setSubject(edit.subject.id.toString());
+    }
+
     return () => window.removeEventListener('keydown', closeWithEsc);
-  }, [setIsVisible]);
+  }, [handleClose]);
 
   return (
-    <div
-      className={`fixed left-0 top-0 h-screen w-full bg-gray-500/60 z-40 items-center justify-center ${
-        isVisible ? 'fixed' : 'hidden'
-      }`}>
+    <div className="fixed left-0 top-0 h-screen w-full bg-gray-500/60 z-40 items-center justify-center">
       <div className="fixed left-0 z-40 flex h-screen w-full outline-none items-center justify-center overflow-y-auto">
         <div
           className={`flex flex-col w-full md:w-1/2 rounded-lg lg:px-32 bg-gray-200 dark:bg-gray-700 items-center justify-around relative overflow-x-hidden overflow-y-scroll`}>
           <button
-            onClick={() => setIsVisible(false)}
+            onClick={handleClose}
             className="text-2xl font-black text-red-500 hover:text-red-600 z-20 absolute top-10 right-10">
             X
           </button>
           <span className="w-full text-center text-xl lg:text-3xl font-black mb-6 px-2 pt-10">
-            Add Note
+            {!edit ? 'Adicionar Resumo' : 'Editar Resumo'}
           </span>
           <div className="h-full w-full">
             <div className="flex flex-col justify-between mb-6">
@@ -189,6 +196,7 @@ const NoteModal: React.FC<ModalProps> = ({ isVisible, setIsVisible, subjects }) 
                 type="text"
                 className="w-full px-1.5 md:px-4 py-2 rounded bg-transparent border"
                 ref={titleRef}
+                defaultValue={edit?.title}
               />
             </div>
 
@@ -198,6 +206,7 @@ const NoteModal: React.FC<ModalProps> = ({ isVisible, setIsVisible, subjects }) 
                 className="w-full px-1.5 md:px-4 py-2 rounded bg-transparent border"
                 rows={2}
                 ref={descRef}
+                defaultValue={edit?.description}
               />
             </div>
 
@@ -206,7 +215,8 @@ const NoteModal: React.FC<ModalProps> = ({ isVisible, setIsVisible, subjects }) 
               <SelectInput
                 options={subjects?.sort((a, b) => a.label.localeCompare(b.label))}
                 onChange={handleSubjectChange}
-                placeholder="Select a subject."
+                placeholder="Seleciona uma disciplina."
+                defaultValue={edit?.subject.id}
               />
             </div>
 
@@ -234,7 +244,7 @@ const NoteModal: React.FC<ModalProps> = ({ isVisible, setIsVisible, subjects }) 
 
             <div className="flex items-left mb-12">
               <PrimaryButton onClick={handleSubmit} className="w-full text-xl !font-bold">
-                Adicionar
+                {!edit ? 'Adicionar' : 'Guardar'}
               </PrimaryButton>
             </div>
           </div>

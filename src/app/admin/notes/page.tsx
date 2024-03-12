@@ -5,27 +5,26 @@ import swal from 'sweetalert';
 import { useTheme } from 'next-themes';
 import Image from 'next/image';
 import moment from 'moment';
+import useSWR from 'swr';
 import 'moment/locale/pt';
 
 import { fetchSubjects } from '@/services/fetchSubjects';
-import fetchNotes from '@/services/fetchNotes';
 import useSession from '@/hooks/useSession';
 import Note from '@/types/Note';
-import PrimaryButton from '@/components/PrimaryButton';
 import NoteModal from '@/components/NoteModal';
 import SelectInput, { InputSelectOption } from '@/components/SelectInput';
 import LoadingSpinner from '@/components/LoadingSpinner';
 import { Add, Eye, Pencil } from '@/styles/Icons';
 import { BASE_URL } from '@/services/api';
+import Pagination from '@/types/Pagination';
 
 const NotesPage: React.FC = () => {
   const { theme } = useTheme();
 
   const [subjects, setSubjects] = useState<InputSelectOption[]>();
-  const [isLoading, setIsLoading] = useState<boolean>(false);
   const [selectedSubject, setSelectedSubject] = useState<string>();
-  const [notes, setNotes] = useState<Note[]>();
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const [editNote, setEditNote] = useState<Note | undefined>();
 
   const session = useSession();
 
@@ -43,31 +42,24 @@ const NotesPage: React.FC = () => {
     }
   }, [theme]);
 
-  const getNotes = useCallback(async () => {
-    if (!selectedSubject) return;
-    setNotes(undefined);
-
-    try {
-      const n = await fetchNotes(selectedSubject?.toString(), session.token as string);
-      setNotes(n);
-      setIsLoading(false);
-    } catch (error) {
-      swal('Oops!', 'Não foi possível obter os resumos da disciplina.', 'error', {
-        className: theme === 'dark' ? 'swal-dark' : ''
-      });
-    }
-  }, [selectedSubject, session.token, theme]);
-
   useEffect(() => {
     getSubjects();
   }, [getSubjects]);
 
-  useEffect(() => {
-    getNotes();
-  }, [getNotes]);
+  const fetcher = (url: RequestInfo | URL) => {
+    if (!selectedSubject) return;
+    return fetch(url, { headers: { Authorization: 'Bearer ' + session.token } }).then((res) =>
+      res.json()
+    );
+  };
+
+  const { data, isLoading, mutate } = useSWR(
+    `${BASE_URL}/subjects/${selectedSubject}/notes?limit=999`,
+    fetcher
+  );
+  const notes: Pagination<Note> = data;
 
   const handleSubjectChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    setIsLoading(true);
     setSelectedSubject(e.target.value);
   };
 
@@ -85,12 +77,17 @@ const NotesPage: React.FC = () => {
     window.open(data.url, '_blank');
   };
 
+  const handleEdit = (note: Note) => {
+    setEditNote(note);
+    setIsModalOpen(true);
+  };
+
   moment.locale('pt');
 
   return (
     <>
       <div className="">
-        <h1 className="text-4xl font-bold mb-4">Notes</h1>
+        <h1 className="text-4xl font-bold mb-4">Resumos</h1>
 
         <div className="bg-gray-700 rounded-md p-4 drop-shadow-md">
           <div className="flex items-center mb-4">
@@ -110,102 +107,121 @@ const NotesPage: React.FC = () => {
               </div>
             )}
             <button
-              className="rounded-md bg-primary p-1 ml-auto text-2xl"
+              className="rounded-md bg-primary p-1 ml-auto text-2xl hover:bg-opacity-80 transition-colors"
               onClick={handleUploadClick}>
               <Add />
             </button>
           </div>
 
-          <div className="overflow-x-scroll">
-            {isLoading ? (
-              <div>
-                <LoadingSpinner className="text-xl" />
-              </div>
-            ) : !selectedSubject ? (
-              <p>Seleciona uma disciplina.</p>
-            ) : !notes || !notes.length ? (
-              <p>Não existem resumos para a disciplina selecionada.</p>
-            ) : (
-              <table className="w-full text-left">
-                <thead className="font-bold">
-                  <tr>
-                    <th className="p-3">
-                      <span>Título</span>
-                    </th>
-                    <th className="p-3">
-                      <span>Autor</span>
-                    </th>
-                    <th className="p-3">
-                      <span>Páginas</span>
-                    </th>
-                    <th className="p-3">
-                      <span>Likes</span>
-                    </th>
-                    <th className="p-3">
-                      <span>Views</span>
-                    </th>
-                    <th className="p-3">
-                      <span>Criado</span>
-                    </th>
-                    <th className="p-3"></th>
-                    <th className="p-3"></th>
-                  </tr>
-                </thead>
-                <tbody className="[&_span]:font-normal">
-                  {notes?.map((n) => (
-                    <tr key={n.id} className="odd:bg-gray-600 hover:bg-gray-500 transition-colors">
-                      <th className="p-3 truncate">
-                        <span>{n.title}</span>
-                      </th>
-                      <th className="p-3 truncate text-ellipsis">
-                        <div className="flex flex-row gap-2 items-center">
-                          <Image
-                            className="w-6 md:w-8 rounded-full aspect-square"
-                            src={`https://gravatar.com/avatar/${n.user.avatar}?s=64&d=identicon`}
-                            alt={n.user.name}
-                            loading="lazy"
-                            width={24}
-                            height={24}
-                            title={n.user.name}
-                          />
-                          <span>{n.user.name}</span>
-                        </div>
+          {isLoading ? (
+            <div>
+              <LoadingSpinner className="text-xl" />
+            </div>
+          ) : !selectedSubject ? (
+            <p>Seleciona uma disciplina.</p>
+          ) : !notes || !notes.meta.total ? (
+            <p>Não existem resumos para a disciplina selecionada.</p>
+          ) : (
+            <>
+              <div className="overflow-x-scroll">
+                <table className="w-full text-left">
+                  <thead className="font-bold">
+                    <tr>
+                      <th className="p-3">
+                        <span>Título</span>
                       </th>
                       <th className="p-3">
-                        <span>{n.n_pages || '-'}</span>
+                        <span>Autor</span>
                       </th>
                       <th className="p-3">
-                        <span>{n.likes}</span>
+                        <span>Páginas</span>
                       </th>
                       <th className="p-3">
-                        <span>{n.views}</span>
+                        <span>Likes</span>
                       </th>
                       <th className="p-3">
-                        <span>{moment(n.created_at).fromNow()}</span>
+                        <span>Views</span>
                       </th>
-                      <th>
-                        <button
-                          className="hover:text-primary transition-colors p-3"
-                          onClick={() => handleOpenPreview(n.id)}>
-                          <Eye />
-                        </button>
+                      <th className="p-3">
+                        <span>Criado</span>
                       </th>
-                      <th>
-                        {/* onClick={() => handleEdit(n.id)}> */}
-                        <button className="hover:text-primary transition-colors p-3">
-                          <Pencil />
-                        </button>
-                      </th>
+                      <th className="p-3"></th>
+                      <th className="p-3"></th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
-            )}
-          </div>
+                  </thead>
+                  <tbody className="[&_span]:font-normal">
+                    {notes.data.map((n) => (
+                      <tr
+                        key={n.id}
+                        className="odd:bg-gray-600 hover:bg-gray-500 transition-colors">
+                        <th className="p-3 truncate">
+                          <span>{n.title}</span>
+                        </th>
+                        <th className="p-3 truncate text-ellipsis">
+                          <div className="flex flex-row gap-2 items-center">
+                            <Image
+                              className="w-6 md:w-8 rounded-full aspect-square"
+                              src={`https://gravatar.com/avatar/${n.user.avatar}?s=64&d=identicon`}
+                              alt={n.user.name}
+                              loading="lazy"
+                              width={24}
+                              height={24}
+                              title={n.user.name}
+                            />
+                            <span>{n.user.name}</span>
+                          </div>
+                        </th>
+                        <th className="p-3">
+                          <span>{n.n_pages || '-'}</span>
+                        </th>
+                        <th className="p-3">
+                          <span>{n.likes}</span>
+                        </th>
+                        <th className="p-3">
+                          <span>{n.views}</span>
+                        </th>
+                        <th className="p-3">
+                          <span title={moment(n.created_at).format('LLLL')}>
+                            {moment(n.created_at).fromNow()}
+                          </span>
+                        </th>
+                        <th>
+                          <button
+                            className="hover:text-primary transition-colors p-3"
+                            onClick={() => handleOpenPreview(n.id)}>
+                            <Eye />
+                          </button>
+                        </th>
+                        <th onClick={() => handleEdit(n)}>
+                          <button className="hover:text-primary transition-colors p-3">
+                            <Pencil />
+                          </button>
+                        </th>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+
+              <div className="flex justify-center mt-4">
+                <span>
+                  {notes?.meta.total} item{notes?.meta.total !== 1 && 's'}
+                </span>
+              </div>
+            </>
+          )}
         </div>
       </div>
 
-      <NoteModal isVisible={isModalOpen} setIsVisible={setIsModalOpen} subjects={subjects} />
+      {isModalOpen && (
+        <NoteModal
+          setIsVisible={setIsModalOpen}
+          subjects={subjects}
+          mutate={mutate}
+          edit={editNote}
+          setEdit={setEditNote}
+        />
+      )}
     </>
   );
 };

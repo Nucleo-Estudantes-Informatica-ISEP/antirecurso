@@ -1,10 +1,11 @@
 'use client';
 
 import { Dispatch, SetStateAction } from 'react';
-import PreviousExamResponseMetadata from 'src/types/PreviousExamResponseMetadata';
+
+import { PaginationMetadata } from '@/types/Pagination';
 
 interface PaginationProps {
-  metadata: PreviousExamResponseMetadata;
+  metadata: PaginationMetadata;
   setFetchUrl: Dispatch<SetStateAction<string | null>>;
 }
 

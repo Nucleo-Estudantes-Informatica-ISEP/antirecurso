@@ -4,7 +4,7 @@ import User from './User';
 export default interface Note {
   id: number;
   title: string;
-  url: string;
+  url: string | null;
   views: number;
   user: User;
   subject: Subject;
@@ -13,4 +13,5 @@ export default interface Note {
   likes: number;
   is_liked: boolean;
   created_at: Date;
+  upload_id: string | null;
 }
