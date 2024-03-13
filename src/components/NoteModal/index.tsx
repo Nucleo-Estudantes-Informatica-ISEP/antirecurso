@@ -49,7 +49,7 @@ const NoteModal: React.FC<ModalProps> = ({ setIsVisible, subjects, mutate, edit,
     mutate();
   }, [setIsVisible, setEdit, mutate]);
 
-  const handleSubmit = async () => {
+  const handleSubmit = useCallback(async () => {
     const title = titleRef.current?.value;
     const description = descRef.current?.value;
 
@@ -114,7 +114,7 @@ const NoteModal: React.FC<ModalProps> = ({ setIsVisible, subjects, mutate, edit,
       timer: 2000
     });
     handleClose();
-  };
+  }, [author, subject, uploadedFile, isFileLoading, edit, session.token, theme, handleClose]);
 
   const handleSubjectChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setSubject(e.target.value);
@@ -165,18 +165,21 @@ const NoteModal: React.FC<ModalProps> = ({ setIsVisible, subjects, mutate, edit,
   };
 
   useEffect(() => {
-    const closeWithEsc = (e: KeyboardEvent) => {
+    const keydownEvent = (e: KeyboardEvent) => {
       if (e.key === 'Escape') handleClose();
+      else if (e.key === 'Enter') handleSubmit();
     };
-    window.addEventListener('keydown', closeWithEsc);
+    window.addEventListener('keydown', keydownEvent);
 
     if (edit) {
       setAuthor(edit.user);
       setSubject(edit.subject.id.toString());
     }
 
-    return () => window.removeEventListener('keydown', closeWithEsc);
-  }, [handleClose]);
+    titleRef.current?.focus();
+
+    return () => window.removeEventListener('keydown', keydownEvent);
+  }, [handleClose, edit, handleSubmit]);
 
   return (
     <div className="fixed left-0 top-0 h-screen w-full bg-gray-500/60 z-40 items-center justify-center">
