@@ -20,12 +20,14 @@ const Sidebar: React.FC<SidebarProps> = () => {
 
   return (
     <>
-      <nav className="fixed w-64 -left-64 md:left-0 top-20 bottom-0 bg-secondary-dark overflow-y-scroll z-30">
+      <nav className="fixed w-64 -left-64 md:left-0 top-20 bottom-0 overflow-y-scroll z-30 shadow-md dark:bg-secondary-dark">
         <ul className="mb-12">
-          <li className="mt-4 mb-2 font-bold text-gray-300">
+          <li className="mt-4 mb-2 font-bold dark:text-gray-300">
             <div className="px-4 flex flex-1 items-center justify-between">
               <span>Menu</span>
-              <LeftArrow className="cursor-pointer" />
+              <button className="cursor-pointer">
+                <LeftArrow />
+              </button>
             </div>
           </li>
 
@@ -34,11 +36,11 @@ const Sidebar: React.FC<SidebarProps> = () => {
               key={k}
               className={`${
                 !item.link ? 'mt-4 mb-2 font-bold' : 'flex flex-row items-center'
-              } text-gray-300`}>
+              } dark:text-gray-300`}>
               {item.link ? (
                 <Link
                   href={item.link}
-                  className="flex flex-row items-center gap-4 p-4 hover:text-white hover:bg-gray-700 transition-colors w-full">
+                  className="flex flex-row items-center gap-4 w-full p-4 hover:bg-gray-200 dark:hover:text-white dark:hover:bg-gray-700 transition-colors">
                   {item.icon}
                   {item.label}
                 </Link>

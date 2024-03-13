@@ -89,7 +89,7 @@ const NotesPage: React.FC = () => {
       <div className="">
         <h1 className="text-4xl font-bold mb-4">Resumos</h1>
 
-        <div className="bg-gray-700 rounded-md p-4 drop-shadow-md">
+        <div className="bg-gray-100 dark:bg-gray-700 rounded-md p-4 shadow-md">
           <div className="flex items-center mb-4">
             <span className="mr-2">Filtrar: </span>
             {!subjects ? (
@@ -107,7 +107,7 @@ const NotesPage: React.FC = () => {
               </div>
             )}
             <button
-              className="rounded-md bg-primary p-1 ml-auto text-2xl hover:bg-opacity-80 transition-colors"
+              className="rounded-md text-white bg-primary p-1 ml-auto text-2xl hover:bg-opacity-80 transition-colors"
               onClick={handleUploadClick}>
               <Add />
             </button>
@@ -153,7 +153,7 @@ const NotesPage: React.FC = () => {
                     {notes.data.map((n) => (
                       <tr
                         key={n.id}
-                        className="odd:bg-gray-600 hover:bg-gray-500 transition-colors">
+                        className="odd:bg-gray-200 hover:bg-gray-300 dark:odd:bg-gray-600 dark:hover:bg-gray-500 transition-colors">
                         <th className="p-3 truncate">
                           <span>{n.title}</span>
                         </th>

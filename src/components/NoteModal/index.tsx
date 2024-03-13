@@ -18,6 +18,7 @@ import User from '@/types/User';
 import { readFile } from '@/utils/files';
 import { BASE_URL } from '@/services/api';
 import Note from '@/types/Note';
+import LoadingSpinner from '../LoadingSpinner';
 
 interface ModalProps {
   setIsVisible: React.Dispatch<React.SetStateAction<boolean>>;
@@ -40,6 +41,8 @@ const NoteModal: React.FC<ModalProps> = ({ setIsVisible, subjects, mutate, edit,
   const [uploadedFile, setUploadedFile] = useState<UploadedFile>();
 
   const [author, setAuthor] = useState<User | null>(null);
+
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 
   const handleClose = useCallback(() => {
     setIsVisible(false);
@@ -78,6 +81,8 @@ const NoteModal: React.FC<ModalProps> = ({ setIsVisible, subjects, mutate, edit,
         className: theme === 'dark' ? 'swal-dark' : ''
       });
 
+    setIsSubmitting(true);
+
     const url = !edit ? `${BASE_URL}/subjects/${subject}/notes` : `${BASE_URL}/notes/${edit.id}`;
     const res = await fetch(url, {
       method: !edit ? 'POST' : 'PATCH',
@@ -103,7 +108,7 @@ const NoteModal: React.FC<ModalProps> = ({ setIsVisible, subjects, mutate, edit,
         'error',
         { className: theme === 'dark' ? 'swal-dark' : '' }
       );
-      return;
+      return setIsSubmitting(false);
     }
 
     swal({
@@ -167,19 +172,21 @@ const NoteModal: React.FC<ModalProps> = ({ setIsVisible, subjects, mutate, edit,
   useEffect(() => {
     const keydownEvent = (e: KeyboardEvent) => {
       if (e.key === 'Escape') handleClose();
-      else if (e.key === 'Enter') handleSubmit();
+      else if (e.key === 'Enter' && !isSubmitting) handleSubmit();
     };
     window.addEventListener('keydown', keydownEvent);
 
+    return () => window.removeEventListener('keydown', keydownEvent);
+  }, [handleClose, handleSubmit, isSubmitting]);
+
+  useEffect(() => {
     if (edit) {
       setAuthor(edit.user);
       setSubject(edit.subject.id.toString());
     }
 
     titleRef.current?.focus();
-
-    return () => window.removeEventListener('keydown', keydownEvent);
-  }, [handleClose, edit, handleSubmit]);
+  }, [edit]);
 
   return (
     <div className="fixed left-0 top-0 h-screen w-full bg-gray-500/60 z-40 items-center justify-center">
@@ -248,8 +255,17 @@ const NoteModal: React.FC<ModalProps> = ({ setIsVisible, subjects, mutate, edit,
             </div>
 
             <div className="flex items-left mb-12">
-              <PrimaryButton onClick={handleSubmit} className="w-full text-xl !font-bold">
-                {!edit ? 'Adicionar' : 'Guardar'}
+              <PrimaryButton
+                onClick={handleSubmit}
+                disabled={isSubmitting}
+                className="w-full text-xl !font-bold">
+                {isSubmitting ? (
+                  <LoadingSpinner className="mx-auto" />
+                ) : !edit ? (
+                  'Adicionar'
+                ) : (
+                  'Guardar'
+                )}
               </PrimaryButton>
             </div>
           </div>

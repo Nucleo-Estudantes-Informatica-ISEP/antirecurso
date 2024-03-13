@@ -27,7 +27,7 @@ const UserSelector: React.FC<UserSelectorProps> = ({ selected, setSelected }) =>
     keepPreviousData: true
   });
 
-  const users = data && !!query.length ? data.data : null;
+  const users: User[] | null = data && !!query.length ? data.data : null;
 
   const { token } = useSession();
 
@@ -69,18 +69,18 @@ const UserSelector: React.FC<UserSelectorProps> = ({ selected, setSelected }) =>
           />
           <div className="relative">
             {isLoading ? (
-              <div className="absolute bg-gray-700 rounded-md w-52 px-4 py-2 text-center">
+              <div className="absolute bg-gray-200 dark:bg-gray-700 rounded-md w-52 px-4 py-2 text-center">
                 <LoadingSpinner className="text-xl mx-auto" />
               </div>
             ) : (
-              <div className="absolute bg-gray-700 rounded-md drop-shadow-lg font-bold">
+              <div className="absolute bg-gray-200 dark:bg-gray-700 rounded-md drop-shadow-lg font-bold">
                 {users &&
                   (!users.length ? (
                     <div className="w-52 px-4 py-2 text-center">No results.</div>
                   ) : (
-                    users?.map((r: User) => (
+                    users?.slice(0, 3).map((r: User) => (
                       <button
-                        className="flex items-center gap-2 px-4 py-4 w-64 cursor-pointer hover:bg-gray-600 transition-colors rounded-md"
+                        className="flex items-center gap-2 px-4 py-4 w-64 cursor-pointer rounded-md hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
                         key={r.id}
                         onClick={() => handleSelectUser(r)}>
                         <Image
