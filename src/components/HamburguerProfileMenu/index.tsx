@@ -6,8 +6,11 @@ import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import LogoutButton from '../LogoutButton';
 import PrimaryButton from '../PrimaryButton';
+import useCallbackUrl from '@/hooks/useCallbackUrl';
 
 const HamburgerProfileMenu: React.FC = () => {
+  const pathname = useCallbackUrl();
+
   const [isOpen, setIsOpen] = useState(false);
 
   const session = useSession();
@@ -33,33 +36,31 @@ const HamburgerProfileMenu: React.FC = () => {
           <button className="text-primary hover:cursor-pointer" onClick={handleClickMenu}>
             <X className="w-5 h-5" />
           </button>
-          <div>
-            <div className="absolute right-0 w-64 bg-white rounded-b-lg dark:bg-primary-dark top-20">
-              <div className="flex flex-col p-4 mb-1 gap-y-2">
-                {session.user ? (
-                  <>
-                    <Link href={`/profile`}>
-                      <PrimaryButton onClick={closeMenu} className="w-full mb-2">
-                        Aceder ao perfil
-                      </PrimaryButton>
-                    </Link>
-                    <LogoutButton onClick={closeMenu} />
-                  </>
-                ) : (
-                  <>
-                    <Link href="/login">
-                      <PrimaryButton onClick={closeMenu} className="w-full">
-                        Iniciar sessão
-                      </PrimaryButton>
-                    </Link>
-                    <Link href="/register">
-                      <PrimaryButton onClick={closeMenu} className="w-full">
-                        Criar uma conta
-                      </PrimaryButton>
-                    </Link>
-                  </>
-                )}
-              </div>
+          <div className="absolute right-0 w-64 bg-white rounded-b-lg dark:bg-primary-dark top-20">
+            <div className="flex flex-col p-4 mb-1 gap-y-2">
+              {session.user ? (
+                <>
+                  <Link href={`/profile`}>
+                    <PrimaryButton onClick={closeMenu} className="w-full mb-2">
+                      Aceder ao perfil
+                    </PrimaryButton>
+                  </Link>
+                  <LogoutButton onClick={closeMenu} />
+                </>
+              ) : (
+                <>
+                  <Link href={`/login?callbackUrl=${pathname}`}>
+                    <PrimaryButton onClick={closeMenu} className="w-full">
+                      Iniciar sessão
+                    </PrimaryButton>
+                  </Link>
+                  <Link href={`/register?callbackUrl=${pathname}`}>
+                    <PrimaryButton onClick={closeMenu} className="w-full">
+                      Criar uma conta
+                    </PrimaryButton>
+                  </Link>
+                </>
+              )}
             </div>
           </div>
         </>

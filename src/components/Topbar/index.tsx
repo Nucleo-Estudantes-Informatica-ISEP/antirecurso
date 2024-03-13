@@ -5,6 +5,7 @@ import Link from 'next/link';
 import HamburgerMenu from '../HamburgerMenu';
 import HamburgerProfileMenu from '../HamburguerProfileMenu';
 import TopbarLink from '../TopbarLink';
+import ThemeChanger from '../Theme/ThemeChanger';
 
 export const topBarLinks = {
   Home: '/',
@@ -38,6 +39,7 @@ const Topbar: React.FC = () => {
               {label}
             </TopbarLink>
           ))}
+          <ThemeChanger />
         </div>
 
         <div className="ml-6">
