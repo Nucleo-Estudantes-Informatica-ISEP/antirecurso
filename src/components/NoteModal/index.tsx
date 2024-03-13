@@ -78,14 +78,16 @@ const NoteModal: React.FC<ModalProps> = ({ setIsVisible, subjects, mutate, edit,
         className: theme === 'dark' ? 'swal-dark' : ''
       });
 
-    const res = await fetch(BASE_URL + '/subjects/' + subject + '/notes', {
+    const url = !edit ? `${BASE_URL}/subjects/${subject}/notes` : `${BASE_URL}/notes/${edit.id}`;
+    const res = await fetch(url, {
       method: !edit ? 'POST' : 'PATCH',
       body: JSON.stringify({
         upload_id: uploadedFile?.id,
         author_id: author.id,
         title,
         description,
-        n_pages: uploadedFile?.pages
+        n_pages: uploadedFile?.pages,
+        subject_id: subject
       }),
       headers: {
         Accept: 'application/json',
