@@ -22,7 +22,7 @@ const GoalGradeCalculator: React.FC<GradeCalculatorProps> = ({ weight, min_grade
       : Math.max(0, toFixed((pretended - 0.5 - frequency * (1 - weight)) / weight, 2));
 
   return (
-    <div className="flex flex-col items-center justify-center w-full p-4 mx-auto my-4 space-y-6">
+    <div className="flex flex-col items-center justify-center w-full p-4 mx-auto mb-4 space-y-6">
       <div className="flex items-center justify-between w-full gap-x-2">
         <div className="h-0.5 w-1/3 bg-primary rounded opacity-70"></div>
         <h1 className="w-full mx-auto text-xl font-bold text-center md:text-3xl">

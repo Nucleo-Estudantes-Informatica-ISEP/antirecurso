@@ -104,13 +104,13 @@ const Exams: React.FC<ExamAnswerPageProps> = ({ params }) => {
                 <p className="text-5xl">{mode.icon}</p>
                 {mode.comingSoon ? (
                   <div className="absolute top-0 p-1 text-xs font-bold text-white rotate-45 bg-orange-500 md:text-base -right-4 md:-right-8 md:p-2">
-                    <p>Coming Soon</p>
+                    <p>Em breve...</p>
                   </div>
                 ) : (
                   mode.needsAuth &&
                   !session && (
                     <div className="absolute left-0 w-full p-1 text-xs font-bold text-white bg-red-500 md:text-base -top-4 md:-right-8 md:p-2">
-                      <p>Needs account 🔒</p>
+                      <p>Conta necessária 🔒</p>
                     </div>
                   )
                 )}
@@ -141,13 +141,13 @@ const Exams: React.FC<ExamAnswerPageProps> = ({ params }) => {
               <p className="text-5xl">{mode.icon}</p>
               {mode.comingSoon ? (
                 <div className="absolute top-0 p-1 text-xs font-bold text-white rotate-45 bg-orange-500 md:text-base -right-4 md:-right-8 md:p-2">
-                  <p>Coming Soon</p>
+                  <p>Em breve...</p>
                 </div>
               ) : (
                 mode.needsAuth &&
                 !session && (
                   <div className="absolute left-0 w-full p-1 text-xs font-bold text-white bg-red-500 md:text-base -top-4 md:-right-8 md:p-2">
-                    <p>Needs account 🔒</p>
+                    <p>Conta necessária 🔒</p>
                   </div>
                 )
               )}

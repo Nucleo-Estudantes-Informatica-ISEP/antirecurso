@@ -1,10 +1,9 @@
+import { fetchSubjectsWithQuestions } from '@/services/fetchSubjects';
 import Link from 'next/link';
-
-import { fetchSubjects } from 'src/services';
 
 // @ts-expect-error Server Component
 const Scoreboard: React.FC = async () => {
-  const subjects = await fetchSubjects();
+  const subjects = await fetchSubjectsWithQuestions();
 
   return (
     <section className="w-full flex flex-col items-center text-center mt-8">
@@ -18,7 +17,7 @@ const Scoreboard: React.FC = async () => {
           <Link
             key={subject.id}
             href={`/scoreboard/${subject.id}`}
-            className="w-full h-full md:h-48 p-6 flex flex-col space-y-6 items-center justify-center shadow dark:shadow-secondary-dark border border-gray-100 rounded text-center group hover:bg-primary transition ease-in-out">
+            className="w-full h-full min-w-[180px] md:h-48 p-6 flex flex-col space-y-6 items-center justify-center shadow dark:shadow-secondary-dark border border-gray-100 rounded text-center group hover:bg-primary transition ease-in-out">
             <div className="w-full justify-center items-center overflow-auto">
               <p className="w-full text-xs md:text-xl font-bold capitalize line-clamp-6 group-hover:text-white">
                 {subject.name}

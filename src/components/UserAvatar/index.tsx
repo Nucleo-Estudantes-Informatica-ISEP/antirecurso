@@ -6,9 +6,11 @@ import Link from 'next/link';
 
 interface UserAvatarProps {
   avatar: string;
+  widthValue?: number;
+  heightValue?: number;
 }
 
-const UserAvatar: React.FC<UserAvatarProps> = ({ avatar }) => {
+const UserAvatar: React.FC<UserAvatarProps> = ({ avatar, widthValue, heightValue }) => {
   const animation: AnimationProps = {
     variants: {
       initial: { opacity: 0 },
@@ -24,7 +26,9 @@ const UserAvatar: React.FC<UserAvatarProps> = ({ avatar }) => {
     <motion.div
       initial="initial"
       whileHover="hover"
-      className="flex flex-col items-center relative hover:cursor-pointer md:w-40 md:h-40 w-24 h-24 my-6 rounded-full">
+      className={`flex flex-col items-center relative hover:cursor-pointer md:w-${
+        widthValue ? widthValue : 40
+      } md:h-${heightValue ? heightValue : 40} w-24 h-24 my-6 rounded-full`}>
       <Image
         placeholder="blur"
         blurDataURL="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjU2IiBoZWlnaHQ9IjI1NiIgdmlld0JveD0iMCAwIDI1NiAyNTYiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAw"

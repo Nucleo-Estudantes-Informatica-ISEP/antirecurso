@@ -1,6 +1,6 @@
 'use client';
 
-import React, { Dispatch, SetStateAction } from 'react';
+import { Dispatch, SetStateAction } from 'react';
 import PreviousExamResponseMetadata from 'src/types/PreviousExamResponseMetadata';
 
 interface PaginationProps {

@@ -7,6 +7,7 @@ import { useEffect, useState } from 'react';
 import LogoutButton from '../LogoutButton';
 import PrimaryButton from '../PrimaryButton';
 import ThemeChanger from '../Theme/ThemeChanger';
+import { topBarLinks } from '../Topbar';
 import TopbarLink from '../TopbarLink';
 
 const HamburgerMenu: React.FC = () => {
@@ -25,10 +26,10 @@ const HamburgerMenu: React.FC = () => {
   // when clicking outside the menu, close it
   useEffect(() => {
     if (isOpen) {
-      document.querySelector('main')!.addEventListener('click', closeMenu);
+      document.querySelector('main')?.addEventListener('click', closeMenu);
     }
     return () => {
-      document.querySelector('main')!.removeEventListener('click', closeMenu);
+      document.querySelector('main')?.removeEventListener('click', closeMenu);
     };
   });
 
@@ -42,18 +43,11 @@ const HamburgerMenu: React.FC = () => {
               <ThemeChanger />
             </div>
 
-            <TopbarLink onClick={closeMenu} href="/">
-              Home
-            </TopbarLink>
-            <TopbarLink onClick={closeMenu} href="/exams">
-              Exames
-            </TopbarLink>
-            <TopbarLink onClick={closeMenu} href="/scoreboard">
-              Scoreboard
-            </TopbarLink>
-            <TopbarLink onClick={closeMenu} href="/about">
-              Sobre
-            </TopbarLink>
+            {Object.entries(topBarLinks).map(([label, href], index) => (
+              <TopbarLink key={index} onClick={closeMenu} href={href}>
+                {label}
+              </TopbarLink>
+            ))}
 
             <div className="flex flex-col pt-6 mt-6 border-t border-gray-200 gap-y-4">
               {session.user ? (
