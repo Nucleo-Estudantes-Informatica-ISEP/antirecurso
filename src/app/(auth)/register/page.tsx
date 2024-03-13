@@ -12,11 +12,12 @@ import PrimaryButton from '@/components/PrimaryButton';
 import TextInput from '@/components/TextInput';
 import { Spinner } from '@/styles/Icons';
 import { useTheme } from 'next-themes';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import swal from 'sweetalert';
 import useSession from '@/hooks/useSession';
 
 const Register: React.FC = () => {
+  const callbackUrl = useSearchParams().get('callbackUrl');
   const session = useSession();
   const router = useRouter();
 
@@ -75,7 +76,7 @@ const Register: React.FC = () => {
 
       if (res.status === 200) {
         session.revalidate();
-        router.push('/');
+        router.push(decodeURI(callbackUrl ?? '/'));
         router.refresh();
       } else if (res.status === 422) {
         // duplicate email
@@ -208,7 +209,9 @@ const Register: React.FC = () => {
         <hr className="my-8" />
 
         <p className="mt-4">
-          <Link className="text-sm font-medium text-primary-600 hover:underline" href="/login">
+          <Link
+            className="text-sm font-medium text-primary-600 hover:underline"
+            href={'/login?callbackUrl=' + callbackUrl ?? '/'}>
             Já tens conta?
           </Link>
         </p>

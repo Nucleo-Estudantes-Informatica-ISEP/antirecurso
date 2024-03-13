@@ -7,7 +7,7 @@ import useSession from '@/hooks/useSession';
 import { Spinner } from '@/styles/Icons';
 import { useTheme } from 'next-themes';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 import LoginSchema from 'src/schemas/LoginSchema';
 import swal from 'sweetalert';
@@ -15,6 +15,7 @@ import swal from 'sweetalert';
 import { z } from 'zod';
 
 const Login: React.FC = () => {
+  const callbackUrl = useSearchParams().get('callbackUrl');
   const session = useSession();
   const router = useRouter();
 
@@ -50,6 +51,8 @@ const Login: React.FC = () => {
 
       const { email, password } = result;
 
+      router.push(decodeURI(callbackUrl ?? '/'));
+
       const res = await fetch('/api/auth/login', {
         method: 'POST',
         headers: {
@@ -63,7 +66,7 @@ const Login: React.FC = () => {
 
       if (res.status === 200) {
         session.revalidate();
-        router.push('/');
+        router.push(decodeURI(callbackUrl ?? '/'));
         router.refresh();
       } else {
         swal(
@@ -144,7 +147,9 @@ const Login: React.FC = () => {
         <hr className="my-8" />
 
         <p className="mt-4">
-          <Link className="text-sm font-medium text-primary-600 hover:underline" href="/register">
+          <Link
+            className="text-sm font-medium text-primary-600 hover:underline"
+            href={'/register?callbackUrl=' + callbackUrl ?? '/'}>
             Ainda não tens conta?
           </Link>
         </p>
