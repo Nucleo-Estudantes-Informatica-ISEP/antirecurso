@@ -11,7 +11,7 @@
     "chart.js": "^4.3.0",
     "framer-motion": "^10.10.0",
     "lodash": "^4.17.21",
-    "next": "13.2.4",
+    "next": "14.1.3",
     "next-themes": "^0.2.1",
     "postcss-preset-env": "^8.0.1",
     "react": "18.2.0",
@@ -24,7 +24,7 @@
     "sweetalert": "^2.1.2",
     "swr": "^2.2.4",
     "typescript": "4.9.5",
-    "zod": "^3.21.4"
+    "zod": "^3.22.4"
   },
   "devDependencies": {
     "@tailwindcss/forms": "^0.5.2",
@@ -33,15 +33,20 @@
     "@types/react": "18.0.28",
     "@types/react-dom": "18.0.11",
     "@types/regression": "^2.0.2",
-    "@typescript-eslint/eslint-plugin": "^5.54.1",
+    "@typescript-eslint/eslint-plugin": "^7.2.0",
     "autoprefixer": "^10.4.13",
     "color": "^4.0.1",
-    "eslint": "8.34.0",
-    "eslint-config-next": "13.1.6",
+    "eslint": "8.57.0",
+    "eslint-config-next": "14.1.3",
     "eslint-config-prettier": "^8.7.0",
     "eslint-plugin-prettier": "^4.2.1",
     "postcss": "^8.4.21",
     "prettier": "^2.8.4",
     "tailwindcss": "^3.1.0"
+  },
+  "pnpm": {
+    "overrides": {
+      "postcss@<8.4.31": ">=8.4.31"
+    }
   }
 }
