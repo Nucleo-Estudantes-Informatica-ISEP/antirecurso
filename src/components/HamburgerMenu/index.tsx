@@ -37,7 +37,9 @@ const HamburgerMenu: React.FC = () => {
     <div className="flex md:hidden">
       {isOpen ? (
         <>
-          <X className="w-5 h-5 text-primary hover:cursor-pointer" onClick={handleClickMenu} />
+          <button className="text-primary hover:cursor-pointer" onClick={handleClickMenu}>
+            <X className="w-5 h-5" />
+          </button>
           <div className="absolute left-0 flex flex-col w-screen h-auto p-5 space-y-5 bg-white shadow dark:shadow-secondary-dark top-20 dark:bg-secondary-dark z-15">
             <div className="self-end">
               <ThemeChanger />
@@ -76,7 +78,9 @@ const HamburgerMenu: React.FC = () => {
           </div>
         </>
       ) : (
-        <Menu className="w-5 h-5 text-primary hover:cursor-pointer" onClick={handleClickMenu} />
+        <button className="text-primary hover:cursor-pointer" onClick={handleClickMenu}>
+          <Menu className="w-5 h-5" />
+        </button>
       )}
     </div>
   );

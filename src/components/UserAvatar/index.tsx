@@ -5,7 +5,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 
 interface UserAvatarProps {
-  avatar: string;
+  avatar?: string;
   widthValue?: number;
   heightValue?: number;
 }

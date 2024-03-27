@@ -32,8 +32,10 @@ const HamburgerProfileMenu: React.FC = () => {
   return (
     <div className="flex">
       {isOpen ? (
-        <div>
-          <X className="w-5 h-5 text-primary hover:cursor-pointer" onClick={handleClickMenu} />
+        <>
+          <button className="text-primary hover:cursor-pointer" onClick={handleClickMenu}>
+            <X className="w-5 h-5" />
+          </button>
           <div className="absolute right-0 w-64 bg-white rounded-b-lg dark:bg-primary-dark top-20">
             <div className="flex flex-col p-4 mb-1 gap-y-2">
               {session.user ? (
@@ -61,9 +63,11 @@ const HamburgerProfileMenu: React.FC = () => {
               )}
             </div>
           </div>
-        </div>
+        </>
       ) : (
-        <Menu className="w-5 h-5 text-primary hover:cursor-pointer" onClick={handleClickMenu} />
+        <button className="text-primary hover:cursor-pointer" onClick={handleClickMenu}>
+          <Menu className="w-5 h-5" />
+        </button>
       )}
     </div>
   );
