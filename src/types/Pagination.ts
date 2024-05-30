@@ -12,7 +12,7 @@ export default interface Pagination<T> {
 export interface PaginationMetadata {
   path: string;
   links: {
-    url: string;
+    url: string | null;
     label: string;
     active: boolean;
   }[];
