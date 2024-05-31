@@ -17,16 +17,16 @@ const ScoreboardRow: React.FC<ScoreboardRowProps> = ({ line, position, highlight
       whileInView={{ opacity: 1, y: 0, scale: 1 }}
       viewport={{ once: true }}
       transition={{ duration: 0.8, type: 'spring', bounce: 0.4 }}
-      className={`${
-        highlight
-          ? 'bg-orange-200 dark:bg-orange-800'
-          : 'hover:bg-gray-100 dark:hover:bg-cool-gray-700'
-      } text-lg md:text-xl font-bold transition-colors duration-200 ease-in-out max-w-fit`}
+      className={`text-lg md:text-xl font-bold max-w-fit group
+        [&>*]:transition-colors [&>*]:duration-200 [&>*]:ease-in-out
+        ${highlight ?? 'bg-orange-200 dark:bg-orange-800'}`}
       key={line.user_id}>
-      <th scope="row" className="py-3 pl-6 pr-6 rounded-l-full md:pl-16 whitespace-nowrap">
+      <th
+        scope="row"
+        className="py-3 pl-6 pr-6 rounded-l-full md:pl-16 whitespace-nowrap group-hover:bg-gray-100 dark:group-hover:bg-cool-gray-700">
         {position}
       </th>
-      <td className="md:pl-4 py-2 min-w-[3.5rem]">
+      <td className="md:pl-4 py-2 min-w-[3.5rem] group-hover:bg-gray-100 dark:group-hover:bg-cool-gray-700">
         <Image
           className="w-9 rounded-full aspect-square"
           src={`https://gravatar.com/avatar/${line.avatar}?s=64&d=identicon`}
@@ -36,7 +36,7 @@ const ScoreboardRow: React.FC<ScoreboardRowProps> = ({ line, position, highlight
           height={64}
         />
       </td>
-      <td className="md:px-4 py-2 md:min-w-[32rem]">
+      <td className="md:px-4 py-2 md:min-w-[32rem] group-hover:bg-gray-100 dark:group-hover:bg-cool-gray-700">
         <div className="flex flex-col items-start text-left">
           <span className="text-lg leading-5">{line.user_name}</span>
           <span className="text-sm font-normal leading-3 text-gray-600 dark:text-gray-300">
@@ -44,7 +44,9 @@ const ScoreboardRow: React.FC<ScoreboardRowProps> = ({ line, position, highlight
           </span>
         </div>
       </td>
-      <td className="px-6 py-2 rounded-r-full md:pr-16">{line.score}</td>
+      <td className="px-6 py-2 rounded-r-full md:pr-16 group-hover:bg-gray-100 dark:group-hover:bg-cool-gray-700">
+        {line.score}
+      </td>
     </motion.tr>
   );
 };
