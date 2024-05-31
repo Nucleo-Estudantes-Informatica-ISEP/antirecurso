@@ -4,6 +4,15 @@ import Link from 'next/link';
 const Changelog: React.FC = () => {
   return (
     <section className="w-full text-sm md:text-md px-5 md:px-24 md:pb-24 pb-48 mt-5">
+      {/* <ChangelogVersion
+        title="v1.4.2 🛠"
+        date={new Date(2024, .., ..)}
+        updates={[
+          <span className="align-middle" key="1.4.2-maintenance">
+            Corrigidos problemas visuais em alguns componentes.
+          </span>
+        ]}
+      /> */}
       <ChangelogVersion
         title="v1.4.1 📂"
         date={new Date(2024, 1, 18)}
@@ -14,7 +23,6 @@ const Changelog: React.FC = () => {
           </span>
         ]}
       />
-      ,
       <ChangelogVersion
         title="v1.4.0 📚"
         date={new Date(2024, 1, 2)}
@@ -255,7 +263,7 @@ const Changelog: React.FC = () => {
       </ChangelogVersion>
       <ChangelogVersion
         title="v1.3.3 🛠️"
-        date={new Date(2023, 5, 7)}
+        date={new Date(2023, 6, 13)}
         updates={[
           'Correção da paginação de exames no perfil (finalmente)',
           'Adição de suporte a imagem nas perguntas',

@@ -9,7 +9,9 @@ const ChangelogVersion: React.FC<ChangelogVersion> = ({ title, date, updates, ch
   return (
     <article className="my-6 w-full">
       <h3 className="font-bold text-primary w-full leading-10 text-2xl mb-0.5">{title}</h3>
-      <p className="text-sm text-gray-500">{date.toLocaleDateString('pt-PT')}</p>
+      <p className="text-sm text-gray-500">
+        {date.toLocaleDateString('pt-PT', { day: 'numeric', month: 'long', year: 'numeric' })}
+      </p>
       {children && (
         <span className="inline-block mt-2 mb-2 leading-5 text-lg align-middle">{children}</span>
       )}
