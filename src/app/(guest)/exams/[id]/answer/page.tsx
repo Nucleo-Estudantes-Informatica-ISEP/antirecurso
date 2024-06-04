@@ -131,7 +131,7 @@ const Exams: React.FC<ExamAnswerPageProps> = ({ params }) => {
             </>
           ) : (
             <Link
-              href={`exams/${params.id}/answer/${mode.slug}`}
+              href={`/exams/${params.id}/answer/${mode.slug}`}
               key={mode.id}
               className={`relative w-full h-full md:h-64 p-5 flex flex-col space-y-6 items-center justify-center shadow dark:shadow-gray-500 rounded text-center group hover:bg-primary transition ease-in-out ${
                 mode.comingSoon || (mode.needsAuth && !session)
