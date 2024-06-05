@@ -1,14 +1,14 @@
 'use client';
 
-import React, { Dispatch, SetStateAction, useState } from 'react';
 import { MD5 } from 'crypto-js';
+import React, { Dispatch, SetStateAction, useState } from 'react';
 
 import useSession from '@/hooks/useSession';
 import { BASE_URL } from '@/services/api';
 import User from '@/types/User';
 import Image from 'next/image';
-import LoadingSpinner from '../LoadingSpinner';
 import useSWR from 'swr';
+import LoadingSpinner from '../LoadingSpinner';
 
 interface UserSelectorProps {
   selected: User | null;
@@ -93,6 +93,7 @@ const UserSelector: React.FC<UserSelectorProps> = ({ selected, setSelected }) =>
                           className="rounded-full aspect-square"
                         />
                         <span>{r.name}</span>
+                        <span className="text-sm">({r.email})</span>
                       </button>
                     ))
                   ))}
