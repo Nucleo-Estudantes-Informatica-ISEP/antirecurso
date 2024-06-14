@@ -59,6 +59,7 @@ const ScoreboardPodium: React.FC<ScoreboardPodiumProps> = ({ scores, uid }) => {
               alt={score.user_name}
               width={128}
               height={128}
+              unoptimized
             />
             <Image
               className="w-8 rounded-full aspect-square absolute right-[-.5rem] top-[-.5rem] md:right-0 md:top-0"

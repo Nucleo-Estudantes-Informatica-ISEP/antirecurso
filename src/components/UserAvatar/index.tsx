@@ -36,6 +36,7 @@ const UserAvatar: React.FC<UserAvatarProps> = ({ avatar, widthValue, heightValue
         height={328}
         src={`https://gravatar.com/avatar/${avatar}?s=256&d=identicon`}
         alt="Avatar"
+        unoptimized
         className="w-full h-full rounded-full"
       />
       <Link

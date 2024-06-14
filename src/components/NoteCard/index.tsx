@@ -74,6 +74,7 @@ const NoteCard: React.FC<NoteCardParams> = ({ note }) => {
             alt={note.user.name}
             loading="lazy"
             width={32}
+            unoptimized
             height={32}
           />
           <span className="text-base md:text-lg leading-5">
