@@ -10,7 +10,8 @@ const nextConfig = {
       {
         protocol: 'https',
         hostname: 'gravatar.com',
-        port: ''
+        port: '',
+        pathname: '/avatars/**'
       },
       {
         protocol: 'https',
@@ -22,4 +23,4 @@ const nextConfig = {
   }
 };
 
-module.exports = nextConfig;
+export default nextConfig;

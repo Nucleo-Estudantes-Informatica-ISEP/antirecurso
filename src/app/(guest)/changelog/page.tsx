@@ -28,7 +28,7 @@ const Changelog: React.FC = () => {
         date={new Date(2024, 1, 2)}
         updates={[
           <span className="align-middle" key="1.4.0-notes">
-            Adição da página de <span className="font-bold text-primary">resumos</span>
+            Adição da página de <span className="font-bold text-primary">resumos</span>.
           </span>,
           <span key="1.4.0-scoreboard-visibility">
             Adição da opção de tornar o teu score privado/público na página de perfil (Obrigado pela
