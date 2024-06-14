@@ -1,23 +1,23 @@
 'use client';
 
-import { Dispatch, SetStateAction, useCallback, useEffect, useRef, useState } from 'react';
 import { useTheme } from 'next-themes';
 import { PDFDocument } from 'pdf-lib';
+import { Dispatch, SetStateAction, useCallback, useEffect, useRef, useState } from 'react';
 import swal from 'sweetalert';
 import { KeyedMutator } from 'swr';
 
-import useSession from '@/hooks/useSession';
+import FileInput from '@/components/FileInput';
 import PrimaryButton from '@/components/PrimaryButton';
 import SelectInput, { InputSelectOption } from '@/components/SelectInput';
-import FileInput from '@/components/FileInput';
-import { Pdf } from '@/styles/Icons';
-import { getSignedUrl, uploadToBucket } from '@/lib/upload';
-import { UploadedFile } from '@/types/UploadedFile';
 import UserSelector from '@/components/UserSelector';
+import useSession from '@/hooks/useSession';
+import { getSignedUrl, uploadToBucket } from '@/lib/upload';
+import { BASE_URL } from '@/services/api';
+import { Pdf } from '@/styles/Icons';
+import Note from '@/types/Note';
+import { UploadedFile } from '@/types/UploadedFile';
 import User from '@/types/User';
 import { readFile } from '@/utils/files';
-import { BASE_URL } from '@/services/api';
-import Note from '@/types/Note';
 import LoadingSpinner from '../LoadingSpinner';
 
 interface ModalProps {
@@ -58,11 +58,6 @@ const NoteModal: React.FC<ModalProps> = ({ setIsVisible, subjects, mutate, edit,
 
     if (!title || title.length < 2)
       return swal('Oops!', 'Título inválido.', 'error', {
-        className: theme === 'dark' ? 'swal-dark' : ''
-      });
-
-    if (!description || description.length < 2)
-      return swal('Oops!', 'Descrição inválida.', 'error', {
         className: theme === 'dark' ? 'swal-dark' : ''
       });
 
