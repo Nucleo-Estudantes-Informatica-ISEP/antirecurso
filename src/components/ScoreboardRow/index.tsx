@@ -34,6 +34,7 @@ const ScoreboardRow: React.FC<ScoreboardRowProps> = ({ line, position, highlight
           loading="lazy"
           width={64}
           height={64}
+          unoptimized
         />
       </td>
       <td className="md:px-4 py-2 md:min-w-[32rem] group-hover:bg-gray-100 dark:group-hover:bg-cool-gray-700">
