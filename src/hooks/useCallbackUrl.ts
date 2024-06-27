@@ -7,17 +7,13 @@ const useCallbackUrl = (): string => {
   const path = decodeURI(usePathname());
   const callbackUrl = useSearchParams().get('callbackUrl');
 
-  const isInOmitedPaths = (value: string): boolean => {
+  const isInOmittedPaths = (value: string): boolean => {
     return omittedPathnames.find((item) => item === value) ? true : false;
   };
 
-  if (callbackUrl && !isInOmitedPaths(callbackUrl)) {
-    return encodeURI(callbackUrl);
-  }
+  if (callbackUrl && !isInOmittedPaths(callbackUrl)) return encodeURI(callbackUrl);
 
-  if (path.length === 0 || isInOmitedPaths(path)) {
-    return encodeURI('/');
-  }
+  if (path.length === 0 || isInOmittedPaths(path)) return encodeURI('/');
 
   return encodeURI(path);
 };

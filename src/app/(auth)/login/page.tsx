@@ -51,8 +51,6 @@ const Login: React.FC = () => {
 
       const { email, password } = result;
 
-      router.push(decodeURI(callbackUrl ?? '/'));
-
       const res = await fetch('/api/auth/login', {
         method: 'POST',
         headers: {
