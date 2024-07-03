@@ -10,7 +10,6 @@ interface SubjectNotesProps {
   };
 }
 
-// @ts-expect-error Server Component
 const SubjectNotes: React.FC<SubjectNotesProps> = async ({ params }) => {
   const token = cookies().get(config.cookies.token)?.value;
 

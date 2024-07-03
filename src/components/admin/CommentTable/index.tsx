@@ -1,8 +1,7 @@
+import { BASE_URL } from '@/services/api';
 import Comment from '@/types/Comment';
 import fetchComments from '@/utils/FetchComments';
-import { BASE_URL } from '@/services/api';
 
-// @ts-expect-error Server Component
 const CommentTable: React.FC = async () => {
   const comments = await fetchComments(`${BASE_URL}/comments`);
 

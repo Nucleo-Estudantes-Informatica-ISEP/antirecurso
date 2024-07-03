@@ -4,7 +4,6 @@ import getServerSession from '@/services/getServerSession';
 import { redirect } from 'next/navigation';
 import swal from 'sweetalert';
 
-// @ts-expect-error Server Component
 const AdminPage: React.FC = async () => {
   const session = await getServerSession();
 

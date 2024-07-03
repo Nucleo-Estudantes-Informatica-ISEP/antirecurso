@@ -12,7 +12,6 @@ interface ProfileProps {
   };
 }
 
-// @ts-expect-error Server Component
 const Profile: React.FC<ProfileProps> = async () => {
   const session = await getServerSession();
   if (!session) redirect('/');

@@ -5,7 +5,6 @@ import User from '@/types/User';
 import { cookies } from 'next/headers';
 import React from 'react';
 
-// @ts-expect-error Server Component
 const users: React.FC = async () => {
   const t = cookies().get(config.cookies.token);
   const token = t?.value;

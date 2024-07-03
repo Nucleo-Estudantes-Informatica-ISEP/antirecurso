@@ -1,7 +1,6 @@
 import { fetchSubjectsWithQuestions } from '@/services/fetchSubjects';
 import Link from 'next/link';
 
-// @ts-expect-error Server Component
 const Scoreboard: React.FC = async () => {
   const subjects = await fetchSubjectsWithQuestions();
 
