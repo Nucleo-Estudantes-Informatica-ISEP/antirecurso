@@ -1,4 +1,4 @@
-import CommentTable from '@/components/comments/CommentTable';
+import CommentTable from '@/components/admin/CommentTable';
 
 const Comments: React.FC = () => {
   // const [selectedActions, setSelectedActions] = useState<string[]>([]);
