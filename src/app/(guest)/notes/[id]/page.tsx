@@ -1,4 +1,4 @@
-import NoteCard from '@/components/NoteCard';
+import NoteCard from '@/components/notes/NoteCard';
 import Custom403 from '@/components/pages/Custom403';
 import config from '@/config';
 import fetchNotes from '@/services/fetchNotes';
