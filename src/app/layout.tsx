@@ -1,7 +1,7 @@
-import ChangelogPopUp from '@/components/ChangelogPopUp';
-import CookieConsent from '@/components/CookieConsent';
-import ThemeProvider from '@/components/Theme/ThemeProvider';
-import Topbar from '@/components/Topbar';
+import ChangelogPopUp from '@/components/changelog/ChangelogPopUp';
+import Topbar from '@/components/navbar/Topbar';
+import CookieConsent from '@/components/utils/CookieConsent';
+import ThemeProvider from '@/components/utils/Theme/ThemeProvider';
 import { AuthContextProvider } from '@/contexts/AuthContext';
 import '@/styles/globals.css';
 import { Suspense } from 'react';

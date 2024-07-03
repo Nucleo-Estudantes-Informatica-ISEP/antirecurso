@@ -4,10 +4,10 @@ import { useContext, useEffect, useState } from 'react';
 
 import Link from 'next/link';
 
-import PrimaryButton from '@/components/PrimaryButton';
+import PrimaryButton from '@/components/utils/PrimaryButton';
 import { ExamContext } from 'src/contexts/ExamContext';
 
-import ScoreIndicator from '@/components/ScoreIndicator';
+import ScoreIndicator from '@/components/profile/ScoreIndicator';
 import useSession from '@/hooks/useSession';
 import { useTheme } from 'next-themes';
 import { useRouter } from 'next/navigation';

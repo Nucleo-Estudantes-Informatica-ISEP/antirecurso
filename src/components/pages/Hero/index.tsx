@@ -1,6 +1,6 @@
 import Link from 'next/link';
 
-import PrimaryButton from '../PrimaryButton';
+import PrimaryButton from '@/components/utils/PrimaryButton';
 
 const Hero: React.FC = () => {
   return (

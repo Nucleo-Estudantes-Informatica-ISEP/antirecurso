@@ -1,5 +1,5 @@
+import TableHeading from '@/components/utils/TableHeading';
 import Skeleton from 'react-loading-skeleton';
-import TableHeading from '../TableHeading';
 
 const N_ITEMS_PER_PAGE = 10;
 

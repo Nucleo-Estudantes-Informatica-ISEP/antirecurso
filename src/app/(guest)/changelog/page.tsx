@@ -1,4 +1,4 @@
-import ChangelogVersion from '@/components/ChangelogVersion';
+import ChangelogVersion from '@/components/changelog/ChangelogVersion';
 import Link from 'next/link';
 
 const Changelog: React.FC = () => {
@@ -18,7 +18,7 @@ const Changelog: React.FC = () => {
         date={new Date(2024, 1, 18)}
         updates={[
           <span className="align-middle" key="1.4.1-notes">
-            Adicionadas <span className="font-bold text-primary">+6</span> Unidades Curriculares na{' '}
+            Adicionadas <span className="font-bold text-primary">+9</span> Unidades Curriculares na{' '}
             secção de <span className="font-bold text-primary">resumos</span>.
           </span>
         ]}

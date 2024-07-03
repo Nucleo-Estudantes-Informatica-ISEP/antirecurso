@@ -1,7 +1,7 @@
-import PreviousExamsTable from '@/components/PreviousExamsTable';
-import PrimaryButton from '@/components/PrimaryButton';
-import UserAvatar from '@/components/UserAvatar';
-import UserProfileScoreboard from '@/components/UserProfileScoreboard';
+import PreviousExamsTable from '@/components/exams/PreviousExamsTable';
+import UserProfileScoreboard from '@/components/profile/UserProfileScoreboard';
+import UserAvatar from '@/components/scoreboard/UserAvatar';
+import PrimaryButton from '@/components/utils/PrimaryButton';
 import getServerSession from '@/services/getServerSession';
 import Link from 'next/link';
 import { redirect } from 'next/navigation';

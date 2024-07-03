@@ -6,10 +6,10 @@ import { Dispatch, SetStateAction, useCallback, useEffect, useRef, useState } fr
 import swal from 'sweetalert';
 import { KeyedMutator } from 'swr';
 
-import FileInput from '@/components/FileInput';
-import PrimaryButton from '@/components/PrimaryButton';
-import SelectInput, { InputSelectOption } from '@/components/SelectInput';
-import UserSelector from '@/components/UserSelector';
+import FileInput from '@/components/utils/FileInput';
+import PrimaryButton from '@/components/utils/PrimaryButton';
+import SelectInput, { InputSelectOption } from '@/components/utils/SelectInput';
+import UserSelector from '@/components/utils/UserSelector';
 import useSession from '@/hooks/useSession';
 import { getSignedUrl, uploadToBucket } from '@/lib/upload';
 import { BASE_URL } from '@/services/api';
@@ -18,7 +18,7 @@ import Note from '@/types/Note';
 import { UploadedFile } from '@/types/UploadedFile';
 import User from '@/types/User';
 import { readFile } from '@/utils/files';
-import LoadingSpinner from '../LoadingSpinner';
+import LoadingSpinner from '../../utils/LoadingSpinner';
 
 interface ModalProps {
   setIsVisible: React.Dispatch<React.SetStateAction<boolean>>;

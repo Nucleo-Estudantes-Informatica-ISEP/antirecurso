@@ -1,8 +1,8 @@
 'use client';
 
-import InputLabel from '@/components/InputLabel';
-import PrimaryButton from '@/components/PrimaryButton';
-import TextInput from '@/components/TextInput';
+import InputLabel from '@/components/utils/InputLabel';
+import PrimaryButton from '@/components/utils/PrimaryButton';
+import TextInput from '@/components/utils/TextInput';
 import { ResetPasswordContext } from '@/contexts/ResetPasswordContext';
 import { Spinner } from '@/styles/Icons';
 import { useTheme } from 'next-themes';

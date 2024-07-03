@@ -15,13 +15,13 @@ import { BASE_URL } from '@/services/api';
 import generateExam from '@/services/generateExam';
 import getSubjectNameById from '@/utils/getSubjectNameById';
 
-import ExamNumeration from '@/components/ExamNumeration';
-import ExamNumerationContainer from '@/components/ExamNumerationContainer';
-import PrimaryButton from '@/components/PrimaryButton';
-import QuestionPrompt from '@/components/QuestionPrompt';
+import QuestionPrompt from '@/components/exams/QuestionPrompt';
+import PrimaryButton from '@/components/utils/PrimaryButton';
 import useAnswerableExamNavigation from '@/hooks/useAnswerableExamNavigation';
 import useSession from '@/hooks/useSession';
 
+import ExamNumeration from '@/components/exams/ExamNumeration';
+import ExamNumerationContainer from '@/components/exams/ExamNumerationContainer';
 import sampleImage from 'public/images/sample.webp';
 
 interface ExamPageProps {

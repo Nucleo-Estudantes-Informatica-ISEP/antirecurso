@@ -1,6 +1,6 @@
 'use client';
 
-import CustomExamModal from '@/components/CustomExamModal';
+import CustomExamModal from '@/components/exams/CustomExamModal';
 import useSession from '@/hooks/useSession';
 import Link from 'next/link';
 import { useState } from 'react';

@@ -1,7 +1,7 @@
 'use client';
 
-import ScoreboardPodium from '@/components/ScoreboardPodium';
-import ScoreboardRow from '@/components/ScoreboardRow';
+import ScoreboardPodium from '@/components/scoreboard/ScoreboardPodium';
+import ScoreboardRow from '@/components/scoreboard/ScoreboardRow';
 import useSession from '@/hooks/useSession';
 import { BASE_URL } from '@/services/api';
 import Leaderboard from '@/types/Leaderboard';

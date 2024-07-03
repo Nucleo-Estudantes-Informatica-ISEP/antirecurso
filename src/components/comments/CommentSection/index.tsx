@@ -1,7 +1,10 @@
 'use client';
 
+import InputLabel from '@/components/utils/InputLabel';
+import PrimaryButton from '@/components/utils/PrimaryButton';
 import useSession from '@/hooks/useSession';
 import { Flag } from '@/styles/Icons';
+import Comment from '@/types/Comment';
 import { useTheme } from 'next-themes';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -9,9 +12,6 @@ import { useRef } from 'react';
 import Skeleton from 'react-loading-skeleton';
 import { BASE_URL } from 'src/services/api';
 import swal from 'sweetalert';
-import Comment from '../../types/Comment';
-import InputLabel from '../InputLabel';
-import PrimaryButton from '../PrimaryButton';
 
 interface CommentSectionProps {
   comments: Comment[] | undefined;

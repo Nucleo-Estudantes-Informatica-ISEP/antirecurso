@@ -6,11 +6,11 @@ import Image from 'next/image';
 import Skeleton from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css';
 
-import CommentSection from '@/components/CommentSection';
-import ExamNumeration from '@/components/ExamNumeration';
-import ExamNumerationContainer from '@/components/ExamNumerationContainer';
-import PrimaryButton from '@/components/PrimaryButton';
-import QuestionReview from '@/components/QuestionReview';
+import CommentSection from '@/components/comments/CommentSection';
+import ExamNumeration from '@/components/exams/ExamNumeration';
+import ExamNumerationContainer from '@/components/exams/ExamNumerationContainer';
+import QuestionReview from '@/components/exams/QuestionReview';
+import PrimaryButton from '@/components/utils/PrimaryButton';
 import useSession from '@/hooks/useSession';
 import sampleImage from 'public/images/sample.webp';
 import useExamReviewNavigation from 'src/hooks/useExamReviewNavigation';

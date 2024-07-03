@@ -1,5 +1,5 @@
-import Custom403 from '@/components/Custom403';
 import NoteCard from '@/components/NoteCard';
+import Custom403 from '@/components/pages/Custom403';
 import config from '@/config';
 import fetchNotes from '@/services/fetchNotes';
 import { cookies } from 'next/headers';

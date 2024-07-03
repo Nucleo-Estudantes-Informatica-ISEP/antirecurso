@@ -1,8 +1,8 @@
 'use client';
 
 import { Preview, Trash, Upload } from '@/styles/Icons';
-import LoadingSpinner from '../LoadingSpinner';
 import { MouseEvent, useRef } from 'react';
+import LoadingSpinner from '../LoadingSpinner';
 
 interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   name: string;

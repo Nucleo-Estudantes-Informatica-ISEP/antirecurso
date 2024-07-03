@@ -7,14 +7,14 @@ import { z } from 'zod';
 
 import RegisterSchema from 'src/schemas/RegisterSchema';
 
-import InputLabel from '@/components/InputLabel';
-import PrimaryButton from '@/components/PrimaryButton';
-import TextInput from '@/components/TextInput';
+import InputLabel from '@/components/utils/InputLabel';
+import PrimaryButton from '@/components/utils/PrimaryButton';
+import TextInput from '@/components/utils/TextInput';
+import useSession from '@/hooks/useSession';
 import { Spinner } from '@/styles/Icons';
 import { useTheme } from 'next-themes';
 import { useRouter, useSearchParams } from 'next/navigation';
 import swal from 'sweetalert';
-import useSession from '@/hooks/useSession';
 
 const Register: React.FC = () => {
   const callbackUrl = useSearchParams().get('callbackUrl');
@@ -182,7 +182,7 @@ const Register: React.FC = () => {
                 Confirmo que li e aceito a{' '}
                 <Link
                   target="_blank"
-                  className="text-primary hover:underline"
+                  className="text-primary hover:underline align-middle"
                   href="/privacy-policy">
                   Política de Privacidade
                 </Link>

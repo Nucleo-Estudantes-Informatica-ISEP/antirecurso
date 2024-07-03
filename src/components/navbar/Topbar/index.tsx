@@ -1,3 +1,4 @@
+import ThemeChanger from '@/components/utils/Theme/ThemeChanger';
 import DarkMainLogo from '@/images/logos/main-logo-dark.svg';
 import MainLogo from '@/images/logos/main-logo.svg';
 import Image from 'next/image';
@@ -5,7 +6,6 @@ import Link from 'next/link';
 import HamburgerMenu from '../HamburgerMenu';
 import HamburgerProfileMenu from '../HamburguerProfileMenu';
 import TopbarLink from '../TopbarLink';
-import ThemeChanger from '../Theme/ThemeChanger';
 
 export const topBarLinks = {
   Home: '/',

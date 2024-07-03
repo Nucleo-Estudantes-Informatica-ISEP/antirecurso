@@ -1,9 +1,9 @@
 'use client';
 
-import GradeCalculatorContainer from '@/components/GradeCalculatorContainer';
-import ScoreIndicator from '@/components/ScoreIndicator';
-import StatsLineChart from '@/components/StatsLineChart';
-import StatsPieChart from '@/components/StatsPieChart';
+import GradeCalculatorContainer from '@/components/profile/GradeCalculatorContainer';
+import ScoreIndicator from '@/components/profile/ScoreIndicator';
+import StatsLineChart from '@/components/profile/StatsLineChart';
+import StatsPieChart from '@/components/profile/StatsPieChart';
 import useSession from '@/hooks/useSession';
 import { sanitizeMode } from '@/utils/sanitizeMode';
 import Link from 'next/link';

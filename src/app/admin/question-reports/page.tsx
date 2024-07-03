@@ -1,18 +1,18 @@
 'use client';
 
-import useSWR, { mutate } from 'swr';
-import { fetcher } from '@/utils/SWRFetcher';
-import { BASE_URL } from 'src/services/api';
-import useSession from '@/hooks/useSession';
-import { useTheme } from 'next-themes';
-import { useState, useEffect } from 'react';
+import ReportTable from '@/components/admin/ReportTable';
+import ReportModal from '@/components/exams/ReportModal';
 import { useQueryParamsManager } from '@/hooks/useQueryParamsManager';
-import swal from 'sweetalert';
+import useSession from '@/hooks/useSession';
+import Report from '@/types/Report';
+import { fetcher } from '@/utils/SWRFetcher';
+import { useTheme } from 'next-themes';
+import { useEffect, useState } from 'react';
 import Skeleton from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css';
-import ReportTable from '@/components/ReportTable';
-import ReportModal from '@/components/ReportModal';
-import Report from '@/types/Report';
+import { BASE_URL } from 'src/services/api';
+import swal from 'sweetalert';
+import useSWR, { mutate } from 'swr';
 
 type Filter = {
   name: string;
@@ -143,7 +143,7 @@ const Reports: React.FC = () => {
       sort: sortBy.key,
       order: sortBy.desc ? 'desc' : 'asc'
     });
-  }, [sortBy]);
+  }, [sortBy.key, sortBy.desc, searchParams]);
 
   // when search params change, update endpoint
   useEffect(() => {
@@ -166,7 +166,7 @@ const Reports: React.FC = () => {
     } else {
       setSortBy({ key: 'created_at', desc: true });
     }
-  }, []);
+  }, [searchParams.queryParams]);
 
   return (
     <>

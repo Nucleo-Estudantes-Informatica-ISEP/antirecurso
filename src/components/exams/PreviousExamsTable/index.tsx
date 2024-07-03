@@ -8,9 +8,9 @@ import { BASE_URL } from 'src/services/api';
 import PreviousExamResponse from 'src/types/PreviousExamResponse';
 import fetchUserPreviousExams from 'src/utils/FetchAnswers';
 import swal from 'sweetalert';
+import Pagination from '../../utils/Pagination';
 import ExamsTable from '../ExamsTable';
 import ExamTableLoading from '../ExamsTableLoading';
-import Pagination from '../Pagination';
 
 interface PreviousExamsTableProps {
   token: string;

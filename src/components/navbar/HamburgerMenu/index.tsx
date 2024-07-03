@@ -1,12 +1,12 @@
 'use client';
 
+import PrimaryButton from '@/components/utils/PrimaryButton';
+import ThemeChanger from '@/components/utils/Theme/ThemeChanger';
 import useSession from '@/hooks/useSession';
 import { Menu, X } from '@/styles/Icons';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import LogoutButton from '../LogoutButton';
-import PrimaryButton from '../PrimaryButton';
-import ThemeChanger from '../Theme/ThemeChanger';
 import { topBarLinks } from '../Topbar';
 import TopbarLink from '../TopbarLink';
 

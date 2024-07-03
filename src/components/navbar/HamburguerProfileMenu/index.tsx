@@ -1,12 +1,12 @@
 'use client';
 
+import PrimaryButton from '@/components/utils/PrimaryButton';
+import useCallbackUrl from '@/hooks/useCallbackUrl';
 import useSession from '@/hooks/useSession';
 import { Menu, X } from '@/styles/Icons';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import LogoutButton from '../LogoutButton';
-import PrimaryButton from '../PrimaryButton';
-import useCallbackUrl from '@/hooks/useCallbackUrl';
 
 const HamburgerProfileMenu: React.FC = () => {
   const pathname = useCallbackUrl();

@@ -1,21 +1,21 @@
 'use client';
 
-import React, { useCallback, useEffect, useState } from 'react';
-import swal from 'sweetalert';
+import moment from 'moment';
+import 'moment/locale/pt';
 import { useTheme } from 'next-themes';
 import Image from 'next/image';
-import moment from 'moment';
+import React, { useCallback, useEffect, useState } from 'react';
+import swal from 'sweetalert';
 import useSWR from 'swr';
-import 'moment/locale/pt';
 
-import { fetchSubjects } from '@/services/fetchSubjects';
+import NoteModal from '@/components/admin/NoteModal';
+import LoadingSpinner from '@/components/utils/LoadingSpinner';
+import SelectInput, { InputSelectOption } from '@/components/utils/SelectInput';
 import useSession from '@/hooks/useSession';
-import Note from '@/types/Note';
-import NoteModal from '@/components/NoteModal';
-import SelectInput, { InputSelectOption } from '@/components/SelectInput';
-import LoadingSpinner from '@/components/LoadingSpinner';
-import { Add, Eye, Pencil } from '@/styles/Icons';
 import { BASE_URL } from '@/services/api';
+import { fetchSubjects } from '@/services/fetchSubjects';
+import { Add, Eye, Pencil } from '@/styles/Icons';
+import Note from '@/types/Note';
 import Pagination from '@/types/Pagination';
 
 const NotesPage: React.FC = () => {

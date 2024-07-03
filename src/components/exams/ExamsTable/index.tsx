@@ -1,10 +1,10 @@
 import React from 'react';
 
+import TableHeading from '@/components/utils/TableHeading';
 import { sanitizeMode } from '@/utils/sanitizeMode';
 import Link from 'next/link';
 import PreviousExamResponse from 'src/types/PreviousExamResponse';
 import { formatDateDDStrMonthYYYY } from 'src/utils/Date';
-import TableHeading from '../TableHeading';
 
 interface ExamsTableProps {
   previousExamResponse: PreviousExamResponse;

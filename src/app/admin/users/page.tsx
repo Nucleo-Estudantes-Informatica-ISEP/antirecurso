@@ -1,4 +1,4 @@
-import UserAvatar from '@/components/UserAvatar';
+import UserAvatar from '@/components/scoreboard/UserAvatar';
 import config from '@/config';
 import { BASE_URL } from '@/services/api';
 import User from '@/types/User';

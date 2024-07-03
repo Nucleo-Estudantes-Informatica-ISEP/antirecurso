@@ -1,7 +1,7 @@
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import swal from 'sweetalert';
-import Slider from '../Slider';
+import Slider from '../../utils/Slider';
 
 interface ModalProps {
   isVisible?: boolean;

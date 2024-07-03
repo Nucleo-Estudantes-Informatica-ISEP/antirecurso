@@ -1,27 +1,30 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import Link from 'next/link';
-import { AnimatePresence, motion } from 'framer-motion';
-import PrimaryButton from '@/components/PrimaryButton';
+import PrimaryButton from '@/components/utils/PrimaryButton';
 import config from '@/config';
 import useIsMobile from '@/hooks/useIsMobile';
+import { AnimatePresence, motion } from 'framer-motion';
+import Link from 'next/link';
+import { useEffect, useState } from 'react';
 
-const CookieConsent: React.FC = () => {
+const ChangelogPopUp: React.FC = () => {
   const [visible, setVisible] = useState(false);
   const isMobile = useIsMobile();
 
+  const localStorageKeyName = `${config.localStorage.changelog}-${config.version}`;
+
   useEffect(() => {
-    const consent = localStorage.getItem(config.localStorage.consent);
-    if (!consent) setVisible(true);
-  }, []);
+    const hasSeenChangelog = localStorage.getItem(localStorageKeyName);
+    if (!hasSeenChangelog) setVisible(true);
+  }, [localStorageKeyName]);
 
   const handleConfirm = () => {
-    localStorage.setItem(config.localStorage.consent, 'yes');
+    localStorage.setItem(localStorageKeyName, 'yes');
     setVisible(false);
   };
 
   const position = isMobile ? -160 : -80;
+  const version = config.version;
 
   return (
     <AnimatePresence>
@@ -33,18 +36,19 @@ const CookieConsent: React.FC = () => {
           transition={{ duration: 0.3, ease: 'easeOut' }}>
           <div>
             <p className="font-medium">
-              🍪 Usamos cookies essenciais para garantir que o AntiRecurso funcione corretamente.{' '}
+              A versão {version} está aqui 🎉. Descobre mais{' '}
               <Link
-                href="/cookie-policy"
+                href="/changelog"
+                onClick={handleConfirm}
                 className="text-blue-700 dark:text-blue-300 hover:underline cursor-pointer"
                 tabIndex={1}>
-                Sabe mais aqui.
+                aqui.
               </Link>
             </p>
           </div>
           <div className="max-md:w-full">
             <PrimaryButton onClick={handleConfirm} className="max-md:w-full" tabIndex={2}>
-              Confirmar
+              Ignorar
             </PrimaryButton>
           </div>
         </motion.div>
@@ -53,4 +57,4 @@ const CookieConsent: React.FC = () => {
   );
 };
 
-export default CookieConsent;
+export default ChangelogPopUp;
