@@ -6,6 +6,7 @@ import StatsLineChart from '@/components/profile/StatsLineChart';
 import StatsPieChart from '@/components/profile/StatsPieChart';
 import useSession from '@/hooks/useSession';
 import { sanitizeMode } from '@/utils/sanitizeMode';
+import { fetcher } from '@/utils/SWRFetcher';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { FiInfo, FiSettings } from 'react-icons/fi';
@@ -14,6 +15,7 @@ import 'react-loading-skeleton/dist/skeleton.css';
 import { BASE_URL } from 'src/services/api';
 import SubjectStats from 'src/types/SubjectStats';
 import getSubjectNameById from 'src/utils/getSubjectNameById';
+import useSWR from 'swr';
 
 interface SubjectStatsProps {
   params: {
@@ -23,27 +25,26 @@ interface SubjectStatsProps {
 
 const SubjectStats: React.FC<SubjectStatsProps> = ({ params }) => {
   const [subjectName, setSubjectName] = useState('');
-  const [subjectStats, setSubjectStats] = useState<SubjectStats>();
   const { token } = useSession();
+  const url = `${BASE_URL}/subjects/${params.id}/stats`;
+
+  // conditional data fetching https://swr.vercel.app/docs/conditional-fetching
+  const { data: subjectStats } = useSWR<SubjectStats>(
+    token ? [url, token as string] : null,
+    ([url, token]) => fetcher(url, token as string),
+    {
+      revalidateOnFocus: false,
+      keepPreviousData: true
+    }
+  );
 
   useEffect(() => {
-    async function getSubjectStats() {
+    async function fetchSubjectName() {
       const sName = await getSubjectNameById(params.id);
       setSubjectName(sName);
-
-      const res = await fetch(`${BASE_URL}/subjects/${params.id}/stats`, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`
-        },
-        cache: 'no-store'
-      });
-      const sStats: SubjectStats = await res.json();
-      setSubjectStats(sStats);
     }
 
-    getSubjectStats();
+    fetchSubjectName();
   }, [params.id, token]);
 
   return (

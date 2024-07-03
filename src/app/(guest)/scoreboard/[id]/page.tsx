@@ -7,10 +7,12 @@ import { BASE_URL } from '@/services/api';
 import Leaderboard from '@/types/Leaderboard';
 import getSubjectNameById from '@/utils/getSubjectNameById';
 import { sanitizeMode } from '@/utils/sanitizeMode';
+import { fetcher } from '@/utils/SWRFetcher';
 import { motion } from 'framer-motion';
 import { useEffect, useState } from 'react';
 import Skeleton from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css';
+import useSWR from 'swr';
 
 interface ScoreboardPageProps {
   params: {
@@ -22,26 +24,21 @@ const examModes = ['custom', 'default', 'realistic', 'all', 'new', 'wrong', 'har
 
 const ScoreboardPage: React.FC<ScoreboardPageProps> = ({ params }) => {
   const [mode, setMode] = useState<string>('all');
-  const [loading, setLoading] = useState<boolean>(false);
-  const [scoreboard, setScoreboard] = useState<Leaderboard | null>(null);
   const [subjectName, setSubjectName] = useState<string | null>(null);
   const { user } = useSession();
 
-  useEffect(() => {
-    async function fetchLeaderboard() {
-      setLoading(true);
-      const res = await fetch(`${BASE_URL}/subjects/${params.id}/scoreboard/${mode}`);
-      const data = await res.json();
-      setLoading(false);
-      setScoreboard(data);
-    }
+  const { data: scoreboard } = useSWR<Leaderboard>(
+    `${BASE_URL}/subjects/${params.id}/scoreboard/${mode}`,
+    (url) => fetcher(url, null),
+    { revalidateOnFocus: false, keepPreviousData: true }
+  );
 
+  useEffect(() => {
     async function fetchSubjectNameById(id: number) {
       const s = await getSubjectNameById(id);
       setSubjectName(s);
     }
 
-    fetchLeaderboard();
     fetchSubjectNameById(parseInt(params.id));
   }, [mode, params.id]);
 
@@ -69,7 +66,7 @@ const ScoreboardPage: React.FC<ScoreboardPageProps> = ({ params }) => {
         )}
       </p>
 
-      {scoreboard !== null && !loading ? (
+      {scoreboard !== undefined ? (
         <motion.section className="grid w-full my-5 place-items-center">
           {scoreboard.scores.length === 0 ? (
             <p className="text-center">Sem nenhum utilizador registado</p>

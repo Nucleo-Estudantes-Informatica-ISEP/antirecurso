@@ -27,6 +27,7 @@ const Reports: React.FC = () => {
   const searchParams = useQueryParamsManager();
 
   const [endpoint, setEndpoint] = useState<string | null>(null);
+
   // conditional data fetching https://swr.vercel.app/docs/conditional-fetching
   const { data, error, isLoading } = useSWR(
     session.token && endpoint ? [endpoint, session.token as string] : null,
