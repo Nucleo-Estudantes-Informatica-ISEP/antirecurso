@@ -1,7 +1,7 @@
 'use client';
 
 import Report from '@/types/Report';
-import { FaArrowUp, FaArrowDown } from 'react-icons/fa';
+import { FaArrowDown, FaArrowUp } from 'react-icons/fa';
 
 type TableProps = {
   reports: Report[];
@@ -17,7 +17,7 @@ type TableProps = {
   handleOpenModal: (report: Report) => void;
 };
 
-type Collumn = {
+type Column = {
   name: string;
   key: string;
   w: string;
@@ -31,7 +31,7 @@ const ReportTable: React.FC<TableProps> = ({
   setSortBy,
   handleOpenModal
 }) => {
-  const collumns = [
+  const columns = [
     {
       name: 'ID',
       key: 'id',
@@ -66,28 +66,28 @@ const ReportTable: React.FC<TableProps> = ({
 
   // select a single row
   const toggleRow = (id: number) => {
-    setSelectedReports((prevselectedReports) =>
-      prevselectedReports.includes(id)
-        ? prevselectedReports.filter((rowId) => rowId !== id)
-        : [...prevselectedReports, id]
+    setSelectedReports((prevSelectedReports) =>
+      prevSelectedReports.includes(id)
+        ? prevSelectedReports.filter((rowId) => rowId !== id)
+        : [...prevSelectedReports, id]
     );
   };
 
   // select all rows
   const handleSelectAll = () => {
     const allRowIds = reports.map((row) => row.id);
-    setSelectedReports((prevselectedReports) =>
-      prevselectedReports.length === allRowIds.length ? [] : allRowIds
+    setSelectedReports((prevSelectedReports) =>
+      prevSelectedReports.length === allRowIds.length ? [] : allRowIds
     );
   };
 
   // sort table
-  const handleSort = (collumn: Collumn) => {
+  const handleSort = (column: Column) => {
     let desc = true;
-    if (sortBy.key === collumn.key && sortBy.desc) {
+    if (sortBy.key === column.key && sortBy.desc) {
       desc = false;
     }
-    setSortBy({ key: collumn.key, desc });
+    setSortBy({ key: column.key, desc });
   };
 
   return (
@@ -110,13 +110,13 @@ const ReportTable: React.FC<TableProps> = ({
                     onChange={handleSelectAll}
                   />
                 </th>
-                {collumns.map((collumn: Collumn) => (
+                {columns.map((column: Column) => (
                   <th
-                    className={`cursor-pointer px-6 py-4 ${collumn.w}`}
-                    onClick={() => handleSort(collumn)}
-                    key={collumn.key}>
-                    {collumn.name}
-                    {sortBy.key === collumn.key &&
+                    className={`cursor-pointer px-6 py-4 ${column.w}`}
+                    onClick={() => handleSort(column)}
+                    key={column.key}>
+                    {column.name}
+                    {sortBy.key === column.key &&
                       (!sortBy.desc ? (
                         <FaArrowUp className="inline ml-1" />
                       ) : (
