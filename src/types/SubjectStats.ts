@@ -1,4 +1,4 @@
-export default interface SubjectStats {
+export interface SubjectStats {
   n_of_answers: number;
   total_of_questions: number;
   n_of_wrong_answers: number;

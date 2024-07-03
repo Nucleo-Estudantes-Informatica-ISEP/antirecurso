@@ -13,7 +13,7 @@ import { FiInfo, FiSettings } from 'react-icons/fi';
 import Skeleton from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css';
 import { BASE_URL } from 'src/services/api';
-import SubjectStats from 'src/types/SubjectStats';
+import type { SubjectStats } from 'src/types/SubjectStats';
 import getSubjectNameById from 'src/utils/getSubjectNameById';
 import useSWR from 'swr';
 
