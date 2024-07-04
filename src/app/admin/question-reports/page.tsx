@@ -50,6 +50,7 @@ const Reports: React.FC = () => {
       value: 'notSolved'
     }
   ];
+
   const [filter, setFilter] = useState<string>(filters[0].value);
   const [selectedReports, setSelectedReports] = useState<number[]>([]);
   const [sortBy, setSortBy] = useState<{ key: string; desc: boolean }>({
@@ -144,7 +145,8 @@ const Reports: React.FC = () => {
       sort: sortBy.key,
       order: sortBy.desc ? 'desc' : 'asc'
     });
-  }, [sortBy.key, sortBy.desc, searchParams]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [sortBy.key, sortBy.desc]);
 
   // when search params change, update endpoint
   useEffect(() => {
@@ -162,6 +164,7 @@ const Reports: React.FC = () => {
     // set the sort by and order
     const sort = searchParams.queryParams.get('sort');
     const order = searchParams.queryParams.get('order');
+
     if (sort && order) {
       setSortBy({ key: sort, desc: order === 'desc' });
     } else {
