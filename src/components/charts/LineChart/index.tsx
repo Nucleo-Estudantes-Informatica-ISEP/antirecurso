@@ -1,31 +1,20 @@
 'use client';
 
-import {
-  CategoryScale,
-  Chart as ChartJS,
-  ChartData,
-  ChartOptions,
-  Legend,
-  LinearScale,
-  LineElement,
-  PointElement,
-  Title,
-  Tooltip
-} from 'chart.js';
+import { ChartData, Chart as ChartJS, ChartOptions, registerables } from 'chart.js';
 import { useTheme } from 'next-themes';
 import { useId } from 'react';
 import { Line } from 'react-chartjs-2';
 import regression, { DataPoint } from 'regression';
 
-ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
+ChartJS.register(...registerables);
 
-interface StatsLineChartProps {
+interface LineChartProps {
   labels: string[];
   data: number[];
   text: string;
 }
 
-const StatsLineChart: React.FC<StatsLineChartProps> = ({ labels, data, text }) => {
+const LineChart: React.FC<LineChartProps> = ({ labels, data, text }) => {
   const dataPoints = data.map((value, index) => [index, value] as DataPoint);
   const regressionLine = regression.linear(dataPoints).points.map((point) => point[1]);
 
@@ -70,6 +59,7 @@ const StatsLineChart: React.FC<StatsLineChartProps> = ({ labels, data, text }) =
       }
     ]
   };
+
   return (
     <div className="h-full">
       <div className="h-full">
@@ -88,4 +78,4 @@ const StatsLineChart: React.FC<StatsLineChartProps> = ({ labels, data, text }) =
   );
 };
 
-export default StatsLineChart;
+export default LineChart;

@@ -1,9 +1,9 @@
 'use client';
 
+import LineChart from '@/components/charts/LineChart';
+import PieChart from '@/components/charts/PieChart';
 import GradeCalculatorContainer from '@/components/profile/GradeCalculatorContainer';
 import ScoreIndicator from '@/components/profile/ScoreIndicator';
-import StatsLineChart from '@/components/profile/StatsLineChart';
-import StatsPieChart from '@/components/profile/StatsPieChart';
 import useSession from '@/hooks/useSession';
 import { sanitizeMode } from '@/utils/sanitizeMode';
 import { fetcher } from '@/utils/SWRFetcher';
@@ -146,7 +146,7 @@ const SubjectStats: React.FC<SubjectStatsProps> = ({ params }) => {
               <div className="w-full py-1 text-white rounded-md bg-primary">
                 <p>Número de Exames</p>
               </div>
-              <StatsPieChart
+              <PieChart
                 labels={['Aprovado', 'Reprovado']}
                 text="Nº de exames"
                 backgroundColor={['rgba(50, 229, 50, 0.8)', 'rgba(255, 22, 12, 0.8)']}
@@ -161,7 +161,7 @@ const SubjectStats: React.FC<SubjectStatsProps> = ({ params }) => {
               <div className="w-full py-1 text-white rounded-md bg-primary">
                 <p>Número de Questões</p>
               </div>
-              <StatsPieChart
+              <PieChart
                 labels={['Corretas', 'Incorretas', 'Não respondidas']}
                 text="Nº de questões"
                 backgroundColor={[
@@ -185,7 +185,7 @@ const SubjectStats: React.FC<SubjectStatsProps> = ({ params }) => {
               <div className="w-full py-1 text-white rounded-md bg-primary">
                 <p>Tipo de Exame</p>
               </div>
-              <StatsPieChart
+              <PieChart
                 labels={Object.keys(subjectStats.mode_scores).map(
                   (mode) => sanitizeMode(mode).charAt(0).toUpperCase() + sanitizeMode(mode).slice(1)
                 )}
@@ -217,7 +217,7 @@ const SubjectStats: React.FC<SubjectStatsProps> = ({ params }) => {
         ) : (
           <>
             <div className="py-2 px-1 md:p-2 bg-gray-100 dark:bg-secondary-dark rounded-md w-full relative min-h-[400px]">
-              <StatsLineChart
+              <LineChart
                 labels={subjectStats.user_scores.map((score) =>
                   new Date(score.created_at).toLocaleDateString('pt-PT')
                 )}

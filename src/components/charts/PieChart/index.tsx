@@ -6,7 +6,7 @@ import { Pie } from 'react-chartjs-2';
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
-interface StatsPieChartProps {
+interface PieChartProps {
   labels: string[];
   data: number[];
   text: string;
@@ -14,7 +14,7 @@ interface StatsPieChartProps {
   borderColor: string[];
 }
 
-const StatsPieChart: React.FC<StatsPieChartProps> = ({
+const PieChart: React.FC<PieChartProps> = ({
   labels,
   data,
   text,
@@ -50,4 +50,4 @@ const StatsPieChart: React.FC<StatsPieChartProps> = ({
   );
 };
 
-export default StatsPieChart;
+export default PieChart;

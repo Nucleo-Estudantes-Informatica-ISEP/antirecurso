@@ -1,11 +1,11 @@
 'use client';
 
+import { AnimatePresence, motion } from 'framer-motion';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
-import { AnimatePresence, motion } from 'framer-motion';
 
-import { Flag, Home, Message, Note, RightArrow, User } from '@/styles/Icons';
 import useIsMobile from '@/hooks/useIsMobile';
+import { Flag, Home, Message, Note, RightArrow, User } from '@/styles/Icons';
 
 interface SidebarProps {
   children?: React.ReactNode;
@@ -22,10 +22,10 @@ const Sidebar: React.FC<SidebarProps> = () => {
 
   const items = [
     { label: 'Dashboard', icon: <Home className="text-lg" />, link: '/admin' },
-    { label: 'Example', icon: null, link: null },
+    { label: 'Geral', icon: null, link: null },
     { label: 'Utilizadores', icon: <User className="text-lg" />, link: '/admin/users' },
     { label: 'Resumos', icon: <Note className="text-lg" />, link: '/admin/notes' },
-    { label: 'Example', icon: null, link: null },
+    { label: 'Comunidade', icon: null, link: null },
     { label: 'Reports', icon: <Flag className="text-lg" />, link: '/admin/question-reports' },
     { label: 'Comentários', icon: <Message className="text-lg" />, link: '/admin/comments' }
   ];
