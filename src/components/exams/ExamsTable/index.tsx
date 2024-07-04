@@ -1,13 +1,14 @@
 import React from 'react';
 
 import TableHeading from '@/components/utils/TableHeading';
+import Answer from '@/types/Answer';
+import { Paginate } from '@/types/Paginate';
 import { sanitizeMode } from '@/utils/sanitizeMode';
 import Link from 'next/link';
-import PreviousExamResponse from 'src/types/PreviousExamResponse';
 import { formatDateDDStrMonthYYYY } from 'src/utils/Date';
 
 interface ExamsTableProps {
-  previousExamResponse: PreviousExamResponse;
+  previousExamResponse: Paginate<Answer>;
 }
 
 const ExamsTable: React.FC<ExamsTableProps> = ({ previousExamResponse }) => {

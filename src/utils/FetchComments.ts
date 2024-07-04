@@ -1,13 +1,13 @@
+import { BASE_URL } from '@/services/api';
+import Comment from '@/types/Comment';
 import { cookies } from 'next/headers';
 import config from 'src/config';
 
-export default async function fetchComments(fetchUrl: string | null) {
-  if (!fetchUrl) throw new Error('No fetch url provided');
-
+export async function fetchComments(): Promise<Comment[]> {
   const t = cookies().get(config.cookies.token);
   const token = t?.value;
 
-  const res = await fetch(fetchUrl, {
+  const res = await fetch(`${BASE_URL}/comments`, {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',
@@ -17,5 +17,5 @@ export default async function fetchComments(fetchUrl: string | null) {
 
   if (res.status !== 200) throw new Error('Could not fetch comments');
 
-  return await res.json();
+  return ((await res.json()) as { data: Comment[] }).data;
 }

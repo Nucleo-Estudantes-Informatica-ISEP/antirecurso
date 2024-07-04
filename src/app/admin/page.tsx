@@ -35,7 +35,8 @@ const AdminPage: React.FC = async () => {
       </p>
 
       <div className="flex flex-col gap-4 mt-8 size-full">
-        <h2 className="text-xl font-semibold text-center">Atividade de Hoje</h2>
+        <h2 className="text-3xl font-semibold text-center">Atividade</h2>
+
         <div className="flex flex-row gap-x-2 gap-y-6 flex-wrap items-center justify-center size-full">
           <div className="py-4 px-1 md:p-2 bg-gray-100 dark:bg-secondary-dark rounded-md size-3/4">
             <BarChart

@@ -1,9 +1,8 @@
-import { BASE_URL } from '@/services/api';
 import Comment from '@/types/Comment';
-import fetchComments from '@/utils/FetchComments';
+import { fetchComments } from '@/utils/FetchComments';
 
 const CommentTable: React.FC = async () => {
-  const comments = await fetchComments(`${BASE_URL}/comments`);
+  const comments = await fetchComments();
 
   return (
     <table className="table-auto">

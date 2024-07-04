@@ -1,11 +1,12 @@
 'use client';
 
+import Answer from '@/types/Answer';
+import { Paginate } from '@/types/Paginate';
 import { useTheme } from 'next-themes';
 import { useRouter } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 import 'react-loading-skeleton/dist/skeleton.css';
 import { BASE_URL } from 'src/services/api';
-import PreviousExamResponse from 'src/types/PreviousExamResponse';
 import fetchUserPreviousExams from 'src/utils/FetchAnswers';
 import swal from 'sweetalert';
 import Pagination from '../../utils/Pagination';
@@ -21,7 +22,7 @@ const PreviousExamsTable: React.FC<PreviousExamsTableProps> = ({ token }) => {
   const router = useRouter();
 
   const [fetchUrl, setFetchUrl] = useState<string | null>(BASE_URL + '/exams');
-  const [previousExamResponse, setPreviousExamResponse] = useState<PreviousExamResponse>();
+  const [previousExamResponse, setPreviousExamResponse] = useState<Paginate<Answer>>();
 
   const { theme } = useTheme();
 
