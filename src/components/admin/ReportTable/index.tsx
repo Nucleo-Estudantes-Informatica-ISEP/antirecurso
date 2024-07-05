@@ -1,37 +1,19 @@
 'use client';
 
-import Report from '@/types/Report';
+import { Report } from '@/types/Report';
+import { TableColumn } from '@/types/TableColumn';
+import { TableProps } from '@/types/TableProps';
 import { FaArrowDown, FaArrowUp } from 'react-icons/fa';
 
-type TableProps = {
-  reports: Report[];
-  selectedReports: number[];
-  setSelectedReports: React.Dispatch<React.SetStateAction<number[]>>;
-  sortBy: { key: string; desc: boolean };
-  setSortBy: React.Dispatch<
-    React.SetStateAction<{
-      key: string;
-      desc: boolean;
-    }>
-  >;
-  handleOpenModal: (report: Report) => void;
-};
-
-type Column = {
-  name: string;
-  key: string;
-  w: string;
-};
-
-const ReportTable: React.FC<TableProps> = ({
-  reports,
-  selectedReports,
-  setSelectedReports,
+const ReportTable: React.FC<TableProps<Report>> = ({
+  data,
+  selected,
+  setSelected,
   sortBy,
   setSortBy,
   handleOpenModal
 }) => {
-  const columns = [
+  const columns: TableColumn<Report>[] = [
     {
       name: 'ID',
       key: 'id',
@@ -39,7 +21,7 @@ const ReportTable: React.FC<TableProps> = ({
     },
     {
       name: 'Autor',
-      key: 'user_id',
+      key: 'user',
       w: 'w-12'
     },
     {
@@ -66,7 +48,7 @@ const ReportTable: React.FC<TableProps> = ({
 
   // select a single row
   const toggleRow = (id: number) => {
-    setSelectedReports((prevSelectedReports) =>
+    setSelected((prevSelectedReports) =>
       prevSelectedReports.includes(id)
         ? prevSelectedReports.filter((rowId) => rowId !== id)
         : [...prevSelectedReports, id]
@@ -75,14 +57,14 @@ const ReportTable: React.FC<TableProps> = ({
 
   // select all rows
   const handleSelectAll = () => {
-    const allRowIds = reports.map((row) => row.id);
-    setSelectedReports((prevSelectedReports) =>
+    const allRowIds = data.map((row) => row.id);
+    setSelected((prevSelectedReports) =>
       prevSelectedReports.length === allRowIds.length ? [] : allRowIds
     );
   };
 
   // sort table
-  const handleSort = (column: Column) => {
+  const handleSort = (column: TableColumn<Report>) => {
     let desc = true;
     if (sortBy.key === column.key && sortBy.desc) {
       desc = false;
@@ -93,10 +75,10 @@ const ReportTable: React.FC<TableProps> = ({
   return (
     <div className="relative overflow-x-auto shadow-md pt-4">
       <table className="table-fixed w-full text-left rtl:text-right text-gray-800 dark:text-gray-300">
-        {reports.length === 0 ? (
+        {data.length === 0 ? (
           <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
             <tr>
-              <th className="px-4 py-3">Nenhum report encontrado</th>
+              <th className="px-4 py-3">Nenhum comentário encontrado</th>
             </tr>
           </thead>
         ) : (
@@ -106,11 +88,11 @@ const ReportTable: React.FC<TableProps> = ({
                 <th className="px-4 py-4 w-1">
                   <input
                     type="checkbox"
-                    checked={selectedReports.length === reports.length}
+                    checked={selected.length === data.length}
                     onChange={handleSelectAll}
                   />
                 </th>
-                {columns.map((column: Column) => (
+                {columns.map((column) => (
                   <th
                     className={`cursor-pointer px-6 py-4 ${column.w}`}
                     onClick={() => handleSort(column)}
@@ -127,39 +109,29 @@ const ReportTable: React.FC<TableProps> = ({
               </tr>
             </thead>
             <tbody>
-              {reports.map((report: Report) => (
+              {data.map((report: Report) => (
                 <tr
                   key={report.id}
                   className={
-                    selectedReports.includes(report.id)
+                    selected.includes(report.id)
                       ? 'cursor-pointer dark:bg-gray-600 bg-blue-200 border-b dark:border-gray-700'
                       : 'cursor-pointer bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600'
                   }>
                   <td className="px-4 py-3">
                     <input
                       type="checkbox"
-                      checked={selectedReports.includes(report.id)}
+                      checked={selected.includes(report.id)}
                       onChange={() => toggleRow(report.id)}
                     />
                   </td>
-                  <td className="px-6 py-3" onClick={() => handleOpenModal(report)}>
-                    {report.id}
-                  </td>
-                  <td className="px-6 py-3" onClick={() => handleOpenModal(report)}>
-                    {report.user}
-                  </td>
-                  <td className="px-6 py-3 truncate" onClick={() => handleOpenModal(report)}>
-                    {report.reason}
-                  </td>
-                  <td className="px-6 py-3" onClick={() => handleOpenModal(report)}>
-                    {report.question.id}
-                  </td>
-                  <td className="px-6 py-3" onClick={() => handleOpenModal(report)}>
-                    {report.created_at}
-                  </td>
-                  <td className="px-6 py-3" onClick={() => handleOpenModal(report)}>
-                    {report.solved == 1 ? 'Sim' : 'Não'}
-                  </td>
+                  {columns.map((column) => (
+                    <td
+                      className={`px-6 py-3 truncate`}
+                      onClick={() => handleOpenModal && handleOpenModal(report)}
+                      key={column.key}>
+                      {report[column.key] as string}
+                    </td>
+                  ))}
                 </tr>
               ))}
             </tbody>
@@ -173,14 +145,12 @@ const ReportTable: React.FC<TableProps> = ({
           <p className="text-sm">
             <span className="font-normal text-gray-500 dark:text-gray-400">Selecionados:</span>
             <span className="font-semibold text-gray-900 dark:text-white pl-1">
-              {selectedReports.length}
+              {selected.length}
             </span>
           </p>
           <p className="text-sm">
             <span className="font-normal text-gray-500 dark:text-gray-400">Total:</span>
-            <span className="font-semibold text-gray-900 dark:text-white pl-1">
-              {reports.length}
-            </span>
+            <span className="font-semibold text-gray-900 dark:text-white pl-1">{data.length}</span>
           </p>
         </nav>
       </div>

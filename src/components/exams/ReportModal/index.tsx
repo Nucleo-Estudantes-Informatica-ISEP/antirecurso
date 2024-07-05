@@ -1,14 +1,14 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import Report from '@/types/Report';
-import Option from '@/types/Option';
+import useSession from '@/hooks/useSession';
+import { BASE_URL } from '@/services/api';
 import { Check } from '@/styles/Icons';
+import Option from '@/types/Option';
+import { Report } from '@/types/Report';
+import { useTheme } from 'next-themes';
+import { useEffect, useState } from 'react';
 import { FaEdit } from 'react-icons/fa';
 import swal from 'sweetalert';
-import { BASE_URL } from '@/services/api';
-import useSession from '@/hooks/useSession';
-import { useTheme } from 'next-themes';
 
 interface ModalProps {
   isVisible?: boolean;
@@ -214,7 +214,7 @@ const ReportModal: React.FC<ModalProps> = ({
                 <p>{report?.email}</p>
                 <p>{report?.created_at}</p>
               </div>
-              {report?.solved && (
+              {report?.solved.toString().toLowerCase() === 'sim' && (
                 <div className="flex flex-col mb-12">
                   <h2 className="w-full font-bold mb-6 text-lg">Resolvido por</h2>
                   <p>{report?.reviewed_by?.name}</p>
@@ -224,7 +224,7 @@ const ReportModal: React.FC<ModalProps> = ({
               )}
             </div>
           </div>
-          {!report?.solved && (
+          {report?.solved.toString().toLowerCase() !== 'sim' && (
             <button
               name="Criar Exame"
               className="w-full mt-2 p-2 text-xl bg-primary rounded-md text-white font-bold hover:brightness-90 hover:text-white"

@@ -1,5 +1,5 @@
 import { BASE_URL } from '@/services/api';
-import Comment from '@/types/Comment';
+import { Comment } from '@/types/Comment';
 import { Paginate } from '@/types/Paginate';
 import { cookies } from 'next/headers';
 import config from 'src/config';

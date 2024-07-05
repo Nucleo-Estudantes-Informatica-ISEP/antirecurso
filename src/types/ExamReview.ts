@@ -1,4 +1,4 @@
-import Comment from './Comment';
+import { Comment } from './Comment';
 import Option from './Option';
 
 export default interface ExamReview {

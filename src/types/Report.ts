@@ -1,10 +1,11 @@
 import Option from './Option';
 
-export default interface Report {
+export interface Report {
   id: number;
   user: string;
   email: string;
   reason: string;
+  question_id: string;
   question: {
     id: number;
     title: string;
@@ -20,5 +21,5 @@ export default interface Report {
     name: string;
     email: string;
   } | null;
-  solved: number;
+  solved: boolean | string;
 }

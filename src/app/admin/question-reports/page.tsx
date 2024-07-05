@@ -4,7 +4,8 @@ import ReportTable from '@/components/admin/ReportTable';
 import ReportModal from '@/components/exams/ReportModal';
 import { useQueryParamsManager } from '@/hooks/useQueryParamsManager';
 import useSession from '@/hooks/useSession';
-import Report from '@/types/Report';
+import { Filter } from '@/types/Filter';
+import { Report } from '@/types/Report';
 import { fetcher } from '@/utils/SWRFetcher';
 import { useTheme } from 'next-themes';
 import { useEffect, useState } from 'react';
@@ -13,11 +14,6 @@ import 'react-loading-skeleton/dist/skeleton.css';
 import { BASE_URL } from 'src/services/api';
 import swal from 'sweetalert';
 import useSWR, { mutate } from 'swr';
-
-type Filter = {
-  name: string;
-  value: string;
-};
 
 const Reports: React.FC = () => {
   const { theme } = useTheme();
@@ -34,6 +30,12 @@ const Reports: React.FC = () => {
     ([url, token]) => fetcher(url, token),
     { revalidateOnFocus: false }
   );
+
+  const reports = data?.map((r: Report) => ({
+    ...r,
+    question_id: r.question.id,
+    solved: r.solved ? 'Sim' : 'Não'
+  }));
 
   // logic
   const filters = [
@@ -221,9 +223,9 @@ const Reports: React.FC = () => {
             </div>
           ) : (
             <ReportTable
-              reports={data ?? []}
-              selectedReports={selectedReports}
-              setSelectedReports={setSelectedReports}
+              data={reports ?? []}
+              selected={selectedReports}
+              setSelected={setSelectedReports}
               sortBy={sortBy}
               setSortBy={setSortBy}
               handleOpenModal={handleOpenModal}

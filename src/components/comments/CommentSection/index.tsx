@@ -4,7 +4,7 @@ import InputLabel from '@/components/utils/InputLabel';
 import PrimaryButton from '@/components/utils/PrimaryButton';
 import useSession from '@/hooks/useSession';
 import { Flag } from '@/styles/Icons';
-import Comment from '@/types/Comment';
+import { Comment } from '@/types/Comment';
 import { useTheme } from 'next-themes';
 import Image from 'next/image';
 import Link from 'next/link';
