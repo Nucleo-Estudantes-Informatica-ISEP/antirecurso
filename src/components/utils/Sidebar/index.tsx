@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { useEffect, useState } from 'react';
 
 import useIsMobile from '@/hooks/useIsMobile';
-import { Flag, Home, Message, Note, RightArrow, User } from '@/styles/Icons';
+import { Flag, Home, Message, Note, RightArrow, User, ChartBar } from '@/styles/Icons';
 
 interface SidebarProps {
   children?: React.ReactNode;
@@ -22,6 +22,7 @@ const Sidebar: React.FC<SidebarProps> = () => {
 
   const items = [
     { label: 'Dashboard', icon: <Home className="text-lg" />, link: '/admin' },
+    { label: 'Gráficos', icon: <ChartBar className="text-lg"/>, link: '/admin/charts'},
     { label: 'Geral', icon: null, link: null },
     { label: 'Utilizadores', icon: <User className="text-lg" />, link: '/admin/users' },
     { label: 'Resumos', icon: <Note className="text-lg" />, link: '/admin/notes' },
