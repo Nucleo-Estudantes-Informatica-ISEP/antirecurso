@@ -3,21 +3,46 @@
 import BarChart from '@/components/charts/BarChart';
 import useSession from '@/hooks/useSession';
 import { AdminChartStats } from '@/types/AdminChartStats';
+import { fetchSubjects } from '@/services/fetchSubjects';
 import { useState, useEffect } from 'react';
 import { BASE_URL } from 'src/services/api';
 
 const Charts: React.FC = () => {
   const session = useSession();
 
-  // logic
+  // Get Subjects
+  const [subjects, setSubjects] = useState<{ name: string; value: string }[]>([
+    { name: 'Todos', value: '' },
+  ]);
+  const [isLoadingSubjects, setIsLoadingSubjects] = useState<boolean>(true);
+
+  useEffect(() => {
+    const getSubjects = async () => {
+      try {
+        const subjectsData = await fetchSubjects();
+        const formattedSubjects = subjectsData.map((subject) => ({
+          name: subject.name,
+          value: subject.id.toString(),
+        }));
+
+        setSubjects([{ name: 'Todos', value: '' }, ...formattedSubjects]);
+      } catch (error) {
+        console.error('Error fetching subjects:', error);
+      } finally {
+        setIsLoadingSubjects(false);
+      }
+    };
+    getSubjects();
+  }, []);
+
   const filters = [
     {
       name: 'Exames',
-      value: 'examsCharts'
+      value: 'exams-charts'
     },
     {
       name: 'Users Criados',
-      value: 'usersCreated'
+      value: 'users-created'
     },
     {
       name: 'Comments',
@@ -29,46 +54,7 @@ const Charts: React.FC = () => {
     }
   ];
 
-  const subjects = [
-    {
-      name: 'Todos',
-      value: ''
-    },
-    {
-      name: 'ALGAV',
-      value: '1'
-    },
-    {
-      name: 'ASIST',
-      value: '2'
-    },
-    {
-      name: 'ODSOFT',
-      value: '3'
-    },
-    {
-      name: 'RCOMP',
-      value: '4'
-    },
-    {
-      name: 'SCOMP',
-      value: '5'
-    },
-    {
-      name: 'SGRAI',
-      value: '6'
-    },
-    {
-      name: 'ARQCP',
-      value: '7'
-    },
-    {
-      name: 'PRCMP',
-      value: '8'
-    }
-  ];
-
-  const [selectedFilter, setSelectedFilter] = useState<string>('examsCharts');
+  const [selectedFilter, setSelectedFilter] = useState<string>('exams-charts');
   const [selectedSubject, setSelectedSubject] = useState<string>('');
   const [data, setData] = useState<AdminChartStats | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -78,11 +64,10 @@ const Charts: React.FC = () => {
     setIsLoading(true);
     setError(null);
 
-    const url = new URL(`${BASE_URL}/admin/${filter}`);
+    const url = new URL(`${BASE_URL}/admin/${filter}/stats`);
 
-    if (filter === 'examsCharts' && subject) {
+    if (filter === 'exams-charts' && subject) {
       url.searchParams.append('subject_id',subject);
-      console.log(url);
     }
 
     try {
@@ -115,6 +100,49 @@ const Charts: React.FC = () => {
   const handleChangeSubject = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setSelectedSubject(e.target.value);
   };
+  
+  const filterToComponentMap = new Map([
+    [
+      'exams-charts',
+      (data: AdminChartStats) => (
+        <BarChart
+          title="Nº de exames por Mês"
+          labels={data.exams_per_subject_individual?.map((item) => item.month)}
+          data={data.exams_per_subject_individual?.map((item) => item.count)}
+        />
+      ),
+    ],
+    [
+      'users-created',
+      (data: AdminChartStats) => (
+        <BarChart
+          title="Nº de contas criadas por Mês"
+          labels={data.users_per_month?.map((item) => item.month)}
+          data={data.users_per_month?.map((item) => item.count)}
+        />
+      ),
+    ],
+    [
+      'comments',
+      (data: AdminChartStats) => (
+        <BarChart
+          title="Nº de comments por Mês"
+          labels={data.comments_per_month?.map((item) => item.month)}
+          data={data.comments_per_month?.map((item) => item.count)}
+        />
+      ),
+    ],
+    [
+      'reports',
+      (data: AdminChartStats) => (
+        <BarChart
+          title="Nº de reports por Mês"
+          labels={data.reports_per_month?.map((item) => item.month)}
+          data={data.reports_per_month?.map((item) => item.count)}
+        />
+      ),
+    ],
+  ]);
 
 
   return (
@@ -133,7 +161,7 @@ const Charts: React.FC = () => {
             </option>
           ))}
         </select>
-        {selectedFilter === 'examsCharts' && (
+        {selectedFilter === 'exams-charts' && !isLoadingSubjects &&(
           <select
           id="subjects"
           className="w-44 bg-gray-50 border border-gray-300 text-gray-900 text-sm focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
@@ -156,34 +184,7 @@ const Charts: React.FC = () => {
           <p className="text-red-500"><strong>{error}</strong></p>
         ) : (
           <div className="py-4 px-1 md:p-2 bg-gray-100 dark:bg-secondary-dark rounded-md size-3/4">
-            {selectedFilter === 'examsCharts' && data?.exams_per_subject_individual && (
-              <BarChart
-                title="Nº de exames por Mês"
-                labels={data.exams_per_subject_individual.map((item) => item.month)}
-                data={data.exams_per_subject_individual.map((item) => item.count)}
-              />
-            )}
-            {selectedFilter === 'usersCreated' && data?.users_per_month && (
-              <BarChart
-                title="Nº de contas criadas por Mês"
-                labels={data.users_per_month.map((item) => item.month)}
-                data={data.users_per_month.map((item) => item.count)}
-              />
-            )}
-            {selectedFilter === 'reports' && data?.reports_per_month && (
-              <BarChart
-                title="Nº de reports por Mês"
-                labels={data.reports_per_month.map((item) => item.month)}
-                data={data.reports_per_month.map((item) => item.count)}
-              />
-            )}
-            {selectedFilter === 'comments' && data?.comments_per_month && (
-              <BarChart
-                title="Nº de comments por Mês"
-                labels={data.comments_per_month.map((item) => item.month)}
-                data={data.comments_per_month.map((item) => item.count)}
-              />
-            )}
+            {filterToComponentMap.get(selectedFilter)?.(data!)}
           </div>
         )}
       </div>
