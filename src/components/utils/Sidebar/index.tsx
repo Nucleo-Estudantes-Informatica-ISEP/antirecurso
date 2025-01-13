@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { useEffect, useState } from 'react';
 
 import useIsMobile from '@/hooks/useIsMobile';
-import { Flag, Home, Message, Note, RightArrow, User } from '@/styles/Icons';
+import { Flag, Home, Message, Note, RightArrow, User, Calendar } from '@/styles/Icons';
 
 interface SidebarProps {
   children?: React.ReactNode;
@@ -25,6 +25,7 @@ const Sidebar: React.FC<SidebarProps> = () => {
     { label: 'Geral', icon: null, link: null },
     { label: 'Utilizadores', icon: <User className="text-lg" />, link: '/admin/users' },
     { label: 'Resumos', icon: <Note className="text-lg" />, link: '/admin/notes' },
+    { label: 'Eventos', icon: <Calendar className="text-lg" />, link: '/admin/events' },
     { label: 'Comunidade', icon: null, link: null },
     { label: 'Reports', icon: <Flag className="text-lg" />, link: '/admin/question-reports' },
     { label: 'Comentários', icon: <Message className="text-lg" />, link: '/admin/comments' }
@@ -49,7 +50,8 @@ const Sidebar: React.FC<SidebarProps> = () => {
         transition={transition}
         className={`${
           !isLoaded && 'max-md:hidden'
-        } fixed w-64 md:left-0 top-20 bottom-0 overflow-y-scroll z-20 shadow-md bg-white dark:bg-secondary-dark`}>
+        } fixed w-64 md:left-0 top-20 bottom-0 overflow-y-scroll z-20 shadow-md bg-white dark:bg-secondary-dark`}
+      >
         <ul className="mb-12">
           <li className="mt-4 mb-2 font-bold dark:text-gray-300">
             <div className="px-4 flex flex-1 items-center justify-between">
@@ -62,13 +64,15 @@ const Sidebar: React.FC<SidebarProps> = () => {
               key={k}
               className={`${
                 !item.link ? 'mt-4 mb-2 font-bold' : 'flex flex-row items-center'
-              } dark:text-gray-300`}>
+              } dark:text-gray-300`}
+            >
               {item.link ? (
                 <Link
                   href={item.link}
                   className="flex flex-row items-center gap-4 w-full p-4 hover:bg-gray-200 dark:hover:text-white dark:hover:bg-gray-700 transition-colors"
                   onClick={() => setIsOpen(false)}
-                  tabIndex={isMobile && !isOpen ? -1 : undefined}>
+                  tabIndex={isMobile && !isOpen ? -1 : undefined}
+                >
                   {item.icon}
                   {item.label}
                 </Link>
@@ -90,14 +94,16 @@ const Sidebar: React.FC<SidebarProps> = () => {
             exit={{ opacity: 0 }}
             transition={transition}
             className="fixed md:hidden top-20 bottom-0 left-0 right-0 bg-black/50 z-10 transition-opacity"
-            onClick={() => setIsOpen(false)}></motion.div>
+            onClick={() => setIsOpen(false)}
+          ></motion.div>
         )}
       </AnimatePresence>
 
       <motion.button
         className="absolute left-4 bottom-4 rounded-full p-4 shadow-md bg-white hover:bg-gray-200 dark:bg-primary-dark dark:hover:bg-gray-700 cursor-pointer md:hidden z-20 transition-colors"
         onClick={() => setIsOpen((o) => !o)}
-        animate={{ rotate: isOpen ? 180 : 0 }}>
+        animate={{ rotate: isOpen ? 180 : 0 }}
+      >
         <RightArrow />
       </motion.button>
     </>
