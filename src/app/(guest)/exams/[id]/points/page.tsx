@@ -91,7 +91,7 @@ const Points: React.FC = () => {
               particleCount={150}
               fire={fire}
               origin={{ y: 0.9 }}
-              className="fixed z-50 w-full h-full"
+              className="fixed z-[-1] w-full h-full"
             />
           </>
         ) : (
