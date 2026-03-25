@@ -19,15 +19,18 @@ const normalizeSubjectsResponse = (payload: unknown): Subject[] => {
 };
 
 const fetchSubjectsWithQuestions = async (): Promise<Subject[]> => {
-  console.log(BASE_URL);
-  const res = await fetch(`${BASE_URL}/subjects?with_questions=true`);
+  const res = await fetch(`${BASE_URL}/subjects?with_questions=true`, {
+    cache: 'no-store'
+  });
   if (!res.ok) throw new Error('Error fetching subjects');
 
   return normalizeSubjectsResponse(await res.json());
 };
 
 const fetchSubjects = async (): Promise<Subject[]> => {
-  const res = await fetch(`${BASE_URL}/subjects`);
+  const res = await fetch(`${BASE_URL}/subjects`, {
+    cache: 'no-store'
+  });
   if (!res.ok) throw new Error('Error fetching subjects');
 
   return normalizeSubjectsResponse(await res.json());

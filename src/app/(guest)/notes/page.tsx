@@ -3,6 +3,8 @@ import { fetchSubjects } from '@/services/fetchSubjects';
 import { cookies } from 'next/headers';
 import Link from 'next/link';
 
+export const dynamic = 'force-dynamic';
+
 const Notes: React.FC = async () => {
   const session = cookies().get(config.cookies.token)?.value;
 

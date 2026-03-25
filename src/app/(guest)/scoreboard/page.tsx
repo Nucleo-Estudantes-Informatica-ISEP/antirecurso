@@ -1,6 +1,8 @@
 import { fetchSubjectsWithQuestions } from '@/services/fetchSubjects';
 import Link from 'next/link';
 
+export const dynamic = 'force-dynamic';
+
 const Scoreboard: React.FC = async () => {
   const subjects = await fetchSubjectsWithQuestions();
 

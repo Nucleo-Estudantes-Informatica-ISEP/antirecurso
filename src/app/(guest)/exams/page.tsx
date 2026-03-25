@@ -2,6 +2,8 @@ import Link from 'next/link';
 
 import { fetchSubjectsWithQuestions } from '@/services/fetchSubjects';
 
+export const dynamic = 'force-dynamic';
+
 const Exams: React.FC = async () => {
   const subjects = await fetchSubjectsWithQuestions();
 
