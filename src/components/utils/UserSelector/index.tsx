@@ -17,6 +17,10 @@ interface UserSelectorProps {
 
 const UserSelector: React.FC<UserSelectorProps> = ({ selected, setSelected }) => {
   const [query, setQuery] = useState<string>('');
+  const avatarFromEmail = (email?: string | null) => {
+    const normalizedEmail = email?.trim().toLowerCase();
+    return MD5(normalizedEmail || 'unknown-user').toString();
+  };
 
   const fetcher = (url: RequestInfo | URL) => {
     if (!query.length) return;
@@ -46,9 +50,7 @@ const UserSelector: React.FC<UserSelectorProps> = ({ selected, setSelected }) =>
       {selected ? (
         <div className="flex items-center gap-2 px-4 w-full font-bold">
           <Image
-            src={`https://gravatar.com/avatar/${MD5(
-              selected.email.trim().toLowerCase()
-            ).toString()}?s=256&d=identicon`}
+            src={`https://gravatar.com/avatar/${avatarFromEmail(selected.email)}?s=256&d=identicon`}
             alt={selected.name}
             width={32}
             height={32}
@@ -84,9 +86,7 @@ const UserSelector: React.FC<UserSelectorProps> = ({ selected, setSelected }) =>
                         key={r.id}
                         onClick={() => handleSelectUser(r)}>
                         <Image
-                          src={`https://gravatar.com/avatar/${MD5(
-                            r.email.trim().toLowerCase()
-                          ).toString()}?s=256&d=identicon`}
+                          src={`https://gravatar.com/avatar/${avatarFromEmail(r.email)}?s=256&d=identicon`}
                           alt={r.name}
                           width={32}
                           height={32}
