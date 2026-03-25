@@ -5,22 +5,36 @@ import User from '@/types/User';
 import { redirect } from 'next/navigation';
 import React from 'react';
 
-const users: React.FC = async () => {
+interface UsersResponse {
+  data?: User[];
+}
+
+const UsersPage: React.FC = async () => {
   const token = await getApiAccessToken();
 
-  if (!token) {
+  if (!token || !BASE_URL) {
     redirect('/');
   }
 
   const res = await fetch(`${BASE_URL}/users`, {
     method: 'GET',
+    cache: 'no-store',
     headers: {
       'Content-Type': 'application/json',
       Authorization: `Bearer ${token}`
     }
   });
 
-  const users = await res.json();
+  if (res.status === 401 || res.status === 403) {
+    redirect('/');
+  }
+
+  if (!res.ok) {
+    throw new Error(`Failed to load users: ${res.status}`);
+  }
+
+  const payload = (await res.json()) as UsersResponse;
+  const users = Array.isArray(payload?.data) ? payload.data : [];
 
   return (
     <div className="w-full h-full mt-4 flex flex-col items-center justify-center">
@@ -55,4 +69,4 @@ const users: React.FC = async () => {
   );
 };
 
-export default users;
+export default UsersPage;
