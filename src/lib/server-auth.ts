@@ -31,21 +31,50 @@ export async function getIdToken() {
 }
 
 export async function getJwtTokenFromCookies() {
-  const cookieHeader = cookies()
-    .getAll()
-    .map((cookie) => `${cookie.name}=${cookie.value}`)
-    .join('; ');
+  const cookieStore = cookies();
+  const allCookies = cookieStore.getAll();
+  const cookieHeader = allCookies.map((cookie) => `${cookie.name}=${cookie.value}`).join('; ');
 
   if (!cookieHeader) {
     return null;
   }
 
+  const req = {
+    headers: {
+      cookie: cookieHeader
+    }
+  } as unknown as Parameters<typeof getToken>[0]['req'];
+
+  const sessionCookieVariants = [
+    {
+      cookieName: '__Secure-next-auth.session-token',
+      secureCookie: true
+    },
+    {
+      cookieName: 'next-auth.session-token',
+      secureCookie: false
+    }
+  ].filter(({ cookieName }) =>
+    allCookies.some(
+      (cookie) => cookie.name === cookieName || cookie.name.startsWith(`${cookieName}.`)
+    )
+  );
+
+  for (const variant of sessionCookieVariants) {
+    const token = (await getToken({
+      req,
+      secret: process.env.AUTH_SECRET,
+      cookieName: variant.cookieName,
+      secureCookie: variant.secureCookie
+    })) as JWT | null;
+
+    if (token) {
+      return token;
+    }
+  }
+
   return (await getToken({
-    req: {
-      headers: {
-        cookie: cookieHeader
-      }
-    } as unknown as Parameters<typeof getToken>[0]['req'],
+    req,
     secret: process.env.AUTH_SECRET
   })) as JWT | null;
 }
