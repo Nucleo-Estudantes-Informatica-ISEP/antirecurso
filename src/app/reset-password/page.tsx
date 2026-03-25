@@ -23,8 +23,8 @@ const ResetPassword: React.FC = () => {
       <div className="w-full dark:text-white -mt-8 md:mt-0">
         <h1 className="mb-6 text-2xl font-semibold">Recuperar acesso</h1>
         <p className="mb-8 text-sm leading-7 text-gray-600 dark:text-gray-300">
-          A recuperacao da palavra-passe e feita no portal de autenticacao do NEI. Abre o portal
-          e usa a opcao de recuperacao de password nessa pagina.
+          A recuperacao da palavra-passe e feita no portal de autenticacao do NEI. Abre o portal e
+          usa a opcao de recuperacao de password nessa pagina.
         </p>
 
         <PrimaryButton type="button" className="block w-full" onClick={handleOpenAuthPortal}>
