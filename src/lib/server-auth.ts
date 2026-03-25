@@ -5,9 +5,22 @@ import type { JWT } from 'next-auth/jwt';
 import { authOptions } from '@/lib/auth';
 
 export const CLIENT_SESSION_TOKEN = 'server-session';
+const authDebugEnabled = process.env.AUTH_DEBUG === 'true';
 
 export async function getAppAuthSession() {
-  return getServerSession(authOptions);
+  const session = await getServerSession(authOptions);
+
+  if (authDebugEnabled) {
+    console.info('[auth][session]', {
+      source: 'getAppAuthSession',
+      hasUser: Boolean(session?.user),
+      userId: session?.user?.id ?? null,
+      userEmail: session?.user?.email ?? null,
+      error: session?.error ?? null
+    });
+  }
+
+  return session;
 }
 
 export async function getApiAccessToken() {
@@ -35,6 +48,13 @@ export async function getJwtTokenFromCookies() {
   const allCookies = cookieStore.getAll();
 
   if (!allCookies.length) {
+    if (authDebugEnabled) {
+      console.warn('[auth][token]', {
+        source: 'getJwtTokenFromCookies',
+        reason: 'no-cookies'
+      });
+    }
+
     return null;
   }
 
@@ -60,6 +80,14 @@ export async function getJwtTokenFromCookies() {
     )
   );
 
+  if (authDebugEnabled) {
+    console.info('[auth][token]', {
+      source: 'getJwtTokenFromCookies',
+      availableCookieNames: allCookies.map((cookie) => cookie.name),
+      sessionCookieVariants: sessionCookieVariants.map((variant) => variant.cookieName)
+    });
+  }
+
   for (const variant of sessionCookieVariants) {
     const token = (await getToken({
       req,
@@ -68,15 +96,39 @@ export async function getJwtTokenFromCookies() {
       secureCookie: variant.secureCookie
     })) as JWT | null;
 
+    if (authDebugEnabled) {
+      console.info('[auth][token]', {
+        source: 'getJwtTokenFromCookies',
+        attemptedCookieName: variant.cookieName,
+        hasToken: Boolean(token),
+        hasAccessToken: typeof token?.accessToken === 'string',
+        hasIdToken: typeof token?.idToken === 'string',
+        error: token?.error ?? null
+      });
+    }
+
     if (token) {
       return token;
     }
   }
 
-  return (await getToken({
+  const fallbackToken = (await getToken({
     req,
     secret: process.env.AUTH_SECRET
   })) as JWT | null;
+
+  if (authDebugEnabled) {
+    console.info('[auth][token]', {
+      source: 'getJwtTokenFromCookies',
+      attemptedCookieName: 'default',
+      hasToken: Boolean(fallbackToken),
+      hasAccessToken: typeof fallbackToken?.accessToken === 'string',
+      hasIdToken: typeof fallbackToken?.idToken === 'string',
+      error: fallbackToken?.error ?? null
+    });
+  }
+
+  return fallbackToken;
 }
 
 export function isAccessTokenExpired(token: JWT | null) {

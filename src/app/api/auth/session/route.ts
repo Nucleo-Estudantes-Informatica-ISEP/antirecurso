@@ -2,6 +2,8 @@ import { NextResponse } from 'next/server';
 import { BASE_URL } from '@/services/api';
 import { CLIENT_SESSION_TOKEN, getApiAccessToken, getAppAuthSession } from '@/lib/server-auth';
 
+const authDebugEnabled = process.env.AUTH_DEBUG === 'true';
+
 function clearAuthCookies(response: NextResponse) {
   for (const cookieName of [
     'next-auth.session-token',
@@ -18,11 +20,27 @@ function clearAuthCookies(response: NextResponse) {
 export async function GET() {
   const [session, accessToken] = await Promise.all([getAppAuthSession(), getApiAccessToken()]);
 
+  if (authDebugEnabled) {
+    console.info('[auth][session-route]', {
+      hasSessionUser: Boolean(session?.user),
+      sessionUserId: session?.user?.id ?? null,
+      sessionUserEmail: session?.user?.email ?? null,
+      sessionError: session?.error ?? null,
+      hasAccessToken: Boolean(accessToken)
+    });
+  }
+
   if (!session?.user) {
     return new NextResponse(null, { status: 401 });
   }
 
   if (!accessToken) {
+    if (authDebugEnabled) {
+      console.warn('[auth][session-route]', {
+        reason: 'missing-access-token'
+      });
+    }
+
     const response = new NextResponse(null, { status: 404 });
     clearAuthCookies(response);
     return response;
@@ -38,6 +56,13 @@ export async function GET() {
   });
 
   if (res.status !== 200) {
+    if (authDebugEnabled) {
+      console.warn('[auth][session-route]', {
+        reason: 'backend-user-fetch-failed',
+        backendStatus: res.status
+      });
+    }
+
     const response = new NextResponse(null, { status: 404 });
     clearAuthCookies(response);
     return response;

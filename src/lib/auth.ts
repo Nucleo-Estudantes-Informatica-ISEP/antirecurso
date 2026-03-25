@@ -5,6 +5,8 @@ type ZitadelProfile = Profile & {
   email_verified?: boolean;
 };
 
+const authDebugEnabled = process.env.AUTH_DEBUG === 'true';
+
 const requiredEnv = {
   authClientId: process.env.AUTH_CLIENT_ID ?? '',
   authIssuerUrl: process.env.AUTH_ISSUER_URL ?? ''
@@ -40,6 +42,16 @@ export const authOptions: NextAuthOptions = {
         token.accessToken = account.access_token;
         token.accessTokenExpiresAt = account.expires_at ? account.expires_at * 1000 : undefined;
         token.idToken = account.id_token;
+
+        if (authDebugEnabled) {
+          console.info('[auth][jwt]', {
+            phase: 'account-received',
+            provider: account.provider,
+            hasAccessToken: typeof account.access_token === 'string',
+            hasIdToken: typeof account.id_token === 'string',
+            expiresAt: account.expires_at ?? null
+          });
+        }
       }
 
       token.userEmail =
@@ -55,6 +67,19 @@ export const authOptions: NextAuthOptions = {
         token.error = 'AccessTokenExpired';
       } else {
         delete token.error;
+      }
+
+      if (authDebugEnabled) {
+        console.info('[auth][jwt]', {
+          phase: 'token-returned',
+          hasAccessToken: typeof token.accessToken === 'string',
+          hasIdToken: typeof token.idToken === 'string',
+          hasUserEmail: typeof token.userEmail === 'string',
+          hasUserName: typeof token.userName === 'string',
+          error: token.error ?? null,
+          accessTokenExpiresAt:
+            typeof token.accessTokenExpiresAt === 'number' ? token.accessTokenExpiresAt : null
+        });
       }
 
       return token;
