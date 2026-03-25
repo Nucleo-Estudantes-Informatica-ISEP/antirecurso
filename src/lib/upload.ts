@@ -11,10 +11,27 @@ export async function getSignedUrl(target: string, contentType: string, token: s
     },
     method: 'POST'
   });
-  return (await res.json()) as UploadResponse;
+
+  if (!res.ok) {
+    const errorBody = await res.text();
+    const details = errorBody ? ` ${errorBody}` : '';
+    throw new Error(`Ocorreu um erro no upload (getSignedUrl ${res.status}).${details}`);
+  }
+
+  const signed = (await res.json()) as Partial<UploadResponse>;
+
+  if (!signed.url || !signed.id || !signed.target || typeof signed.maxSize !== 'number') {
+    throw new Error('Ocorreu um erro no upload (getSignedUrl inválido).');
+  }
+
+  return signed as UploadResponse;
 }
 
 export async function uploadToBucket(signed: UploadResponse, blob: Blob) {
+  if (!signed.url) {
+    throw new Error('Ocorreu um erro no upload (bucket URL inválido).');
+  }
+
   const uploadUrl = BASE_URL ? new URL(signed.url, BASE_URL).toString() : signed.url;
 
   const res = await fetch(uploadUrl, {
