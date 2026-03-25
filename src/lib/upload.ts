@@ -15,7 +15,9 @@ export async function getSignedUrl(target: string, contentType: string, token: s
 }
 
 export async function uploadToBucket(signed: UploadResponse, blob: Blob) {
-  const res = await fetch(signed.url, {
+  const uploadUrl = BASE_URL ? new URL(signed.url, BASE_URL).toString() : signed.url;
+
+  const res = await fetch(uploadUrl, {
     body: blob,
     method: 'PUT',
     headers: signed.headers
