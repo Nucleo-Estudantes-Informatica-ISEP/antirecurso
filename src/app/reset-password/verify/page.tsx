@@ -24,7 +24,7 @@ const ResetPasswordVerify: React.FC = () => {
         <h1 className="mb-6 text-2xl font-semibold">Verificacao de acesso</h1>
         <p className="mb-8 text-sm leading-7 text-gray-600 dark:text-gray-300">
           A verificacao e recuperacao de credenciais acontecem agora diretamente no portal do
-          ZITADEL. Abre o portal para continuar.
+          AuthNEI. Abre o portal para continuar.
         </p>
 
         <PrimaryButton type="button" className="block w-full" onClick={handleOpenAuthPortal}>

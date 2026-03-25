@@ -27,7 +27,7 @@ const Register: React.FC = () => {
       <div className="w-full dark:text-white">
         <h1 className="mb-6 text-2xl font-semibold">Criar conta</h1>
         <p className="mb-8 text-sm leading-7 text-gray-600 dark:text-gray-300">
-          O registo passou para o portal oficial de autenticacao do NEI com ZITADEL. Continua no
+          O registo passou para o portal oficial de autenticacao do NEI. Continua no
           portal e cria la a tua conta para depois regressares automaticamente ao AntiRecurso.
         </p>
 

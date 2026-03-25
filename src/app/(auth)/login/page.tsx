@@ -27,7 +27,7 @@ const Login: React.FC = () => {
       <div className="w-full dark:text-white -mt-8 md:mt-0">
         <h1 className="mb-6 text-2xl font-semibold">Bem-vindo!</h1>
         <p className="mb-8 text-sm leading-7 text-gray-600 dark:text-gray-300">
-          O AntiRecurso utiliza agora o portal de autenticacao do NEI com ZITADEL. O login, registo
+          O AntiRecurso utiliza agora o portal de autenticacao do NEI. O login, registo
           e recuperacao de palavra-passe acontecem todos na pagina oficial de autenticacao.
         </p>
 
