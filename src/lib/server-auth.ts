@@ -33,15 +33,15 @@ export async function getIdToken() {
 export async function getJwtTokenFromCookies() {
   const cookieStore = cookies();
   const allCookies = cookieStore.getAll();
-  const cookieHeader = allCookies.map((cookie) => `${cookie.name}=${cookie.value}`).join('; ');
 
-  if (!cookieHeader) {
+  if (!allCookies.length) {
     return null;
   }
 
   const req = {
+    cookies: cookieStore,
     headers: {
-      cookie: cookieHeader
+      cookie: allCookies.map((cookie) => `${cookie.name}=${cookie.value}`).join('; ')
     }
   } as unknown as Parameters<typeof getToken>[0]['req'];
 
