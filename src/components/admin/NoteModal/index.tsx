@@ -135,7 +135,11 @@ const NoteModal: React.FC<ModalProps> = ({ setIsVisible, subjects, mutate, edit,
         if (file.size > signed.maxSize) throw new Error('O ficheiro é demasiado grande.');
 
         const res = await uploadToBucket(signed, file);
-        if (res.status !== 200) throw new Error('Ocorreu um erro no upload (bucket).');
+        if (!res.ok) {
+          const errorBody = await res.text();
+          const details = errorBody ? ` ${errorBody}` : '';
+          throw new Error(`Ocorreu um erro no upload (bucket ${res.status}).${details}`);
+        }
 
         const previewUrl = URL.createObjectURL(file);
 
