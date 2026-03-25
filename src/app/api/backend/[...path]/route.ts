@@ -4,7 +4,11 @@ import { BASE_URL } from '@/services/api';
 
 export const dynamic = 'force-dynamic';
 
-async function proxyRequest(request: NextRequest, { params }: { params: { path: string[] } }) {
+async function proxyRequest(
+  request: NextRequest,
+  { params }: { params: Promise<{ path: string[] }> }
+) {
+  const { path } = await params;
   const token = await getToken({ req: request, secret: process.env.AUTH_SECRET });
   const accessToken = typeof token?.accessToken === 'string' ? token.accessToken : null;
   const isExpired =
@@ -15,7 +19,7 @@ async function proxyRequest(request: NextRequest, { params }: { params: { path: 
     return NextResponse.json({ message: 'Authentication required' }, { status: 401 });
   }
 
-  const targetUrl = new URL(`${BASE_URL}/${params.path.join('/')}`);
+  const targetUrl = new URL(`${BASE_URL}/${path.join('/')}`);
   request.nextUrl.searchParams.forEach((value, key) => {
     targetUrl.searchParams.append(key, value);
   });

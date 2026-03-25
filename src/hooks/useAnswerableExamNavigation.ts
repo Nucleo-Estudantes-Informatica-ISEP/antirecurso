@@ -128,21 +128,6 @@ export default function useAnswerableExamNavigation({
     window.removeEventListener('keydown', handleKeyDown);
   }, [handleKeyDown]);
 
-  useEffect(() => {
-    window.addEventListener('keydown', handleKeyDown);
-
-    return removeEventListener;
-  }, [
-    currentQuestionIndex,
-    currentQuestion,
-    wasAnswered,
-    changeQuestion,
-    selectAnswer,
-    cycleOptions,
-    removeEventListener,
-    handleKeyDown
-  ]);
-
   const submit = useCallback(
     async (e: React.FormEvent<HTMLFormElement> | void) => {
       if (e) e.preventDefault();
@@ -173,8 +158,23 @@ export default function useAnswerableExamNavigation({
       handleConfirm();
       setIsSubmitting(false);
     },
-    [handleConfirm, hasAnsweredAllQuestions, removeEventListener]
+    [handleConfirm, hasAnsweredAllQuestions, removeEventListener, theme]
   );
+
+  useEffect(() => {
+    window.addEventListener('keydown', handleKeyDown);
+
+    return removeEventListener;
+  }, [
+    currentQuestionIndex,
+    currentQuestion,
+    wasAnswered,
+    changeQuestion,
+    selectAnswer,
+    cycleOptions,
+    removeEventListener,
+    handleKeyDown
+  ]);
 
   useEffect(() => {
     setCurrentQuestion(questions[currentQuestionIndex]);

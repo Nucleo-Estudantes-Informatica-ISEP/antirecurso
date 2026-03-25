@@ -8,7 +8,7 @@ import useSession from '@/hooks/useSession';
 import { sanitizeMode } from '@/utils/sanitizeMode';
 import { fetcher } from '@/utils/SWRFetcher';
 import Link from 'next/link';
-import { useEffect, useState } from 'react';
+import { use, useEffect, useState } from 'react';
 import { FiInfo, FiSettings } from 'react-icons/fi';
 import Skeleton from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css';
@@ -18,15 +18,17 @@ import getSubjectNameById from 'src/utils/getSubjectNameById';
 import useSWR from 'swr';
 
 interface SubjectStatsProps {
-  params: {
-    id: number;
-  };
+  params: Promise<{
+    id: string;
+  }>;
 }
 
 const SubjectStats: React.FC<SubjectStatsProps> = ({ params }) => {
+  const resolvedParams = use(params);
   const [subjectName, setSubjectName] = useState('');
   const { token } = useSession();
-  const url = `${BASE_URL}/subjects/${params.id}/stats`;
+  const subjectId = Number.parseInt(resolvedParams.id, 10);
+  const url = `${BASE_URL}/subjects/${resolvedParams.id}/stats`;
 
   // conditional data fetching https://swr.vercel.app/docs/conditional-fetching
   const { data: subjectStats } = useSWR<SubjectStats>(
@@ -40,12 +42,12 @@ const SubjectStats: React.FC<SubjectStatsProps> = ({ params }) => {
 
   useEffect(() => {
     async function fetchSubjectName() {
-      const sName = await getSubjectNameById(params.id);
+      const sName = await getSubjectNameById(subjectId);
       setSubjectName(sName);
     }
 
     fetchSubjectName();
-  }, [params.id, token]);
+  }, [subjectId, token]);
 
   return (
     <section className="flex flex-col items-center justify-center w-full h-full overflow-x-hidden text-center mt-6">
@@ -103,7 +105,7 @@ const SubjectStats: React.FC<SubjectStatsProps> = ({ params }) => {
                   <p className="text-xs md:text-lg">
                     Com base nos exames que respondeste, sugerimos-te que resolvas um exame do{' '}
                     <Link
-                      href={`/exams/${params.id}/answer/${subjectStats.suggested_mode}`}
+                      href={`/exams/${resolvedParams.id}/answer/${subjectStats.suggested_mode}`}
                       className="font-bold text-primary align-middle">
                       modo {sanitizeMode(subjectStats.suggested_mode)}
                     </Link>{' '}

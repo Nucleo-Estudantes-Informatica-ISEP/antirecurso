@@ -36,8 +36,7 @@ const Sidebar: React.FC<SidebarProps> = () => {
   };
 
   const transition = {
-    bounce: false,
-    ease: 'easeOut',
+    ease: 'easeOut' as const,
     duration: 0.25
   };
 

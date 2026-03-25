@@ -1,6 +1,6 @@
 'use client';
 
-import { AnimationProps, motion } from 'framer-motion';
+import { motion } from 'framer-motion';
 import Image from 'next/image';
 import Link from 'next/link';
 
@@ -11,14 +11,14 @@ interface UserAvatarProps {
 }
 
 const UserAvatar: React.FC<UserAvatarProps> = ({ avatar, widthValue, heightValue }) => {
-  const animation: AnimationProps = {
+  const animation = {
     variants: {
       initial: { opacity: 0 },
       hover: { opacity: 1 }
     },
     transition: {
       duration: 0.2,
-      ease: 'easeOut'
+      ease: 'easeOut' as const
     }
   };
 

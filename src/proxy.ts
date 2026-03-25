@@ -6,7 +6,7 @@ export const config = {
   matcher: '/admin/:path*'
 };
 
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   const token = await getToken({ req: request, secret: process.env.AUTH_SECRET });
   const accessToken = typeof token?.accessToken === 'string' ? token.accessToken : null;
   const isExpired =

@@ -44,7 +44,7 @@ export async function getIdToken() {
 }
 
 export async function getJwtTokenFromCookies() {
-  const cookieStore = cookies();
+  const cookieStore = await cookies();
   const allCookies = cookieStore.getAll();
 
   if (!allCookies.length) {
