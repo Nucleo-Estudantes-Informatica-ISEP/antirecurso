@@ -12,9 +12,9 @@ import ExamNumerationContainer from '@/components/exams/ExamNumerationContainer'
 import QuestionReview from '@/components/exams/QuestionReview';
 import PrimaryButton from '@/components/utils/PrimaryButton';
 import useSession from '@/hooks/useSession';
+import { PROTECTED_API_BASE_URL } from '@/services/api';
 import sampleImage from 'public/images/sample.webp';
 import useExamReviewNavigation from 'src/hooks/useExamReviewNavigation';
-import { BASE_URL } from 'src/services/api';
 
 interface ExamPageProps {
   params: {
@@ -36,7 +36,7 @@ const ReviewPage: React.FC<ExamPageProps> = ({ params }) => {
   } = useExamReviewNavigation();
 
   const getExamResult = useCallback(async () => {
-    const res = await fetch(`${BASE_URL}/exams/${params.id}`, {
+    const res = await fetch(`${PROTECTED_API_BASE_URL}/exams/${params.id}`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json'
@@ -51,7 +51,7 @@ const ReviewPage: React.FC<ExamPageProps> = ({ params }) => {
   async function submitComment(comment: string) {
     if (!session.user) return;
 
-    await fetch(`${BASE_URL}/comments`, {
+    await fetch(`${PROTECTED_API_BASE_URL}/comments`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

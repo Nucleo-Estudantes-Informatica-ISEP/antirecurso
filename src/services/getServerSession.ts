@@ -1,14 +1,11 @@
-import { cookies } from 'next/headers';
-
-import config from '@/config';
 import { BASE_URL } from '@/services/api';
+import { CLIENT_SESSION_TOKEN, getApiAccessToken, getAppAuthSession } from '@/lib/server-auth';
 import { Session } from '@/types/Session';
 import User from '@/types/User';
 
 export async function getServerSession(): Promise<Session | null> {
-  const cookie = cookies().get(config.cookies.token);
-  const token = cookie?.value as string;
-  if (!token) return null;
+  const [session, token] = await Promise.all([getAppAuthSession(), getApiAccessToken()]);
+  if (!session?.user || !token) return null;
 
   const res = await fetch(`${BASE_URL}/user`, {
     method: 'GET',
@@ -20,12 +17,11 @@ export async function getServerSession(): Promise<Session | null> {
   });
 
   if (res.status !== 200) return null;
-  return { token, user: (await res.json()) as User };
+  return { token: CLIENT_SESSION_TOKEN, user: (await res.json()) as User };
 }
 
 export async function getUserScores() {
-  const cookie = cookies().get(config.cookies.token);
-  const token = cookie?.value as string;
+  const token = await getApiAccessToken();
   if (!token) return null;
 
   const res = await fetch(`${BASE_URL}/user/scores`, {

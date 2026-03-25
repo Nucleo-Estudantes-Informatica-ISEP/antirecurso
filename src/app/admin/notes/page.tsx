@@ -12,7 +12,7 @@ import NoteModal from '@/components/admin/NoteModal';
 import LoadingSpinner from '@/components/utils/LoadingSpinner';
 import SelectInput, { InputSelectOption } from '@/components/utils/SelectInput';
 import useSession from '@/hooks/useSession';
-import { BASE_URL } from '@/services/api';
+import { PROTECTED_API_BASE_URL } from '@/services/api';
 import { fetchSubjects } from '@/services/fetchSubjects';
 import { Add, Eye, Pencil } from '@/styles/Icons';
 import Note from '@/types/Note';
@@ -54,7 +54,7 @@ const NotesPage: React.FC = () => {
   };
 
   const { data, isLoading, mutate } = useSWR(
-    `${BASE_URL}/subjects/${selectedSubject}/notes?limit=999`,
+    `${PROTECTED_API_BASE_URL}/subjects/${selectedSubject}/notes?limit=999`,
     fetcher
   );
   const notes: Pagination<Note> = data;
@@ -68,7 +68,7 @@ const NotesPage: React.FC = () => {
   };
 
   const handleOpenPreview = async (id: number) => {
-    const res = await fetch(`${BASE_URL}/notes/${id}/view`, {
+    const res = await fetch(`${PROTECTED_API_BASE_URL}/notes/${id}/view`, {
       method: 'POST',
       headers: { Authorization: `Bearer ${session.token}` }
     });

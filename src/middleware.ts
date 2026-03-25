@@ -1,5 +1,5 @@
-import c from '@/config';
 import { BASE_URL } from '@/services/api';
+import { getToken } from 'next-auth/jwt';
 import { NextRequest, NextResponse } from 'next/server';
 
 export const config = {
@@ -7,16 +7,19 @@ export const config = {
 };
 
 export async function middleware(request: NextRequest) {
-  const t = request.cookies.get(c.cookies.token) as { value: string } | undefined;
-  const token = t?.value;
+  const token = await getToken({ req: request, secret: process.env.AUTH_SECRET });
+  const accessToken = typeof token?.accessToken === 'string' ? token.accessToken : null;
+  const isExpired =
+    token?.error === 'AccessTokenExpired' ||
+    (typeof token?.accessTokenExpiresAt === 'number' && Date.now() >= token.accessTokenExpiresAt);
 
-  if (!token) return NextResponse.rewrite(new URL('/', request.url));
+  if (!accessToken || isExpired) return NextResponse.rewrite(new URL('/', request.url));
 
   const res = await fetch(`${BASE_URL}/admin`, {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',
-      Authorization: `Bearer ${token}`
+      Authorization: `Bearer ${accessToken}`
     }
   });
 

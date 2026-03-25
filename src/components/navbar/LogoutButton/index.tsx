@@ -1,6 +1,7 @@
 'use client';
 
 import useSession from '@/hooks/useSession';
+import { signOut } from 'next-auth/react';
 import { useTheme } from 'next-themes';
 import { useRouter } from 'next/navigation';
 import swal from 'sweetalert';
@@ -34,6 +35,9 @@ const LogoutButton: React.FC<LogoutButtonProps> = ({ className, onClick }) => {
     });
 
     if (res.status === 200) {
+      const { url } = (await res.json()) as { url?: string };
+
+      await signOut({ redirect: false });
       session.clear();
       swal({
         title: 'Terminaste sessão com sucesso!',
@@ -41,6 +45,12 @@ const LogoutButton: React.FC<LogoutButtonProps> = ({ className, onClick }) => {
         timer: 2000,
         className: theme === 'dark' ? 'swal-dark' : ''
       });
+      if (url) {
+        window.location.href = url;
+        return;
+      }
+
+      router.push('/');
       router.refresh();
     } else {
       swal({

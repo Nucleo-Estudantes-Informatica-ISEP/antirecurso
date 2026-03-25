@@ -1,7 +1,7 @@
 'use client';
 
 import useSession from '@/hooks/useSession';
-import { BASE_URL } from '@/services/api';
+import { PROTECTED_API_BASE_URL } from '@/services/api';
 import { Eye, ThumbsUp, ThumbsUpOutline } from '@/styles/Icons';
 import Note from '@/types/Note';
 import { motion } from 'framer-motion';
@@ -20,7 +20,7 @@ const NoteCard: React.FC<NoteCardParams> = ({ note }) => {
   const { token, user } = useSession();
 
   async function handleLikeNote(id: number) {
-    const res = await fetch(BASE_URL + '/notes/' + id + '/like', {
+    const res = await fetch(PROTECTED_API_BASE_URL + '/notes/' + id + '/like', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -35,7 +35,7 @@ const NoteCard: React.FC<NoteCardParams> = ({ note }) => {
   }
 
   async function handleVisitNote(note: Note) {
-    const res = await fetch(BASE_URL + '/notes/' + note.id + '/view', {
+    const res = await fetch(PROTECTED_API_BASE_URL + '/notes/' + note.id + '/view', {
       method: 'POST',
       headers: {
         Authorization: `Bearer ${token}`

@@ -1,27 +1,50 @@
-import { NextRequest, NextResponse } from 'next/server';
-import config from 'src/config';
-import { BASE_URL } from 'src/services/api';
+import { NextResponse } from 'next/server';
+import { BASE_URL } from '@/services/api';
+import { CLIENT_SESSION_TOKEN, getApiAccessToken, getAppAuthSession } from '@/lib/server-auth';
 
-export async function GET(request: NextRequest) {
-  const t = request.cookies.get(config.cookies.token) as { value: string } | undefined;
-  const token = t?.value;
+function clearAuthCookies(response: NextResponse) {
+  for (const cookieName of [
+    'next-auth.session-token',
+    '__Secure-next-auth.session-token',
+    'next-auth.callback-url',
+    '__Secure-next-auth.callback-url',
+    'next-auth.csrf-token',
+    '__Host-next-auth.csrf-token'
+  ]) {
+    response.cookies.delete(cookieName);
+  }
+}
 
-  if (!token) return new NextResponse(null, { status: 401 });
+export async function GET() {
+  const [session, accessToken] = await Promise.all([getAppAuthSession(), getApiAccessToken()]);
+
+  if (!session?.user) {
+    return new NextResponse(null, { status: 401 });
+  }
+
+  if (!accessToken) {
+    const response = new NextResponse(null, { status: 404 });
+    clearAuthCookies(response);
+    return response;
+  }
 
   const res = await fetch(`${BASE_URL}/user`, {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',
-      Authorization: `Bearer ${token}`
+      Authorization: `Bearer ${accessToken}`
     },
     cache: 'no-store'
   });
 
-  if (res.status === 404) {
+  if (res.status !== 200) {
     const response = new NextResponse(null, { status: 404 });
-    response.cookies.delete(config.cookies.token);
+    clearAuthCookies(response);
     return response;
   }
 
-  return NextResponse.json({ token, user: await res.json() }, { status: 200 });
+  return NextResponse.json(
+    { token: CLIENT_SESSION_TOKEN, user: await res.json() },
+    { status: 200 }
+  );
 }

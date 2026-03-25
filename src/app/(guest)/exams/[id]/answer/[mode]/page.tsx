@@ -10,8 +10,9 @@ import swal from 'sweetalert';
 import Skeleton from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css';
 
+import config from '@/config';
 import { ExamContext } from '@/contexts/ExamContext';
-import { BASE_URL } from '@/services/api';
+import { BASE_URL, PROTECTED_API_BASE_URL } from '@/services/api';
 import generateExam from '@/services/generateExam';
 import getSubjectNameById from '@/utils/getSubjectNameById';
 
@@ -76,19 +77,32 @@ const Exam: React.FC<ExamPageProps> = ({ params }) => {
       time: examTime
     };
 
-    const url =
+    const publicUrl =
       params.mode === 'custom' && nOfQuestions && penalizingFactor
         ? `${BASE_URL}/exams/verify?mode=${params.mode}&n_of_questions=${nOfQuestions}&penalizing_factor=${penalizingFactor}`
         : `${BASE_URL}/exams/verify?mode=${params.mode}`;
 
-    const res = await fetch(url, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${session.token}`
-      },
-      body: JSON.stringify(data)
-    });
+    const protectedUrl =
+      params.mode === 'custom' && nOfQuestions && penalizingFactor
+        ? `${PROTECTED_API_BASE_URL}/exams/verify?mode=${params.mode}&n_of_questions=${nOfQuestions}&penalizing_factor=${penalizingFactor}`
+        : `${PROTECTED_API_BASE_URL}/exams/verify?mode=${params.mode}`;
+
+    const headers: HeadersInit = {
+      'Content-Type': 'application/json'
+    };
+
+    if (config.mandatoryAuthModes.includes(params.mode)) {
+      headers.Authorization = `Bearer ${session.token}`;
+    }
+
+    const res = await fetch(
+      config.mandatoryAuthModes.includes(params.mode) ? protectedUrl : publicUrl,
+      {
+        method: 'POST',
+        headers,
+        body: JSON.stringify(data)
+      }
+    );
 
     if (res.status === 200) {
       setExamResult(await res.json());

@@ -1,8 +1,8 @@
 import { UploadResponse } from '@/types/UploadResponse';
-import { BASE_URL } from '@/services/api';
+import { BASE_URL, PROTECTED_API_BASE_URL } from '@/services/api';
 
 export async function getSignedUrl(target: string, contentType: string, token: string) {
-  const res = await fetch(BASE_URL + '/upload', {
+  const res = await fetch(PROTECTED_API_BASE_URL + '/upload', {
     body: JSON.stringify({ target, contentType }),
     headers: {
       Accept: 'application/json',

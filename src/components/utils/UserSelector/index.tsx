@@ -4,7 +4,7 @@ import { MD5 } from 'crypto-js';
 import React, { Dispatch, SetStateAction, useState } from 'react';
 
 import useSession from '@/hooks/useSession';
-import { BASE_URL } from '@/services/api';
+import { PROTECTED_API_BASE_URL } from '@/services/api';
 import User from '@/types/User';
 import Image from 'next/image';
 import useSWR from 'swr';
@@ -23,7 +23,7 @@ const UserSelector: React.FC<UserSelectorProps> = ({ selected, setSelected }) =>
     return fetch(url, { headers: { Authorization: 'Bearer ' + token } }).then((res) => res.json());
   };
 
-  const { data, isLoading } = useSWR(BASE_URL + `/search?query=${query}`, fetcher, {
+  const { data, isLoading } = useSWR(PROTECTED_API_BASE_URL + `/search?query=${query}`, fetcher, {
     keepPreviousData: true
   });
 

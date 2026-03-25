@@ -1,7 +1,7 @@
 'use client';
 
 import useSession from '@/hooks/useSession';
-import { BASE_URL } from '@/services/api';
+import { PROTECTED_API_BASE_URL } from '@/services/api';
 import { Eye, EyeSplash } from '@/styles/Icons';
 import Score from '@/types/Score';
 import Link from 'next/link';
@@ -26,7 +26,7 @@ const UserProfileScoreboard: React.FC<UsePreviousExamsTableProps> = ({ userScore
     }).then(async (willChange) => {
       if (!willChange) return;
 
-      const res = await fetch(`${BASE_URL}/subjects/${subjectId}/scoreboard`, {
+      const res = await fetch(`${PROTECTED_API_BASE_URL}/subjects/${subjectId}/scoreboard`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

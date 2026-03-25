@@ -1,13 +1,17 @@
 import UserAvatar from '@/components/scoreboard/UserAvatar';
-import config from '@/config';
+import { getApiAccessToken } from '@/lib/server-auth';
 import { BASE_URL } from '@/services/api';
 import User from '@/types/User';
-import { cookies } from 'next/headers';
+import { redirect } from 'next/navigation';
 import React from 'react';
 
 const users: React.FC = async () => {
-  const t = cookies().get(config.cookies.token);
-  const token = t?.value;
+  const token = await getApiAccessToken();
+
+  if (!token) {
+    redirect('/');
+  }
+
   const res = await fetch(`${BASE_URL}/users`, {
     method: 'GET',
     headers: {

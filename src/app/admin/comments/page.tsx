@@ -3,7 +3,7 @@
 import CommentTable from '@/components/admin/CommentTable';
 import { useQueryParamsManager } from '@/hooks/useQueryParamsManager';
 import useSession from '@/hooks/useSession';
-import { BASE_URL } from '@/services/api';
+import { PROTECTED_API_BASE_URL } from '@/services/api';
 import { fetcher } from '@/utils/SWRFetcher';
 import { useEffect, useState } from 'react';
 import Skeleton from 'react-loading-skeleton';
@@ -47,7 +47,7 @@ const Comments: React.FC = () => {
 
   // when search params change, update endpoint
   useEffect(() => {
-    setEndpoint(`${BASE_URL}/comments?${searchParams.queryParams}`);
+    setEndpoint(`${PROTECTED_API_BASE_URL}/comments?${searchParams.queryParams}`);
   }, [searchParams.queryParams]);
 
   // on mount set the filter checkboxes and sort by
