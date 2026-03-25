@@ -8,6 +8,11 @@ import { fetcher } from '@/utils/SWRFetcher';
 import { useEffect, useState } from 'react';
 import Skeleton from 'react-loading-skeleton';
 import useSWR from 'swr';
+import type { Comment } from '@/types/Comment';
+
+interface CommentsResponse {
+  data?: Comment[];
+}
 
 const Comments: React.FC = () => {
   const session = useSession();
@@ -23,6 +28,9 @@ const Comments: React.FC = () => {
     ([url, token]) => fetcher(url, token),
     { revalidateOnFocus: false }
   );
+
+  const commentsResponse = data as CommentsResponse | null;
+  const comments = Array.isArray(commentsResponse?.data) ? commentsResponse.data : [];
 
   const [sortBy, setSortBy] = useState<{ key: string; desc: boolean }>({
     key: 'created_at',
@@ -85,7 +93,7 @@ const Comments: React.FC = () => {
           </div>
         ) : (
           <CommentTable
-            data={data ?? []}
+            data={comments}
             selected={selectedComments}
             setSelected={setSelectedComments}
             sortBy={sortBy}
