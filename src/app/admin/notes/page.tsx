@@ -14,7 +14,7 @@ import SelectInput, { InputSelectOption } from '@/components/utils/SelectInput';
 import useSession from '@/hooks/useSession';
 import { PROTECTED_API_BASE_URL } from '@/services/api';
 import { fetchSubjects } from '@/services/fetchSubjects';
-import { Add, Eye, Pencil } from '@/styles/Icons';
+import { Add, Eye, Pencil, Trash } from '@/styles/Icons';
 import Note from '@/types/Note';
 import Pagination from '@/types/Pagination';
 
@@ -35,7 +35,7 @@ const NotesPage: React.FC = () => {
         .map((s) => ({ value: s.id, label: s.name }))
         .sort((a, b) => a.label.localeCompare(b.label));
       setSubjects(options);
-    } catch (error) {
+    } catch {
       swal('Oops!', 'Não foi possível obter as disciplinas.', 'error', {
         className: theme === 'dark' ? 'swal-dark' : ''
       });
@@ -80,6 +80,36 @@ const NotesPage: React.FC = () => {
   const handleEdit = (note: Note) => {
     setEditNote(note);
     setIsModalOpen(true);
+  };
+
+  const handleDelete = async (note: Note) => {
+    const confirmed = await swal({
+      title: 'Tens a certeza?',
+      text: `Vais remover o resumo "${note.title}".`,
+      icon: 'warning',
+      buttons: ['Cancelar', 'Remover'],
+      dangerMode: true,
+      className: theme === 'dark' ? 'swal-dark' : ''
+    });
+
+    if (!confirmed) return;
+
+    const res = await fetch(`${PROTECTED_API_BASE_URL}/notes/${note.id}`, {
+      method: 'DELETE',
+      headers: { Authorization: `Bearer ${session.token}` }
+    });
+
+    if (!res.ok) {
+      return swal('Erro', 'Não foi possível remover o resumo.', 'error', {
+        className: theme === 'dark' ? 'swal-dark' : ''
+      });
+    }
+
+    await mutate();
+
+    swal('Sucesso', 'Resumo removido com sucesso.', 'success', {
+      className: theme === 'dark' ? 'swal-dark' : ''
+    });
   };
 
   moment.locale('pt');
@@ -147,6 +177,7 @@ const NotesPage: React.FC = () => {
                       </th>
                       <th className="p-3"></th>
                       <th className="p-3"></th>
+                      <th className="p-3"></th>
                     </tr>
                   </thead>
                   <tbody className="[&_span]:font-normal">
@@ -195,6 +226,13 @@ const NotesPage: React.FC = () => {
                         <th onClick={() => handleEdit(n)}>
                           <button className="hover:text-primary transition-colors p-3">
                             <Pencil />
+                          </button>
+                        </th>
+                        <th>
+                          <button
+                            className="hover:text-red-500 transition-colors p-3"
+                            onClick={() => handleDelete(n)}>
+                            <Trash />
                           </button>
                         </th>
                       </tr>

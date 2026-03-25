@@ -59,12 +59,14 @@ const FileInput: React.FC<InputProps> = ({
         ref={inputRef}
         {...rest}
       />
-      <button className="w-full rounded-md" onClick={() => inputRef.current?.click()}>
-        <label
+      <button
+        type="button"
+        className="w-full rounded-md"
+        onClick={() => inputRef.current?.click()}>
+        <span
           className={
             'flex flex-1 cursor-pointer flex-row items-center rounded-md border border-gray-400 bg-slate-200 px-4 py-2'
-          }
-          htmlFor={name}>
+          }>
           <span className="mr-2 min-w-min text-lg md:text-xl">
             {isLoading ? <LoadingSpinner /> : file ? icon : <Upload />}
           </span>
@@ -72,18 +74,20 @@ const FileInput: React.FC<InputProps> = ({
           {file && (
             <>
               <button
+                type="button"
                 onClick={handlePreview}
                 className="ml-auto rounded-md p-1 transition-colors hover:bg-gray-600">
                 <Preview />
               </button>
               <button
+                type="button"
                 onClick={handleClear}
                 className="ml-2 rounded-md p-1 transition-colors hover:bg-red-500 hover:text-white">
                 <Trash />
               </button>
             </>
           )}
-        </label>
+        </span>
       </button>
     </div>
   );
