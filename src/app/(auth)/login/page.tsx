@@ -41,7 +41,7 @@ const Login: React.FC = () => {
           <Link
             className="text-sm font-medium text-primary-600 hover:underline"
             href={`/register?callbackUrl=${encodeURIComponent(callbackUrl)}`}>
-            Ainda nao tens conta?
+            Ainda não tens conta?
           </Link>
         </p>
         <p className="mt-2">
