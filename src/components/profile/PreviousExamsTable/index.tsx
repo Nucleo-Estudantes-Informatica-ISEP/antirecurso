@@ -7,35 +7,24 @@ import Answer from '@/types/Answer';
 import { Paginate } from '@/types/Paginate';
 import { useTheme } from 'next-themes';
 import { useRouter } from 'next/navigation';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import 'react-loading-skeleton/dist/skeleton.css';
-import { BASE_URL } from 'src/services/api';
+import { PROTECTED_API_BASE_URL } from 'src/services/api';
 import fetchUserPreviousExams from 'src/utils/FetchAnswers';
 import swal from 'sweetalert';
 
-interface PreviousExamsTableProps {
-  token: string;
-}
-
-const PreviousExamsTable: React.FC<PreviousExamsTableProps> = ({ token }) => {
-  const sectionRef = useRef<HTMLElement>(null);
+const PreviousExamsTable: React.FC = () => {
   const router = useRouter();
 
-  const [fetchUrl, setFetchUrl] = useState<string | null>(BASE_URL + '/exams');
+  const [fetchUrl, setFetchUrl] = useState<string | null>(`${PROTECTED_API_BASE_URL}/exams`);
   const [previousExamResponse, setPreviousExamResponse] = useState<Paginate<Answer>>();
 
   const { theme } = useTheme();
 
   useEffect(() => {
-    sectionRef.current?.scrollIntoView({
-      behavior: 'smooth'
-    });
-  }, [fetchUrl]);
-
-  useEffect(() => {
     async function fetchData() {
       try {
-        const data = await fetchUserPreviousExams(fetchUrl, token);
+        const data = await fetchUserPreviousExams(fetchUrl);
         setPreviousExamResponse(data);
       } catch (error) {
         swal({
@@ -49,7 +38,7 @@ const PreviousExamsTable: React.FC<PreviousExamsTableProps> = ({ token }) => {
     }
 
     fetchData();
-  }, [fetchUrl, router, theme, token]);
+  }, [fetchUrl, router, theme]);
 
   return (
     <section className="mt-5 w-full md:px-16 flex flex-col place-items-center px-6">
@@ -58,7 +47,11 @@ const PreviousExamsTable: React.FC<PreviousExamsTableProps> = ({ token }) => {
       ) : previousExamResponse.data.length ? (
         <>
           <ExamsTable previousExamResponse={previousExamResponse} />
-          <Pagination metadata={previousExamResponse?.meta} setFetchUrl={setFetchUrl} />
+          <Pagination
+            metadata={previousExamResponse.meta}
+            fetchUrl={fetchUrl ?? `${PROTECTED_API_BASE_URL}/exams`}
+            setFetchUrl={setFetchUrl}
+          />
         </>
       ) : (
         <p>Ainda não realizaste nenhum exame...</p>

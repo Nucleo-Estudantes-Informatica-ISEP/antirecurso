@@ -16,7 +16,7 @@ const Profile: React.FC<ProfileProps> = async () => {
   const session = await getServerSession();
   if (!session) redirect('/');
 
-  const { token, user } = session;
+  const { user } = session;
 
   const userScores = await getUserScores();
   if (!userScores) redirect('/');
@@ -50,7 +50,7 @@ const Profile: React.FC<ProfileProps> = async () => {
             Os teus <span className="text-primary">exames</span>
           </p>
 
-          <PreviousExamsTable token={token} />
+          <PreviousExamsTable />
         </>
       ) : (
         <section className="flex flex-col items-center px-3 mt-12 text-center">
