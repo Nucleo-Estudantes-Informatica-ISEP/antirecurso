@@ -9,26 +9,27 @@ import getSubjectNameById from '@/utils/getSubjectNameById';
 import { sanitizeMode } from '@/utils/sanitizeMode';
 import { fetcher } from '@/utils/SWRFetcher';
 import { motion } from 'framer-motion';
-import { useEffect, useState } from 'react';
+import { use, useEffect, useState } from 'react';
 import Skeleton from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css';
 import useSWR from 'swr';
 
 interface ScoreboardPageProps {
-  params: {
+  params: Promise<{
     id: string;
-  };
+  }>;
 }
 
 const examModes = ['custom', 'default', 'realistic', 'all', 'new', 'wrong', 'hard'];
 
 const ScoreboardPage: React.FC<ScoreboardPageProps> = ({ params }) => {
+  const resolvedParams = use(params);
   const [mode, setMode] = useState<string>('all');
   const [subjectName, setSubjectName] = useState<string | null>(null);
   const { user } = useSession();
 
   const { data: scoreboard } = useSWR<Leaderboard>(
-    `${BASE_URL}/subjects/${params.id}/scoreboard/${mode}`,
+    `${BASE_URL}/subjects/${resolvedParams.id}/scoreboard/${mode}`,
     (url) => fetcher(url, null),
     { revalidateOnFocus: false, keepPreviousData: true }
   );
@@ -39,8 +40,8 @@ const ScoreboardPage: React.FC<ScoreboardPageProps> = ({ params }) => {
       setSubjectName(s);
     }
 
-    fetchSubjectNameById(parseInt(params.id));
-  }, [mode, params.id]);
+    fetchSubjectNameById(Number.parseInt(resolvedParams.id, 10));
+  }, [resolvedParams.id]);
 
   return (
     <section className="flex flex-col items-center w-full mt-8">

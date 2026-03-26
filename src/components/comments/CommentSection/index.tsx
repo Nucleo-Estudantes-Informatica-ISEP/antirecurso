@@ -3,6 +3,7 @@
 import InputLabel from '@/components/utils/InputLabel';
 import PrimaryButton from '@/components/utils/PrimaryButton';
 import useSession from '@/hooks/useSession';
+import { PROTECTED_API_BASE_URL } from '@/services/api';
 import { Flag } from '@/styles/Icons';
 import { Comment } from '@/types/Comment';
 import { useTheme } from 'next-themes';
@@ -10,7 +11,6 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useRef } from 'react';
 import Skeleton from 'react-loading-skeleton';
-import { BASE_URL } from 'src/services/api';
 import swal from 'sweetalert';
 
 interface CommentSectionProps {
@@ -58,7 +58,7 @@ const CommentSection: React.FC<CommentSectionProps> = ({
 
     if (result === null) return;
 
-    const res = await fetch(BASE_URL + '/question-reports', {
+    const res = await fetch(PROTECTED_API_BASE_URL + '/question-reports', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

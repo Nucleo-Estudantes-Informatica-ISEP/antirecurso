@@ -1,5 +1,6 @@
 import BarChart from '@/components/charts/BarChart';
 import UserAvatar from '@/components/scoreboard/UserAvatar';
+import { getApiAccessToken } from '@/lib/server-auth';
 import { BASE_URL } from '@/services/api';
 import { getServerSession } from '@/services/getServerSession';
 import { AdminExamsStats } from '@/types/AdminExamsStats';
@@ -8,8 +9,9 @@ import swal from 'sweetalert';
 
 const AdminPage: React.FC = async () => {
   const session = await getServerSession();
+  const accessToken = await getApiAccessToken();
 
-  if (session === null) {
+  if (session === null || !accessToken) {
     swal({
       title: 'Acesso negado',
       text: 'Ocorreu um erro',
@@ -21,7 +23,7 @@ const AdminPage: React.FC = async () => {
   const res = await fetch(`${BASE_URL}/admin/exams`, {
     method: 'GET',
     headers: {
-      Authorization: `Bearer ${session.token}`
+      Authorization: `Bearer ${accessToken}`
     }
   });
 

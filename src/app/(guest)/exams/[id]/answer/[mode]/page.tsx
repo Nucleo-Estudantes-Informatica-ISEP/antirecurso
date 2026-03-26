@@ -1,6 +1,6 @@
 'use client';
 
-import { useContext, useEffect, useState } from 'react';
+import { use, useContext, useEffect, useState } from 'react';
 
 import { useTheme } from 'next-themes';
 import Image from 'next/image';
@@ -10,8 +10,9 @@ import swal from 'sweetalert';
 import Skeleton from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css';
 
+import config from '@/config';
 import { ExamContext } from '@/contexts/ExamContext';
-import { BASE_URL } from '@/services/api';
+import { BASE_URL, PROTECTED_API_BASE_URL } from '@/services/api';
 import generateExam from '@/services/generateExam';
 import getSubjectNameById from '@/utils/getSubjectNameById';
 
@@ -25,16 +26,17 @@ import ExamNumerationContainer from '@/components/exams/ExamNumerationContainer'
 import sampleImage from 'public/images/sample.webp';
 
 interface ExamPageProps {
-  params: {
+  params: Promise<{
     id: string;
     mode: string;
-  };
+  }>;
 }
 
 const N_SKELETON_QUESTIONS = 10;
 const N_SKELETON_OPTIONS = 4;
 
 const Exam: React.FC<ExamPageProps> = ({ params }) => {
+  const resolvedParams = use(params);
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -68,7 +70,7 @@ const Exam: React.FC<ExamPageProps> = ({ params }) => {
     removeEventListener();
 
     const data = {
-      subject_id: parseInt(params.id),
+      subject_id: Number.parseInt(resolvedParams.id, 10),
       answers: [...Array.from({ length: questions.length }, (_, i) => i)].map((i) => ({
         question_id: questions[i].id,
         selected_option: answers.get(i) || null
@@ -76,23 +78,36 @@ const Exam: React.FC<ExamPageProps> = ({ params }) => {
       time: examTime
     };
 
-    const url =
-      params.mode === 'custom' && nOfQuestions && penalizingFactor
-        ? `${BASE_URL}/exams/verify?mode=${params.mode}&n_of_questions=${nOfQuestions}&penalizing_factor=${penalizingFactor}`
-        : `${BASE_URL}/exams/verify?mode=${params.mode}`;
+    const publicUrl =
+      resolvedParams.mode === 'custom' && nOfQuestions && penalizingFactor
+        ? `${BASE_URL}/exams/verify?mode=${resolvedParams.mode}&n_of_questions=${nOfQuestions}&penalizing_factor=${penalizingFactor}`
+        : `${BASE_URL}/exams/verify?mode=${resolvedParams.mode}`;
 
-    const res = await fetch(url, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${session.token}`
-      },
-      body: JSON.stringify(data)
-    });
+    const protectedUrl =
+      resolvedParams.mode === 'custom' && nOfQuestions && penalizingFactor
+        ? `${PROTECTED_API_BASE_URL}/exams/verify?mode=${resolvedParams.mode}&n_of_questions=${nOfQuestions}&penalizing_factor=${penalizingFactor}`
+        : `${PROTECTED_API_BASE_URL}/exams/verify?mode=${resolvedParams.mode}`;
+
+    const headers: HeadersInit = {
+      'Content-Type': 'application/json'
+    };
+
+    if (config.mandatoryAuthModes.includes(resolvedParams.mode)) {
+      headers.Authorization = `Bearer ${session.token}`;
+    }
+
+    const res = await fetch(
+      config.mandatoryAuthModes.includes(resolvedParams.mode) ? protectedUrl : publicUrl,
+      {
+        method: 'POST',
+        headers,
+        body: JSON.stringify(data)
+      }
+    );
 
     if (res.status === 200) {
       setExamResult(await res.json());
-      router.push(`/exams/${params.id}/points`);
+      router.push(`/exams/${resolvedParams.id}/points`);
     } else {
       swal('Ocorreu um erro ao submeter o exame.', 'Por favor tente novamente.', 'error', {
         className: theme === 'dark' ? 'swal-dark' : ''
@@ -120,22 +135,22 @@ const Exam: React.FC<ExamPageProps> = ({ params }) => {
     }
 
     async function setSubjectName() {
-      setSubject(await getSubjectNameById(parseInt(params.id)));
+      setSubject(await getSubjectNameById(Number.parseInt(resolvedParams.id, 10)));
     }
 
     if (nOfQuestions !== undefined && nOfQuestions !== null)
       getExam(
-        parseInt(params.id),
-        params.mode,
-        parseInt(nOfQuestions as string),
+        Number.parseInt(resolvedParams.id, 10),
+        resolvedParams.mode,
+        Number.parseInt(nOfQuestions, 10),
         filter ?? undefined
       );
-    else getExam(parseInt(params.id), params.mode);
+    else getExam(Number.parseInt(resolvedParams.id, 10), resolvedParams.mode);
 
     setExamTime(0);
     setSubjectName();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [params.id, params.mode, router, setQuestions, session.token, nOfQuestions, setExamTime]);
+  }, [resolvedParams.id, resolvedParams.mode, router, setQuestions, session.token, nOfQuestions, filter, setExamTime, theme]);
 
   useEffect(() => {
     const interval = setInterval(() => {

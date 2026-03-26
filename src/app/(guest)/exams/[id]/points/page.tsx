@@ -72,7 +72,7 @@ const Points: React.FC = () => {
 
       <ScoreIndicator score={examResult.score} className="mt-8"></ScoreIndicator>
 
-      <section className="relative flex flex-col items-center justify-center px-4 mt-14 text-center">
+      <section className="relative flex flex-col items-center justify-center px-4 mt-14 text-center z-50">
         {examResult?.passed ? (
           <>
             <p className="text-xl font-semibold">
@@ -91,7 +91,7 @@ const Points: React.FC = () => {
               particleCount={150}
               fire={fire}
               origin={{ y: 0.9 }}
-              className="fixed z-50 w-full h-full"
+              className="fixed z-20 w-full h-full"
             />
           </>
         ) : (

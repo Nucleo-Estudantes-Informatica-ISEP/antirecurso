@@ -1,5 +1,5 @@
 import config from 'src/config';
-import { BASE_URL } from 'src/services/api';
+import { BASE_URL, PROTECTED_API_BASE_URL } from 'src/services/api';
 import Question from 'src/types/Question';
 
 const generateExam = async (
@@ -12,7 +12,7 @@ const generateExam = async (
   if (config.mandatoryAuthModes.includes(mode)) {
     if (!token) return null;
     if (!n_of_questions) {
-      const res = await fetch(BASE_URL + `/exams/generate/${id}?mode=${mode}`, {
+      const res = await fetch(PROTECTED_API_BASE_URL + `/exams/generate/${id}?mode=${mode}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -24,7 +24,7 @@ const generateExam = async (
       return exam;
     } else {
       const res = await fetch(
-        BASE_URL +
+        PROTECTED_API_BASE_URL +
           `/exams/generate/${id}?mode=${mode}&n_of_questions=${n_of_questions}${
             filter ? `&filter=${filter}` : ''
           }`,

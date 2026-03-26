@@ -4,7 +4,7 @@ import { MD5 } from 'crypto-js';
 import React, { Dispatch, SetStateAction, useState } from 'react';
 
 import useSession from '@/hooks/useSession';
-import { BASE_URL } from '@/services/api';
+import { PROTECTED_API_BASE_URL } from '@/services/api';
 import User from '@/types/User';
 import Image from 'next/image';
 import useSWR from 'swr';
@@ -17,13 +17,17 @@ interface UserSelectorProps {
 
 const UserSelector: React.FC<UserSelectorProps> = ({ selected, setSelected }) => {
   const [query, setQuery] = useState<string>('');
+  const avatarFromEmail = (email?: string | null) => {
+    const normalizedEmail = email?.trim().toLowerCase();
+    return MD5(normalizedEmail || 'unknown-user').toString();
+  };
 
   const fetcher = (url: RequestInfo | URL) => {
     if (!query.length) return;
     return fetch(url, { headers: { Authorization: 'Bearer ' + token } }).then((res) => res.json());
   };
 
-  const { data, isLoading } = useSWR(BASE_URL + `/search?query=${query}`, fetcher, {
+  const { data, isLoading } = useSWR(PROTECTED_API_BASE_URL + `/search?query=${query}`, fetcher, {
     keepPreviousData: true
   });
 
@@ -46,9 +50,7 @@ const UserSelector: React.FC<UserSelectorProps> = ({ selected, setSelected }) =>
       {selected ? (
         <div className="flex items-center gap-2 px-4 w-full font-bold">
           <Image
-            src={`https://gravatar.com/avatar/${MD5(
-              selected.email.trim().toLowerCase()
-            ).toString()}?s=256&d=identicon`}
+            src={`https://gravatar.com/avatar/${avatarFromEmail(selected.email)}?s=256&d=identicon`}
             alt={selected.name}
             width={32}
             height={32}
@@ -84,9 +86,7 @@ const UserSelector: React.FC<UserSelectorProps> = ({ selected, setSelected }) =>
                         key={r.id}
                         onClick={() => handleSelectUser(r)}>
                         <Image
-                          src={`https://gravatar.com/avatar/${MD5(
-                            r.email.trim().toLowerCase()
-                          ).toString()}?s=256&d=identicon`}
+                          src={`https://gravatar.com/avatar/${avatarFromEmail(r.email)}?s=256&d=identicon`}
                           alt={r.name}
                           width={32}
                           height={32}

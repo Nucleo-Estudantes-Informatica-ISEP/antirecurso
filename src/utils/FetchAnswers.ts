@@ -1,21 +1,19 @@
 import Answer from '@/types/Answer';
 import { Paginate } from '@/types/Paginate';
 
-export default async function fetchAnswers(
-  fetchUrl: string | null,
-  token: string | null
-): Promise<Paginate<Answer>> {
+export default async function fetchAnswers(fetchUrl: string | null): Promise<Paginate<Answer>> {
   if (!fetchUrl) throw new Error('No fetch url provided');
 
   const response = await fetch(fetchUrl, {
     headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${token}`
+      'Content-Type': 'application/json'
     },
     cache: 'no-store'
   });
 
-  const data = await response.json();
+  if (!response.ok) {
+    throw new Error('Could not fetch previous exams');
+  }
 
-  return data;
+  return response.json() as Promise<Paginate<Answer>>;
 }

@@ -5,6 +5,7 @@ export interface UploadResponse {
   maxSize: number;
   expires: Date;
   url: string;
+  uploadMode?: 'raw-put' | 'supabase-signed-put';
   headers: {
     [key: string]: string;
   };

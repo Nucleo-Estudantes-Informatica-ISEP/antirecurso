@@ -3,12 +3,12 @@
 import CustomExamModal from '@/components/exams/CustomExamModal';
 import useSession from '@/hooks/useSession';
 import Link from 'next/link';
-import { useState } from 'react';
+import { use, useState } from 'react';
 
 interface ExamAnswerPageProps {
-  params: {
+  params: Promise<{
     id: string;
-  };
+  }>;
 }
 
 const modes = [
@@ -78,6 +78,7 @@ const modes = [
 ];
 
 const Exams: React.FC<ExamAnswerPageProps> = ({ params }) => {
+  const resolvedParams = use(params);
   const { token: session } = useSession();
   const [isCustomExamModalOpen, setIsCustomExamModalOpen] = useState(false);
 
@@ -126,12 +127,12 @@ const Exams: React.FC<ExamAnswerPageProps> = ({ params }) => {
                 isVisible={isCustomExamModalOpen}
                 title="Personaliza o teu exame"
                 onClose={() => setIsCustomExamModalOpen(false)}
-                params={{ id: Number(params.id), mode: mode.slug }}
+                params={{ id: Number(resolvedParams.id), mode: mode.slug }}
               />
             </>
           ) : (
             <Link
-              href={`/exams/${params.id}/answer/${mode.slug}`}
+              href={`/exams/${resolvedParams.id}/answer/${mode.slug}`}
               key={mode.id}
               className={`relative w-full h-full md:h-64 p-5 flex flex-col space-y-6 items-center justify-center shadow dark:shadow-gray-500 rounded text-center group hover:bg-primary transition ease-in-out ${
                 mode.comingSoon || (mode.needsAuth && !session)

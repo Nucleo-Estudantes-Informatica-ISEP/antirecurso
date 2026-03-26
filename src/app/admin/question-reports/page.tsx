@@ -11,7 +11,7 @@ import { useTheme } from 'next-themes';
 import { useEffect, useState } from 'react';
 import Skeleton from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css';
-import { BASE_URL } from 'src/services/api';
+import { PROTECTED_API_BASE_URL } from 'src/services/api';
 import swal from 'sweetalert';
 import useSWR, { mutate } from 'swr';
 
@@ -68,7 +68,7 @@ const Reports: React.FC = () => {
   const handleMarkAsResolve = async (reportId?: number) => {
     if (selectedReports.length === 0 && !reportId) return;
 
-    const res = await fetch(BASE_URL + '/question-reports/review', {
+    const res = await fetch(PROTECTED_API_BASE_URL + '/question-reports/review', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -152,7 +152,7 @@ const Reports: React.FC = () => {
 
   // when search params change, update endpoint
   useEffect(() => {
-    setEndpoint(`${BASE_URL}/question-reports?${searchParams.queryParams}`);
+    setEndpoint(`${PROTECTED_API_BASE_URL}/question-reports?${searchParams.queryParams}`);
   }, [searchParams.queryParams]);
 
   // on mount set the filter checkboxes and sort by

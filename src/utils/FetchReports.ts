@@ -1,11 +1,13 @@
-import { cookies } from 'next/headers';
-import config from 'src/config';
+import { getApiAccessToken } from '@/lib/server-auth';
 
 export default async function fetchReports(fetchUrl: string | null) {
   if (!fetchUrl) throw new Error('No fetch url provided');
 
-  const t = cookies().get(config.cookies.token);
-  const token = t?.value;
+  const token = await getApiAccessToken();
+
+  if (!token) {
+    throw new Error('Authentication required');
+  }
 
   const res = await fetch(fetchUrl, {
     method: 'GET',

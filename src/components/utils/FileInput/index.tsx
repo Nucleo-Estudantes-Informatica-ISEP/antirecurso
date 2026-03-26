@@ -59,32 +59,32 @@ const FileInput: React.FC<InputProps> = ({
         ref={inputRef}
         {...rest}
       />
-      <button className="w-full rounded-md" onClick={() => inputRef.current?.click()}>
+      <div className="flex w-full items-center rounded-md border border-gray-400 bg-slate-200">
         <label
-          className={
-            'flex flex-1 cursor-pointer flex-row items-center rounded-md border border-gray-400 bg-slate-200 px-4 py-2'
-          }
-          htmlFor={name}>
+          htmlFor={name}
+          className="flex min-w-0 flex-1 cursor-pointer flex-row items-center px-4 py-2">
           <span className="mr-2 min-w-min text-lg md:text-xl">
             {isLoading ? <LoadingSpinner /> : file ? icon : <Upload />}
           </span>
           <span className="truncate">{file ? file.name : name}</span>
-          {file && (
-            <>
-              <button
-                onClick={handlePreview}
-                className="ml-auto rounded-md p-1 transition-colors hover:bg-gray-600">
-                <Preview />
-              </button>
-              <button
-                onClick={handleClear}
-                className="ml-2 rounded-md p-1 transition-colors hover:bg-red-500 hover:text-white">
-                <Trash />
-              </button>
-            </>
-          )}
         </label>
-      </button>
+        {file && (
+          <div className="ml-2 flex shrink-0 items-center pr-2">
+            <button
+              type="button"
+              onClick={handlePreview}
+              className="rounded-md p-1 transition-colors hover:bg-gray-600">
+              <Preview />
+            </button>
+            <button
+              type="button"
+              onClick={handleClear}
+              className="ml-2 rounded-md p-1 transition-colors hover:bg-red-500 hover:text-white">
+              <Trash />
+            </button>
+          </div>
+        )}
+      </div>
     </div>
   );
 };

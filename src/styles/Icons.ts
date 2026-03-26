@@ -19,7 +19,8 @@ import {
   FaHome as Home,
   FaChevronLeft as LeftArrow,
   FaChevronRight as RightArrow,
-  FaPencilAlt as Pencil
+  FaPencilAlt as Pencil,
+  FaRegCalendar as Calendar
 } from 'react-icons/fa';
 
 import { CgSpinner as LSpinner } from 'react-icons/cg';
@@ -56,5 +57,6 @@ export {
   LeftArrow,
   RightArrow,
   Pencil,
-  Add
+  Add,
+  Calendar
 };

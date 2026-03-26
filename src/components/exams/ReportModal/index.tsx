@@ -1,7 +1,7 @@
 'use client';
 
 import useSession from '@/hooks/useSession';
-import { BASE_URL } from '@/services/api';
+import { PROTECTED_API_BASE_URL } from '@/services/api';
 import { Check } from '@/styles/Icons';
 import Option from '@/types/Option';
 import { Report } from '@/types/Report';
@@ -72,7 +72,7 @@ const ReportModal: React.FC<ModalProps> = ({
   const handleFixQuestion = async () => {
     if (!report) return;
 
-    const res = await fetch(BASE_URL + '/questions/' + report.question.id, {
+    const res = await fetch(PROTECTED_API_BASE_URL + '/questions/' + report.question.id, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',

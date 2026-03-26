@@ -1,153 +1,46 @@
 'use client';
 
-import InputLabel from '@/components/utils/InputLabel';
 import PrimaryButton from '@/components/utils/PrimaryButton';
-import TextInput from '@/components/utils/TextInput';
-import useSession from '@/hooks/useSession';
-import { Spinner } from '@/styles/Icons';
-import { useTheme } from 'next-themes';
+import { signIn } from 'next-auth/react';
 import Link from 'next/link';
-import { useRouter, useSearchParams } from 'next/navigation';
-import { useEffect, useRef, useState } from 'react';
-import LoginSchema from 'src/schemas/LoginSchema';
+import { useSearchParams } from 'next/navigation';
 import swal from 'sweetalert';
 
-import { z } from 'zod';
-
 const Login: React.FC = () => {
-  const callbackUrl = useSearchParams().get('callbackUrl');
-  const session = useSession();
-  const router = useRouter();
+  const searchParams = useSearchParams();
+  const callbackUrl = searchParams.get('callbackUrl') ?? '/';
 
-  const emailInputRef = useRef<HTMLInputElement>(null);
-  const passwordInputRef = useRef<HTMLInputElement>(null);
-  const { theme } = useTheme();
-
-  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
-  const [errors, setErrors] = useState<{
-    email?: string;
-    password?: string;
-  }>({});
-
-  function clearErrors() {
-    setErrors({
-      email: undefined,
-      password: undefined
-    });
-  }
-
-  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-
-    const data = {
-      email: emailInputRef.current?.value,
-      password: passwordInputRef.current?.value
-    };
-
+  async function handleLogin() {
     try {
-      const result = LoginSchema.parse(data);
-      setIsSubmitting(true);
-      clearErrors();
-
-      const { email, password } = result;
-
-      const res = await fetch('/api/auth/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          email,
-          password
-        })
-      });
-
-      if (res.status === 200) {
-        session.revalidate();
-        router.push(decodeURI(callbackUrl ?? '/'));
-        router.refresh();
-      } else {
-        swal(
-          'Oops!',
-          'Ocorreu um erro ao tentar fazer login. Por favor, tente novamente.',
-          'error',
-          {
-            className: theme === 'dark' ? 'swal-dark' : ''
-          }
-        );
-
-        setIsSubmitting(false);
-
-        passwordInputRef.current?.focus();
-      }
-    } catch (err) {
-      if (err instanceof z.ZodError) {
-        const errs = err.formErrors.fieldErrors;
-
-        setErrors({
-          email: errs.email?.flat()[0],
-          password: errs.password?.flat()[0]
-        });
-      }
+      await signIn('zitadel', { callbackUrl });
+    } catch {
+      await swal(
+        'Oops!',
+        'Não foi possível abrir o portal de autenticação. Por favor tenta novamente.',
+        'error'
+      );
     }
-  };
-
-  useEffect(() => {
-    if (errors.email) emailInputRef.current?.focus();
-    else if (errors.password) passwordInputRef.current?.focus();
-  }, [errors]);
+  }
 
   return (
     <div className="relative flex flex-col items-center justify-center w-11/12 max-w-md px-4 py-12 sm:p-12 md:w-1/2 h-full">
       <div className="w-full dark:text-white -mt-8 md:mt-0">
-        <h1 className="mb-12 text-2xl font-semibold">Bem-vindo!</h1>
+        <h1 className="mb-6 text-2xl font-semibold">Bem-vindo!</h1>
+        <p className="mb-8 text-sm leading-7 text-gray-600 dark:text-gray-300">
+          O AntiRecurso utiliza agora o portal de autenticação do NEI. O login, registo e
+          recuperação de palavra-passe acontecem todos na página oficial de autenticação.
+        </p>
 
-        <form onSubmit={handleSubmit}>
-          <div>
-            <InputLabel htmlFor="email" value="Email" />
-            <TextInput
-              placeholder="Email"
-              inputRef={emailInputRef}
-              disabled={isSubmitting}
-              className="block w-full"
-              errorText={errors.email}
-            />
-          </div>
-
-          <div className="mb-4">
-            <InputLabel htmlFor="password" value="Password" />
-            <TextInput
-              placeholder="Password"
-              inputRef={passwordInputRef}
-              disabled={isSubmitting}
-              errorText={errors.password}
-              type="password"
-              className="block w-full"
-            />
-          </div>
-
-          <div>
-            <PrimaryButton disabled={isSubmitting} type="submit" className="block w-full">
-              {isSubmitting ? (
-                <div className="flex flex-row items-center justify-center">
-                  <svg className="animate-spin h-[16px] w-[16px] mr-3">
-                    <Spinner size={16} />
-                  </svg>
-                  A autenticar...
-                </div>
-              ) : (
-                <span>Entrar</span>
-              )}
-            </PrimaryButton>
-          </div>
-        </form>
+        <PrimaryButton type="button" className="block w-full" onClick={handleLogin}>
+          Continuar para o login
+        </PrimaryButton>
 
         <hr className="my-8" />
 
         <p className="mt-4">
           <Link
             className="text-sm font-medium text-primary-600 hover:underline"
-            href={'/register?callbackUrl=' + callbackUrl ?? '/'}>
+            href={`/register?callbackUrl=${encodeURIComponent(callbackUrl)}`}>
             Ainda não tens conta?
           </Link>
         </p>
@@ -155,7 +48,7 @@ const Login: React.FC = () => {
           <Link
             className="text-sm font-medium text-primary-600 hover:underline text-primary"
             href="/reset-password">
-            Esqueceste-te da tua palavra-passe?
+            Precisas de recuperar o acesso?
           </Link>
         </p>
       </div>

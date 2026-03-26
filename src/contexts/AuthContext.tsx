@@ -58,6 +58,7 @@ async function fetchSession(): Promise<SessionData | null> {
   });
 
   if (res.status === 200) return (await res.json()) as SessionData;
+  if (res.status === 401) return null;
 
   if (res.status === 404) {
     await swal('Sessão expirada', 'Por favor, inicia sessão novamente.', 'error');

@@ -12,7 +12,7 @@ import SelectInput, { InputSelectOption } from '@/components/utils/SelectInput';
 import UserSelector from '@/components/utils/UserSelector';
 import useSession from '@/hooks/useSession';
 import { getSignedUrl, uploadToBucket } from '@/lib/upload';
-import { BASE_URL } from '@/services/api';
+import { PROTECTED_API_BASE_URL } from '@/services/api';
 import { Pdf } from '@/styles/Icons';
 import Note from '@/types/Note';
 import { UploadedFile } from '@/types/UploadedFile';
@@ -78,7 +78,9 @@ const NoteModal: React.FC<ModalProps> = ({ setIsVisible, subjects, mutate, edit,
 
     setIsSubmitting(true);
 
-    const url = !edit ? `${BASE_URL}/subjects/${subject}/notes` : `${BASE_URL}/notes/${edit.id}`;
+    const url = !edit
+      ? `${PROTECTED_API_BASE_URL}/subjects/${subject}/notes`
+      : `${PROTECTED_API_BASE_URL}/notes/${edit.id}`;
     const res = await fetch(url, {
       method: !edit ? 'POST' : 'PATCH',
       body: JSON.stringify({
@@ -133,7 +135,11 @@ const NoteModal: React.FC<ModalProps> = ({ setIsVisible, subjects, mutate, edit,
         if (file.size > signed.maxSize) throw new Error('O ficheiro é demasiado grande.');
 
         const res = await uploadToBucket(signed, file);
-        if (res.status !== 200) throw new Error('Ocorreu um erro no upload (bucket).');
+        if (!res.ok) {
+          const errorBody = await res.text();
+          const details = errorBody ? ` ${errorBody}` : '';
+          throw new Error(`Ocorreu um erro no upload (bucket ${res.status}).${details}`);
+        }
 
         const previewUrl = URL.createObjectURL(file);
 

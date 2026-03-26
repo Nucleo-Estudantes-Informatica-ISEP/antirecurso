@@ -1,23 +1,23 @@
 import NoteCard from '@/components/notes/NoteCard';
 import Custom403 from '@/components/pages/Custom403';
-import config from '@/config';
+import { getApiAccessToken } from '@/lib/server-auth';
 import fetchNotes from '@/services/fetchNotes';
-import { cookies } from 'next/headers';
 
 interface SubjectNotesProps {
-  params: {
+  params: Promise<{
     id: string;
-  };
+  }>;
 }
 
 const SubjectNotes: React.FC<SubjectNotesProps> = async ({ params }) => {
-  const token = cookies().get(config.cookies.token)?.value;
+  const { id } = await params;
+  const token = await getApiAccessToken();
 
   if (!token) {
     return <Custom403 />;
   }
 
-  const notes = await fetchNotes(params.id, token);
+  const notes = await fetchNotes(id, token);
   const subject = notes.data[0]?.subject.name;
 
   return (

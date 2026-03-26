@@ -1,10 +1,12 @@
-import config from '@/config';
+import { getAppAuthSession } from '@/lib/server-auth';
 import { fetchSubjects } from '@/services/fetchSubjects';
-import { cookies } from 'next/headers';
 import Link from 'next/link';
 
+export const dynamic = 'force-dynamic';
+
 const Notes: React.FC = async () => {
-  const session = cookies().get(config.cookies.token)?.value;
+  const session = await getAppAuthSession();
+  const hasSession = Boolean(session?.user);
 
   const subjects = await fetchSubjects();
 
@@ -21,7 +23,7 @@ const Notes: React.FC = async () => {
             <div
               key={subject.id}
               className={`relative w-full h-full md:h-48 p-6 flex flex-col space-y-6 items-center justify-center shadow dark:shadow-secondary-dark border border-gray-100 rounded text-center group ${
-                session
+                hasSession
                   ? 'hover:bg-primary transition ease-in-out'
                   : 'pointer-events-none opacity-50'
               }`}>
@@ -36,7 +38,7 @@ const Notes: React.FC = async () => {
                   <p className="text-xs mt-4 uppercase group-hover:text-white">({subject.slug})</p>
                 </div>
               </Link>
-              {!session && (
+              {!hasSession && (
                 <div className="absolute left-0 w-full p-1 text-xs font-bold text-white bg-red-500 md:text-base -top-2 md:-right-8 md:p-2">
                   <p>Conta necessária 🔒</p>
                 </div>
