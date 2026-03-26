@@ -1,16 +1,19 @@
 'use client';
 
+import { useTheme } from 'next-themes';
 import EventModal from '@/components/admin/EventModal';
 import LoadingSpinner from '@/components/utils/LoadingSpinner';
 import useSession from '@/hooks/useSession';
 import { PROTECTED_API_BASE_URL } from '@/services/api';
-import { Add, Pencil } from '@/styles/Icons';
+import { Add, Pencil, Trash } from '@/styles/Icons';
 import Event from '@/types/Event';
 import Pagination from '@/types/Pagination';
 import React, { useState } from 'react';
+import swal from 'sweetalert';
 import useSWR from 'swr';
 
 const EventsPage: React.FC = () => {
+  const { theme } = useTheme();
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const session = useSession();
   const [editEvent, setEditEvent] = useState<Event | undefined>();
@@ -37,6 +40,36 @@ const EventsPage: React.FC = () => {
   const handleEdit = (event: Event) => {
     setEditEvent(event);
     setIsModalOpen(true);
+  };
+
+  const handleDelete = async (event: Event) => {
+    const confirmed = await swal({
+      title: 'Tens a certeza?',
+      text: `Vais remover o evento "${event.name}".`,
+      icon: 'warning',
+      buttons: ['Cancelar', 'Remover'],
+      dangerMode: true,
+      className: theme === 'dark' ? 'swal-dark' : ''
+    });
+
+    if (!confirmed) return;
+
+    const res = await fetch(`${PROTECTED_API_BASE_URL}/events/${event.id}`, {
+      method: 'DELETE',
+      headers: { Authorization: `Bearer ${session.token}` }
+    });
+
+    if (!res.ok) {
+      return swal('Erro', 'Não foi possível remover o evento.', 'error', {
+        className: theme === 'dark' ? 'swal-dark' : ''
+      });
+    }
+
+    await mutate();
+
+    swal('Sucesso', 'Evento removido com sucesso.', 'success', {
+      className: theme === 'dark' ? 'swal-dark' : ''
+    });
   };
 
   return (
@@ -69,6 +102,7 @@ const EventsPage: React.FC = () => {
                 <th className="px-4 py-2">Data de início</th>
                 <th className="px-4 py-2">Data de fim</th>
                 <th className="px-4 py-2"></th>
+                <th className="px-4 py-2"></th>
               </tr>
             </thead>
             <tbody>
@@ -85,6 +119,14 @@ const EventsPage: React.FC = () => {
                       onClick={() => handleEdit(event)}
                     >
                       <Pencil />
+                    </button>
+                  </td>
+                  <td className="border px-4 py-2">
+                    <button
+                      className="hover:text-red-500 transition-colors p-3"
+                      onClick={() => handleDelete(event)}
+                    >
+                      <Trash />
                     </button>
                   </td>
                 </tr>
