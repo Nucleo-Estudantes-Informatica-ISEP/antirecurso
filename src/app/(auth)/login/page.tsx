@@ -16,7 +16,7 @@ const Login: React.FC = () => {
     } catch {
       await swal(
         'Oops!',
-        'Nao foi possivel abrir o portal de autenticacao. Por favor tenta novamente.',
+        'Não foi possível abrir o portal de autenticação. Por favor tenta novamente.',
         'error'
       );
     }
@@ -27,8 +27,8 @@ const Login: React.FC = () => {
       <div className="w-full dark:text-white -mt-8 md:mt-0">
         <h1 className="mb-6 text-2xl font-semibold">Bem-vindo!</h1>
         <p className="mb-8 text-sm leading-7 text-gray-600 dark:text-gray-300">
-          O AntiRecurso utiliza agora o portal de autenticacao do NEI. O login, registo e
-          recuperacao de palavra-passe acontecem todos na pagina oficial de autenticacao.
+          O AntiRecurso utiliza agora o portal de autenticação do NEI. O login, registo e
+          recuperação de palavra-passe acontecem todos na página oficial de autenticação.
         </p>
 
         <PrimaryButton type="button" className="block w-full" onClick={handleLogin}>

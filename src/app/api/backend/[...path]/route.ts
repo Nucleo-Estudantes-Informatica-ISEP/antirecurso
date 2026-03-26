@@ -19,6 +19,10 @@ async function proxyRequest(
     return NextResponse.json({ message: 'Authentication required' }, { status: 401 });
   }
 
+  if (!BASE_URL) {
+    return NextResponse.json({ message: 'API base URL is not configured' }, { status: 500 });
+  }
+
   const targetUrl = new URL(`${BASE_URL}/${path.join('/')}`);
   request.nextUrl.searchParams.forEach((value, key) => {
     targetUrl.searchParams.append(key, value);

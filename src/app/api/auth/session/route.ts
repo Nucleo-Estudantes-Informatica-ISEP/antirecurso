@@ -1,23 +1,35 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { BASE_URL } from '@/services/api';
 import { CLIENT_SESSION_TOKEN, getApiAccessToken, getAppAuthSession } from '@/lib/server-auth';
 
 const authDebugEnabled = process.env.AUTH_DEBUG === 'true';
 
-function clearAuthCookies(response: NextResponse) {
-  for (const cookieName of [
-    'next-auth.session-token',
-    '__Secure-next-auth.session-token',
-    'next-auth.callback-url',
-    '__Secure-next-auth.callback-url',
-    'next-auth.csrf-token',
-    '__Host-next-auth.csrf-token'
-  ]) {
+const AUTH_COOKIE_NAMES = [
+  'next-auth.session-token',
+  '__Secure-next-auth.session-token',
+  'next-auth.callback-url',
+  '__Secure-next-auth.callback-url',
+  'next-auth.csrf-token',
+  '__Host-next-auth.csrf-token'
+] as const;
+
+function clearAuthCookies(response: NextResponse, existingCookieNames: string[] = []) {
+  const cookieNames = new Set<string>(AUTH_COOKIE_NAMES);
+
+  for (const existingCookieName of existingCookieNames) {
+    if (AUTH_COOKIE_NAMES.some((cookieName) => existingCookieName.startsWith(`${cookieName}.`))) {
+      cookieNames.add(existingCookieName);
+    }
+  }
+
+  for (const cookieName of Array.from(cookieNames)) {
     response.cookies.delete(cookieName);
   }
 }
 
-export async function GET() {
+export async function GET(request: NextRequest) {
+  const existingCookieNames = request.cookies.getAll().map(({ name }) => name);
+
   const [session, accessToken] = await Promise.all([getAppAuthSession(), getApiAccessToken()]);
 
   if (authDebugEnabled) {
@@ -42,8 +54,18 @@ export async function GET() {
     }
 
     const response = new NextResponse(null, { status: 404 });
-    clearAuthCookies(response);
+    clearAuthCookies(response, existingCookieNames);
     return response;
+  }
+
+  if (!BASE_URL) {
+    if (authDebugEnabled) {
+      console.error('[auth][session-route]', {
+        reason: 'missing-base-url'
+      });
+    }
+
+    return NextResponse.json({ message: 'API base URL is not configured' }, { status: 500 });
   }
 
   const res = await fetch(`${BASE_URL}/user`, {
@@ -64,7 +86,7 @@ export async function GET() {
     }
 
     const response = new NextResponse(null, { status: 404 });
-    clearAuthCookies(response);
+    clearAuthCookies(response, existingCookieNames);
     return response;
   }
 
