@@ -1,122 +1,284 @@
-<p align="center">
-    <a href="https://nei-isep.org" target="_blank">
-        <img src="public/images/nei.png" width="100" alt="NEI Logo">
-    </a>
-</p>
+# AntiRecurso
 
-## Welcome to AntiRecurso's GitHub Repository 🚀
+AntiRecurso is the web frontend for NEI ISEP's exam-preparation platform. It gives students a browser-based interface to practice subject-specific exams, review results, track rankings, browse study notes, and access profile and admin features through a hosted authentication flow.
 
-Hello, and welcome to AntiRecurso's home on GitHub! Here you'll find all the necessary code, documentation, and resources related to the AntiRecurso platform.
+## Key Features
 
-The repository serves as the starting point for anyone who wishes to understand our project better, contribute their unique ideas, or simply stay updated with our developments. So, whether you're a potential contributor, an interested observer, or a user wanting to understand more about the gears that drive AntiRecurso, you're in the right place! Welcome aboard!
+- Subject-based exam practice with multiple answering modes
+- Scoreboards and personal score tracking
+- Protected notes area for authenticated users
+- Hosted authentication flow backed by NextAuth and Zitadel/AuthNEI
+- Admin dashboard for activity, comments, reports, notes, and users
+- Cookie consent, changelog popup, theming, and responsive UI
 
-## About the Project 🤓
+## Tech Stack
 
-"AntiRecurso" initially began as an Android mobile app designed to help ISEP students studying for exams. Over time, it has evolved into a platform that caters to a broad range of academic subjects, accessible from any device.
+- **Runtime**: Node.js 20.9+ and pnpm 9
+- **Framework**: Next.js 16 App Router
+- **UI**: React 19, Tailwind CSS, Framer Motion
+- **Auth**: NextAuth 4 with the Zitadel provider
+- **Validation**: Zod
+- **Charts**: Chart.js and react-chartjs-2
+- **Data Fetching**: native `fetch` plus SWR where needed
+- **Language**: TypeScript
 
-Whether using a computer, tablet, or mobile phone, AntiRecurso provides numerous exercises in the form of short quizzes, each with 10 random questions. Upon completion, users receive immediate feedback and their performance is tracked on a scoreboard.
+## Architecture Overview
 
-If you're a student seeking extra academic resources, check out AntiRecurso <a href="https://antirecurso.nei-isep.org" target="_blank">here</a>.
+This repository is a frontend application, not the full AntiRecurso platform.
 
-## The Tech Stack 🔧
+- The UI is rendered by Next.js in [`src/app`](src/app/).
+- Authentication is handled through NextAuth in [`src/lib/auth.ts`](src/lib/auth.ts) with a hosted Zitadel/AuthNEI login flow.
+- Business data such as users, subjects, exams, scores, notes, and admin stats comes from an external backend API defined by `NEXT_PUBLIC_BASE_URL`.
+- Authenticated requests can be proxied through `src/app/api/backend/[...path]/route.ts`, which forwards the logged-in user's access token to the upstream backend.
+- Admin routes are guarded by [`src/proxy.ts`](src/proxy.ts), which checks the session token and validates backend admin access before allowing the request through.
 
-For this project, we're using the Next.js framework.
+### Main Route Groups
 
-Here's a quick rundown of the tech stack:
+- `/` - landing page
+- `/exams` - subject picker for exam sessions
+- `/exams/[id]/answer` - exam answering flow
+- `/exams/[id]/review` - answer review flow
+- `/scoreboard` - subject picker for rankings
+- `/notes` - subject picker for study notes
+- `/profile` - authenticated user profile and previous results
+- `/admin` - protected admin dashboard
+- `/login`, `/register`, `/reset-password` - hosted auth entry points
 
-- **Next.js**: An open-source React front-end development web framework that enables functionality such as server-side rendering and generating static websites for React-based web applications.
+### Authentication Notes
 
-- **Tailwind CSS**: A utility-first CSS framework that uses class utilities to build any design, directly in the markup.
+This codebase no longer supports password-based local auth forms.
 
-- **Framer Motion**: A motion library for React that helps create smooth and delightful animations. It provides a simple and intuitive API to animate components and create interactive user experiences.
+- `POST /api/auth/login`
+- `POST /api/auth/register`
+- `POST /api/auth/reset-password`
+- `POST /api/auth/reset-password/send`
 
-## Usage Examples 🌐
+These endpoints intentionally return `410 Gone` and direct users to the hosted AuthNEI flow instead.
 
-To start using AntiRecurso:
+## Repository Structure
 
-1. Navigate to the AntiRecurso homepage by clicking [here](https://antirecurso.nei-isep.org).
+```text
+.
+├── assets/                 Legacy README screenshots and static media
+├── public/                 Favicons, logos, images, manifest, robots.txt
+├── scripts/                Utility scripts
+├── src/
+│   ├── app/                App Router pages, layouts, route handlers
+│   ├── components/         UI components by domain
+│   ├── config/             App constants and feature flags
+│   ├── contexts/           React context providers
+│   ├── hooks/              Custom React hooks
+│   ├── lib/                Auth and server-side session helpers
+│   ├── schemas/            Zod schemas
+│   ├── services/           Backend-facing service functions
+│   ├── styles/             Global and shared styles
+│   ├── types/              TypeScript domain types
+│   └── utils/              Shared helpers
+├── .env.example            Sample environment configuration
+├── next.config.js          Next.js configuration
+├── package.json            Scripts and dependencies
+└── tailwind.config.js      Tailwind setup
+```
 
-<p align="center">
-  <img src="/assets/homepage.png" width="600" alt="Homepage Printscreen">
-</p>
+## Prerequisites
 
-2. Register an account, or login if you already have one.
+Install the following before running the project locally:
 
-3. Choose your desired subject from the wide array available.
+- Node.js `>=20.9.0`
+- pnpm `>=9`
+- Access to a running AntiRecurso backend API
+- Access to a Zitadel/AuthNEI client configuration for local login testing
 
-<p align="center">
-  <img src="/assets/desiredSubject.png" width="600" alt="Subject Selector Screen Printscreen">
-</p>
+If you use `nvm`, the repository includes [`.nvmrc`](.nvmrc).
 
-4. Choose the type of exam you wish to take
+## Getting Started
 
-<p align="center">
-  <img src="/assets/typeOfQuestions.png" width="600" alt="Exam Type Selector Screen Printscreen">
-</p>
+### 1. Clone the repository
 
-5. Submit your answers, and immediately receive feedback on your performance, including a breakdown of correct and incorrect responses.
+```bash
+git clone <your-fork-or-origin-url>
+cd antirecurso
+```
 
-6. Track your progress over time using the inbuilt scoreboard feature.
+### 2. Select the Node version
 
-<p align="center">
-  <img src="/assets/score.png" width="600" alt="Exam Result Screen Printscreen">
-</p>
+```bash
+nvm use
+```
 
-## Roadmap or Future Plans 🚀
+If you do not use `nvm`, install a compatible Node.js version manually.
 
-We have an exciting vision for the future of AntiRecurso! Here are some of the planned features and enhancements we have in store:
+### 3. Install dependencies
 
-- **Enhanced Question Bank**: Expand the question bank across multiple subjects. We aim to provide a comprehensive set of questions that cover a wide range of topics to cater to the needs of students studying various disciplines.
+The project enforces pnpm via `only-allow`.
 
-- **Social Features**: Implement social features to foster a community of learners. This may include the ability to connect with other users, share achievements, and engage in discussions related to specific subjects or questions.
+```bash
+pnpm install
+```
 
-- **Localization and Multilingual Support**: Provide localization options and multilingual support to make AntiRecurso accessible to a wider audience. This will involve translating the user interface and quizzes.
+### 4. Create your local environment file
 
-- **Gamification Elements**: Introduce gamification elements, such as badges, rewards, to make the learning process more engaging and motivating for users. This will encourage healthy competition and provide incentives for users to actively participate and improve their performance.
+Copy the example file:
 
-- **Accessibility Improvements**: Continuously work on improving the accessibility of the platform to ensure that it is usable by individuals with diverse abilities. This includes adhering to accessibility guidelines, optimizing the user interface for screen readers and other assistive technologies.
+```bash
+cp .env.example .env.local
+```
 
-Note that these are just a few examples of the features and enhancements we have planned for AntiRecurso. The roadmap is subject to change based on user feedback, community contributions, and emerging needs in the education sector.
+Next.js also works with `.env`, but `.env.local` is the preferred local-development file.
 
-We invite you to join us on this journey of growth and innovation as we strive to create a powerful and accessible learning platform for the students. If you have any suggestions or ideas for future development, we'd love to hear from you!
+### 5. Configure environment variables
 
-Let's make learning fun and effective together! 🌟
+At minimum, define the variables below before starting the app.
 
-## Contributions 🤝
+| Variable | Required | Description |
+| --- | --- | --- |
+| `NEXT_PUBLIC_BASE_URL` | Yes | Base URL of the AntiRecurso backend API. This is required by the frontend code but is not currently present in `.env.example`. |
+| `AUTH_SECRET` | Yes | NextAuth secret used to sign and decrypt session tokens. |
+| `AUTH_ISSUER_URL` | Yes | Zitadel/AuthNEI issuer URL. |
+| `AUTH_CLIENT_ID` | Yes | OAuth client ID for the hosted login flow. |
+| `AUTH_CLIENT_SECRET` | Usually | OAuth client secret for the Zitadel provider. |
+| `AUTH_SCOPES` | No | Defaults to `openid email profile`. |
+| `AUTH_POST_LOGOUT_REDIRECT_URI` | Recommended | Redirect target after logout. Defaults to `/` if omitted. |
+| `AUTH_DEBUG` | No | Set to `true` to enable verbose auth logging. |
 
-We welcome contributions from the community! If you're interested in contributing to AntiRecurso, please check out our [Contributing Guidelines](CONTRIBUTING.md) for more information.
+The sample file also contains:
 
-## License 📝
+- `APP_BASE_URL`
+- `AUTH_REDIRECT_URI`
 
-AntiRecurso is licensed under the GNU General Public License v3.0. See the [LICENSE](LICENSE) file for more details.
+Those values may still be useful for external auth-provider setup, but they are not referenced directly by this frontend codebase.
 
-## Code of Conduct 📜
+Example local configuration:
 
-We have adopted a Code of Conduct that we expect project participants to adhere to. Please read the [full text](CODE_OF_CONDUCT.md) so that you can understand what actions will and will not be tolerated.
+```dotenv
+NEXT_PUBLIC_BASE_URL=http://localhost:4000
+AUTH_SECRET=replace-with-a-long-random-secret
+AUTH_ISSUER_URL=https://auth.example.com
+AUTH_CLIENT_ID=replace-with-your-client-id
+AUTH_CLIENT_SECRET=replace-with-your-client-secret
+AUTH_SCOPES=openid email profile
+AUTH_POST_LOGOUT_REDIRECT_URI=http://localhost:3000
+AUTH_DEBUG=false
+```
 
-## Security Policy 🔒
+### 6. Start the development server
 
-We take security seriously at AntiRecurso. If you discover a security issue, please bring it to our attention right away!
+```bash
+pnpm dev
+```
 
-Please read our [Security Policy](SECURITY.md) for more information.
+The app runs on [http://localhost:3000](http://localhost:3000) by default.
 
-## Contact Us 📧
+## Available Scripts
 
-If you have any questions, suggestions, or just want to say hello, feel free to reach out to us:
+Defined in [`package.json`](package.json):
 
-- **Email**: <support.antirecurso@nei-isep.org>
+- `pnpm dev` - start the Next.js development server
+- `pnpm build` - create a production build
+- `pnpm start` - start the production server
+- `pnpm lint` - run ESLint
 
-We value your feedback and would love to hear from you!
+## Development Notes
 
-## Thank you 🙌
+### Backend Dependency
 
-It's really important to us that you're simply checking this page.
-If you want to contribute, it's even better!
+Most meaningful pages depend on a live backend:
 
-If you want to contact us, you can always check our social media and our e-mail in our profile.
+- subject lists are fetched from the API
+- profile data is fetched from `/user`
+- scoreboard data comes from backend score endpoints
+- admin pages call protected admin endpoints
 
-Keep being awesome!
+Without a reachable backend and valid auth configuration, the app will render incompletely or redirect away from protected routes.
 
-With love,
+### Session Model
 
-NEI ISEP ❤︎
+The app uses a JWT session strategy:
+
+- NextAuth stores the upstream access token and ID token in its JWT
+- server helpers in [`src/lib/server-auth.ts`](src/lib/server-auth.ts) read those tokens from cookies
+- authenticated server components fetch user data from the backend before rendering
+- the `/api/backend/*` proxy forwards the bearer token to the upstream API
+
+### Theming and Global UX
+
+The root layout in [`src/app/layout.tsx`](src/app/layout.tsx) wires up:
+
+- global styles
+- the top navigation bar
+- auth context
+- theme provider
+- changelog popup
+- cookie consent banner
+
+## Deployment Guidance
+
+No deployment manifests such as `Dockerfile`, `vercel.json`, `render.yaml`, or `fly.toml` are currently committed in this repository. That means deployment is flexible, but you need to provide the surrounding infrastructure yourself.
+
+For production you need:
+
+- a Node-compatible host capable of running `next build` and `next start`
+- all auth-related environment variables
+- a reachable backend API URL for `NEXT_PUBLIC_BASE_URL`
+- a correctly configured callback and logout setup in Zitadel/AuthNEI
+
+A typical production flow is:
+
+```bash
+pnpm install --frozen-lockfile
+pnpm build
+pnpm start
+```
+
+If you deploy behind a reverse proxy or managed platform, ensure:
+
+- HTTPS is enabled
+- your auth issuer accepts the production callback URL
+- `AUTH_POST_LOGOUT_REDIRECT_URI` matches the deployed frontend URL
+
+## Troubleshooting
+
+### Login succeeds but the app acts logged out
+
+Check:
+
+- `AUTH_SECRET`
+- `AUTH_ISSUER_URL`
+- `AUTH_CLIENT_ID`
+- `AUTH_CLIENT_SECRET`
+- whether the issued access token is expired
+
+The auth helper marks expired tokens with `AccessTokenExpired`, and protected routes will reject them.
+
+### Pages fail with missing data
+
+Check:
+
+- `NEXT_PUBLIC_BASE_URL`
+- backend availability
+- whether the backend accepts the forwarded bearer token
+
+### Admin routes redirect to the homepage
+
+That usually means one of the following:
+
+- there is no valid session token
+- the upstream access token expired
+- the backend `/admin` check returned a non-200 status
+
+## Contributing
+
+Contributions are welcome. Start with [`CONTRIBUTING.md`](CONTRIBUTING.md) for contribution workflow and expectations.
+
+## Security
+
+If you discover a vulnerability, read [`SECURITY.md`](SECURITY.md) before disclosing it.
+
+## License
+
+This project is licensed under the GNU General Public License v3.0. See [`LICENSE`](LICENSE).
+
+## Contact
+
+- Email: `support.antirecurso@nei-isep.org`
+- Public site: [https://antirecurso.nei-isep.org](https://antirecurso.nei-isep.org)
