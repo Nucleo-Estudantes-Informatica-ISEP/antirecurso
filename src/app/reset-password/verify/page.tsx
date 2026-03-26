@@ -12,7 +12,7 @@ const ResetPasswordVerify: React.FC = () => {
     } catch {
       await swal(
         'Oops!',
-        'Nao foi possivel abrir o portal de autenticacao. Por favor tenta novamente.',
+        'Não foi possível abrir o portal de autenticação. Por favor tenta novamente.',
         'error'
       );
     }
@@ -21,14 +21,14 @@ const ResetPasswordVerify: React.FC = () => {
   return (
     <div className="relative flex flex-col items-center justify-center w-11/12 max-w-md px-4 py-12 sm:p-12 md:w-1/2 h-full">
       <div className="w-full dark:text-white -mt-8 md:mt-0">
-        <h1 className="mb-6 text-2xl font-semibold">Verificacao de acesso</h1>
+        <h1 className="mb-6 text-2xl font-semibold">Verificação de acesso</h1>
         <p className="mb-8 text-sm leading-7 text-gray-600 dark:text-gray-300">
-          A verificacao e recuperacao de credenciais acontecem agora diretamente no portal do
+          A verificação e recuperação de credenciais acontecem agora diretamente no portal do
           AuthNEI. Abre o portal para continuar.
         </p>
 
         <PrimaryButton type="button" className="block w-full" onClick={handleOpenAuthPortal}>
-          Abrir portal de autenticacao
+          Abrir portal de autenticação
         </PrimaryButton>
 
         <hr className="my-8" />

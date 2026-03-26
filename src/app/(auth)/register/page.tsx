@@ -16,7 +16,7 @@ const Register: React.FC = () => {
     } catch {
       await swal(
         'Oops!',
-        'Nao foi possivel abrir o portal de autenticacao. Por favor tenta novamente.',
+        'Não foi possível abrir o portal de autenticação. Por favor tenta novamente.',
         'error'
       );
     }
@@ -27,8 +27,8 @@ const Register: React.FC = () => {
       <div className="w-full dark:text-white">
         <h1 className="mb-6 text-2xl font-semibold">Criar conta</h1>
         <p className="mb-8 text-sm leading-7 text-gray-600 dark:text-gray-300">
-          O registo passou para o portal oficial de autenticacao do NEI. Continua no portal e cria
-          la a tua conta para depois regressares automaticamente ao AntiRecurso.
+          O registo passou para o portal oficial de autenticação do NEI. Continua no portal e cria
+          lá a tua conta para depois regressares automaticamente ao AntiRecurso.
         </p>
 
         <PrimaryButton type="button" className="block w-full" onClick={handleRegister}>
@@ -41,7 +41,7 @@ const Register: React.FC = () => {
           <Link
             className="text-sm font-medium text-primary-600 hover:underline"
             href={`/login?callbackUrl=${encodeURIComponent(callbackUrl)}`}>
-            Ja tens conta?
+            Já tens conta?
           </Link>
         </p>
       </div>

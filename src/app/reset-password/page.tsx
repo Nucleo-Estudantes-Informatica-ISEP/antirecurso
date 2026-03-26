@@ -12,7 +12,7 @@ const ResetPassword: React.FC = () => {
     } catch {
       await swal(
         'Oops!',
-        'Nao foi possivel abrir o portal de autenticacao. Por favor tenta novamente.',
+        'Não foi possível abrir o portal de autenticação. Por favor tenta novamente.',
         'error'
       );
     }
@@ -23,12 +23,12 @@ const ResetPassword: React.FC = () => {
       <div className="w-full dark:text-white -mt-8 md:mt-0">
         <h1 className="mb-6 text-2xl font-semibold">Recuperar acesso</h1>
         <p className="mb-8 text-sm leading-7 text-gray-600 dark:text-gray-300">
-          A recuperacao da palavra-passe e feita no portal de autenticacao do NEI. Abre o portal e
-          usa a opcao de recuperacao de password nessa pagina.
+          A recuperação da palavra-passe é feita no portal de autenticação do NEI. Abre o portal e
+          usa a opção de recuperação de password nessa página.
         </p>
 
         <PrimaryButton type="button" className="block w-full" onClick={handleOpenAuthPortal}>
-          Abrir portal de autenticacao
+          Abrir portal de autenticação
         </PrimaryButton>
 
         <hr className="my-8" />

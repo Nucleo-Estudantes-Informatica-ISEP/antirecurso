@@ -42,14 +42,30 @@ const EventModal: React.FC<ModalProps> = ({ setIsVisible, edit, mutate, setEdit 
     return `${year}-${month}-${day}`;
   };
 
+  const parseDateInput = (value?: string) => {
+    if (!value) return null;
+
+    const [year, month, day] = value.split('-').map(Number);
+    if (!year || !month || !day) return null;
+
+    return new Date(year, month - 1, day);
+  };
+
+  const startOfDay = (date: Date) => new Date(date.getFullYear(), date.getMonth(), date.getDate());
+
   const handleSubmit = useCallback(async () => {
     const title = titleRef.current?.value;
     const description = descRef.current?.value;
-    const startDate = new Date(startDateRef.current?.value || '01-01-2000');
-    const endDate = new Date(endDateRef.current?.value || '01-01-2000');
+    const startDate = parseDateInput(startDateRef.current?.value);
+    const endDate = parseDateInput(endDateRef.current?.value);
 
     if (!title || title.length < 2)
       return swal('Oops!', 'Título inválido.', 'error', {
+        className: theme === 'dark' ? 'swal-dark' : ''
+      });
+
+    if (!startDate || !endDate)
+      return swal('Oops!', 'Datas inválidas.', 'error', {
         className: theme === 'dark' ? 'swal-dark' : ''
       });
 
@@ -58,7 +74,7 @@ const EventModal: React.FC<ModalProps> = ({ setIsVisible, edit, mutate, setEdit 
         className: theme === 'dark' ? 'swal-dark' : ''
       });
 
-    if (startDate < new Date())
+    if (startDate < startOfDay(new Date()))
       return swal('Oops!', 'Data de início não pode ser menor que a data atual.', 'error', {
         className: theme === 'dark' ? 'swal-dark' : ''
       });
