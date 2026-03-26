@@ -7,7 +7,7 @@ import { KeyedMutator } from 'swr';
 
 import PrimaryButton from '@/components/utils/PrimaryButton';
 import useSession from '@/hooks/useSession';
-import { BASE_URL } from '@/services/api';
+import { PROTECTED_API_BASE_URL } from '@/services/api';
 import Event from '@/types/Event';
 import LoadingSpinner from '../../utils/LoadingSpinner';
 
@@ -72,7 +72,9 @@ const EventModal: React.FC<ModalProps> = ({ setIsVisible, edit, mutate, setEdit 
       end_date: formatDateToMySQL(endDate)
     };
 
-    const url = !edit ? `${BASE_URL}/events/new` : `${BASE_URL}/events/${edit.id}`;
+    const url = !edit
+      ? `${PROTECTED_API_BASE_URL}/events/new`
+      : `${PROTECTED_API_BASE_URL}/events/${edit.id}`;
     const res = await fetch(url, {
       method: !edit ? 'POST' : 'PATCH',
       body: JSON.stringify(eventData),

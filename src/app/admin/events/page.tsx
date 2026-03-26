@@ -3,7 +3,7 @@
 import EventModal from '@/components/admin/EventModal';
 import LoadingSpinner from '@/components/utils/LoadingSpinner';
 import useSession from '@/hooks/useSession';
-import { BASE_URL } from '@/services/api';
+import { PROTECTED_API_BASE_URL } from '@/services/api';
 import { Add, Pencil } from '@/styles/Icons';
 import Event from '@/types/Event';
 import Pagination from '@/types/Pagination';
@@ -16,12 +16,18 @@ const EventsPage: React.FC = () => {
   const [editEvent, setEditEvent] = useState<Event | undefined>();
 
   const fetcher = async (url: RequestInfo | URL) => {
-    return fetch(url, { headers: { Authorization: 'Bearer ' + session.token } }).then((res) =>
-      res.json()
-    );
+    if (!session.token) return null;
+
+    const res = await fetch(url, { headers: { Authorization: 'Bearer ' + session.token } });
+    if (!res.ok) return null;
+
+    return res.json();
   };
 
-  const { data, isLoading, mutate } = useSWR(`${BASE_URL}/events`, fetcher);
+  const { data, isLoading, mutate } = useSWR(
+    session.token ? `${PROTECTED_API_BASE_URL}/events` : null,
+    fetcher
+  );
   const events: Pagination<Event> = data;
 
   const handleAddEventClick = () => {
