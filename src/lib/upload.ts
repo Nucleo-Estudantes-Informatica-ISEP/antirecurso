@@ -35,12 +35,8 @@ export async function uploadToBucket(signed: UploadResponse, blob: Blob) {
   const uploadUrl = BASE_URL ? new URL(signed.url, BASE_URL).toString() : signed.url;
 
   if (signed.uploadMode === 'supabase-signed-put') {
-    const formData = new FormData();
-    formData.append('cacheControl', '3600');
-    formData.append('', blob);
-
     const res = await fetch(uploadUrl, {
-      body: formData,
+      body: blob,
       method: 'PUT',
       headers: signed.headers
     });
