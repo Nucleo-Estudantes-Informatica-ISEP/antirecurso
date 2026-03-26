@@ -33,7 +33,7 @@ const EventModal: React.FC<ModalProps> = ({ setIsVisible, edit, mutate, setEdit 
     setIsVisible(false);
     setEdit(undefined);
     mutate();
-  }, [setIsVisible, mutate]);
+  }, [setIsVisible, setEdit, mutate]);
 
   const formatDateToMySQL = (date: Date) => {
     const year = date.getFullYear();
@@ -103,7 +103,7 @@ const EventModal: React.FC<ModalProps> = ({ setIsVisible, edit, mutate, setEdit 
       timer: 2000
     });
     handleClose();
-  }, [session.token, theme, handleClose]);
+  }, [edit, session.token, theme, handleClose]);
 
   useEffect(() => {
     const keydownEvent = (e: KeyboardEvent) => {
