@@ -1,6 +1,8 @@
 'use client';
 
-import PrimaryButton from '@/components/utils/PrimaryButton';
+import { Button } from '@/components/ui/button';
+import { Separator } from '@/components/ui/separator';
+import { ArrowRight, UserPlus } from 'lucide-react';
 import { signIn } from 'next-auth/react';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
@@ -23,27 +25,40 @@ const Register: React.FC = () => {
   }
 
   return (
-    <div className="relative flex flex-col items-center justify-center w-11/12 max-w-md px-4 py-12 sm:p-12 md:w-1/2 h-full">
-      <div className="w-full dark:text-white">
-        <h1 className="mb-6 text-2xl font-semibold">Criar conta</h1>
-        <p className="mb-8 text-sm leading-7 text-gray-600 dark:text-gray-300">
-          O registo passou para o portal oficial de autenticação do NEI. Continua no portal e cria
-          lá a tua conta para depois regressares automaticamente ao AntiRecurso.
-        </p>
+    <div className="flex flex-col items-center justify-center w-full px-6 py-12 sm:px-12 sm:py-16 min-h-[36rem]">
+      <div className="w-full max-w-sm space-y-8">
+        <div className="space-y-3">
+          <div className="inline-flex items-center justify-center size-12 rounded-2xl bg-primary/10 text-primary">
+            <UserPlus className="size-6" />
+          </div>
+          <h1 className="text-3xl font-bold tracking-tight">Criar conta</h1>
+          <p className="text-sm leading-6 text-muted-foreground">
+            O registo passou para o portal oficial de autenticação do NEI. Continua no portal e
+            cria lá a tua conta para regressares automaticamente ao AntiRecurso.
+          </p>
+        </div>
 
-        <PrimaryButton type="button" className="block w-full" onClick={handleRegister}>
-          Continuar para o portal
-        </PrimaryButton>
+        <div className="space-y-3">
+          <Button
+            onClick={handleRegister}
+            size="lg"
+            className="w-full shadow-md shadow-primary/20"
+          >
+            Continuar para o portal
+            <ArrowRight className="size-4" />
+          </Button>
+        </div>
 
-        <hr className="my-8" />
+        <Separator />
 
-        <p className="mt-4">
+        <div className="text-center text-sm">
           <Link
-            className="text-sm font-medium text-primary-600 hover:underline"
-            href={`/login?callbackUrl=${encodeURIComponent(callbackUrl)}`}>
-            Já tens conta?
+            className="text-primary font-medium hover:underline"
+            href={`/login?callbackUrl=${encodeURIComponent(callbackUrl)}`}
+          >
+            Já tens conta? Inicia sessão
           </Link>
-        </p>
+        </div>
       </div>
     </div>
   );

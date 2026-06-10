@@ -1,9 +1,20 @@
 'use client';
 
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow
+} from '@/components/ui/table';
 import useSession from '@/hooks/useSession';
 import { PROTECTED_API_BASE_URL } from '@/services/api';
-import { Eye, EyeSplash } from '@/styles/Icons';
 import Score from '@/types/Score';
+import { Eye, EyeOff } from 'lucide-react';
 import Link from 'next/link';
 import React from 'react';
 import swal from 'sweetalert';
@@ -54,45 +65,56 @@ const UserProfileScoreboard: React.FC<UsePreviousExamsTableProps> = ({ userScore
       setScores(s);
     });
   }
+
   return (
-    <section className="grid w-full mt-5 md:px-16 place-items-center px-6">
-      <table className="w-full lg:w-1/2 text-sm text-center">
-        <thead className="text-xs text-white uppercase bg-primary">
-          <tr>
-            <th scope="col" className="w-1/3 px-6 py-3">
-              Disciplina
-            </th>
-            <th scope="col" className="w-1/6 px-3 py-3">
-              Pontuação
-            </th>
-            <th scope="col" className="w-1/12 px-2 py-3">
-              Visível
-            </th>
-          </tr>
-        </thead>
-        <tbody>
+    <Card className="overflow-hidden">
+      <Table>
+        <TableHeader>
+          <TableRow className="hover:bg-transparent">
+            <TableHead>Disciplina</TableHead>
+            <TableHead className="text-center">Pontuação</TableHead>
+            <TableHead className="text-center">Visível</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
           {scores.map((score) => (
-            <tr className="bg-white border-b dark:bg-primary-dark" key={score.subject_id}>
-              <td className="px-6 py-4 capitalize">
+            <TableRow key={score.subject_id}>
+              <TableCell className="capitalize">
                 <Link
                   href={`/stats/${score.subject_id}`}
-                  className="text-xs underline capitalize transition ease-in-out hover:text-primary md:text-base">
+                  className="font-medium text-foreground hover:text-primary hover:underline transition-colors"
+                >
                   {score.subject}
                 </Link>
-              </td>
-              <td className="px-3 py-4 w-1/6">{score.score}</td>
-              <td className="px-2 py-4 w-1/12">
-                <button
+              </TableCell>
+              <TableCell className="text-center">
+                <Badge
+                  variant={score.score >= 50 ? 'success' : 'destructive'}
+                  className="font-bold tabular-nums"
+                >
+                  {Math.round(score.score)}%
+                </Badge>
+              </TableCell>
+              <TableCell className="text-center">
+                <Button
+                  size="icon"
+                  variant="ghost"
+                  className="size-8 text-muted-foreground hover:text-primary"
                   onClick={() => handleVisibilityChange(score.subject_id, score.show_scoreboard)}
-                  className="text-lg mx-auto">
-                  {score.show_scoreboard ? <Eye /> : <EyeSplash />}
-                </button>
-              </td>
-            </tr>
+                  aria-label={score.show_scoreboard ? 'Esconder' : 'Mostrar'}
+                >
+                  {score.show_scoreboard ? (
+                    <Eye className="size-4" />
+                  ) : (
+                    <EyeOff className="size-4" />
+                  )}
+                </Button>
+              </TableCell>
+            </TableRow>
           ))}
-        </tbody>
-      </table>
-    </section>
+        </TableBody>
+      </Table>
+    </Card>
   );
 };
 

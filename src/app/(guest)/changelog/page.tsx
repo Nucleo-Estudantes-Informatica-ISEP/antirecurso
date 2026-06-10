@@ -1,9 +1,23 @@
 import ChangelogVersion from '@/components/changelog/ChangelogVersion';
+import { Badge } from '@/components/ui/badge';
 import Link from 'next/link';
 
 const Changelog: React.FC = () => {
   return (
-    <section className="w-full text-sm md:text-md px-5 md:px-24 md:pb-24 pb-48 mt-5">
+    <section className="container py-10 md:py-14 w-full max-w-3xl">
+      <div className="flex flex-col items-center text-center mb-10">
+        <Badge variant="soft" className="mb-3">
+          Versões
+        </Badge>
+        <h1 className="text-balance text-3xl md:text-4xl font-bold tracking-tight">
+          <span className="gradient-text">Changelog</span>
+        </h1>
+        <p className="mt-3 max-w-xl text-muted-foreground">
+          Acompanha tudo o que tem acontecido no AntiRecurso.
+        </p>
+      </div>
+
+      <div className="relative md:pl-8 space-y-6 before:hidden md:before:block before:absolute before:left-1.5 before:top-2 before:bottom-2 before:w-px before:bg-border">
       {/* <ChangelogVersion
         title="v1.4.3 🛠"
         date={new Date(2024, .., ..)}
@@ -410,6 +424,7 @@ const Changelog: React.FC = () => {
         <br />
         Nesta versão apenas alguns utilizadores selecionados podem aceder ao site. <br />
       </ChangelogVersion>
+      </div>
     </section>
   );
 };

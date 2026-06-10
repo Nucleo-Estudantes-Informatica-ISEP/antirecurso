@@ -3,143 +3,208 @@
 @tailwind utilities;
 
 @layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 240 10% 10%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 240 10% 10%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 240 10% 10%;
+
+    --primary: 18 80% 46%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 240 5% 96%;
+    --secondary-foreground: 240 10% 10%;
+
+    --muted: 240 5% 96%;
+    --muted-foreground: 240 4% 46%;
+
+    --accent: 18 100% 96%;
+    --accent-foreground: 18 80% 30%;
+
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 240 6% 90%;
+    --input: 240 6% 90%;
+    --ring: 18 80% 46%;
+
+    --radius: 0.75rem;
+  }
+
+  .dark {
+    --background: 240 8% 8%;
+    --foreground: 0 0% 98%;
+
+    --card: 240 8% 11%;
+    --card-foreground: 0 0% 98%;
+
+    --popover: 240 8% 11%;
+    --popover-foreground: 0 0% 98%;
+
+    --primary: 18 88% 56%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 240 6% 16%;
+    --secondary-foreground: 0 0% 98%;
+
+    --muted: 240 6% 16%;
+    --muted-foreground: 240 5% 65%;
+
+    --accent: 18 80% 16%;
+    --accent-foreground: 18 100% 80%;
+
+    --destructive: 0 70% 50%;
+    --destructive-foreground: 0 0% 98%;
+
+    --border: 240 6% 20%;
+    --input: 240 6% 20%;
+    --ring: 18 88% 56%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
   html {
     scroll-behavior: smooth;
-    font-family: 'Poppins', sans-serif;
+    font-family: 'Inter', 'Poppins', system-ui, sans-serif;
     overflow-x: hidden;
   }
 
-  /* remove scrollbar in every browser*/
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-feature-settings: 'rlig' 1, 'calt' 1;
+  }
+
+  /* hide scrollbar in every browser */
   ::-webkit-scrollbar {
     display: none;
   }
 
-  /* from: https://design2tailwind.com/blog/tailwindcss-hide-scrollbar/ */
-  /* For Webkit-based browsers (Chrome, Safari and Opera) */
   .scrollbar-hide::-webkit-scrollbar {
     display: none;
   }
 
-  /* For IE, Edge and Firefox */
   .scrollbar-hide {
-    -ms-overflow-style: none; /* IE and Edge */
-    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
   }
 
-  .swal-dark {
-    background-color: #222026 !important;
-    border: 1px solid #eaeaea !important;
-    color: #fff !important;
+  .bg-grid-pattern {
+    background-image:
+      linear-gradient(to right, hsl(var(--border) / 0.4) 1px, transparent 1px),
+      linear-gradient(to bottom, hsl(var(--border) / 0.4) 1px, transparent 1px);
+    background-size: 48px 48px;
   }
 
-  .swal-dark .swal-title {
-    color: #fff !important;
+  .gradient-text {
+    @apply bg-gradient-to-r from-brand-500 via-brand-400 to-brand-600 bg-clip-text text-transparent;
   }
+}
 
-  .swal-dark .swal-text {
-    color: #fff !important;
-  }
+/* sweetalert dark theme overrides */
+.swal-dark {
+  background-color: hsl(240 8% 11%) !important;
+  border: 1px solid hsl(240 6% 20%) !important;
+  color: #fff !important;
+}
 
-  .swal-dark .swal-button {
-    background-color: #222026 !important;
-    border: 1px solid #eaeaea !important;
-    color: #fff !important;
-  }
+.swal-dark .swal-title {
+  color: #fff !important;
+}
 
-  .swal-dark .swal-button:hover {
-    filter: brightness(1.1);
-  }
+.swal-dark .swal-text {
+  color: #e2e2e6 !important;
+}
 
-  .swal-dark .swal-button:focus {
-    filter: brightness(1.1);
-  }
+.swal-dark .swal-button {
+  background-color: hsl(240 6% 16%) !important;
+  border: 1px solid hsl(240 6% 22%) !important;
+  color: #fff !important;
+}
 
-  .swal-dark .swal-button.swal-button--confirm {
-    background-color: #d35d19 !important;
-    border: 1px solid #eaeaea !important;
-    color: #fff !important;
-  }
+.swal-dark .swal-button:hover {
+  filter: brightness(1.15);
+}
 
-  .swal-dark input {
-    background-color: #222026 !important;
-    border: 1px solid #eaeaea !important;
-    color: #fff !important;
-  }
+.swal-dark .swal-button:focus {
+  filter: brightness(1.15);
+}
 
-  .swal-dark input:focus {
-    border: 1px solid #eaeaea !important;
-    box-shadow: 0 0 0 1px #d35d19 !important;
-  }
+.swal-dark .swal-button.swal-button--confirm {
+  background-color: #ec4109 !important;
+  border: 1px solid #ec4109 !important;
+  color: #fff !important;
+}
 
-  .swal-dark .swal-footer {
-    background-color: #222026 !important;
-    border: 1px solid #eaeaea !important;
-    color: #d35d19 !important;
-  }
+.swal-dark input {
+  background-color: hsl(240 6% 16%) !important;
+  border: 1px solid hsl(240 6% 22%) !important;
+  color: #fff !important;
+}
 
-  .swal-dark .swal-icon--error {
-    border-color: #d35d19 !important;
-  }
+.swal-dark input:focus {
+  border: 1px solid #ec4109 !important;
+  box-shadow: 0 0 0 1px #ec4109 !important;
+}
 
-  .swal-dark .swal-icon--error::before {
-    background-color: #d35d19 !important;
-  }
+.swal-dark .swal-footer {
+  background-color: hsl(240 8% 11%) !important;
+  border: 1px solid hsl(240 6% 20%) !important;
+  color: #ec4109 !important;
+}
 
-  .swal-dark .swal-icon--error .swal-icon--error-x-mark {
-    border-color: #d35d19 !important;
-  }
+.swal-dark .swal-icon--error,
+.swal-dark .swal-icon--warning,
+.swal-dark .swal-icon--info,
+.swal-dark .swal-icon--success {
+  border-color: #ec4109 !important;
+}
 
-  .swal-dark .swal-icon--error .swal-icon--error-x-mark::before,
-  .swal-dark .swal-icon--error .swal-icon--error-x-mark::after {
-    background-color: #d35d19 !important;
-  }
+.swal-dark .swal-icon--error::before,
+.swal-dark .swal-icon--warning::before,
+.swal-dark .swal-icon--info::before {
+  background-color: #ec4109 !important;
+}
 
-  .swal-dark .swal-icon--warning {
-    border-color: #d35d19 !important;
-  }
+.swal-dark .swal-icon--error .swal-icon--error-x-mark {
+  border-color: #ec4109 !important;
+}
 
-  .swal-dark .swal-icon--warning::before {
-    background-color: #d35d19 !important;
-  }
+.swal-dark .swal-icon--error .swal-icon--error-x-mark::before,
+.swal-dark .swal-icon--error .swal-icon--error-x-mark::after {
+  background-color: #ec4109 !important;
+}
 
-  .swal-dark .swal-icon--warning .swal-icon--warning-body {
-    border-color: #d35d19 !important;
-  }
+.swal-dark .swal-icon--warning .swal-icon--warning-body,
+.swal-dark .swal-icon--info .swal-icon--info-i {
+  border-color: #ec4109 !important;
+}
 
-  .swal-dark .swal-icon--warning .swal-icon--warning-body::before {
-    background-color: #d35d19 !important;
-  }
+.swal-dark .swal-icon--warning .swal-icon--warning-body::before,
+.swal-dark .swal-icon--warning .swal-icon--warning-dot,
+.swal-dark .swal-icon--info .swal-icon--info-i::before {
+  background-color: #ec4109 !important;
+}
 
-  .swal-dark .swal-icon--warning .swal-icon--warning-dot {
-    background-color: #d35d19 !important;
-  }
+.swal-dark .swal-icon--success {
+  background-color: hsl(240 8% 11%) !important;
+}
 
-  .swal-dark .swal-icon--info {
-    border-color: #d35d19 !important;
-  }
-
-  .swal-dark .swal-icon--info::before {
-    background-color: #d35d19 !important;
-  }
-
-  .swal-dark .swal-icon--info .swal-icon--info-i {
-    border-color: #d35d19 !important;
-  }
-
-  .swal-dark .swal-icon--info .swal-icon--info-i::before {
-    background-color: #d35d19 !important;
-  }
-
-  .swal-dark .swal-icon--success {
-    border-color: #d35d19 !important;
-    background-color: #222026 !important;
-  }
-
-  .swal-dark .swal-icon--success__hide-corners {
-    background: none !important;
-  }
-  .swal-dark .swal-icon--success:before,
-  .swal-dark .swal-icon--success:after {
-    background: none !important;
-  }
+.swal-dark .swal-icon--success__hide-corners,
+.swal-dark .swal-icon--success:before,
+.swal-dark .swal-icon--success:after {
+  background: none !important;
 }

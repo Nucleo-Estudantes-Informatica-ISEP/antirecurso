@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getToken } from 'next-auth/jwt';
 import { BASE_URL } from '@/services/api';
+import { DEV_BYPASS_TOKEN, isDevAuthBypass } from '@/lib/server-auth';
 
 export const dynamic = 'force-dynamic';
 
@@ -9,14 +10,22 @@ async function proxyRequest(
   { params }: { params: Promise<{ path: string[] }> }
 ) {
   const { path } = await params;
-  const token = await getToken({ req: request, secret: process.env.AUTH_SECRET });
-  const accessToken = typeof token?.accessToken === 'string' ? token.accessToken : null;
-  const isExpired =
-    token?.error === 'AccessTokenExpired' ||
-    (typeof token?.accessTokenExpiresAt === 'number' && Date.now() >= token.accessTokenExpiresAt);
 
-  if (!accessToken || isExpired) {
-    return NextResponse.json({ message: 'Authentication required' }, { status: 401 });
+  let accessToken: string | null = null;
+
+  if (isDevAuthBypass) {
+    accessToken = DEV_BYPASS_TOKEN;
+  } else {
+    const token = await getToken({ req: request, secret: process.env.AUTH_SECRET });
+    const tokenAccessToken = typeof token?.accessToken === 'string' ? token.accessToken : null;
+    const isExpired =
+      token?.error === 'AccessTokenExpired' ||
+      (typeof token?.accessTokenExpiresAt === 'number' && Date.now() >= token.accessTokenExpiresAt);
+
+    if (!tokenAccessToken || isExpired) {
+      return NextResponse.json({ message: 'Authentication required' }, { status: 401 });
+    }
+    accessToken = tokenAccessToken;
   }
 
   if (!BASE_URL) {

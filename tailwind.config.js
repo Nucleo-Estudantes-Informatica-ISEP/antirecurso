@@ -1,6 +1,5 @@
 /** @type {import('tailwindcss').Config} */
 const defaultTheme = require('tailwindcss/defaultTheme');
-const plugin = require('tailwindcss/plugin');
 
 module.exports = {
   darkMode: 'class',
@@ -11,195 +10,112 @@ module.exports = {
     './src/**/*.{js,ts,jsx,tsx}'
   ],
   theme: {
-    themeVariants: ['dark'],
-    defaultTheme: 'dark',
-    Forms: (theme) => ({
-      default: {
-        'input, textarea': {
-          '&::placeholder': {
-            color: theme('colors.gray.400')
-          }
-        }
-      }
-    }),
-    colors: {
-      transparent: 'transparent',
-      white: '#ffffff',
-      black: '#000000',
-      gray: {
-        50: '#f9fafb',
-        100: '#f4f5f7',
-        200: '#e5e7eb',
-        300: '#d5d6d7',
-        400: '#9e9e9e',
-        500: '#707275',
-        600: '#4c4f52',
-        700: '#24262d',
-        800: '#1a1c23',
-        900: '#121317'
-      },
-      'cool-gray': {
-        50: '#fbfdfe',
-        100: '#f1f5f9',
-        200: '#e2e8f0',
-        300: '#cfd8e3',
-        400: '#97a6ba',
-        500: '#64748b',
-        600: '#475569',
-        700: '#364152',
-        800: '#27303f',
-        900: '#1a202e'
-      },
-      red: {
-        50: '#fdf2f2',
-        100: '#fde8e8',
-        200: '#fbd5d5',
-        300: '#f8b4b4',
-        400: '#f98080',
-        500: '#f05252',
-        600: '#e02424',
-        700: '#c81e1e',
-        800: '#9b1c1c',
-        900: '#771d1d'
-      },
-      orange: {
-        50: '#fff8f1',
-        100: '#feecdc',
-        200: '#fcd9bd',
-        300: '#fdba8c',
-        400: '#ff8a4c',
-        500: '#ff5a1f',
-        600: '#d03801',
-        700: '#b43403',
-        800: '#8a2c0d',
-        900: '#771d1d'
-      },
-      yellow: {
-        50: '#fdfdea',
-        100: '#fdf6b2',
-        200: '#fce96a',
-        300: '#faca15',
-        400: '#e3a008',
-        500: '#c27803',
-        600: '#9f580a',
-        700: '#8e4b10',
-        800: '#723b13',
-        900: '#633112'
-      },
-      green: {
-        50: '#f3faf7',
-        100: '#def7ec',
-        200: '#bcf0da',
-        300: '#84e1bc',
-        400: '#31c48d',
-        500: '#0e9f6e',
-        600: '#057a55',
-        700: '#046c4e',
-        800: '#03543f',
-        900: '#014737'
-      },
-      teal: {
-        50: '#edfafa',
-        100: '#d5f5f6',
-        200: '#afecef',
-        300: '#7edce2',
-        400: '#16bdca',
-        500: '#0694a2',
-        600: '#047481',
-        700: '#036672',
-        800: '#05505c',
-        900: '#014451'
-      },
-      blue: {
-        50: '#ebf5ff',
-        100: '#e1effe',
-        200: '#c3ddfd',
-        300: '#a4cafe',
-        400: '#76a9fa',
-        500: '#3f83f8',
-        600: '#1c64f2',
-        700: '#1a56db',
-        800: '#1e429f',
-        900: '#233876'
-      },
-      indigo: {
-        50: '#f0f5ff',
-        100: '#e5edff',
-        200: '#cddbfe',
-        300: '#b4c6fc',
-        400: '#8da2fb',
-        500: '#6875f5',
-        600: '#5850ec',
-        700: '#5145cd',
-        800: '#42389d',
-        900: '#362f78'
-      },
-      purple: {
-        50: '#f6f5ff',
-        100: '#edebfe',
-        200: '#dcd7fe',
-        300: '#cabffd',
-        400: '#ac94fa',
-        500: '#9061f9',
-        600: '#7e3af2',
-        700: '#6c2bd9',
-        800: '#5521b5',
-        900: '#4a1d96'
-      },
-      pink: {
-        50: '#fdf2f8',
-        100: '#fce8f3',
-        200: '#fad1e8',
-        300: '#f8b4d9',
-        400: '#f17eb8',
-        500: '#e74694',
-        600: '#d61f69',
-        700: '#bf125d',
-        800: '#99154b',
-        900: '#751a3d'
-      },
+    container: {
+      center: true,
+      padding: '1rem',
       screens: {
-        sm: '640px',
-        md: '768px',
-        lg: '1024px',
-        xl: '1280px',
-        '2xl': '1536px'
+        '2xl': '1400px'
       }
     },
     extend: {
-      dropShadow: {
-        '3xl': '4px 6px 4px',
-        '4xl': '8px 10px 8px'
+      defaultTheme: 'dark',
+      colors: {
+        border: 'hsl(var(--border))',
+        input: 'hsl(var(--input))',
+        ring: 'hsl(var(--ring))',
+        background: 'hsl(var(--background))',
+        foreground: 'hsl(var(--foreground))',
+        primary: {
+          DEFAULT: 'hsl(var(--primary))',
+          foreground: 'hsl(var(--primary-foreground))',
+          dark: '#1a1b21'
+        },
+        secondary: {
+          DEFAULT: 'hsl(var(--secondary))',
+          foreground: 'hsl(var(--secondary-foreground))',
+          dark: '#14151a'
+        },
+        destructive: {
+          DEFAULT: 'hsl(var(--destructive))',
+          foreground: 'hsl(var(--destructive-foreground))'
+        },
+        muted: {
+          DEFAULT: 'hsl(var(--muted))',
+          foreground: 'hsl(var(--muted-foreground))'
+        },
+        accent: {
+          DEFAULT: 'hsl(var(--accent))',
+          foreground: 'hsl(var(--accent-foreground))'
+        },
+        popover: {
+          DEFAULT: 'hsl(var(--popover))',
+          foreground: 'hsl(var(--popover-foreground))'
+        },
+        card: {
+          DEFAULT: 'hsl(var(--card))',
+          foreground: 'hsl(var(--card-foreground))'
+        },
+        brand: {
+          50: '#fff5ed',
+          100: '#ffe7d2',
+          200: '#ffcaa3',
+          300: '#ffa569',
+          400: '#fe7b34',
+          500: '#fa5b13',
+          600: '#ec4109',
+          700: '#c4300a',
+          800: '#9b2810',
+          900: '#7d2411',
+          950: '#430e05'
+        }
       },
-      backgroundImage: {
-        hero: "linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), url('/images/background.webp')"
+      borderRadius: {
+        lg: 'var(--radius)',
+        md: 'calc(var(--radius) - 2px)',
+        sm: 'calc(var(--radius) - 4px)'
       },
       fontFamily: {
-        sans: ['Inter', ...defaultTheme.fontFamily.sans]
+        sans: ['Inter', 'Poppins', ...defaultTheme.fontFamily.sans]
       },
       maxHeight: {
         0: '0',
         xl: '36rem'
       },
-      colors: {
-        primary: {
-          DEFAULT: '#d35d19',
-          dark: '#2e303a'
+      dropShadow: {
+        '3xl': '4px 6px 4px',
+        '4xl': '8px 10px 8px'
+      },
+      backgroundImage: {
+        'hero-gradient':
+          'radial-gradient(circle at top left, hsl(var(--primary) / 0.18), transparent 55%), radial-gradient(circle at bottom right, hsl(var(--primary) / 0.12), transparent 60%)',
+        'hero-grid':
+          "linear-gradient(to right, hsl(var(--border) / 0.6) 1px, transparent 1px), linear-gradient(to bottom, hsl(var(--border) / 0.6) 1px, transparent 1px)"
+      },
+      keyframes: {
+        'accordion-down': {
+          from: { height: '0' },
+          to: { height: 'var(--radix-accordion-content-height)' }
         },
-        secondary: {
-          dark: '#222026'
+        'accordion-up': {
+          from: { height: 'var(--radix-accordion-content-height)' },
+          to: { height: '0' }
+        },
+        'fade-in': {
+          '0%': { opacity: '0', transform: 'translateY(8px)' },
+          '100%': { opacity: '1', transform: 'translateY(0)' }
+        },
+        shimmer: {
+          '0%': { backgroundPosition: '-200% 0' },
+          '100%': { backgroundPosition: '200% 0' }
         }
+      },
+      animation: {
+        'accordion-down': 'accordion-down 0.2s ease-out',
+        'accordion-up': 'accordion-up 0.2s ease-out',
+        'fade-in': 'fade-in 0.4s ease-out',
+        shimmer: 'shimmer 2.5s linear infinite'
       }
-    },
-    important: true
+    }
   },
-  variants: {
-    backgroundColor: ['hover', 'focus', 'active', 'odd'],
-    display: ['responsive', 'dark'],
-    textColor: ['focus-within', 'hover', 'active'],
-    placeholderColor: ['focus'],
-    borderColor: ['focus', 'hover'],
-    boxShadow: ['focus']
-  },
-  plugins: [require('@tailwindcss/forms')]
+  plugins: [require('tailwindcss-animate'), require('@tailwindcss/forms')]
 };

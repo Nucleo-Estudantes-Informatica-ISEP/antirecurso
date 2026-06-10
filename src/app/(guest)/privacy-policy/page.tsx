@@ -1,99 +1,107 @@
+import { Badge } from '@/components/ui/badge';
+import { Card, CardContent } from '@/components/ui/card';
+
 const PrivacyPolicy: React.FC = () => {
   return (
-    <section className="w-full text-sm md:text-md px-5 md:px-24 md:pb-24 pb-48 mt-5">
-      <h1 className="text-primary font-black text-2xl">Política de Privacidade</h1>
-      <div className="flex flex-col h-full gap-5 text-base">
-        <article className="mt-5">
-          <h3 className="font-bold text-primary">
-            Aplicação do Regulamento Geral sobre a Proteção de Dados
-          </h3>
-          <span>
-            Em vigor a partir de 20 de junho de 2023. De maneira a compreender que informações são
-            recolhidas e como são utilizadas o Núcleo de Estudantes de Informática do Instituto
-            Superior de Engenharia do Porto (NEI-ISEP) aconselha que leia esta Política de
-            Privacidade que visa explicar as nossas práticas no que diz respeito à recolha,
-            utilização e conservação de determinadas informações, incluindo os seus dados pessoais,
-            no âmbito da aplicação AntiRecurso. Criamos o nosso serviço tendo como base o respeito
-            pela sua privacidade e que cumpre a legislação de proteção de dados pessoais em vigor
-            nomeadamente o Regulamento (UE) 2016/679 do Parlamento Europeu e do Conselho, de 27 de
-            Abril de 2016. O AntiRecurso é uma aplicação que auxilia os alunos pertencentes ao
-            Departamento de Engenharia Informática do ISEP a estudarem de maneira mais simples e
-            eficaz para os exames de certas Unidades Curriculares.
-          </span>
-        </article>
-        <article>
-          <h3 className="mt-2 font-bold text-primary">Responsável pelo tratamento</h3>
-          <span>
-            O NEI-ISEP é a organização responsável pelo tratamento dos seus dados pessoais. Poderá
-            entrar em contacto com o núcleo através do email{' '}
-            <a
-              className="text-blue-700 dark:text-blue-300 hover:underline"
-              href="mailto:info@nei-isep.org">
-              info@nei-isep.org
-            </a>
-            .
-          </span>
-        </article>
-        <article>
-          <h3 className="mt-2 font-bold text-primary">Recolha de Informações</h3>
-          <span>
-            Para usar a nossa aplicação é necessário ter uma conta de utilizador e por esse motivo é
-            preciso fornecer-nos certas informações. Isto inclui o nome, uma palavra-passe e um
-            endereço de email. O endereço de email e a palavra-passe são requeridos para
-            autenticação no sistema e o nome tem o propósito para a identificação. Podemos então
-            concluir que todos os dados solicitados têm um fim específico e justificado, conforme a
-            disposição legal da alínea c) do nº1 do Artigo 5° do RGPD.
-          </span>
-        </article>
-        <article>
-          <h3 className="mt-2 font-bold text-primary">Direitos dos Titulares dos Dados</h3>
-          <p>
-            Ao abrigo da legislação de proteção de dados aplicável, tem o direito de aceder à sua
-            informação pessoal (Artigo 15° do Regulamento Geral sobre a Proteção de Dados),
-            retificar os seus dados (Artigo 16° do Regulamento Geral sobre a Proteção de Dados),
-            efetuar a portabilidade, apagar as suas informações (Artigo 17° do Regulamento Geral
-            sobre a Proteção de Dados) e limitar e opor-se a determinados tratamentos das suas
-            informações, bem como o direito de apresentação de uma reclamação junto da CNPD –
-            Comissão Nacional de Proteção de Dados (
-            <a
-              className="text-blue-700 dark:text-blue-300 hover:underline"
-              href="mailto:geral@cnpd.pt">
-              geral@cnpd.pt
-            </a>
-            ). Para exercer os seus direitos, ou caso tenha uma questão relacionada com a nossa
-            política de privacidade, contacte o nosso Encarregado da Proteção de Dados, através do
-            email{' '}
-            <a
-              className="text-blue-700 dark:text-blue-300 hover:underline"
-              href="mailto:info@nei-isep.org">
-              info@nei-isep.org
-            </a>
-            .
-          </p>
-        </article>
-        <article>
-          <h3 className="font-bold text-primary">Conservação das Informações</h3>
-          <p>
-            Quando a sua conta for eliminada, O NEI-ISEP anonimiza as suas informações pessoais não
-            sendo possível recuperar esse conteúdo mais tarde.
-          </p>
-        </article>
-        <article>
-          <h3 className="font-bold text-primary">Obrigações do utilizador</h3>
-          <p>
-            O utilizador declara que leu a política de privacidade, concordando na sua totalidade
-            com todas as informações nela presentes.
-          </p>
-        </article>
-        <article>
-          <h3 className="font-bold text-primary">Outros Termos</h3>
-          <p>
-            Os seus dados pessoais poderão ser comunicados a entidades públicas ou autoridades
-            judiciais, se assim for obrigatório por lei ou para prevenir ou punir a prática de
-            crimes.
-          </p>
-        </article>
+    <section className="container py-10 md:py-14 w-full max-w-3xl">
+      <div className="mb-10">
+        <Badge variant="soft" className="mb-3">
+          Privacidade
+        </Badge>
+        <h1 className="text-balance text-3xl md:text-4xl font-bold tracking-tight">
+          Política de <span className="gradient-text">Privacidade</span>
+        </h1>
+        <p className="mt-3 text-muted-foreground">
+          Em vigor a partir de 20 de junho de 2023.
+        </p>
       </div>
+
+      <Card>
+        <CardContent className="p-6 md:p-8 space-y-6 text-sm md:text-base leading-relaxed">
+          <article>
+            <h2 className="font-bold text-primary text-lg mb-2">
+              Aplicação do Regulamento Geral sobre a Proteção de Dados
+            </h2>
+            <p>
+              Para compreenderes que informações são recolhidas e como são utilizadas, o Núcleo de
+              Estudantes de Informática do Instituto Superior de Engenharia do Porto (NEI-ISEP)
+              aconselha que leias esta Política de Privacidade. O AntiRecurso respeita a tua
+              privacidade e cumpre a legislação em vigor, nomeadamente o Regulamento (UE) 2016/679
+              do Parlamento Europeu e do Conselho. O AntiRecurso ajuda os alunos do DEI-ISEP a
+              estudarem de forma mais simples e eficaz.
+            </p>
+          </article>
+
+          <article>
+            <h2 className="font-bold text-primary text-lg mb-2">Responsável pelo tratamento</h2>
+            <p>
+              O NEI-ISEP é a organização responsável pelo tratamento dos teus dados pessoais. Podes
+              contactar-nos por{' '}
+              <a
+                className="text-primary font-medium hover:underline"
+                href="mailto:info@nei-isep.org"
+              >
+                info@nei-isep.org
+              </a>
+              .
+            </p>
+          </article>
+
+          <article>
+            <h2 className="font-bold text-primary text-lg mb-2">Recolha de informações</h2>
+            <p>
+              Para usares a aplicação é necessário ter uma conta. Para isso precisamos do teu nome,
+              palavra-passe e endereço de email. Todos os dados solicitados têm um fim específico e
+              justificado, conforme a alínea c) do nº1 do Artigo 5° do RGPD.
+            </p>
+          </article>
+
+          <article>
+            <h2 className="font-bold text-primary text-lg mb-2">Direitos dos titulares dos dados</h2>
+            <p>
+              Tens o direito de aceder, retificar, portar, apagar, limitar e opor-te ao tratamento
+              dos teus dados, bem como apresentar reclamação junto da CNPD (
+              <a className="text-primary font-medium hover:underline" href="mailto:geral@cnpd.pt">
+                geral@cnpd.pt
+              </a>
+              ). Para exercer os teus direitos contacta o nosso Encarregado da Proteção de Dados
+              em{' '}
+              <a
+                className="text-primary font-medium hover:underline"
+                href="mailto:info@nei-isep.org"
+              >
+                info@nei-isep.org
+              </a>
+              .
+            </p>
+          </article>
+
+          <article>
+            <h2 className="font-bold text-primary text-lg mb-2">Conservação das informações</h2>
+            <p>
+              Quando a tua conta for eliminada, o NEI-ISEP anonimiza as tuas informações pessoais,
+              não sendo possível recuperar esse conteúdo mais tarde.
+            </p>
+          </article>
+
+          <article>
+            <h2 className="font-bold text-primary text-lg mb-2">Obrigações do utilizador</h2>
+            <p>
+              Ao usares o AntiRecurso, declaras que leste esta política de privacidade e concordas
+              com todas as informações nela presentes.
+            </p>
+          </article>
+
+          <article>
+            <h2 className="font-bold text-primary text-lg mb-2">Outros termos</h2>
+            <p>
+              Os teus dados pessoais poderão ser comunicados a entidades públicas ou autoridades
+              judiciais, se assim for obrigatório por lei ou para prevenir ou punir a prática de
+              crimes.
+            </p>
+          </article>
+        </CardContent>
+      </Card>
     </section>
   );
 };

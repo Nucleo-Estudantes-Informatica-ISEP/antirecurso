@@ -1,4 +1,3 @@
-import ThemeChanger from '@/components/utils/Theme/ThemeChanger';
 import DarkMainLogo from '@/images/logos/main-logo-dark.svg';
 import MainLogo from '@/images/logos/main-logo.svg';
 import Image from 'next/image';
@@ -6,6 +5,7 @@ import Link from 'next/link';
 import HamburgerMenu from '../HamburgerMenu';
 import HamburgerProfileMenu from '../HamburguerProfileMenu';
 import TopbarLink from '../TopbarLink';
+import ThemeChanger from '@/components/utils/Theme/ThemeChanger';
 
 export const topBarLinks = {
   Home: '/',
@@ -17,37 +17,46 @@ export const topBarLinks = {
 
 const Topbar: React.FC = () => {
   return (
-    <nav className="sticky top-0 left-0 z-30 flex items-center justify-between w-screen h-20 px-10 py-5 bg-white border-gray-100 shadow dark:shadow-secondary-dark dark:bg-secondary-dark">
-      <Link href="/" className="dark:hidden max-w-[8rem] md:max-w-[12rem] ">
-        <Image height={192} width={192} priority src={MainLogo} alt="AntiRecurso Light Logo" />
-      </Link>
-      <Link href="/" className="hidden dark:block max-w-[8rem] md:max-w-[12rem]">
-        <Image
-          height={192}
-          width={192}
-          priority
-          src={DarkMainLogo}
-          alt="AntiRecurso Dark Logo"
-          className="w-full"
-        />
-      </Link>
+    <header className="sticky top-0 left-0 z-30 w-full border-b border-border/60 bg-background/80 backdrop-blur-xl supports-[backdrop-filter]:bg-background/70">
+      <nav className="container flex h-16 md:h-[4.5rem] items-center justify-between gap-4">
+        <Link
+          href="/"
+          className="flex items-center group focus:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-md"
+        >
+          <Image
+            height={160}
+            width={160}
+            priority
+            src={MainLogo}
+            alt="AntiRecurso"
+            className="block dark:hidden max-w-[7rem] md:max-w-[9rem] h-auto"
+          />
+          <Image
+            height={160}
+            width={160}
+            priority
+            src={DarkMainLogo}
+            alt="AntiRecurso"
+            className="hidden dark:block max-w-[7rem] md:max-w-[9rem] h-auto"
+          />
+        </Link>
 
-      <div className="hidden md:flex md:items-center">
-        <div className="flex items-center gap-x-5">
-          {Object.entries(topBarLinks).map(([label, href], index) => (
-            <TopbarLink key={index} href={href}>
+        <div className="hidden md:flex md:items-center md:gap-1">
+          {Object.entries(topBarLinks).map(([label, href]) => (
+            <TopbarLink key={href} href={href}>
               {label}
             </TopbarLink>
           ))}
-          <ThemeChanger />
         </div>
 
-        <div className="ml-6">
+        <div className="hidden md:flex items-center gap-2">
+          <ThemeChanger />
           <HamburgerProfileMenu />
         </div>
-      </div>
-      <HamburgerMenu />
-    </nav>
+
+        <HamburgerMenu />
+      </nav>
+    </header>
   );
 };
 

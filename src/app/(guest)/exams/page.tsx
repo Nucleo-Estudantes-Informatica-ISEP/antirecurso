@@ -1,6 +1,8 @@
-import Link from 'next/link';
-
+import { Badge } from '@/components/ui/badge';
+import { Card, CardContent } from '@/components/ui/card';
 import { fetchSubjectsWithQuestions } from '@/services/fetchSubjects';
+import { ArrowRight, BookOpen } from 'lucide-react';
+import Link from 'next/link';
 
 export const dynamic = 'force-dynamic';
 
@@ -8,27 +10,45 @@ const Exams: React.FC = async () => {
   const subjects = await fetchSubjectsWithQuestions();
 
   return (
-    <section className="flex flex-col items-center justify-center w-full text-center">
-      <p className="w-5/6 px-4 text-lg font-bold text-center uppercase md:text-xl my-5">
-        <span className="text-primary">Escolhe</span> uma disciplina para fazer um{' '}
-        <span className="text-primary">exame</span>
-      </p>
+    <section className="container py-10 md:py-14 w-full">
+      <div className="flex flex-col items-center text-center mb-10">
+        <Badge variant="soft" className="mb-3">
+          Simulações de exame
+        </Badge>
+        <h1 className="text-balance text-3xl md:text-4xl font-bold tracking-tight">
+          Escolhe uma <span className="gradient-text">disciplina</span>
+        </h1>
+        <p className="mt-3 max-w-xl text-muted-foreground">
+          Carrega numa cadeira para começares a resolver um exame.
+        </p>
+      </div>
 
-      <section className="grid grid-cols-2 gap-x-4 px-6 md:grid-cols-4 gap-y-10 md:gap-x-10 my-8 md:px-16">
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-5">
         {subjects.map((subject) => (
           <Link
             key={subject.id}
             href={`/exams/${subject.id}/answer`}
-            className="w-full h-full min-w-[180px] md:h-48 p-6 flex flex-col space-y-6 items-center justify-center shadow dark:shadow-secondary-dark border border-gray-100 rounded text-center group hover:bg-primary transition ease-in-out">
-            <div className="w-full justify-center items-center overflow-auto">
-              <p className="w-full text-xs md:text-xl font-bold capitalize line-clamp-6 group-hover:text-white">
-                {subject.name}
-              </p>
-              <p className="text-xs mt-4 uppercase group-hover:text-white">({subject.slug})</p>
-            </div>
+            className="group focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 rounded-xl"
+          >
+            <Card className="h-full transition-all duration-200 hover:border-primary/40 hover:shadow-lg hover:-translate-y-1 hover:bg-accent/30">
+              <CardContent className="p-5 md:p-6 flex flex-col items-start gap-3 h-full">
+                <div className="flex size-10 items-center justify-center rounded-lg bg-primary/10 text-primary group-hover:bg-primary group-hover:text-primary-foreground transition-colors">
+                  <BookOpen className="size-5" />
+                </div>
+                <div className="flex-1">
+                  <p className="text-sm md:text-base font-semibold capitalize leading-tight line-clamp-3">
+                    {subject.name}
+                  </p>
+                  <p className="mt-1 text-xs uppercase text-muted-foreground tracking-wide">
+                    {subject.slug}
+                  </p>
+                </div>
+                <ArrowRight className="size-4 text-muted-foreground group-hover:text-primary group-hover:translate-x-1 transition-all" />
+              </CardContent>
+            </Card>
           </Link>
         ))}
-      </section>
+      </div>
     </section>
   );
 };

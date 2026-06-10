@@ -169,6 +169,30 @@ pnpm dev
 
 The app runs on [http://localhost:3000](http://localhost:3000) by default.
 
+### 7. Start a local ZITADEL stack
+
+This repository ships the official ZITADEL Docker Compose quickstart files under:
+
+- [docker-compose.zitadel.yml](docker-compose.zitadel.yml)
+- [docker-compose.zitadel.env.example](docker-compose.zitadel.env.example)
+
+To start the local identity stack:
+
+```powershell
+Copy-Item .\docker-compose.zitadel.env.example .\docker-compose.zitadel.env
+docker compose --env-file .\docker-compose.zitadel.env -f .\docker-compose.zitadel.yml up -d --wait
+```
+
+The ZITADEL login screen is available at [http://localhost:8080](http://localhost:8080).
+Keep the frontend on [http://localhost:3000](http://localhost:3000) and set your app env to point at the local issuer:
+
+```dotenv
+AUTH_ISSUER_URL=http://localhost:8080
+AUTH_POST_LOGOUT_REDIRECT_URI=http://localhost:3000
+```
+
+After ZITADEL starts, create the OAuth client in the local console and copy its `client_id` and `client_secret` into the frontend `.env.local`.
+
 ## Available Scripts
 
 Defined in [`package.json`](package.json):

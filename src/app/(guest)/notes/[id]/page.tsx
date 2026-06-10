@@ -1,7 +1,9 @@
 import NoteCard from '@/components/notes/NoteCard';
 import Custom403 from '@/components/pages/Custom403';
+import { Badge } from '@/components/ui/badge';
 import { getApiAccessToken } from '@/lib/server-auth';
 import fetchNotes from '@/services/fetchNotes';
+import { BookOpen, Mail } from 'lucide-react';
 
 interface SubjectNotesProps {
   params: Promise<{
@@ -21,30 +23,47 @@ const SubjectNotes: React.FC<SubjectNotesProps> = async ({ params }) => {
   const subject = notes.data[0]?.subject.name;
 
   return (
-    <section className="flex flex-col items-center gap-y-8 py-8 w-full text-center px-6 md:px-16 relative">
-      {subject && (
-        <p className="w-5/6 px-4 text-2xl font-bold text-center uppercase md:text-3xl my-5">
-          Resumos de <span className="text-primary"> {subject}</span>
-        </p>
-      )}
+    <section className="container py-10 md:py-14 w-full">
+      <div className="flex flex-col items-center text-center mb-10">
+        <Badge variant="soft" className="mb-3">
+          Resumos
+        </Badge>
+        {subject ? (
+          <h1 className="text-balance text-3xl md:text-4xl font-bold tracking-tight">
+            Resumos de <span className="gradient-text capitalize">{subject}</span>
+          </h1>
+        ) : (
+          <h1 className="text-balance text-3xl md:text-4xl font-bold tracking-tight">
+            Resumos da <span className="gradient-text">disciplina</span>
+          </h1>
+        )}
+      </div>
 
       {notes.data.length === 0 ? (
-        <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 gap-y-4 flex flex-col">
-          <p className="text-xl font-bold">
-            Parece que ainda não há nenhum <span className="font-bold text-primary">resumo</span>{' '}
-            aqui...
-          </p>
-          <p className="md:text-lg w-full">
-            Queres ajudar os teus colegas a prepararem-se para os exames? Envia-nos o teus
-            <span className="text-primary font-bold"> resumos</span> para{' '}
-            <a className="underline text-primary" href="mailto:support.antirecurso@nei-isep.org">
-              support.antirecurso@nei-isep.org
-            </a>
-            .
-          </p>
+        <div className="flex flex-col items-center justify-center py-16 gap-5 text-center">
+          <div className="flex size-16 items-center justify-center rounded-2xl bg-primary/10 text-primary">
+            <BookOpen className="size-7" />
+          </div>
+          <div>
+            <p className="text-xl font-semibold">
+              Parece que ainda não há nenhum{' '}
+              <span className="font-bold text-primary">resumo</span> aqui...
+            </p>
+            <p className="mt-3 max-w-lg mx-auto text-sm text-muted-foreground">
+              Queres ajudar os teus colegas a prepararem-se para os exames? Envia-nos os teus
+              resumos.
+            </p>
+          </div>
+          <a
+            href="mailto:support.antirecurso@nei-isep.org"
+            className="inline-flex items-center gap-2 text-sm font-semibold text-primary hover:underline"
+          >
+            <Mail className="size-4" />
+            support.antirecurso@nei-isep.org
+          </a>
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 justify-items-center w-full items-center gap-16">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-5 md:gap-6">
           {notes.data.map((note) => (
             <NoteCard key={note.id} note={note} />
           ))}

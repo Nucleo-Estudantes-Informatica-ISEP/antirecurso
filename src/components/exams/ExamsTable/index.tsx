@@ -1,10 +1,17 @@
-import React from 'react';
-
-import TableHeading from '@/components/utils/TableHeading';
+import { Badge } from '@/components/ui/badge';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow
+} from '@/components/ui/table';
 import Answer from '@/types/Answer';
 import { Paginate } from '@/types/Paginate';
 import { sanitizeMode } from '@/utils/sanitizeMode';
 import Link from 'next/link';
+import React from 'react';
 import { formatDateDDStrMonthYYYY } from 'src/utils/Date';
 
 interface ExamsTableProps {
@@ -13,36 +20,54 @@ interface ExamsTableProps {
 
 const ExamsTable: React.FC<ExamsTableProps> = ({ previousExamResponse }) => {
   return (
-    <table className="w-5/6 lg:w-1/2 text-sm text-center overflow-x-scroll">
-      <TableHeading />
-      <tbody>
-        {previousExamResponse.data.map((answer) => (
-          <tr key={answer.id} className="bg-white border-b dark:bg-primary-dark">
-            <td className="w-1/6 py-2 text-xs md:px-6 sm:py-4">
-              <Link
-                href={`/exams/${answer.id}/review/`}
-                className="text-xs underline capitalize transition ease-in-out hover:text-primary md:text-base">
-                {answer.subject}
-              </Link>
-            </td>
-            <td className="w-1/6 py-2 text-xs md:text-base md:px-6 sm:py-4">{answer.score}</td>
-            <td className="w-1/6 py-2 text-xs md:text-base md:px-6 sm:py-4">
-              {formatDateDDStrMonthYYYY(answer.created_at)}
-            </td>
-            <td className="w-1/6 py-2 text-xs md:text-base md:px-6 sm:py-4 capitalize">
-              {answer.time
-                ? `${Math.floor(answer.time / 60)}:${answer.time % 60 < 10 ? '0' : ''}${
-                    answer.time % 60
-                  }`
-                : '--'}
-            </td>
-            <td className="w-1/6 py-2 text-xs md:text-base md:px-6 sm:py-4 capitalize">
-              {sanitizeMode(answer.mode)}
-            </td>
-          </tr>
-        ))}
-      </tbody>
-    </table>
+    <div className="w-full max-w-4xl rounded-xl border bg-card overflow-hidden">
+      <Table>
+        <TableHeader>
+          <TableRow className="hover:bg-transparent">
+            <TableHead>Disciplina</TableHead>
+            <TableHead className="text-center">Pontuação</TableHead>
+            <TableHead className="text-center hidden sm:table-cell">Data</TableHead>
+            <TableHead className="text-center hidden md:table-cell">Tempo</TableHead>
+            <TableHead className="text-center">Modo</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {previousExamResponse.data.map((answer) => (
+            <TableRow key={answer.id}>
+              <TableCell className="capitalize">
+                <Link
+                  href={`/exams/${answer.id}/review/`}
+                  className="font-medium text-foreground hover:text-primary transition-colors hover:underline"
+                >
+                  {answer.subject}
+                </Link>
+              </TableCell>
+              <TableCell className="text-center">
+                <Badge
+                  variant={answer.score >= 50 ? 'success' : 'destructive'}
+                  className="font-bold"
+                >
+                  {Math.round(answer.score)}%
+                </Badge>
+              </TableCell>
+              <TableCell className="text-center text-muted-foreground hidden sm:table-cell">
+                {formatDateDDStrMonthYYYY(answer.created_at)}
+              </TableCell>
+              <TableCell className="text-center text-muted-foreground tabular-nums hidden md:table-cell">
+                {answer.time
+                  ? `${Math.floor(answer.time / 60)}:${answer.time % 60 < 10 ? '0' : ''}${
+                      answer.time % 60
+                    }`
+                  : '--'}
+              </TableCell>
+              <TableCell className="text-center capitalize">
+                <Badge variant="outline">{sanitizeMode(answer.mode)}</Badge>
+              </TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+    </div>
   );
 };
 

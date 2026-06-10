@@ -1,7 +1,8 @@
 'use client';
 
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { motion } from 'framer-motion';
-import Image from 'next/image';
+import { Camera } from 'lucide-react';
 import Link from 'next/link';
 
 interface UserAvatarProps {
@@ -10,51 +11,32 @@ interface UserAvatarProps {
   heightValue?: number;
 }
 
-const UserAvatar: React.FC<UserAvatarProps> = ({ avatar, widthValue, heightValue }) => {
-  const animation = {
-    variants: {
-      initial: { opacity: 0 },
-      hover: { opacity: 1 }
-    },
-    transition: {
-      duration: 0.2,
-      ease: 'easeOut' as const
-    }
-  };
-
+const UserAvatar: React.FC<UserAvatarProps> = ({ avatar }) => {
   return (
-    <motion.div
-      initial="initial"
-      whileHover="hover"
-      className={`flex flex-col items-center relative hover:cursor-pointer md:w-${
-        widthValue ? widthValue : 40
-      } md:h-${heightValue ? heightValue : 40} w-24 h-24 my-6 rounded-full`}>
-      <Image
-        placeholder="blur"
-        blurDataURL="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjU2IiBoZWlnaHQ9IjI1NiIgdmlld0JveD0iMCAwIDI1NiAyNTYiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAw"
-        width={328}
-        height={328}
-        src={`https://gravatar.com/avatar/${avatar}?s=256&d=identicon`}
-        alt="Avatar"
-        unoptimized
-        className="w-full h-full rounded-full"
-      />
-      <Link
-        href="https://en.gravatar.com/gravatars/new/computer"
-        target="_blank"
-        rel="noreferrer"
-        className="w-full h-full rounded-full absolute top-0 left-0 flex justify-center items-center text-white text-sm z-5">
-        <motion.div
-          {...animation}
-          className="w-full h-full rounded-full absolute top-0 left-0 bg-primary bg-opacity-70"
-        />
-        <motion.span
-          {...animation}
-          className="z-10 text-white text-center text-sm leading-3 md:text-lg font-bold">
-          Alterar avatar
-        </motion.span>
-      </Link>
-    </motion.div>
+    <Link
+      href="https://en.gravatar.com/gravatars/new/computer"
+      target="_blank"
+      rel="noreferrer"
+      className="relative group"
+    >
+      <motion.div
+        whileHover={{ scale: 1.03 }}
+        transition={{ duration: 0.2 }}
+        className="relative"
+      >
+        <Avatar className="size-24 md:size-32 ring-4 ring-primary/20 group-hover:ring-primary/40 transition-all">
+          <AvatarImage
+            src={`https://gravatar.com/avatar/${avatar}?s=256&d=identicon`}
+            alt="Avatar"
+          />
+          <AvatarFallback className="text-2xl">?</AvatarFallback>
+        </Avatar>
+        <div className="absolute inset-0 rounded-full bg-primary/70 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center text-white text-xs md:text-sm font-semibold gap-1">
+          <Camera className="size-5 md:size-6" />
+          <span>Alterar</span>
+        </div>
+      </motion.div>
+    </Link>
   );
 };
 

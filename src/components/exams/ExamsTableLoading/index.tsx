@@ -1,24 +1,51 @@
-import TableHeading from '@/components/utils/TableHeading';
-import Skeleton from 'react-loading-skeleton';
+import { Skeleton } from '@/components/ui/skeleton';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow
+} from '@/components/ui/table';
 
-const N_ITEMS_PER_PAGE = 10;
-
-const N_COLUMNS = 5;
+const N_ITEMS_PER_PAGE = 8;
 
 const ExamTableLoading = () => {
   return (
-    <table className="w-full lg:w-1/2 text-sm text-center">
-      <TableHeading />
-      <tbody>
-        <tr>
-          {[...Array(N_COLUMNS)].map((_, index) => (
-            <td key={index} className="px-6 py-4">
-              <Skeleton className="h-10 my-2" count={N_ITEMS_PER_PAGE} />
-            </td>
+    <div className="w-full max-w-4xl rounded-xl border bg-card overflow-hidden">
+      <Table>
+        <TableHeader>
+          <TableRow className="hover:bg-transparent">
+            <TableHead>Disciplina</TableHead>
+            <TableHead className="text-center">Pontuação</TableHead>
+            <TableHead className="text-center hidden sm:table-cell">Data</TableHead>
+            <TableHead className="text-center hidden md:table-cell">Tempo</TableHead>
+            <TableHead className="text-center">Modo</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {Array.from({ length: N_ITEMS_PER_PAGE }).map((_, i) => (
+            <TableRow key={i}>
+              <TableCell>
+                <Skeleton className="h-4 w-32" />
+              </TableCell>
+              <TableCell className="text-center">
+                <Skeleton className="h-6 w-16 mx-auto rounded-full" />
+              </TableCell>
+              <TableCell className="text-center hidden sm:table-cell">
+                <Skeleton className="h-4 w-24 mx-auto" />
+              </TableCell>
+              <TableCell className="text-center hidden md:table-cell">
+                <Skeleton className="h-4 w-12 mx-auto" />
+              </TableCell>
+              <TableCell className="text-center">
+                <Skeleton className="h-6 w-20 mx-auto rounded-full" />
+              </TableCell>
+            </TableRow>
           ))}
-        </tr>
-      </tbody>
-    </table>
+        </TableBody>
+      </Table>
+    </div>
   );
 };
 

@@ -7,22 +7,21 @@ import Image from 'next/image';
 import { useRouter, useSearchParams } from 'next/navigation';
 import swal from 'sweetalert';
 
-import Skeleton from 'react-loading-skeleton';
-import 'react-loading-skeleton/dist/skeleton.css';
-
 import config from '@/config';
 import { ExamContext } from '@/contexts/ExamContext';
 import { BASE_URL, PROTECTED_API_BASE_URL } from '@/services/api';
 import generateExam from '@/services/generateExam';
 import getSubjectNameById from '@/utils/getSubjectNameById';
 
-import QuestionPrompt from '@/components/exams/QuestionPrompt';
-import PrimaryButton from '@/components/utils/PrimaryButton';
-import useAnswerableExamNavigation from '@/hooks/useAnswerableExamNavigation';
-import useSession from '@/hooks/useSession';
-
 import ExamNumeration from '@/components/exams/ExamNumeration';
 import ExamNumerationContainer from '@/components/exams/ExamNumerationContainer';
+import QuestionPrompt from '@/components/exams/QuestionPrompt';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Skeleton } from '@/components/ui/skeleton';
+import useAnswerableExamNavigation from '@/hooks/useAnswerableExamNavigation';
+import useSession from '@/hooks/useSession';
+import { ChevronLeft, ChevronRight, Clock, Loader2 } from 'lucide-react';
 import sampleImage from 'public/images/sample.webp';
 
 interface ExamPageProps {
@@ -33,7 +32,6 @@ interface ExamPageProps {
 }
 
 const N_SKELETON_QUESTIONS = 10;
-const N_SKELETON_OPTIONS = 4;
 
 const Exam: React.FC<ExamPageProps> = ({ params }) => {
   const resolvedParams = use(params);
@@ -127,7 +125,7 @@ const Exam: React.FC<ExamPageProps> = ({ params }) => {
           return;
         }
         setQuestions(exam);
-      } catch (err) {
+      } catch {
         swal('Error', 'Por favor tente novamente.', 'error', {
           className: theme === 'dark' ? 'swal-dark' : ''
         });
@@ -160,110 +158,179 @@ const Exam: React.FC<ExamPageProps> = ({ params }) => {
     return () => clearInterval(interval);
   }, [setExamTime]);
 
+  const minutes = Math.floor(examTime / 60);
+  const seconds = examTime % 60;
+
+  const totalAnswered = answers.size;
+  const totalQuestions = questions.length || 1;
+  const progress = (totalAnswered / totalQuestions) * 100;
+
   return (
-    <section className="flex flex-col items-center relative">
-      <span className="-top-1 left-auto absolute font-bold text-lg md:text-xl align-middle">
-        {Math.floor(examTime / 60)}:{examTime % 60 < 10 ? `0${examTime % 60}` : examTime % 60}
-      </span>
-      <p className="mt-10 mb-4 text-xl font-bold text-center uppercase">
-        Exame de{' '}
-        <span className="text-primary align-middle">
-          {subject ? subject : <Skeleton width={150} />}
-        </span>
-      </p>
-      <div className="w-screen mb-12">
-        {questions[0] ? (
-          <ExamNumerationContainer>
-            {questions.length > 15 &&
-              Array.from({ length: questions.length * 0.75 }).map((_, i) => (
-                <div
-                  key={i}
-                  className="h-10 w-10 p-5 flex items-center justify-center rounded-full hover:cursor-pointer"
-                />
-              ))}
-            <PrimaryButton
-              className={`h-10 w-10 p-5 items-center !rounded-full flex justify-center mr-4 ${
-                currentQuestionIndex === 0 ? 'opacity-50' : ''
-              }`}
-              onClick={() => changeQuestion(currentQuestionIndex - 1)}
-              disabled={currentQuestionIndex === 0}>
-              {'<'}
-            </PrimaryButton>
-            {questions.map((question, i) => (
-              <ExamNumeration
-                key={question.id}
-                onClick={() => changeQuestion(i)}
-                wasAnswered={wasAnswered(i)}
-                active={currentQuestionIndex === i}
-                align={i < 2 ? 'end' : i > questions.length - 2 ? 'start' : 'center'}>
-                {i + 1}
-              </ExamNumeration>
-            ))}
-            <PrimaryButton
-              className={`h-10 w-10 p-5 items-center !rounded-full flex justify-center ${
-                currentQuestionIndex === questions.length - 1 ? 'opacity-50' : ''
-              }`}
-              onClick={() => changeQuestion(currentQuestionIndex + 1)}
-              disabled={currentQuestionIndex === questions.length - 1}>
-              {'>'}
-            </PrimaryButton>
-            {isSubmitting ? (
-              <div className="w-10 h-10 border-t-2 border-b-2 rounded-full animate-spin border-primary">
-                <span className="sr-only">Loading...</span>
-              </div>
-            ) : (
-              <form onSubmit={(e) => submit(e)}>
-                <PrimaryButton>Terminar</PrimaryButton>
-              </form>
-            )}
-          </ExamNumerationContainer>
-        ) : (
-          <div className="flex items-center w-screen px-5 mt-5 space-x-10 overflow-x-scroll md:justify-center md:overflow-auto">
-            {Array.from({ length: N_SKELETON_QUESTIONS }).map((_, i) => (
-              <Skeleton
-                key={i}
-                className="flex items-center justify-center w-10 h-10 p-5 "
-                circle={true}
-              />
-            ))}
+    <section className="w-full">
+      {/* Sticky header */}
+      <div className="sticky top-16 md:top-[4.5rem] z-20 bg-background/80 backdrop-blur-xl border-b">
+        <div className="container py-3 md:py-4 flex flex-col gap-3">
+          <div className="flex items-center justify-between gap-4 flex-wrap">
+            <div className="flex items-center gap-3 min-w-0">
+              <Badge variant="soft" className="capitalize">
+                {resolvedParams.mode}
+              </Badge>
+              <h1 className="text-sm md:text-lg font-semibold truncate">
+                Exame de{' '}
+                <span className="text-primary">
+                  {subject || <Skeleton className="inline-block h-5 w-32 align-middle" />}
+                </span>
+              </h1>
+            </div>
+            <div className="flex items-center gap-2 text-sm font-bold tabular-nums">
+              <Clock className="size-4 text-muted-foreground" />
+              <span>
+                {minutes.toString().padStart(2, '0')}:
+                {seconds.toString().padStart(2, '0')}
+              </span>
+            </div>
           </div>
-        )}
-        <section className="px-5 mt-5 md:px-32">
-          {currentQuestion ? (
-            <section className="mb-10">
-              <div
-                className={`relative w-full ${
-                  currentQuestion.image === '' ? 'md:h-[10rem] h-20' : 'md:h-[24rem] h-[16rem]'
-                }`}>
-                {currentQuestion.image === '' ? (
-                  <Image
-                    fill
-                    alt="Sample Image"
-                    className="object-cover w-full h-full"
-                    src={sampleImage}
-                  />
-                ) : (
-                  <Image
-                    fill
-                    alt="Question Image"
-                    className="w-full object-contain h-full"
-                    src={currentQuestion.image}
-                  />
-                )}
+
+          {questions[0] && (
+            <div className="flex items-center justify-between text-xs text-muted-foreground gap-3">
+              <span>
+                {totalAnswered} / {questions.length} respondidas
+              </span>
+              <div className="flex-1 h-1.5 max-w-md rounded-full bg-muted overflow-hidden">
+                <div
+                  className="h-full bg-gradient-to-r from-primary to-brand-400 transition-all"
+                  style={{ width: `${progress}%` }}
+                />
               </div>
-              <QuestionPrompt
-                currentQuestion={currentQuestion}
-                selectAnswer={selectAnswer}
-                currentQuestionIndex={currentQuestionIndex}
-                answers={answers}
-              />
-            </section>
-          ) : (
-            <div className="mt-12">
-              <Skeleton className="h-20 mt-6" count={N_SKELETON_OPTIONS} />
+              <span className="whitespace-nowrap">
+                Pergunta {currentQuestionIndex + 1}/{questions.length}
+              </span>
             </div>
           )}
-        </section>
+        </div>
+
+        {/* Question Numeration */}
+        {questions[0] ? (
+          <div className="border-t">
+            <div className="container flex items-center gap-2 py-2">
+              <Button
+                size="icon"
+                variant="ghost"
+                className="size-9 rounded-full shrink-0"
+                onClick={() => changeQuestion(currentQuestionIndex - 1)}
+                disabled={currentQuestionIndex === 0}
+                aria-label="Pergunta anterior"
+              >
+                <ChevronLeft className="size-4" />
+              </Button>
+              <ExamNumerationContainer>
+                {questions.map((question, i) => (
+                  <ExamNumeration
+                    key={question.id}
+                    onClick={() => changeQuestion(i)}
+                    wasAnswered={wasAnswered(i)}
+                    active={currentQuestionIndex === i}
+                    align={i < 2 ? 'end' : i > questions.length - 2 ? 'start' : 'center'}
+                  >
+                    {i + 1}
+                  </ExamNumeration>
+                ))}
+              </ExamNumerationContainer>
+              <Button
+                size="icon"
+                variant="ghost"
+                className="size-9 rounded-full shrink-0"
+                onClick={() => changeQuestion(currentQuestionIndex + 1)}
+                disabled={currentQuestionIndex === questions.length - 1}
+                aria-label="Próxima pergunta"
+              >
+                <ChevronRight className="size-4" />
+              </Button>
+            </div>
+          </div>
+        ) : (
+          <div className="border-t">
+            <div className="container flex gap-2 py-2 overflow-hidden">
+              {Array.from({ length: N_SKELETON_QUESTIONS }).map((_, i) => (
+                <Skeleton key={i} className="h-10 w-10 rounded-full shrink-0" />
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
+
+      <div className="container max-w-4xl py-6 md:py-10">
+        {currentQuestion ? (
+          <article className="space-y-6">
+            <div
+              className={`relative w-full overflow-hidden rounded-2xl border bg-muted ${
+                currentQuestion.image === '' ? 'h-24 md:h-32' : 'h-64 md:h-[24rem]'
+              }`}
+            >
+              {currentQuestion.image === '' ? (
+                <Image fill alt="Sample" className="object-cover" src={sampleImage} />
+              ) : (
+                <Image
+                  fill
+                  alt="Question Image"
+                  className="object-contain"
+                  src={currentQuestion.image}
+                />
+              )}
+            </div>
+
+            <QuestionPrompt
+              currentQuestion={currentQuestion}
+              selectAnswer={selectAnswer}
+              currentQuestionIndex={currentQuestionIndex}
+              answers={answers}
+            />
+
+            {/* Bottom controls */}
+            <div className="mt-10 pt-6 border-t flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+              <Button
+                variant="outline"
+                onClick={() => changeQuestion(currentQuestionIndex - 1)}
+                disabled={currentQuestionIndex === 0}
+                className="w-full sm:w-auto"
+              >
+                <ChevronLeft className="size-4" />
+                Anterior
+              </Button>
+
+              {currentQuestionIndex === questions.length - 1 ? (
+                <form onSubmit={(e) => submit(e)} className="w-full sm:w-auto">
+                  <Button type="submit" disabled={isSubmitting} className="w-full sm:w-auto">
+                    {isSubmitting ? (
+                      <>
+                        <Loader2 className="size-4 animate-spin" />
+                        A submeter...
+                      </>
+                    ) : (
+                      'Terminar exame'
+                    )}
+                  </Button>
+                </form>
+              ) : (
+                <Button
+                  onClick={() => changeQuestion(currentQuestionIndex + 1)}
+                  className="w-full sm:w-auto"
+                >
+                  Próxima
+                  <ChevronRight className="size-4" />
+                </Button>
+              )}
+            </div>
+          </article>
+        ) : (
+          <div className="space-y-4">
+            <Skeleton className="h-48 w-full" />
+            <Skeleton className="h-16 w-full" />
+            <Skeleton className="h-16 w-full" />
+            <Skeleton className="h-16 w-full" />
+            <Skeleton className="h-16 w-full" />
+          </div>
+        )}
       </div>
     </section>
   );
