@@ -38,14 +38,20 @@ const ReviewPage: React.FC<ExamPageProps> = ({ params }) => {
   } = useExamReviewNavigation();
 
   const getExamResult = useCallback(async () => {
+    if (!session?.token) return;
     const res = await fetch(`${PROTECTED_API_BASE_URL}/exams/${resolvedParams.id}`, {
       method: 'GET',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${session.token}`
+      },
       cache: 'no-cache'
     });
 
-    setExamResult(await res.json());
-  }, [resolvedParams.id, setExamResult]);
+    if (res.ok) {
+      setExamResult(await res.json());
+    }
+  }, [resolvedParams.id, setExamResult, session?.token]);
 
   async function submitComment(comment: string) {
     if (!session.user) return;
