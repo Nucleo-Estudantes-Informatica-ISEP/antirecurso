@@ -110,7 +110,7 @@
   }
 
   .gradient-text {
-    @apply bg-gradient-to-r from-brand-500 via-brand-400 to-brand-600 bg-clip-text text-transparent;
+    @apply text-primary;
   }
 }
 
