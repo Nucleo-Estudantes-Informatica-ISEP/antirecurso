@@ -76,32 +76,29 @@ const Exam: React.FC<ExamPageProps> = ({ params }) => {
       time: examTime
     };
 
-    const publicUrl =
-      resolvedParams.mode === 'custom' && nOfQuestions && penalizingFactor
-        ? `${BASE_URL}/exams/verify?mode=${resolvedParams.mode}&n_of_questions=${nOfQuestions}&penalizing_factor=${penalizingFactor}`
-        : `${BASE_URL}/exams/verify?mode=${resolvedParams.mode}`;
+    const urlParams = new URLSearchParams();
+    urlParams.set('mode', resolvedParams.mode);
+    if (resolvedParams.mode === 'custom' && nOfQuestions && penalizingFactor) {
+      urlParams.set('n_of_questions', nOfQuestions);
+      urlParams.set('penalizing_factor', penalizingFactor);
+    }
 
-    const protectedUrl =
-      resolvedParams.mode === 'custom' && nOfQuestions && penalizingFactor
-        ? `${PROTECTED_API_BASE_URL}/exams/verify?mode=${resolvedParams.mode}&n_of_questions=${nOfQuestions}&penalizing_factor=${penalizingFactor}`
-        : `${PROTECTED_API_BASE_URL}/exams/verify?mode=${resolvedParams.mode}`;
+    const baseUrl = session.token ? PROTECTED_API_BASE_URL : BASE_URL;
+    const url = `${baseUrl}/exams/verify?${urlParams.toString()}`;
 
     const headers: HeadersInit = {
       'Content-Type': 'application/json'
     };
 
-    if (config.mandatoryAuthModes.includes(resolvedParams.mode)) {
+    if (session.token) {
       headers.Authorization = `Bearer ${session.token}`;
     }
 
-    const res = await fetch(
-      config.mandatoryAuthModes.includes(resolvedParams.mode) ? protectedUrl : publicUrl,
-      {
-        method: 'POST',
-        headers,
-        body: JSON.stringify(data)
-      }
-    );
+    const res = await fetch(url, {
+      method: 'POST',
+      headers,
+      body: JSON.stringify(data)
+    });
 
     if (res.status === 200) {
       setExamResult(await res.json());
