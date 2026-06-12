@@ -70,6 +70,10 @@ const Hero: React.FC = () => {
             <span className="gradient-text">AntiRecurso</span>.
           </h1>
 
+          <p className="mt-6 max-w-2xl text-base md:text-lg text-muted-foreground text-balance">
+            Resolve exames, estuda com resumos da comunidade e acompanha a tua evolução.
+          </p>
+
           <div className="mt-10 flex flex-col sm:flex-row items-center gap-3 w-full sm:w-auto">
             <Button asChild size="xl" className="w-full sm:w-auto shadow-lg shadow-primary/20">
               <Link href="/exams">
