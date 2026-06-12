@@ -2,6 +2,7 @@ import { cn } from '@/lib/utils';
 import { Check, X } from 'lucide-react';
 import ExamReview from 'src/types/ExamReview';
 import sanitizeOption from 'src/utils/sanitizeOption';
+import CopyQuestionMenu from '../CopyQuestionMenu';
 
 interface QuestionProps {
   currentQuestion: ExamReview['questions'][0];
@@ -10,9 +11,15 @@ interface QuestionProps {
 const QuestionReview: React.FC<QuestionProps> = ({ currentQuestion }) => {
   return (
     <>
-      <p className="text-base md:text-lg font-semibold mt-4 leading-relaxed">
-        {currentQuestion.question.question}
-      </p>
+      <div className="flex justify-between items-start mt-4 gap-4">
+        <p className="text-base md:text-lg font-semibold leading-relaxed">
+          {currentQuestion.question.question}
+        </p>
+        <CopyQuestionMenu 
+          questionText={currentQuestion.question.question} 
+          options={currentQuestion.options} 
+        />
+      </div>
       <div className="mt-5 space-y-3">
         {currentQuestion.options.map((option, idx) => {
           const isSelected = currentQuestion.selected_option_id === option.id;

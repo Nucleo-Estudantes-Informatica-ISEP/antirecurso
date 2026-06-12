@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { Check } from 'lucide-react';
 import Question from 'src/types/Question';
 import sanitizeOption from 'src/utils/sanitizeOption';
+import CopyQuestionMenu from '../CopyQuestionMenu';
 
 interface QuestionProps {
   currentQuestion: Question;
@@ -19,9 +20,15 @@ const QuestionPrompt: React.FC<QuestionProps> = ({
 }) => {
   return (
     <>
-      <p className="text-base md:text-lg font-semibold mt-4 leading-relaxed">
-        {currentQuestion.question}
-      </p>
+      <div className="flex justify-between items-start mt-4 gap-4">
+        <p className="text-base md:text-lg font-semibold leading-relaxed">
+          {currentQuestion.question}
+        </p>
+        <CopyQuestionMenu 
+          questionText={currentQuestion.question} 
+          options={currentQuestion.options} 
+        />
+      </div>
       <div className="mt-5 space-y-3">
         {currentQuestion.options.map((option, idx) => {
           const isSelected = answers.get(currentQuestionIndex) === option.order;
