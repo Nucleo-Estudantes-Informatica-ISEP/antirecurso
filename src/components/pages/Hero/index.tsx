@@ -60,7 +60,7 @@ const Hero: React.FC = () => {
         <div className="container relative flex flex-col items-center text-center pt-20 pb-24 md:pt-28 md:pb-32">
           <Badge variant="soft" className="mb-6 gap-1.5">
             <Sparkles className="size-3.5" />
-            Plataforma oficial do NEI · DEI-ISEP
+            Uma iniciativa do NEI-ISEP • Instituto Superior de Engenharia do Porto
           </Badge>
 
           <h1 className="text-balance text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight max-w-5xl">
@@ -69,13 +69,6 @@ const Hero: React.FC = () => {
             <br className="hidden md:block" /> Para quê, se tens o{' '}
             <span className="gradient-text">AntiRecurso</span>.
           </h1>
-
-          <p className="mt-6 max-w-2xl text-base md:text-lg text-muted-foreground text-balance">
-            Resolve exames, estuda com resumos da comunidade e acompanha a tua evolução. Tudo
-            num só sítio, feito pelos estudantes do{' '}
-            <span className="font-semibold text-foreground">DEI-ISEP</span> para os estudantes
-            do <span className="font-semibold text-foreground">DEI-ISEP</span>.
-          </p>
 
           <div className="mt-10 flex flex-col sm:flex-row items-center gap-3 w-full sm:w-auto">
             <Button asChild size="xl" className="w-full sm:w-auto shadow-lg shadow-primary/20">

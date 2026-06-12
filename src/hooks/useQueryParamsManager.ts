@@ -10,7 +10,6 @@ export const useQueryParamsManager = () => {
   const [queryParams, setQueryParams] = useState<URLSearchParams>(searchParams);
 
   // if exists, update, else add
-  // eslint-disable-next-line
   const set = (key: string, value: any) => {
     const params = new URLSearchParams(queryParams.toString());
     params.set(key, value);
@@ -42,12 +41,12 @@ export const useQueryParamsManager = () => {
   // update url
   useEffect(() => {
     replace(`${pathname}?${queryParams.toString()}`);
-  }, [queryParams]);
+  }, [pathname, queryParams, replace]);
 
   // on mount, set query params
   useEffect(() => {
     setQueryParams(new URLSearchParams(searchParams));
-  }, []);
+  }, [searchParams]);
 
   return {
     queryParams,

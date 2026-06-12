@@ -147,7 +147,6 @@ const Exam: React.FC<ExamPageProps> = ({ params }) => {
 
     setExamTime(0);
     setSubjectName();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [resolvedParams.id, resolvedParams.mode, router, setQuestions, session.token, nOfQuestions, filter, setExamTime, theme]);
 
   useEffect(() => {

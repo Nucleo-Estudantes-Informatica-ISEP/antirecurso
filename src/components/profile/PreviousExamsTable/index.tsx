@@ -26,7 +26,7 @@ const PreviousExamsTable: React.FC = () => {
       try {
         const data = await fetchUserPreviousExams(fetchUrl);
         setPreviousExamResponse(data);
-      } catch (error) {
+      } catch {
         swal({
           title: 'Erro',
           text: 'Não foi possível obter o resultado de exames.',

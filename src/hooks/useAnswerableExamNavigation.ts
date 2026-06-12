@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 import swal from 'sweetalert';
 
@@ -15,6 +15,7 @@ export default function useAnswerableExamNavigation({
 }) {
   const [answers, setAnswers] = useState<Map<number, string>>(new Map<number, string>());
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const submitRef = useRef<() => Promise<void>>(async () => {});
 
   const { theme } = useTheme();
 
@@ -106,7 +107,7 @@ export default function useAnswerableExamNavigation({
           break;
         case 'Enter':
           e.preventDefault();
-          if (currentQuestionIndex === questions.length - 1) await submit();
+          if (currentQuestionIndex === questions.length - 1) await submitRef.current();
           if (wasAnswered(currentQuestionIndex)) changeQuestion(currentQuestionIndex + 1);
         default:
           break;
@@ -160,6 +161,10 @@ export default function useAnswerableExamNavigation({
     },
     [handleConfirm, hasAnsweredAllQuestions, removeEventListener, theme]
   );
+
+  useEffect(() => {
+    submitRef.current = submit;
+  }, [submit]);
 
   useEffect(() => {
     window.addEventListener('keydown', handleKeyDown);
