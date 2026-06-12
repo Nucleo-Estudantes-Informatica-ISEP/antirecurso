@@ -11,12 +11,11 @@ async function proxyRequest(
 ) {
   const { path } = await params;
   const token = await getToken({ req: request, secret: process.env.AUTH_SECRET });
+  const accessToken = typeof token?.accessToken === 'string' ? token.accessToken : null;
 
-  if (isAccessTokenExpired(token)) {
+  if (!accessToken || isAccessTokenExpired(token)) {
     return NextResponse.json({ message: 'Authentication required' }, { status: 401 });
   }
-
-  const accessToken = token.accessToken as string;
 
   if (!BASE_URL) {
     return NextResponse.json({ message: 'API base URL is not configured' }, { status: 500 });
