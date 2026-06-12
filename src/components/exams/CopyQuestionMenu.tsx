@@ -29,7 +29,7 @@ const CopyQuestionMenu: React.FC<CopyQuestionMenuProps> = ({ questionText, optio
       const letter = String.fromCharCode(65 + idx);
       return `${letter}) ${sanitizeOption(opt.name)}`;
     }).join('\n');
-    return `${questionText}\n\n${optionsText}`;
+    return `Explica-me esta pergunta e as respetivas opções:\n\n${questionText}\n\n${optionsText}`;
   };
 
   const handleCopy = async () => {
@@ -37,49 +37,67 @@ const CopyQuestionMenu: React.FC<CopyQuestionMenuProps> = ({ questionText, optio
     setIsOpen(false);
   };
 
-  const handleSendTo = async (url: string) => {
-    await navigator.clipboard.writeText(getFormattedText());
+  const handleSendTo = async (platform: 'chatgpt' | 'claude' | 'gemini') => {
+    const promptText = getFormattedText();
+    await navigator.clipboard.writeText(promptText);
+    
+    const encodedPrompt = encodeURIComponent(promptText);
+    let url = '';
+    
+    if (platform === 'chatgpt') {
+      url = `https://chatgpt.com/?q=${encodedPrompt}`;
+    } else if (platform === 'claude') {
+      url = `https://claude.ai/new?q=${encodedPrompt}`;
+    } else if (platform === 'gemini') {
+      url = 'https://gemini.google.com/app';
+    }
+    
     window.open(url, '_blank');
     setIsOpen(false);
   };
 
   return (
-    <div className="relative inline-block text-left shrink-0" ref={menuRef}>
+    <div className="relative inline-flex text-left shrink-0" ref={menuRef}>
       <button
-        onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-muted-foreground bg-card border border-border rounded-xl hover:bg-muted focus:outline-none transition-colors"
+        onClick={handleCopy}
+        className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-muted-foreground bg-card border border-r-0 border-border rounded-l-xl hover:bg-muted focus:outline-none transition-colors"
       >
         <Copy className="w-4 h-4" />
-        <span className="hidden sm:inline">Copy</span>
+        <span className="hidden sm:inline">Copiar</span>
+      </button>
+      <button
+        onClick={() => setIsOpen(!isOpen)}
+        className="flex items-center px-2 py-2 text-sm font-medium text-muted-foreground bg-card border border-border rounded-r-xl hover:bg-muted focus:outline-none transition-colors"
+      >
         <ChevronDown className="w-4 h-4" />
       </button>
 
       {isOpen && (
-        <div className="absolute right-0 z-10 w-48 mt-2 origin-top-right bg-popover border border-border rounded-xl shadow-md outline-none overflow-hidden">
+        <div className="absolute right-0 top-full z-10 w-48 mt-2 origin-top-right bg-popover border border-border rounded-xl shadow-md outline-none overflow-hidden">
           <div className="py-1">
             <button
               onClick={handleCopy}
               className="block w-full px-4 py-2 text-sm text-left text-popover-foreground hover:bg-muted transition-colors"
             >
-              Copy to Clipboard
+              Copiar Pergunta
             </button>
             <button
-              onClick={() => handleSendTo('https://chatgpt.com')}
+              onClick={() => handleSendTo('chatgpt')}
               className="block w-full px-4 py-2 text-sm text-left text-popover-foreground hover:bg-muted transition-colors"
             >
-              Copy & Open ChatGPT
+              Perguntar ao ChatGPT
             </button>
             <button
-              onClick={() => handleSendTo('https://claude.ai')}
+              onClick={() => handleSendTo('claude')}
               className="block w-full px-4 py-2 text-sm text-left text-popover-foreground hover:bg-muted transition-colors"
             >
-              Copy & Open Claude
+              Perguntar ao Claude
             </button>
             <button
-              onClick={() => handleSendTo('https://gemini.google.com')}
+              onClick={() => handleSendTo('gemini')}
               className="block w-full px-4 py-2 text-sm text-left text-popover-foreground hover:bg-muted transition-colors"
             >
-              Copy & Open Gemini
+              Perguntar ao Gemini
             </button>
           </div>
         </div>
