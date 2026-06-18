@@ -9,6 +9,9 @@ interface QuestionProps {
 }
 
 const QuestionReview: React.FC<QuestionProps> = ({ currentQuestion }) => {
+  // Sort options by their order field to ensure correct letter assignment
+  const sortedOptions = [...currentQuestion.options].sort((a, b) => a.order.localeCompare(b.order));
+
   return (
     <>
       <div className="flex justify-between items-start mt-4 gap-4">
@@ -21,7 +24,7 @@ const QuestionReview: React.FC<QuestionProps> = ({ currentQuestion }) => {
         />
       </div>
       <div className="mt-5 space-y-3">
-        {currentQuestion.options.map((option, idx) => {
+        {sortedOptions.map((option, idx) => {
           const isSelected = currentQuestion.selected_option_id === option.id;
           const isCorrect = currentQuestion.correct_option === option.order;
           const isWrongSelection = currentQuestion.is_wrong === true && isSelected;
