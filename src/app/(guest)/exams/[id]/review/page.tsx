@@ -47,7 +47,7 @@ const ReviewPage: React.FC<ExamPageProps> = ({ params }) => {
     if (isAuthenticated && session.token) {
       headers['Authorization'] = `Bearer ${session.token}`
     }
-    const res = await fetch(`${apiBase}/exams/${resolvedParams.id}/review`, {
+    const res = await fetch(`${apiBase}/exams/${resolvedParams.id}`, {
       method: 'GET',
       headers,
       cache: 'no-cache',
