@@ -69,7 +69,7 @@ const CopyQuestionMenu: React.FC<CopyQuestionMenuProps> = ({ questionText, optio
         className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-muted-foreground bg-card border border-r-0 border-border rounded-l-xl hover:bg-muted focus:outline-none transition-colors"
       >
         <Copy className="w-4 h-4" />
-        <span className="hidden sm:inline">{copied ? 'Copiado ✓' : 'Copiar'}</span>
+        <span className="hidden sm:inline">{copied ? 'Copiado' : 'Copiar'}</span>
         {copied && <Check className="w-4 h-4 text-green-500" />}
       </button>
       <button
