@@ -10,7 +10,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import useSession from '@/hooks/useSession';
 import { ArrowRight, Clock, PartyPopper, Sparkles } from 'lucide-react';
 import { useTheme } from 'next-themes';
-import { useRouter } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import ReactCanvasConfetti from 'react-canvas-confetti';
 import { ExamContext } from 'src/contexts/ExamContext';
 import { BASE_URL, PROTECTED_API_BASE_URL } from '@/services/api';
@@ -19,6 +19,7 @@ import swal from 'sweetalert';
 const Points: React.FC = () => {
   const session = useSession();
   const router = useRouter();
+  const params = useParams();
   const [fire, setFire] = useState(false);
   const [loading, setLoading] = useState(false);
   const [fetchError, setFetchError] = useState(false);
@@ -41,7 +42,12 @@ const Points: React.FC = () => {
       try {
         const isAuthenticated = Boolean(session?.token);
         const apiBase = isAuthenticated ? PROTECTED_API_BASE_URL : BASE_URL;
-        const res = await fetch(`${apiBase}/exams/${router.query.id}/review`, {
+        const examId = params?.id;
+        if (!examId) {
+          setFetchError(true);
+          return;
+        }
+        const res = await fetch(`${apiBase}/exams/${examId}/review`, {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
@@ -71,7 +77,7 @@ const Points: React.FC = () => {
     }
 
     fetchExamResult();
-  }, [examResult, setExamResult, session?.token, router.query.id]);
+  }, [examResult, setExamResult, session?.token, params?.id]);
 
   function handleReview() {
     if (!examResult) {
