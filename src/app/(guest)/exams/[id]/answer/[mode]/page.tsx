@@ -144,7 +144,7 @@ const Exam: React.FC<ExamPageProps> = ({ params }) => {
 
     setExamTime(0);
     setSubjectName();
-  }, [resolvedParams.id, resolvedParams.mode, router, setQuestions, session.token, nOfQuestions, filter, setExamTime, theme]);
+  }, [resolvedParams.id, resolvedParams.mode, router, setQuestions, session.token, nOfQuestions, filter, setExamTime]);
 
   useEffect(() => {
     const interval = setInterval(() => {

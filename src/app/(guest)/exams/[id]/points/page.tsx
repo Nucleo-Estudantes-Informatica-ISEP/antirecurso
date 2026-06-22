@@ -13,15 +13,59 @@ import { useTheme } from 'next-themes';
 import { useRouter } from 'next/navigation';
 import ReactCanvasConfetti from 'react-canvas-confetti';
 import { ExamContext } from 'src/contexts/ExamContext';
+import { BASE_URL, PROTECTED_API_BASE_URL } from '@/services/api';
 import swal from 'sweetalert';
 
 const Points: React.FC = () => {
   const session = useSession();
   const router = useRouter();
   const [fire, setFire] = useState(false);
-  const { examResult, examTime } = useContext(ExamContext);
+  const [loading, setLoading] = useState(false);
+  const [fetchError, setFetchError] = useState(false);
+  const { examResult, setExamResult, examTime } = useContext(ExamContext);
 
   const { theme } = useTheme();
+
+  useEffect(() => {
+    async function fetchExamResult() {
+      if (examResult) return;
+      setLoading(true);
+      setFetchError(false);
+
+      try {
+        const isAuthenticated = Boolean(session?.token);
+        const apiBase = isAuthenticated ? PROTECTED_API_BASE_URL : BASE_URL;
+        const res = await fetch(`${apiBase}/exams/${router.query.id}/review`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            ...(isAuthenticated && session.token
+              ? { Authorization: `Bearer ${session.token}` }
+              : {}),
+          },
+          cache: 'no-store',
+        });
+
+        if (res.ok) {
+          const data = await res.json();
+          setExamResult({
+            id: data.id,
+            score: data.score,
+            passed: data.score >= 50,
+            subject: data.subject,
+          });
+        } else {
+          setFetchError(true);
+        }
+      } catch {
+        setFetchError(true);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchExamResult();
+  }, [examResult, setExamResult, session?.token, router.query.id]);
 
   function handleReview() {
     if (!examResult) {
@@ -29,7 +73,7 @@ const Points: React.FC = () => {
         title: 'Erro',
         text: 'Não foi possível obter o resultado do exame.',
         icon: 'error',
-        className: theme === 'dark' ? 'swal-dark' : ''
+        className: theme === 'dark' ? 'swal-dark' : '',
       });
       router.push('/');
       return;
@@ -37,16 +81,25 @@ const Points: React.FC = () => {
     router.push('/exams/' + examResult.id + '/review');
   }
 
-  useEffect(() => {
-    setFire(true);
-  }, []);
+  if (loading) {
+    return (
+      <section className="container max-w-3xl py-10 md:py-16 w-full">
+        <Card className="relative overflow-hidden">
+          <div className="absolute inset-0 bg-hero-gradient pointer-events-none" />
+          <CardContent className="relative p-6 md:p-10 flex flex-col items-center text-center">
+            <p className="text-muted-foreground">A carregar resultado...</p>
+          </CardContent>
+        </Card>
+      </section>
+    );
+  }
 
-  if (!examResult) {
+  if (fetchError || !examResult) {
     swal({
       title: 'Erro',
       text: 'Não foi possível obter o resultado do exame.',
       icon: 'error',
-      className: theme === 'dark' ? 'swal-dark' : ''
+      className: theme === 'dark' ? 'swal-dark' : '',
     });
     router.push('/');
     return null;
