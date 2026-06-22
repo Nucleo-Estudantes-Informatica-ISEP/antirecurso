@@ -24,7 +24,7 @@ const zitadelProviderConfig: Parameters<typeof ZitadelProvider>[0] = {
   }
 };
 
-async function refreshAccessToken(token: JWT): Promise<JWT> {
+export async function refreshAccessToken(token: JWT): Promise<JWT> {
   try {
     if (authDebugEnabled) {
       console.info('[auth][jwt] Attempting to refresh access token...');

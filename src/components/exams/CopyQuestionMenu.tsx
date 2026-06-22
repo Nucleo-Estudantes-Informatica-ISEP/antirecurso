@@ -14,6 +14,13 @@ const CopyQuestionMenu: React.FC<CopyQuestionMenuProps> = ({ questionText, optio
   const [isOpen, setIsOpen] = useState(false);
   const [copied, setCopied] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
+  const timerRef = useRef<ReturnType<typeof setTimeout>>(null);
+
+  useEffect(() => {
+    return () => {
+      if (timerRef.current) clearTimeout(timerRef.current);
+    };
+  }, []);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -25,7 +32,6 @@ const CopyQuestionMenu: React.FC<CopyQuestionMenuProps> = ({ questionText, optio
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  // Sort options by their order field to ensure correct letter assignment
   const sortedOptions = [...options].sort((a, b) => a.order.localeCompare(b.order));
 
   const getFormattedText = () => {
@@ -39,7 +45,7 @@ const CopyQuestionMenu: React.FC<CopyQuestionMenuProps> = ({ questionText, optio
   const handleCopy = async () => {
     await navigator.clipboard.writeText(getFormattedText());
     setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
+    timerRef.current = setTimeout(() => setCopied(false), 1500);
     setIsOpen(false);
   };
 
@@ -68,9 +74,17 @@ const CopyQuestionMenu: React.FC<CopyQuestionMenuProps> = ({ questionText, optio
         onClick={handleCopy}
         className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-muted-foreground bg-card border border-r-0 border-border rounded-l-xl hover:bg-muted focus:outline-none transition-colors"
       >
-        <Copy className="w-4 h-4" />
-        <span className="hidden sm:inline">{copied ? 'Copiado' : 'Copiar'}</span>
-        {copied && <Check className="w-4 h-4 text-green-500" />}
+        {copied ? (
+          <>
+            <Check className="w-4 h-4 text-green-500" />
+            <span className="hidden sm:inline">Copiado</span>
+          </>
+        ) : (
+          <>
+            <Copy className="w-4 h-4" />
+            <span className="hidden sm:inline">Copiar</span>
+          </>
+        )}
       </button>
       <button
         onClick={() => setIsOpen(!isOpen)}

@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { BASE_URL } from '@/services/api';
-import { CLIENT_SESSION_TOKEN, getApiAccessToken, getAppAuthSession } from '@/lib/server-auth';
+import { CLIENT_SESSION_TOKEN, getApiAccessToken, getAppAuthSession, getJwtTokenFromCookies } from '@/lib/server-auth';
+import { refreshAccessToken } from '@/lib/auth';
+import type { JWT } from 'next-auth/jwt';
 
 const authDebugEnabled = process.env.AUTH_DEBUG === 'true';
 
@@ -30,7 +32,34 @@ function clearAuthCookies(response: NextResponse, existingCookieNames: string[] 
 export async function GET(request: NextRequest) {
   const existingCookieNames = request.cookies.getAll().map(({ name }) => name);
 
-  const [session, accessToken] = await Promise.all([getAppAuthSession(), getApiAccessToken()]);
+  let session = await getAppAuthSession();
+  let accessToken = await getApiAccessToken();
+
+  // If the access token is missing/expired but we still have a session,
+  // attempt a one-time refresh so the client session is not destroyed
+  // by a stale cookie on the next request.
+  if (session?.user && !accessToken) {
+    const rawToken = await getJwtTokenFromCookies();
+
+    if (
+      rawToken &&
+      typeof rawToken.refreshToken === 'string' &&
+      (rawToken.error === 'AccessTokenExpired' ||
+        (typeof rawToken.accessTokenExpiresAt === 'number' &&
+          Number.isFinite(rawToken.accessTokenExpiresAt) &&
+          Date.now() >= rawToken.accessTokenExpiresAt))
+    ) {
+      try {
+        const refreshed = await refreshAccessToken(rawToken);
+
+        if (refreshed && typeof refreshed.accessToken === 'string') {
+          accessToken = refreshed.accessToken;
+        }
+      } catch {
+        // ignore refresh failure and fall through to normal error handling
+      }
+    }
+  }
 
   if (authDebugEnabled) {
     console.info('[auth][session-route]', {

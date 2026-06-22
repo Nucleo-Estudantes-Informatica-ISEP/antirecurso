@@ -40,7 +40,7 @@ const ReviewPage: React.FC<ExamPageProps> = ({ params }) => {
 
   const getExamResult = useCallback(async () => {
     const isAuthenticated = Boolean(session?.token)
-    const apiBase = isAuthenticated ? PROTECTED_API_BASE_URL : '/api/public'
+    const apiBase = PROTECTED_API_BASE_URL
     const headers: HeadersInit = {
       'Content-Type': 'application/json',
     }

@@ -13,7 +13,7 @@ import { useTheme } from 'next-themes';
 import { useParams, useRouter } from 'next/navigation';
 import ReactCanvasConfetti from 'react-canvas-confetti';
 import { ExamContext } from 'src/contexts/ExamContext';
-import { BASE_URL, PROTECTED_API_BASE_URL } from '@/services/api';
+import { PROTECTED_API_BASE_URL } from '@/services/api';
 import swal from 'sweetalert';
 
 const Points: React.FC = () => {
@@ -41,7 +41,7 @@ const Points: React.FC = () => {
 
       try {
         const isAuthenticated = Boolean(session?.token);
-        const apiBase = isAuthenticated ? PROTECTED_API_BASE_URL : BASE_URL;
+        const apiBase = PROTECTED_API_BASE_URL;
         const examId = params?.id;
         if (!examId) {
           setFetchError(true);
