@@ -38,25 +38,30 @@ export default function useAnswerableExamNavigation({
 
   const wasAnswered = useCallback(
     (i: number) => {
-      return answers.has(i);
+      const questionId = questions[i]?.id;
+      if (questionId === undefined) return false;
+      return answers.has(questionId);
     },
-    [answers]
+    [answers, questions]
   );
 
-  const selectAnswer = useCallback((question: number, order: string) => {
+  const selectAnswer = useCallback((questionIndex: number, order: string) => {
+    const questionId = questions[questionIndex]?.id;
+    if (questionId === undefined) return;
     setAnswers((prev) => {
       const newAnswers = new Map(prev);
-      if (newAnswers.get(question) === order) newAnswers.delete(question);
-      else newAnswers.set(question, order);
+      if (newAnswers.get(questionId) === order) newAnswers.delete(questionId);
+      else newAnswers.set(questionId, order);
       return newAnswers;
     });
-  }, []);
+  }, [questions]);
 
   const cycleOptions = useCallback(
     (direction: 'UP' | 'DOWN') => {
-      if (!optionOrders) return;
+      if (!optionOrders || !currentQuestion) return;
 
-      const currentOption = answers.get(currentQuestionIndex);
+      const questionId = currentQuestion.id;
+      const currentOption = answers.get(questionId);
       if (!currentOption && direction === 'DOWN')
         return selectAnswer(currentQuestionIndex, optionOrders[0]);
       if (!currentOption && direction === 'UP')
@@ -69,16 +74,15 @@ export default function useAnswerableExamNavigation({
       const nextIndex = currentIndex + 1 * multiplier;
 
       if (nextIndex >= optionOrders.length) selectAnswer(currentQuestionIndex, optionOrders[0]);
-      else if (nextIndex < 0)
-        selectAnswer(currentQuestionIndex, optionOrders[optionOrders.length - 1]);
+      else if (nextIndex < 0) selectAnswer(currentQuestionIndex, optionOrders[optionOrders.length - 1]);
       else selectAnswer(currentQuestionIndex, optionOrders[nextIndex]);
     },
-    [answers, currentQuestionIndex, optionOrders, selectAnswer]
+    [answers, currentQuestion, currentQuestionIndex, optionOrders, selectAnswer]
   );
 
   const handleKeyDown: (e: KeyboardEvent) => void = useCallback(
     async (e: KeyboardEvent) => {
-      if (!optionOrders) return;
+      if (!optionOrders || !currentQuestion) return;
 
       switch (e.key) {
         case '1':

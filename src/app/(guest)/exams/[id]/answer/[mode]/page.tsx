@@ -55,19 +55,7 @@ const Exam: React.FC<ExamPageProps> = ({ params }) => {
   themeRef.current = theme;
 
   const { setExamResult, examTime, setExamTime } = useContext(ExamContext);
-  const {
-    answers,
-    submit,
-    setQuestions,
-    questions,
-    wasAnswered,
-    currentQuestionIndex,
-    changeQuestion,
-    removeEventListener,
-    currentQuestion,
-    selectAnswer,
-    isSubmitting
-  } = useAnswerableExamNavigation({ handleConfirm });
+  const { answers, submit, setQuestions, questions, wasAnswered, currentQuestionIndex, changeQuestion, removeEventListener, currentQuestion, selectAnswer, isSubmitting } = useAnswerableExamNavigation({ handleConfirm });
 
   async function handleConfirm() {
     if (isSubmitting) return;
@@ -76,9 +64,9 @@ const Exam: React.FC<ExamPageProps> = ({ params }) => {
 
     const data = {
       subject_id: Number.parseInt(resolvedParams.id, 10),
-      answers: [...Array.from({ length: questions.length }, (_, i) => i)].map((i) => ({
-        question_id: questions[i].id,
-        selected_option: answers.get(i) || null
+      answers: questions.map((q) => ({
+        question_id: q.id,
+        selected_option: answers.get(q.id) || null
       })),
       time: examTime
     };
@@ -296,6 +284,7 @@ const Exam: React.FC<ExamPageProps> = ({ params }) => {
 
             <QuestionPrompt
               currentQuestion={currentQuestion}
+              questionId={currentQuestion.id}
               selectAnswer={selectAnswer}
               currentQuestionIndex={currentQuestionIndex}
               answers={answers}

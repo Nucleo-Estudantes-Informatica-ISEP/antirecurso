@@ -7,6 +7,7 @@ import CopyQuestionMenu from '../CopyQuestionMenu';
 
 interface QuestionProps {
   currentQuestion: Question;
+  questionId: number;
   selectAnswer: (questionIndex: number, optionOrder: string) => void;
   currentQuestionIndex: number;
   answers: Map<number, string>;
@@ -14,6 +15,7 @@ interface QuestionProps {
 
 const QuestionPrompt: React.FC<QuestionProps> = ({
   currentQuestion,
+  questionId,
   selectAnswer,
   currentQuestionIndex,
   answers
@@ -34,7 +36,7 @@ const QuestionPrompt: React.FC<QuestionProps> = ({
       </div>
       <div className="mt-5 space-y-3">
         {sortedOptions.map((option, idx) => {
-          const isSelected = answers.get(currentQuestionIndex) === option.order;
+          const isSelected = answers.get(questionId) === option.order;
           const letter = String.fromCharCode(65 + idx);
           return (
             <motion.button
