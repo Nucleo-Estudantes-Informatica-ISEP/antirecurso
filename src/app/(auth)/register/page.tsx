@@ -14,7 +14,7 @@ const Register: React.FC = () => {
 
   async function handleRegister() {
     try {
-      await signIn('zitadel', { callbackUrl, authorizationParams: { prompt: 'create' } });
+      await signIn('zitadel', { callbackUrl }, { prompt: 'create' });
     } catch {
       await swal(
         'Oops!',

@@ -5,7 +5,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { getServerSession, getUserScores } from '@/services/getServerSession';
-import { ArrowRight, BookOpenCheck, CalendarDays, GraduationCap, History } from 'lucide-react';
+import { ArrowRight, BookOpenCheck, CalendarDays, GraduationCap, History, Settings } from 'lucide-react';
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
 
@@ -53,6 +53,18 @@ const Profile: React.FC = async () => {
                   Ver resumos
                 </Link>
               </Button>
+              {process.env.AUTH_ISSUER_URL && (
+                <Button asChild variant="ghost" className="text-muted-foreground hover:text-foreground">
+                  <a
+                    href={`${process.env.AUTH_ISSUER_URL}/ui/console`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <Settings className="size-4" />
+                    Gerir conta
+                  </a>
+                </Button>
+              )}
             </div>
           </div>
         </CardContent>

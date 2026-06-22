@@ -1,6 +1,6 @@
 'use client';
 
-import { use, useContext, useEffect, useState } from 'react';
+import { use, useContext, useEffect, useRef, useState } from 'react';
 
 import { useTheme } from 'next-themes';
 import Image from 'next/image';
@@ -46,6 +46,8 @@ const Exam: React.FC<ExamPageProps> = ({ params }) => {
 
   const session = useSession();
   const { theme } = useTheme();
+  const themeRef = useRef(theme);
+  themeRef.current = theme;
 
   const { setExamResult, examTime, setExamTime } = useContext(ExamContext);
   const {
@@ -116,7 +118,7 @@ const Exam: React.FC<ExamPageProps> = ({ params }) => {
         const exam = await generateExam(id, mode, session.token, n_of_questions, filter);
         if (exam === null) {
           swal('Ocorreu um erro ao carregar o exame.', 'Por favor tente novamente.', 'error', {
-            className: theme === 'dark' ? 'swal-dark' : ''
+            className: themeRef.current === 'dark' ? 'swal-dark' : ''
           });
           router.push('/exams');
           return;
@@ -124,7 +126,7 @@ const Exam: React.FC<ExamPageProps> = ({ params }) => {
         setQuestions(exam);
       } catch {
         swal('Error', 'Por favor tente novamente.', 'error', {
-          className: theme === 'dark' ? 'swal-dark' : ''
+          className: themeRef.current === 'dark' ? 'swal-dark' : ''
         });
       }
     }
@@ -144,7 +146,7 @@ const Exam: React.FC<ExamPageProps> = ({ params }) => {
 
     setExamTime(0);
     setSubjectName();
-  }, [resolvedParams.id, resolvedParams.mode, router, setQuestions, session.token, nOfQuestions, filter, setExamTime, theme]);
+  }, [resolvedParams.id, resolvedParams.mode, router, setQuestions, session.token, nOfQuestions, filter, setExamTime]);
 
   useEffect(() => {
     const interval = setInterval(() => {
