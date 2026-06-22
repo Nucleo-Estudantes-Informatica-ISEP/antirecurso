@@ -16,6 +16,7 @@ import { PROTECTED_API_BASE_URL } from '@/services/api';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import sampleImage from 'public/images/sample.webp';
 import useExamReviewNavigation from 'src/hooks/useExamReviewNavigation';
+import { getShuffleSeed, shuffleWithSeed } from '@/utils/examShuffle';
 
 interface ExamPageProps {
   params: Promise<{
@@ -53,7 +54,12 @@ const ReviewPage: React.FC<ExamPageProps> = ({ params }) => {
     })
 
     if (res.ok) {
-      setExamResult(await res.json())
+      const data = await res.json()
+      const storedSeed = getShuffleSeed(resolvedParams.id)
+      if (storedSeed && data.questions) {
+        data.questions = shuffleWithSeed(data.questions, storedSeed)
+      }
+      setExamResult(data)
     }
   }, [resolvedParams.id, setExamResult, session?.token])
 

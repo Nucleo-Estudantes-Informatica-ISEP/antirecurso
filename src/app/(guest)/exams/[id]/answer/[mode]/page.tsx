@@ -23,6 +23,11 @@ import useAnswerableExamNavigation from '@/hooks/useAnswerableExamNavigation';
 import useSession from '@/hooks/useSession';
 import { ChevronLeft, ChevronRight, Clock, Loader2 } from 'lucide-react';
 import sampleImage from 'public/images/sample.webp';
+import {
+  getShuffleSeed,
+  setShuffleSeed,
+  shuffleWithSeed,
+} from '@/utils/examShuffle';
 
 interface ExamPageProps {
   params: Promise<{
@@ -106,8 +111,8 @@ const Exam: React.FC<ExamPageProps> = ({ params }) => {
       setExamResult(await res.json());
       router.push(`/exams/${resolvedParams.id}/points`);
     } else {
-      swal('Ocorreu um erro ao submeter o exame.', 'Por favor tente novamente.', 'error', {
-        className: theme === 'dark' ? 'swal-dark' : ''
+      swal('Ocorreu um erro ao submeter o exame.', 'Por favor tenta novamente.', 'error', {
+        className: themeRef.current === 'dark' ? 'swal-dark' : ''
       });
     }
   }
@@ -117,15 +122,27 @@ const Exam: React.FC<ExamPageProps> = ({ params }) => {
       try {
         const exam = await generateExam(id, mode, session.token, n_of_questions, filter);
         if (exam === null) {
-          swal('Ocorreu um erro ao carregar o exame.', 'Por favor tente novamente.', 'error', {
+          swal('Ocorreu um erro ao carregar o exame.', 'Por favor tenta novamente.', 'error', {
             className: themeRef.current === 'dark' ? 'swal-dark' : ''
           });
           router.push('/exams');
           return;
         }
-        setQuestions(exam);
+
+        const storedSeed = getShuffleSeed(id);
+        let orderedQuestions = exam;
+
+        if (storedSeed) {
+          orderedQuestions = shuffleWithSeed(exam, storedSeed);
+        } else {
+          const newSeed = `${resolvedParams.mode}-${Date.now()}`;
+          setShuffleSeed(id, newSeed);
+          orderedQuestions = shuffleWithSeed(exam, newSeed);
+        }
+
+        setQuestions(orderedQuestions);
       } catch {
-        swal('Error', 'Por favor tente novamente.', 'error', {
+        swal('Error', 'Por favor tenta novamente.', 'error', {
           className: themeRef.current === 'dark' ? 'swal-dark' : ''
         });
       }
