@@ -1,6 +1,6 @@
 'use client';
 
-import { useContext, useEffect, useState } from 'react';
+import { useContext, useEffect, useRef, useState } from 'react';
 
 import Link from 'next/link';
 
@@ -25,6 +25,12 @@ const Points: React.FC = () => {
   const { examResult, setExamResult, examTime } = useContext(ExamContext);
 
   const { theme } = useTheme();
+  const themeRef = useRef(theme);
+  themeRef.current = theme;
+
+  useEffect(() => {
+    setFire(true);
+  }, []);
 
   useEffect(() => {
     async function fetchExamResult() {
@@ -73,7 +79,7 @@ const Points: React.FC = () => {
         title: 'Erro',
         text: 'Não foi possível obter o resultado do exame.',
         icon: 'error',
-        className: theme === 'dark' ? 'swal-dark' : '',
+        className: themeRef.current === 'dark' ? 'swal-dark' : '',
       });
       router.push('/');
       return;
@@ -99,7 +105,7 @@ const Points: React.FC = () => {
       title: 'Erro',
       text: 'Não foi possível obter o resultado do exame.',
       icon: 'error',
-      className: theme === 'dark' ? 'swal-dark' : '',
+      className: themeRef.current === 'dark' ? 'swal-dark' : '',
     });
     router.push('/');
     return null;

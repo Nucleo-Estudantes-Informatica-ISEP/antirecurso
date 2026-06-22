@@ -1,4 +1,5 @@
 import type { NextAuthOptions, Profile } from 'next-auth';
+import type { JWT } from 'next-auth/jwt';
 import ZitadelProvider from 'next-auth/providers/zitadel';
 
 type ZitadelProfile = Profile & {
@@ -18,10 +19,60 @@ const zitadelProviderConfig: Parameters<typeof ZitadelProvider>[0] = {
   clientSecret: process.env.AUTH_CLIENT_SECRET ?? '',
   authorization: {
     params: {
-      scope: process.env.AUTH_SCOPES ?? 'openid email profile'
+      scope: process.env.AUTH_SCOPES ?? 'openid email profile offline_access'
     }
   }
 };
+
+async function refreshAccessToken(token: JWT): Promise<JWT> {
+  try {
+    if (authDebugEnabled) {
+      console.info('[auth][jwt] Attempting to refresh access token...');
+    }
+
+    const response = await fetch(`${requiredEnv.authIssuerUrl}/oauth/v2/token`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded'
+      },
+      body: new URLSearchParams({
+        client_id: requiredEnv.authClientId,
+        client_secret: process.env.AUTH_CLIENT_SECRET ?? '',
+        grant_type: 'refresh_token',
+        refresh_token: token.refreshToken ?? ''
+      })
+    });
+
+    const refreshedTokens = await response.json();
+
+    if (!response.ok) {
+      throw refreshedTokens;
+    }
+
+    if (authDebugEnabled) {
+      console.info('[auth][jwt] Access token refreshed successfully.');
+    }
+
+    return {
+      ...token,
+      accessToken: refreshedTokens.access_token,
+      accessTokenExpiresAt: refreshedTokens.expires_in
+        ? Date.now() + refreshedTokens.expires_in * 1000
+        : undefined,
+      refreshToken: refreshedTokens.refresh_token ?? token.refreshToken,
+      idToken: refreshedTokens.id_token ?? token.idToken,
+      error: undefined
+    };
+  } catch (error) {
+    if (authDebugEnabled) {
+      console.error('[auth][jwt] Failed to refresh access token:', error);
+    }
+    return {
+      ...token,
+      error: 'AccessTokenExpired'
+    };
+  }
+}
 
 export const authOptions: NextAuthOptions = {
   secret: process.env.AUTH_SECRET,
@@ -42,6 +93,7 @@ export const authOptions: NextAuthOptions = {
         token.accessToken = account.access_token;
         token.accessTokenExpiresAt = account.expires_at ? account.expires_at * 1000 : undefined;
         token.idToken = account.id_token;
+        token.refreshToken = account.refresh_token;
 
         if (authDebugEnabled) {
           console.info('[auth][jwt]', {
@@ -49,6 +101,7 @@ export const authOptions: NextAuthOptions = {
             provider: account.provider,
             hasAccessToken: typeof account.access_token === 'string',
             hasIdToken: typeof account.id_token === 'string',
+            hasRefreshToken: typeof account.refresh_token === 'string',
             expiresAt: account.expires_at ?? null
           });
         }
@@ -59,11 +112,16 @@ export const authOptions: NextAuthOptions = {
       token.userName =
         (typeof profile?.name === 'string' ? profile.name : undefined) ?? token.userName;
 
-      if (
+      // Check if access token is expired
+      const isExpired =
         typeof token.accessTokenExpiresAt === 'number' &&
         Number.isFinite(token.accessTokenExpiresAt) &&
-        Date.now() >= token.accessTokenExpiresAt
-      ) {
+        Date.now() >= token.accessTokenExpiresAt;
+
+      if (isExpired) {
+        if (token.refreshToken) {
+          return await refreshAccessToken(token);
+        }
         token.error = 'AccessTokenExpired';
       } else {
         delete token.error;
@@ -74,6 +132,7 @@ export const authOptions: NextAuthOptions = {
           phase: 'token-returned',
           hasAccessToken: typeof token.accessToken === 'string',
           hasIdToken: typeof token.idToken === 'string',
+          hasRefreshToken: typeof token.refreshToken === 'string',
           hasUserEmail: typeof token.userEmail === 'string',
           hasUserName: typeof token.userName === 'string',
           error: token.error ?? null,

@@ -18,6 +18,9 @@ const QuestionPrompt: React.FC<QuestionProps> = ({
   currentQuestionIndex,
   answers
 }) => {
+  // Sort options by their order field to ensure correct letter assignment
+  const sortedOptions = [...currentQuestion.options].sort((a, b) => a.order.localeCompare(b.order));
+
   return (
     <>
       <div className="flex justify-between items-start mt-4 gap-4">
@@ -30,7 +33,7 @@ const QuestionPrompt: React.FC<QuestionProps> = ({
         />
       </div>
       <div className="mt-5 space-y-3">
-        {currentQuestion.options.map((option, idx) => {
+        {sortedOptions.map((option, idx) => {
           const isSelected = answers.get(currentQuestionIndex) === option.order;
           const letter = String.fromCharCode(65 + idx);
           return (
