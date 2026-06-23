@@ -1,16 +1,27 @@
 'use client';
 
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState, useContext } from 'react';
 
 import swal from 'sweetalert';
 
 import { useTheme } from 'next-themes';
 import Question from 'src/types/Question';
 import useExamNavigation from './useExamNavigation';
+import useSession from '@/hooks/useSession';
+import { ExamContext } from '@/contexts/ExamContext';
+import { PROTECTED_API_BASE_URL } from '@/services/api';
 
 export default function useAnswerableExamNavigation({
+  subjectId,
+  mode,
+  nOfQuestions,
+  filter,
   handleConfirm
 }: {
+  subjectId: number;
+  mode: string;
+  nOfQuestions?: string | null;
+  filter?: string | null;
   handleConfirm: () => Promise<void>;
 }) {
   const [answers, setAnswers] = useState<Map<number, string>>(new Map<number, string>());
@@ -18,6 +29,8 @@ export default function useAnswerableExamNavigation({
   const submitRef = useRef<() => Promise<void>>(async () => {});
 
   const { theme } = useTheme();
+  const session = useSession();
+  const { examTime } = useContext(ExamContext);
 
   const {
     changeQuestion,
@@ -27,6 +40,66 @@ export default function useAnswerableExamNavigation({
     currentQuestion,
     setCurrentQuestion
   } = useExamNavigation<Question>();
+
+  const lastAnswersRef = useRef<string>('');
+  const lastIndexRef = useRef<number>(-1);
+  const lastSavedTimeRef = useRef<number>(-1);
+
+  // Auto-save exam state on progress changes
+  useEffect(() => {
+    if (questions.length === 0) return;
+
+    const serializedAnswers = JSON.stringify(Array.from(answers.entries()));
+    
+    const stateData = {
+      subjectId,
+      mode,
+      questions,
+      answers: Array.from(answers.entries()),
+      time: examTime,
+      currentQuestionIndex,
+      savedAt: Date.now(),
+      n_of_questions: nOfQuestions ?? undefined,
+      filter: filter ?? undefined
+    };
+
+    // Save to localStorage immediately
+    localStorage.setItem(`exam-state-${subjectId}`, JSON.stringify(stateData));
+
+    if (!session.token) return;
+
+    // Save to backend if answers, current question, or >= 10s of time elapsed
+    const answersChanged = serializedAnswers !== lastAnswersRef.current;
+    const indexChanged = currentQuestionIndex !== lastIndexRef.current;
+    const timeThresholdPassed = lastSavedTimeRef.current === -1 || (examTime - lastSavedTimeRef.current) >= 10;
+
+    if (answersChanged || indexChanged || timeThresholdPassed) {
+      lastAnswersRef.current = serializedAnswers;
+      lastIndexRef.current = currentQuestionIndex;
+      lastSavedTimeRef.current = examTime;
+
+      const saveToBackend = async () => {
+        try {
+          await fetch(`${PROTECTED_API_BASE_URL}/exams/state`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${session.token}`
+            },
+            body: JSON.stringify({
+              subject_id: subjectId,
+              mode,
+              state: stateData
+            })
+          });
+        } catch (err) {
+          console.error('Failed to save exam state to backend:', err);
+        }
+      };
+
+      saveToBackend();
+    }
+  }, [questions, answers, currentQuestionIndex, examTime, session.token, subjectId, mode, nOfQuestions, filter]);
 
   const hasAnsweredAllQuestions = useCallback((): boolean => {
     if (answers.size === questions.length) return true;
@@ -198,6 +271,7 @@ export default function useAnswerableExamNavigation({
     removeEventListener,
     setQuestions,
     answers,
+    setAnswers,
     questions,
     currentQuestionIndex,
     currentQuestion,

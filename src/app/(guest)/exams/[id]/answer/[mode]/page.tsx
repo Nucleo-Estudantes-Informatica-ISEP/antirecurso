@@ -7,7 +7,6 @@ import Image from 'next/image';
 import { useRouter, useSearchParams } from 'next/navigation';
 import swal from 'sweetalert';
 
-import config from '@/config';
 import { ExamContext } from '@/contexts/ExamContext';
 import { BASE_URL, PROTECTED_API_BASE_URL } from '@/services/api';
 import generateExam from '@/services/generateExam';
@@ -55,7 +54,26 @@ const Exam: React.FC<ExamPageProps> = ({ params }) => {
   themeRef.current = theme;
 
   const { setExamResult, examTime, setExamTime } = useContext(ExamContext);
-  const { answers, submit, setQuestions, questions, wasAnswered, currentQuestionIndex, changeQuestion, removeEventListener, currentQuestion, selectAnswer, isSubmitting } = useAnswerableExamNavigation({ handleConfirm });
+  const {
+    answers,
+    setAnswers,
+    submit,
+    setQuestions,
+    questions,
+    wasAnswered,
+    currentQuestionIndex,
+    changeQuestion,
+    removeEventListener,
+    currentQuestion,
+    selectAnswer,
+    isSubmitting
+  } = useAnswerableExamNavigation({
+    subjectId: Number.parseInt(resolvedParams.id, 10),
+    mode: resolvedParams.mode,
+    nOfQuestions,
+    filter,
+    handleConfirm
+  });
 
   async function handleConfirm() {
     if (isSubmitting) return;
@@ -97,6 +115,23 @@ const Exam: React.FC<ExamPageProps> = ({ params }) => {
 
     if (res.status === 200) {
       setExamResult(await res.json());
+
+      // Clear saved state
+      try {
+        const subjectId = Number.parseInt(resolvedParams.id, 10);
+        localStorage.removeItem(`exam-state-${subjectId}`);
+        if (session.token) {
+          fetch(`${PROTECTED_API_BASE_URL}/exams/state/${subjectId}`, {
+            method: 'DELETE',
+            headers: {
+              Authorization: `Bearer ${session.token}`
+            }
+          }).catch(console.error);
+        }
+      } catch (err) {
+        console.error('Error clearing saved state:', err);
+      }
+
       router.push(`/exams/${resolvedParams.id}/points`);
     } else {
       swal('Ocorreu um erro ao submeter o exame.', 'Por favor tenta novamente.', 'error', {
@@ -106,9 +141,101 @@ const Exam: React.FC<ExamPageProps> = ({ params }) => {
   }
 
   useEffect(() => {
-    async function getExam(id: number, mode: string, n_of_questions?: number, filter?: string) {
+    let active = true;
+
+    async function initExam() {
+      const subjectId = Number.parseInt(resolvedParams.id, 10);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      let savedState: any = null;
+
       try {
-        const exam = await generateExam(id, mode, session.token, n_of_questions, filter);
+        if (session.token) {
+          const res = await fetch(`${PROTECTED_API_BASE_URL}/exams/state/${subjectId}`, {
+            headers: {
+              Authorization: `Bearer ${session.token}`
+            }
+          });
+          if (res.status === 200) {
+            const data = await res.json();
+            savedState = data.state;
+          }
+        } else {
+          const localStr = localStorage.getItem(`exam-state-${subjectId}`);
+          if (localStr) {
+            const data = JSON.parse(localStr);
+            // Check expiry (3 days = 3 * 24 * 60 * 60 * 1000)
+            if (Date.now() - data.savedAt < 3 * 24 * 60 * 60 * 1000) {
+              savedState = data;
+            } else {
+              localStorage.removeItem(`exam-state-${subjectId}`);
+            }
+          }
+        }
+      } catch (err) {
+        console.error('Error checking saved exam state:', err);
+      }
+
+      if (!active) return;
+
+      if (savedState) {
+        const resume = await swal({
+          title: 'Exame inacabado',
+          text: 'Tens um exame por terminar nesta disciplina. Desejas retomá-lo?',
+          icon: 'info',
+          buttons: ['Não, começar de novo', 'Sim, continuar'],
+          className: themeRef.current === 'dark' ? 'swal-dark' : ''
+        });
+
+        if (!active) return;
+
+        if (resume) {
+          if (savedState.mode !== resolvedParams.mode) {
+            const redirectUrl = new URL(
+              `/exams/${subjectId}/answer/${savedState.mode}`,
+              window.location.origin
+            );
+            if (savedState.n_of_questions) {
+              redirectUrl.searchParams.set('n_of_questions', savedState.n_of_questions);
+            }
+            if (savedState.filter) {
+              redirectUrl.searchParams.set('filter', savedState.filter);
+            }
+            router.push(redirectUrl.pathname + redirectUrl.search);
+            return;
+          }
+
+          // Restore state
+          setQuestions(savedState.questions);
+          setAnswers(new Map<number, string>(savedState.answers));
+          setExamTime(savedState.time);
+          changeQuestion(savedState.currentQuestionIndex || 0);
+          return;
+        } else {
+          // User chose to start fresh, clear the saved state
+          localStorage.removeItem(`exam-state-${subjectId}`);
+          if (session.token) {
+            fetch(`${PROTECTED_API_BASE_URL}/exams/state/${subjectId}`, {
+              method: 'DELETE',
+              headers: {
+                Authorization: `Bearer ${session.token}`
+              }
+            }).catch(console.error);
+          }
+        }
+      }
+
+      // Load fresh exam
+      try {
+        const exam = await generateExam(
+          subjectId,
+          resolvedParams.mode,
+          session.token,
+          nOfQuestions ? Number.parseInt(nOfQuestions, 10) : undefined,
+          filter ?? undefined
+        );
+
+        if (!active) return;
+
         if (exam === null) {
           swal('Ocorreu um erro ao carregar o exame.', 'Por favor tenta novamente.', 'error', {
             className: themeRef.current === 'dark' ? 'swal-dark' : ''
@@ -117,19 +244,21 @@ const Exam: React.FC<ExamPageProps> = ({ params }) => {
           return;
         }
 
-        const storedSeed = getShuffleSeed(id);
+        const storedSeed = getShuffleSeed(subjectId);
         let orderedQuestions = exam;
 
         if (storedSeed) {
           orderedQuestions = shuffleWithSeed(exam, storedSeed);
         } else {
           const newSeed = `${resolvedParams.mode}-${Date.now()}`;
-          setShuffleSeed(id, newSeed);
+          setShuffleSeed(subjectId, newSeed);
           orderedQuestions = shuffleWithSeed(exam, newSeed);
         }
 
         setQuestions(orderedQuestions);
+        setExamTime(0);
       } catch {
+        if (!active) return;
         swal('Error', 'Por favor tenta novamente.', 'error', {
           className: themeRef.current === 'dark' ? 'swal-dark' : ''
         });
@@ -137,21 +266,28 @@ const Exam: React.FC<ExamPageProps> = ({ params }) => {
     }
 
     async function setSubjectName() {
-      setSubject(await getSubjectNameById(Number.parseInt(resolvedParams.id, 10)));
+      const name = await getSubjectNameById(Number.parseInt(resolvedParams.id, 10));
+      if (active) setSubject(name);
     }
 
-    if (nOfQuestions !== undefined && nOfQuestions !== null)
-      getExam(
-        Number.parseInt(resolvedParams.id, 10),
-        resolvedParams.mode,
-        Number.parseInt(nOfQuestions, 10),
-        filter ?? undefined
-      );
-    else getExam(Number.parseInt(resolvedParams.id, 10), resolvedParams.mode);
-
-    setExamTime(0);
+    initExam();
     setSubjectName();
-  }, [resolvedParams.id, resolvedParams.mode, router, setQuestions, session.token, nOfQuestions, filter, setExamTime]);
+
+    return () => {
+      active = false;
+    };
+  }, [
+    resolvedParams.id,
+    resolvedParams.mode,
+    router,
+    setQuestions,
+    setAnswers,
+    setExamTime,
+    changeQuestion,
+    session.token,
+    nOfQuestions,
+    filter
+  ]);
 
   useEffect(() => {
     const interval = setInterval(() => {

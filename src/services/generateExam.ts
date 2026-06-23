@@ -36,7 +36,7 @@ const generateExam = async (
 
     const exam = await res.json();
     return exam;
-  } catch (error) {
+  } catch {
     return null;
   }
 };

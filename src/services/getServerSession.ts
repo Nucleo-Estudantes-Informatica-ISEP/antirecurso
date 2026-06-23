@@ -4,7 +4,8 @@ import { Session } from '@/types/Session';
 import User from '@/types/User';
 
 export async function getServerSession(): Promise<Session | null> {
-  const [session, token] = await Promise.all([getAppAuthSession(), getApiAccessToken()]);
+  const token = await getApiAccessToken();
+  const session = await getAppAuthSession();
   if (!session?.user || !token) return null;
 
   const res = await fetch(`${BASE_URL}/user`, {

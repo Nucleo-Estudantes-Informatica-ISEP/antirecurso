@@ -3,7 +3,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { Copy, ChevronDown, Check } from 'lucide-react';
 import sanitizeOption from 'src/utils/sanitizeOption';
-import { cn } from '@/lib/utils';
 
 interface CopyQuestionMenuProps {
   questionText: string;
