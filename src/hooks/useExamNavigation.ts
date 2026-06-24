@@ -1,15 +1,18 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 export default function useExamNavigation<T>() {
   const [questions, setQuestions] = useState<T[]>([]);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [currentQuestion, setCurrentQuestion] = useState<T | null>(null);
 
+  const questionsLengthRef = useRef(questions.length);
+  questionsLengthRef.current = questions.length;
+
   const changeQuestion = useCallback(
     (i: number) => {
-      if (i >= 0 && i < questions.length) setCurrentQuestionIndex(i);
+      if (i >= 0 && i < questionsLengthRef.current) setCurrentQuestionIndex(i);
     },
-    [questions.length]
+    []
   );
 
   const handleKeyDown = useCallback(
