@@ -37,3 +37,20 @@ export async function getUserScores() {
   if (res.status !== 200) return null;
   return await res.json();
 }
+
+export async function getPendingExams() {
+  const token = await getApiAccessToken();
+  if (!token) return null;
+
+  const res = await fetch(`${BASE_URL}/exams/pending`, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`
+    },
+    cache: 'no-store'
+  });
+
+  if (res.status !== 200) return null;
+  return await res.json();
+}

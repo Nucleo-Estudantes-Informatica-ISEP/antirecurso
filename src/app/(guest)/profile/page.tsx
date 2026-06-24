@@ -1,10 +1,11 @@
+import PendingExamsTable from '@/components/profile/PendingExamsTable';
 import PreviousExamsTable from '@/components/exams/PreviousExamsTable';
 import UserProfileScoreboard from '@/components/profile/UserProfileScoreboard';
 import UserAvatar from '@/components/scoreboard/UserAvatar';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { getServerSession, getUserScores } from '@/services/getServerSession';
+import { getServerSession, getUserScores, getPendingExams } from '@/services/getServerSession';
 import { ArrowRight, BookOpenCheck, CalendarDays, GraduationCap, History, Settings } from 'lucide-react';
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
@@ -17,6 +18,9 @@ const Profile: React.FC = async () => {
 
   const userScores = await getUserScores();
   if (!userScores) redirect('/');
+
+  const pendingExams = await getPendingExams();
+  const hasPendingExams = pendingExams?.data && pendingExams.data.length > 0;
 
   const today = new Date().toLocaleDateString('pt-PT');
 
@@ -70,6 +74,25 @@ const Profile: React.FC = async () => {
         </CardContent>
       </Card>
 
+      {hasPendingExams && (
+        <section className="space-y-10">
+          <section>
+            <div className="flex items-center gap-3 mb-5">
+              <div className="flex size-10 items-center justify-center rounded-lg bg-primary/10 text-primary">
+                <History className="size-5" />
+              </div>
+              <div>
+                <h2 className="text-lg md:text-xl font-bold">Exames por terminar</h2>
+                <p className="text-xs md:text-sm text-muted-foreground">
+                  Continua onde paraste
+                </p>
+              </div>
+            </div>
+            <PendingExamsTable />
+          </section>
+        </section>
+      )}
+
       {userScores.length ? (
         <div className="space-y-10">
           <section>
@@ -102,7 +125,7 @@ const Profile: React.FC = async () => {
             <PreviousExamsTable />
           </section>
         </div>
-      ) : (
+      ) : !hasPendingExams ? (
         <Card className="max-w-2xl mx-auto">
           <CardContent className="p-10 md:p-14 flex flex-col items-center text-center">
             <div className="flex size-14 items-center justify-center rounded-2xl bg-primary/10 text-primary mb-4">
@@ -120,7 +143,7 @@ const Profile: React.FC = async () => {
             </Button>
           </CardContent>
         </Card>
-      )}
+      ) : null}
     </section>
   );
 };

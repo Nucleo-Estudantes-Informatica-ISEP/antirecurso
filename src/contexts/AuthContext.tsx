@@ -57,7 +57,14 @@ async function fetchSession(): Promise<SessionData | null> {
     headers: { 'Content-Type': 'application/json' }
   });
 
-  if (res.status === 200) return (await res.json()) as SessionData;
+  if (res.status === 200) {
+    const data = (await res.json()) as SessionData & { user: User };
+    if (data.user.requires_account_resolution) {
+      window.location.href = '/conta/resolver';
+      return null;
+    }
+    return data;
+  }
   if (res.status === 401) return null;
 
   if (res.status === 404) {
