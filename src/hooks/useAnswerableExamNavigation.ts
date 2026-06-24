@@ -41,9 +41,9 @@ export default function useAnswerableExamNavigation({
     setCurrentQuestion
   } = useExamNavigation<Question>();
 
-  const lastAnswersRef = useRef<string>('');
-  const lastIndexRef = useRef<number>(-1);
-  const lastSavedTimeRef = useRef<number>(-1);
+  const lastAnswersRef = useRef<string>(JSON.stringify(Array.from(new Map<number, string>().entries())));
+  const lastIndexRef = useRef<number>(0);
+  const lastSavedTimeRef = useRef<number>(0);
 
   // Auto-save exam state on progress changes
   useEffect(() => {
