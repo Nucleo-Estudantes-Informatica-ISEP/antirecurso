@@ -77,10 +77,21 @@ export async function refreshAccessToken(token: JWT): Promise<JWT> {
 export const authOptions: NextAuthOptions = {
   secret: process.env.AUTH_SECRET,
   session: {
-    strategy: 'jwt'
+    strategy: 'jwt',
+  },
+  cookies: {
+    sessionToken: {
+      name: 'next-auth.session-token',
+      options: {
+        httpOnly: true,
+        sameSite: 'lax',
+        path: '/',
+        secure: false,
+      },
+    },
   },
   pages: {
-    signIn: '/login'
+    signIn: '/login',
   },
   providers: [ZitadelProvider(zitadelProviderConfig)],
   callbacks: {
