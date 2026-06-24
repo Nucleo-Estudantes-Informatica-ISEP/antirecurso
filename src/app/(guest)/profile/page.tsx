@@ -75,7 +75,7 @@ const Profile: React.FC = async () => {
       </Card>
 
       {hasPendingExams && (
-        <section className="space-y-10">
+        <section className="space-y-10 mb-10">
           <section>
             <div className="flex items-center gap-3 mb-5">
               <div className="flex size-10 items-center justify-center rounded-lg bg-primary/10 text-primary">

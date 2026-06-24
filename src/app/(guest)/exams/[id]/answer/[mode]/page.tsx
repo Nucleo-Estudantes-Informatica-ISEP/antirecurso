@@ -121,7 +121,8 @@ const Exam: React.FC<ExamPageProps> = ({ params }) => {
         const subjectId = Number.parseInt(resolvedParams.id, 10);
         localStorage.removeItem(`exam-state-${subjectId}`);
         if (session.token) {
-          fetch(`${PROTECTED_API_BASE_URL}/exams/state/${subjectId}`, {
+          const mode = resolvedParams.mode;
+          fetch(`${PROTECTED_API_BASE_URL}/exams/state?subject_id=${subjectId}&mode=${encodeURIComponent(mode)}`, {
             method: 'DELETE',
             headers: {
               Authorization: `Bearer ${session.token}`
@@ -150,7 +151,8 @@ const Exam: React.FC<ExamPageProps> = ({ params }) => {
 
       try {
         if (session.token) {
-          const res = await fetch(`${PROTECTED_API_BASE_URL}/exams/state/${subjectId}`, {
+          const mode = resolvedParams.mode;
+          const res = await fetch(`${PROTECTED_API_BASE_URL}/exams/state?subject_id=${subjectId}&mode=${encodeURIComponent(mode)}`, {
             headers: {
               Authorization: `Bearer ${session.token}`
             }
@@ -214,7 +216,8 @@ const Exam: React.FC<ExamPageProps> = ({ params }) => {
           // User chose to start fresh, clear the saved state
           localStorage.removeItem(`exam-state-${subjectId}`);
           if (session.token) {
-            fetch(`${PROTECTED_API_BASE_URL}/exams/state/${subjectId}`, {
+            const mode = resolvedParams.mode;
+            fetch(`${PROTECTED_API_BASE_URL}/exams/state?subject_id=${subjectId}&mode=${encodeURIComponent(mode)}`, {
               method: 'DELETE',
               headers: {
                 Authorization: `Bearer ${session.token}`
