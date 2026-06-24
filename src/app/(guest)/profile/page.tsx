@@ -74,58 +74,61 @@ const Profile: React.FC = async () => {
         </CardContent>
       </Card>
 
-      {hasPendingExams && (
-        <section className="space-y-10 mb-10">
-          <section>
-            <div className="flex items-center gap-3 mb-5">
-              <div className="flex size-10 items-center justify-center rounded-lg bg-primary/10 text-primary">
-                <History className="size-5" />
+      {(hasPendingExams || userScores.length) && (
+        <div className="space-y-10">
+          {hasPendingExams && (
+            <section>
+              <div className="flex items-center gap-3 mb-5">
+                <div className="flex size-10 items-center justify-center rounded-lg bg-primary/10 text-primary">
+                  <History className="size-5" />
+                </div>
+                <div>
+                  <h2 className="text-lg md:text-xl font-bold">Exames por terminar</h2>
+                  <p className="text-xs md:text-sm text-muted-foreground">
+                    Continua onde paraste
+                  </p>
+                </div>
               </div>
-              <div>
-                <h2 className="text-lg md:text-xl font-bold">Exames por terminar</h2>
-                <p className="text-xs md:text-sm text-muted-foreground">
-                  Continua onde paraste
-                </p>
-              </div>
-            </div>
-            <PendingExamsTable />
-          </section>
-        </section>
+              <PendingExamsTable />
+            </section>
+          )}
+          {userScores.length && (
+            <>
+              <section>
+                <div className="flex items-center gap-3 mb-5">
+                  <div className="flex size-10 items-center justify-center rounded-lg bg-primary/10 text-primary">
+                    <GraduationCap className="size-5" />
+                  </div>
+                  <div>
+                    <h2 className="text-lg md:text-xl font-bold">O teu score por disciplina</h2>
+                    <p className="text-xs md:text-sm text-muted-foreground">
+                      Acompanha o teu desempenho ao longo das cadeiras
+                    </p>
+                  </div>
+                </div>
+                <UserProfileScoreboard userScores={userScores} />
+              </section>
+
+              <section>
+                <div className="flex items-center gap-3 mb-5">
+                  <div className="flex size-10 items-center justify-center rounded-lg bg-primary/10 text-primary">
+                    <History className="size-5" />
+                  </div>
+                  <div>
+                    <h2 className="text-lg md:text-xl font-bold">Os teus exames</h2>
+                    <p className="text-xs md:text-sm text-muted-foreground">
+                      Histórico dos exames que já realizaste
+                    </p>
+                  </div>
+                </div>
+                <PreviousExamsTable />
+              </section>
+            </>
+          )}
+        </div>
       )}
 
-      {userScores.length ? (
-        <div className="space-y-10">
-          <section>
-            <div className="flex items-center gap-3 mb-5">
-              <div className="flex size-10 items-center justify-center rounded-lg bg-primary/10 text-primary">
-                <GraduationCap className="size-5" />
-              </div>
-              <div>
-                <h2 className="text-lg md:text-xl font-bold">O teu score por disciplina</h2>
-                <p className="text-xs md:text-sm text-muted-foreground">
-                  Acompanha o teu desempenho ao longo das cadeiras
-                </p>
-              </div>
-            </div>
-            <UserProfileScoreboard userScores={userScores} />
-          </section>
-
-          <section>
-            <div className="flex items-center gap-3 mb-5">
-              <div className="flex size-10 items-center justify-center rounded-lg bg-primary/10 text-primary">
-                <History className="size-5" />
-              </div>
-              <div>
-                <h2 className="text-lg md:text-xl font-bold">Os teus exames</h2>
-                <p className="text-xs md:text-sm text-muted-foreground">
-                  Histórico dos exames que já realizaste
-                </p>
-              </div>
-            </div>
-            <PreviousExamsTable />
-          </section>
-        </div>
-      ) : !hasPendingExams ? (
+      {!hasPendingExams && !userScores.length && (
         <Card className="max-w-2xl mx-auto">
           <CardContent className="p-10 md:p-14 flex flex-col items-center text-center">
             <div className="flex size-14 items-center justify-center rounded-2xl bg-primary/10 text-primary mb-4">
@@ -143,7 +146,7 @@ const Profile: React.FC = async () => {
             </Button>
           </CardContent>
         </Card>
-      ) : null}
+      )}
     </section>
   );
 };

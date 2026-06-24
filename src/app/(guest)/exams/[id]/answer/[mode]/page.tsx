@@ -52,6 +52,8 @@ const Exam: React.FC<ExamPageProps> = ({ params }) => {
   const { theme } = useTheme();
   const themeRef = useRef(theme);
   themeRef.current = theme;
+  const examKeyRef = useRef<string | null>(null);
+  const resumePromptShownRef = useRef(false);
 
   const { setExamResult, examTime, setExamTime } = useContext(ExamContext);
   const {
@@ -144,6 +146,12 @@ const Exam: React.FC<ExamPageProps> = ({ params }) => {
   useEffect(() => {
     let active = true;
 
+    const examKey = `${resolvedParams.id}-${resolvedParams.mode}`;
+    if (examKeyRef.current !== examKey) {
+      examKeyRef.current = examKey;
+      resumePromptShownRef.current = false;
+    }
+
     async function initExam() {
       const subjectId = Number.parseInt(resolvedParams.id, 10);
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -179,41 +187,39 @@ const Exam: React.FC<ExamPageProps> = ({ params }) => {
 
       if (!active) return;
 
-      if (savedState) {
-        const resume = await swal({
-          title: 'Exame inacabado',
-          text: 'Tens um exame por terminar nesta disciplina. Desejas retomá-lo?',
-          icon: 'info',
-          buttons: ['Não, começar de novo', 'Sim, continuar'],
-          className: themeRef.current === 'dark' ? 'swal-dark' : ''
-        });
+      if (savedState && !resumePromptShownRef.current) {
+        const resumeParam = searchParams.get('resume');
+        const modeMatches = savedState.mode === resolvedParams.mode;
 
-        if (!active) return;
+        if (!resumeParam && modeMatches) {
+          resumePromptShownRef.current = true;
+          const shouldResume = await swal({
+            title: 'Exame inacabado',
+            text: 'Tens um exame por terminar nesta disciplina. Desejas retomá-lo?',
+            icon: 'info',
+            buttons: ['Não, começar de novo', 'Sim, continuar'],
+            className: themeRef.current === 'dark' ? 'swal-dark' : ''
+          });
 
-        if (resume) {
-          if (savedState.mode !== resolvedParams.mode) {
-            const redirectUrl = new URL(
-              `/exams/${subjectId}/answer/${savedState.mode}`,
-              window.location.origin
-            );
-            if (savedState.n_of_questions) {
-              redirectUrl.searchParams.set('n_of_questions', savedState.n_of_questions);
-            }
-            if (savedState.filter) {
-              redirectUrl.searchParams.set('filter', savedState.filter);
-            }
-            router.push(redirectUrl.pathname + redirectUrl.search);
+          if (!active) return;
+
+          if (shouldResume) {
+            setQuestions(savedState.questions);
+            setAnswers(new Map<number, string>(savedState.answers));
+            setExamTime(savedState.time);
+            changeQuestion(savedState.currentQuestionIndex || 0);
             return;
           }
-
-          // Restore state
+        } else if (resumeParam === 'true' && modeMatches) {
+          resumePromptShownRef.current = true;
           setQuestions(savedState.questions);
           setAnswers(new Map<number, string>(savedState.answers));
           setExamTime(savedState.time);
           changeQuestion(savedState.currentQuestionIndex || 0);
           return;
-        } else {
-          // User chose to start fresh, clear the saved state
+        }
+
+        if (modeMatches && !resumeParam) {
           localStorage.removeItem(`exam-state-${subjectId}`);
           if (session.token) {
             const mode = resolvedParams.mode;
