@@ -29,8 +29,8 @@ function clearAuthCookies(response: NextResponse, existingCookieNames: string[] 
 
 export async function GET(request: NextRequest) {
   const existingCookieNames = request.cookies.getAll().map(({ name }) => name);
-  const accessToken = await getApiAccessToken();
   const session = await getAppAuthSession();
+  const accessToken = await getApiAccessToken();
 
   if (authDebugEnabled) {
     console.info('[auth][session-route]', {
