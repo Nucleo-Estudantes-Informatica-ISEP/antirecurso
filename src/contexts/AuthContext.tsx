@@ -60,8 +60,11 @@ async function fetchSession(): Promise<SessionData | null> {
   if (res.status === 200) {
     const data = (await res.json()) as SessionData & { user: User };
     if (data.user.requires_account_resolution) {
-      window.location.href = '/conta/resolver';
-      return null;
+      if (window.location.pathname !== '/account/resolve') {
+        window.location.href = '/account/resolve';
+        return null;
+      }
+      return data;
     }
     return data;
   }
