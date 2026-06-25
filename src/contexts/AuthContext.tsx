@@ -28,7 +28,11 @@ export function AuthContextProvider({ children, ...props }: AuthContextProviderP
 
   const revalidate = async () => {
     const session = await fetchSession();
-    if (!session) return;
+    if (!session) {
+      clear();
+      window.location.href = '/';
+      return;
+    }
 
     const { token, user } = session;
     setToken(token);
