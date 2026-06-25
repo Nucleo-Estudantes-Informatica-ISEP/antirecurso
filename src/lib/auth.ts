@@ -19,7 +19,8 @@ const zitadelProviderConfig: Parameters<typeof ZitadelProvider>[0] = {
   clientSecret: process.env.AUTH_CLIENT_SECRET ?? '',
   authorization: {
     params: {
-      scope: process.env.AUTH_SCOPES ?? 'openid email profile offline_access'
+      scope: process.env.AUTH_SCOPES ?? 'openid email profile offline_access',
+      prompt: 'select_account'
     }
   }
 };
