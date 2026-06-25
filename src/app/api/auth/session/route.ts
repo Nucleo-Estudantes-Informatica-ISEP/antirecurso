@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { BASE_URL } from '@/services/api';
 import { CLIENT_SESSION_TOKEN, getApiAccessToken, getAppAuthSession } from '@/lib/server-auth';
 
-const authDebugEnabled = process.env.AUTH_DEBUG === 'true';
+const authDebugEnabled = process.env.AUTH_DEBUG ='true';
 
 const AUTH_COOKIE_NAMES = [
   'next-auth.session-token',
@@ -13,18 +13,10 @@ const AUTH_COOKIE_NAMES = [
   '__Host-next-auth.csrf-token'
 ] as const;
 
-function clearAuthCookies(response: NextResponse, existingCookieNames: string[] = []) {
-  const cookieNames = new Set<string>(AUTH_COOKIE_NAMES);
-
-  for (const existingCookieName of existingCookieNames) {
-    if (AUTH_COOKIE_NAMES.some((cookieName) => existingCookieName.startsWith(`${cookieName}.`))) {
-      cookieNames.add(existingCookieName);
-    }
-  }
-
-  for (const cookieName of Array.from(cookieNames)) {
-    response.cookies.delete(cookieName);
-  }
+function clearAuthCookies(_response: NextResponse, existingCookieNames: string[] = []) {
+  // NOTE: cookie destruction moved to /api/auth/signout so /session is read-only.
+  // Left as a no-op to avoid accidental reintroduction of silent logout behavior.
+  return _response;
 }
 
 export async function GET(request: NextRequest) {
@@ -53,9 +45,7 @@ export async function GET(request: NextRequest) {
       });
     }
 
-    const response = new NextResponse(null, { status: 404 });
-    clearAuthCookies(response, existingCookieNames);
-    return response;
+    return new NextResponse(null, { status: 401 });
   }
 
   if (!BASE_URL) {
@@ -85,9 +75,7 @@ export async function GET(request: NextRequest) {
       });
     }
 
-    const response = new NextResponse(null, { status: 404 });
-    clearAuthCookies(response, existingCookieNames);
-    return response;
+    return new NextResponse(null, { status: 502 });
   }
 
   return NextResponse.json(
