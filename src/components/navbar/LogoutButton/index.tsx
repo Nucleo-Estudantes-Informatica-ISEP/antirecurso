@@ -1,6 +1,9 @@
 'use client';
 
+import { Button } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
 import useSession from '@/hooks/useSession';
+import { LogOut } from 'lucide-react';
 import { signOut } from 'next-auth/react';
 import { useTheme } from 'next-themes';
 import { useRouter } from 'next/navigation';
@@ -14,7 +17,6 @@ interface LogoutButtonProps {
 const LogoutButton: React.FC<LogoutButtonProps> = ({ className, onClick }) => {
   const session = useSession();
   const router = useRouter();
-
   const { theme } = useTheme();
 
   const logoutButtonHandler = async () => {
@@ -30,9 +32,7 @@ const LogoutButton: React.FC<LogoutButtonProps> = ({ className, onClick }) => {
 
     if (!confirmed) return;
 
-    const res = await fetch('/api/auth/logout', {
-      method: 'PATCH'
-    });
+    const res = await fetch('/api/auth/logout', { method: 'PATCH' });
 
     if (res.status === 200) {
       const { url } = (await res.json()) as { url?: string };
@@ -63,9 +63,14 @@ const LogoutButton: React.FC<LogoutButtonProps> = ({ className, onClick }) => {
   };
 
   return (
-    <button className={`text-red-600 ${className}`} onClick={logoutButtonHandler}>
-      Terminar Sessão
-    </button>
+    <Button
+      variant="outline"
+      className={cn('text-destructive hover:text-destructive', className)}
+      onClick={logoutButtonHandler}
+    >
+      <LogOut className="size-4" />
+      Terminar sessão
+    </Button>
   );
 };
 

@@ -1,8 +1,9 @@
 'use client';
 
-import { Dispatch, SetStateAction } from 'react';
-
+import { Button } from '@/components/ui/button';
 import { PaginationMetadata } from '@/types/Pagination';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { Dispatch, SetStateAction } from 'react';
 
 interface PaginationProps {
   metadata: PaginationMetadata;
@@ -14,7 +15,10 @@ const MAX_LINKS = 7;
 const MAX_MOBILE_LINKS = 5;
 
 const Pagination: React.FC<PaginationProps> = ({ metadata, fetchUrl, setFetchUrl }) => {
-  const { width } = document.documentElement.getBoundingClientRect();
+  const { width } =
+    typeof document !== 'undefined'
+      ? document.documentElement.getBoundingClientRect()
+      : { width: 1280 };
   const maxLinks = width > 768 ? MAX_LINKS : MAX_MOBILE_LINKS;
 
   if (metadata.lastPage <= 1) {
@@ -28,7 +32,6 @@ const Pagination: React.FC<PaginationProps> = ({ metadata, fetchUrl, setFetchUrl
     } else {
       url.searchParams.set('page', String(page));
     }
-
     return `${url.pathname}${url.search}`;
   };
 
@@ -57,37 +60,44 @@ const Pagination: React.FC<PaginationProps> = ({ metadata, fetchUrl, setFetchUrl
 
   return (
     <nav className="w-full">
-      <ul className="flex justify-center items-center py-6 gap-x-3">
+      <ul className="flex justify-center items-center py-6 gap-1.5">
         <li>
-          <button
+          <Button
+            size="icon"
+            variant="outline"
             disabled={metadata.currentPage === metadata.firstPage}
-            className="flex items-center justify-center px-2 py-1 md:px-3 md:py-1.5 rounded-full cursor-pointer border-2 text-center hover:bg-primary hover:text-white disabled:opacity-50 disabled:pointer-events-none"
-            onClick={() => setFetchUrl(buildPageUrl(metadata.currentPage - 1))}>
-            {'<'}
-          </button>
+            onClick={() => setFetchUrl(buildPageUrl(metadata.currentPage - 1))}
+            className="size-9 rounded-full"
+            aria-label="Página anterior"
+          >
+            <ChevronLeft className="size-4" />
+          </Button>
         </li>
 
         {pageNumbers.map((page) => (
           <li key={page}>
-            <button
-              className={`flex items-center justify-center w-7 h-7 md:w-9 md:h-9 rounded-full cursor-pointer border-2 text-center ${
-                page === metadata.currentPage
-                  ? 'bg-primary text-white'
-                  : 'hover:bg-primary hover:text-white'
-              }`}
-              onClick={() => setFetchUrl(buildPageUrl(page))}>
-              <span className="text-xs md:text-md">{page}</span>
-            </button>
+            <Button
+              size="icon"
+              variant={page === metadata.currentPage ? 'default' : 'outline'}
+              onClick={() => setFetchUrl(buildPageUrl(page))}
+              className="size-9 rounded-full text-sm"
+            >
+              {page}
+            </Button>
           </li>
         ))}
 
         <li>
-          <button
+          <Button
+            size="icon"
+            variant="outline"
             disabled={!metadata.nextPageUrl}
-            className="flex items-center justify-center px-2 py-1 md:px-3 md:py-1.5 rounded-full cursor-pointer border-2 text-center hover:bg-primary hover:text-white disabled:opacity-50 disabled:pointer-events-none"
-            onClick={() => setFetchUrl(buildPageUrl(metadata.currentPage + 1))}>
-            {'>'}
-          </button>
+            onClick={() => setFetchUrl(buildPageUrl(metadata.currentPage + 1))}
+            className="size-9 rounded-full"
+            aria-label="Próxima página"
+          >
+            <ChevronRight className="size-4" />
+          </Button>
         </li>
       </ul>
     </nav>

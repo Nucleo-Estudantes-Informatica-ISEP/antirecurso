@@ -4,7 +4,8 @@ import { Session } from '@/types/Session';
 import User from '@/types/User';
 
 export async function getServerSession(): Promise<Session | null> {
-  const [session, token] = await Promise.all([getAppAuthSession(), getApiAccessToken()]);
+  const token = await getApiAccessToken();
+  const session = await getAppAuthSession();
   if (!session?.user || !token) return null;
 
   const res = await fetch(`${BASE_URL}/user`, {
@@ -25,6 +26,23 @@ export async function getUserScores() {
   if (!token) return null;
 
   const res = await fetch(`${BASE_URL}/user/scores`, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`
+    },
+    cache: 'no-store'
+  });
+
+  if (res.status !== 200) return null;
+  return await res.json();
+}
+
+export async function getPendingExams() {
+  const token = await getApiAccessToken();
+  if (!token) return null;
+
+  const res = await fetch(`${BASE_URL}/exams/pending`, {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',

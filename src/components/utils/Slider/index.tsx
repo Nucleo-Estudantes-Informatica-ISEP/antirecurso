@@ -1,3 +1,7 @@
+'use client';
+
+import { Slider as ShadSlider } from '@/components/ui/slider';
+
 interface SliderProps {
   min: number;
   max: number;
@@ -8,13 +12,12 @@ interface SliderProps {
 const Slider: React.FC<SliderProps> = ({ min, max, value, onChange }) => {
   return (
     <div className="w-full relative">
-      <input
-        type="range"
+      <ShadSlider
         min={min}
         max={max}
-        value={value}
-        onChange={(e) => onChange(parseInt(e.target.value))}
-        className="w-full h-2 bg-gray-300 dark:bg-gray-400 rounded-full appearance-none cursor-pointer"
+        step={1}
+        value={[value]}
+        onValueChange={(values) => onChange(values[0])}
       />
     </div>
   );

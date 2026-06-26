@@ -28,7 +28,11 @@ export function AuthContextProvider({ children, ...props }: AuthContextProviderP
 
   const revalidate = async () => {
     const session = await fetchSession();
-    if (!session) return;
+    if (!session) {
+      clear();
+      window.location.href = '/';
+      return;
+    }
 
     const { token, user } = session;
     setToken(token);
@@ -57,7 +61,17 @@ async function fetchSession(): Promise<SessionData | null> {
     headers: { 'Content-Type': 'application/json' }
   });
 
-  if (res.status === 200) return (await res.json()) as SessionData;
+  if (res.status === 200) {
+    const data = (await res.json()) as SessionData & { user: User };
+    if (data.user.requires_account_resolution) {
+      if (window.location.pathname !== '/account/resolve') {
+        window.location.href = '/account/resolve';
+        return null;
+      }
+      return data;
+    }
+    return data;
+  }
   if (res.status === 401) return null;
 
   if (res.status === 404) {

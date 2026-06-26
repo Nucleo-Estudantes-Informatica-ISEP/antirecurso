@@ -2,16 +2,20 @@
 
 import ScoreboardPodium from '@/components/scoreboard/ScoreboardPodium';
 import ScoreboardRow from '@/components/scoreboard/ScoreboardRow';
+import { Badge } from '@/components/ui/badge';
+import { Card, CardContent } from '@/components/ui/card';
+import { Skeleton } from '@/components/ui/skeleton';
+import { Table, TableBody } from '@/components/ui/table';
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import useSession from '@/hooks/useSession';
 import { BASE_URL } from '@/services/api';
 import Leaderboard from '@/types/Leaderboard';
 import getSubjectNameById from '@/utils/getSubjectNameById';
-import { sanitizeMode } from '@/utils/sanitizeMode';
 import { fetcher } from '@/utils/SWRFetcher';
+import { sanitizeMode } from '@/utils/sanitizeMode';
 import { motion } from 'framer-motion';
+import { Info, Trophy } from 'lucide-react';
 import { use, useEffect, useState } from 'react';
-import Skeleton from 'react-loading-skeleton';
-import 'react-loading-skeleton/dist/skeleton.css';
 import useSWR from 'swr';
 
 interface ScoreboardPageProps {
@@ -39,69 +43,103 @@ const ScoreboardPage: React.FC<ScoreboardPageProps> = ({ params }) => {
       const s = await getSubjectNameById(id);
       setSubjectName(s);
     }
-
     fetchSubjectNameById(Number.parseInt(resolvedParams.id, 10));
   }, [resolvedParams.id]);
 
   return (
-    <section className="flex flex-col items-center w-full mt-8">
-      <div className="flex flex-col md:flex-row items-center justify-center">
-        {examModes.map((m, i) => (
-          <button
-            key={i}
-            className={`${
-              mode === m ? 'bg-primary text-white' : 'text-primary'
-            } w-40 py-2 capitalize rounded-lg`}
-            onClick={() => setMode(m)}>
-            {sanitizeMode(m)}
-          </button>
-        ))}
+    <section className="container py-10 md:py-14 w-full">
+      <div className="flex flex-col items-center text-center mb-8">
+        <Badge variant="soft" className="mb-3 gap-1.5">
+          <Trophy className="size-3.5" />
+          Scoreboard
+        </Badge>
+        <h1 className="text-balance text-3xl md:text-4xl font-bold tracking-tight">
+          Scoreboard de{' '}
+          {subjectName ? (
+            <span className="gradient-text capitalize">{subjectName}</span>
+          ) : (
+            <Skeleton className="inline-block h-8 w-40 align-middle" />
+          )}
+        </h1>
       </div>
 
-      <p className="px-4 text-xl font-bold text-center uppercase mt-8 mb-5">
-        Scoreboard de{' '}
-        {subjectName ? (
-          <span className="text-primary">{subjectName}</span>
-        ) : (
-          <Skeleton width={150} />
-        )}
-      </p>
+      <div className="flex justify-center mb-8 overflow-x-auto">
+        <Tabs value={mode} onValueChange={setMode}>
+          <TabsList className="h-auto p-1 flex-wrap">
+            {examModes.map((m) => (
+              <TabsTrigger key={m} value={m} className="capitalize">
+                {sanitizeMode(m)}
+              </TabsTrigger>
+            ))}
+          </TabsList>
+        </Tabs>
+      </div>
 
       {scoreboard !== undefined ? (
-        <motion.section className="grid w-full my-5 place-items-center">
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.3 }}
+          className="w-full"
+        >
           {scoreboard.scores.length === 0 ? (
-            <p className="text-center">Sem nenhum utilizador registado</p>
+            <Card className="max-w-xl mx-auto">
+              <CardContent className="p-10 text-center text-muted-foreground">
+                Sem nenhum utilizador registado neste modo.
+              </CardContent>
+            </Card>
           ) : (
             <>
               <ScoreboardPodium scores={scoreboard.scores} uid={!user ? undefined : user.id} />
-              <table className="text-sm text-center">
-                <tbody>
-                  {scoreboard.scores.slice(3).map((line, key) => (
-                    <ScoreboardRow
-                      line={line}
-                      position={key + 4}
-                      key={key}
-                      highlight={!!user && user.id === line.user_id}
-                    />
-                  ))}
-                </tbody>
-              </table>
+
+              {scoreboard.scores.length > 3 && (
+                <Card className="max-w-3xl mx-auto mt-8 overflow-hidden">
+                  <Table>
+                    <TableBody>
+                      {scoreboard.scores.slice(3).map((line, key) => (
+                        <ScoreboardRow
+                          line={line}
+                          position={key + 4}
+                          key={key}
+                          highlight={!!user && user.id === line.user_id}
+                        />
+                      ))}
+                    </TableBody>
+                  </Table>
+                </Card>
+              )}
             </>
           )}
-        </motion.section>
+        </motion.div>
       ) : (
-        <Skeleton className="mt-3" height={40} width={600} count={30} />
+        <div className="grid grid-cols-3 max-w-3xl mx-auto gap-4 mb-8">
+          {Array.from({ length: 3 }).map((_, i) => (
+            <Skeleton key={i} className="h-48 rounded-xl" />
+          ))}
+        </div>
       )}
-      <h3 className="font-bold text-xl md:text-3xl mt-4">
-        Total de exames realizados:{' '}
-        <span className="text-primary font-bold">{scoreboard?.total}</span>
-      </h3>
-      <p className="md:text-base text-sm text-slate-500 text-center mx-4 my-4 align-middle">
-        Nota: Para estares presente no scoreboard deves pertencer ter respondido, no mínimo, a{' '}
-        <span className="font-bold text-primary">{scoreboard?.min_answers}</span> exames e estar
-        entre as <span className="font-bold text-primary">{scoreboard?.limit}</span> melhores
-        médias.
-      </p>
+
+      <div className="mt-10 max-w-3xl mx-auto space-y-3">
+        <div className="flex items-center justify-center gap-3">
+          <Badge variant="outline" className="text-base font-bold gap-1.5">
+            <Trophy className="size-4 text-primary" />
+            {scoreboard?.total ?? 0}
+          </Badge>
+          <span className="text-sm text-muted-foreground">exames realizados</span>
+        </div>
+        <Card className="bg-muted/40 border-dashed">
+          <CardContent className="p-4 flex items-start gap-3 text-sm">
+            <Info className="size-4 mt-0.5 text-primary shrink-0" />
+            <p className="text-muted-foreground">
+              Para apareceres no scoreboard precisas de ter respondido a, no mínimo,{' '}
+              <span className="font-semibold text-foreground">{scoreboard?.min_answers}</span>{' '}
+              exames e estar entre as{' '}
+              <span className="font-semibold text-foreground">{scoreboard?.limit}</span> melhores
+              médias.
+            </p>
+          </CardContent>
+        </Card>
+      </div>
     </section>
   );
 };

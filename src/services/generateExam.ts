@@ -9,49 +9,36 @@ const generateExam = async (
   n_of_questions?: number,
   filter?: string
 ): Promise<Question[] | null> => {
-  if (config.mandatoryAuthModes.includes(mode)) {
-    if (!token) return null;
-    if (!n_of_questions) {
-      const res = await fetch(PROTECTED_API_BASE_URL + `/exams/generate/${id}?mode=${mode}`, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`
-        }
-      });
-      if (res.status !== 200) return null;
-      const exam = await res.json();
-      return exam;
-    } else {
-      const res = await fetch(
-        PROTECTED_API_BASE_URL +
-          `/exams/generate/${id}?mode=${mode}&n_of_questions=${n_of_questions}${
-            filter ? `&filter=${filter}` : ''
-          }`,
-        {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`
-          }
-        }
-      );
-      if (res.status !== 200) return null;
-      const exam = await res.json();
-      return exam;
-    }
+  if (config.mandatoryAuthModes.includes(mode) && !token) return null;
+
+  const urlParams = new URLSearchParams();
+  urlParams.set('mode', mode);
+  if (n_of_questions) urlParams.set('n_of_questions', n_of_questions.toString());
+  if (filter) urlParams.set('filter', filter);
+
+  const baseUrl = token ? PROTECTED_API_BASE_URL : BASE_URL;
+  const url = `${baseUrl}/exams/generate/${id}?${urlParams.toString()}`;
+
+  const headers: HeadersInit = {
+    'Content-Type': 'application/json'
+  };
+
+  if (token) {
+    headers.Authorization = `Bearer ${token}`;
   }
 
-  const res = await fetch(BASE_URL + `/exams/generate/${id}?mode=${mode}`, {
-    method: 'GET',
-    headers: {
-      'Content-Type': 'application/json'
-    }
-  });
-  if (res.status !== 200) return null;
+  try {
+    const res = await fetch(url, {
+      method: 'GET',
+      headers
+    });
+    if (res.status !== 200) return null;
 
-  const exam = await res.json();
-  return exam;
+    const exam = await res.json();
+    return exam;
+  } catch {
+    return null;
+  }
 };
 
 export default generateExam;

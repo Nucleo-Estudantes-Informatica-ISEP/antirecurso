@@ -13,15 +13,19 @@ export const metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="pt">
-      <body className="transition-colors dark:bg-primary-dark">
+    <html lang="pt" suppressHydrationWarning>
+      <body className="min-h-screen bg-background text-foreground antialiased transition-colors">
         <AuthContextProvider>
           <ThemeProvider>
             <Suspense>
-              <Topbar />
-              <main className="flex">
-                <div className="flex items-stretch w-full min-h-[calc(100vh-5rem)]">{children}</div>
-              </main>
+              <div className="relative flex min-h-screen flex-col">
+                <Topbar />
+                <main className="flex-1 flex">
+                  <div className="flex items-stretch w-full min-h-[calc(100vh-4.5rem)]">
+                    {children}
+                  </div>
+                </main>
+              </div>
               <ChangelogPopUp />
             </Suspense>
             <CookieConsent />

@@ -1,5 +1,6 @@
 'use client';
 
+import { Card, CardContent } from '@/components/ui/card';
 import toFixed from '@/utils/toFixed';
 import GradeCalculatorContextProvider from 'src/contexts/GradeCalculatorContext';
 import GoalGradeCalculator from '../GoalGradeCalculator';
@@ -16,33 +17,54 @@ interface GradeCalculatorProps {
 const GradeCalculatorContainer: React.FC<GradeCalculatorProps> = ({ subjectStats }) => {
   return (
     <GradeCalculatorContextProvider>
-      <section className="flex items-center flex-col md:flex-row justify-center gap-y-8 gap-x-24 w-full">
-        <article className="flex flex-col justify-between items-center gap-y-2 min-h-40 md:h-64 w-full max-w-lg p-8 text-xl bg-gray-100 rounded-md gap-x-2 dark:bg-secondary-dark text-left">
-          <h2 className="text-xl md:text-3xl font-bold text-center">Peso do Exame</h2>
-          <span className="font-bold text-primary align-middle text-3xl md:text-4xl text-center">
-            {toFixed(subjectStats.exam_weight * 100, 2)}%
-          </span>
-          <div className="text-center text-base md:block hidden">
-            A tua nota final é calculada com base neste peso.
-          </div>
-        </article>
-        <article className="flex flex-col justify-between items-center gap-y-2 min-h-40 md:h-64 w-full max-w-lg p-8 text-xl bg-gray-100 rounded-md gap-x-2 dark:bg-secondary-dark text-left">
-          <h2 className="text-xl md:text-3xl font-bold text-center">Nota Mínima</h2>
-          <span className="font-bold text-primary align-middle text-3xl md:text-4xl text-center">
-            {subjectStats.min_grade} <span className="text-2xl">valores</span>
-          </span>
-          <div className="text-center text-base md:block hidden">
-            Se obtiveres uma nota inferior a este valor no exame és reprovado automaticamente.
-          </div>
-        </article>
-      </section>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-5 mb-6">
+        <Card>
+          <CardContent className="p-6 flex flex-col items-center text-center gap-2">
+            <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">
+              Peso do exame
+            </h2>
+            <p className="text-3xl md:text-4xl font-bold text-primary">
+              {toFixed(subjectStats.exam_weight * 100, 2)}%
+            </p>
+            <p className="text-sm text-muted-foreground max-w-xs">
+              A tua nota final é calculada com base neste peso.
+            </p>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardContent className="p-6 flex flex-col items-center text-center gap-2">
+            <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">
+              Nota mínima
+            </h2>
+            <p className="text-3xl md:text-4xl font-bold text-primary">
+              {subjectStats.min_grade}{' '}
+              <span className="text-lg text-muted-foreground font-medium">valores</span>
+            </p>
+            <p className="text-sm text-muted-foreground max-w-xs">
+              Abaixo deste valor no exame és reprovado automaticamente.
+            </p>
+          </CardContent>
+        </Card>
+      </div>
 
-      <GradeCalculator
-        examGrade={parseInt(subjectStats.average_grade)}
-        weight={subjectStats.exam_weight}
-        minGrade={subjectStats.min_grade}
-      />
-      <GoalGradeCalculator weight={subjectStats.exam_weight} min_grade={subjectStats.min_grade} />
+      <Card>
+        <CardContent className="p-6 md:p-8">
+          <GradeCalculator
+            examGrade={parseInt(subjectStats.average_grade)}
+            weight={subjectStats.exam_weight}
+            minGrade={subjectStats.min_grade}
+          />
+        </CardContent>
+      </Card>
+
+      <Card className="mt-4 md:mt-5">
+        <CardContent className="p-6 md:p-8">
+          <GoalGradeCalculator
+            weight={subjectStats.exam_weight}
+            min_grade={subjectStats.min_grade}
+          />
+        </CardContent>
+      </Card>
     </GradeCalculatorContextProvider>
   );
 };

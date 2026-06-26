@@ -1,15 +1,14 @@
 'use client';
 
-import PrimaryButton from '@/components/utils/PrimaryButton';
+import { Button } from '@/components/ui/button';
 import config from '@/config';
-import useIsMobile from '@/hooks/useIsMobile';
 import { AnimatePresence, motion } from 'framer-motion';
+import { Cookie } from 'lucide-react';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 
 const CookieConsent: React.FC = () => {
   const [visible, setVisible] = useState(false);
-  const isMobile = useIsMobile();
 
   useEffect(() => {
     const consent = localStorage.getItem(config.localStorage.consent);
@@ -21,31 +20,35 @@ const CookieConsent: React.FC = () => {
     setVisible(false);
   };
 
-  const position = isMobile ? -160 : -80;
-
   return (
     <AnimatePresence>
       {visible && (
         <motion.div
-          className="fixed -bottom-40 md:-bottom-20 left-0 w-full px-8 py-4 bg-white dark:bg-secondary-dark shadow-black shadow-lg border-t-gray-100 flex flex-col md:flex-row items-center justify-between gap-4"
-          animate={{ y: [0, position] }}
-          exit={{ y: [position, 0] }}
-          transition={{ duration: 0.3, ease: 'easeOut' }}>
-          <div>
-            <p className="font-medium">
-              🍪 Usamos cookies essenciais para garantir que o AntiRecurso funcione corretamente.{' '}
-              <Link
-                href="/cookie-policy"
-                className="text-blue-700 dark:text-blue-300 hover:underline cursor-pointer"
-                tabIndex={1}>
-                Sabe mais aqui.
-              </Link>
-            </p>
-          </div>
-          <div className="max-md:w-full">
-            <PrimaryButton onClick={handleConfirm} className="max-md:w-full" tabIndex={2}>
+          initial={{ y: 80, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          exit={{ y: 80, opacity: 0 }}
+          transition={{ duration: 0.3, ease: 'easeOut' }}
+          className="fixed inset-x-0 bottom-4 z-40 px-4"
+        >
+          <div className="mx-auto max-w-3xl rounded-2xl border bg-card/95 backdrop-blur shadow-xl p-4 md:p-5 flex flex-col md:flex-row md:items-center gap-4">
+            <div className="flex items-start gap-3 flex-1">
+              <div className="flex size-9 items-center justify-center rounded-full bg-primary/10 text-primary shrink-0">
+                <Cookie className="size-5" />
+              </div>
+              <p className="text-sm leading-6">
+                Usamos cookies essenciais para garantir que o AntiRecurso funcione corretamente.{' '}
+                <Link
+                  href="/cookie-policy"
+                  className="text-primary font-medium hover:underline"
+                  tabIndex={1}
+                >
+                  Sabe mais aqui.
+                </Link>
+              </p>
+            </div>
+            <Button onClick={handleConfirm} className="w-full md:w-auto" tabIndex={2}>
               Confirmar
-            </PrimaryButton>
+            </Button>
           </div>
         </motion.div>
       )}

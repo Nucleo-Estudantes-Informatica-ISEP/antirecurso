@@ -1,11 +1,14 @@
 'use client';
 
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
 import useSession from '@/hooks/useSession';
 import { PROTECTED_API_BASE_URL } from '@/services/api';
-import { Eye, ThumbsUp, ThumbsUpOutline } from '@/styles/Icons';
 import Note from '@/types/Note';
 import { motion } from 'framer-motion';
-import Image from 'next/image';
+import { Eye, ExternalLink, FileText, Heart } from 'lucide-react';
 import { useState } from 'react';
 import swal from 'sweetalert';
 
@@ -37,79 +40,101 @@ const NoteCard: React.FC<NoteCardParams> = ({ note }) => {
   async function handleVisitNote(note: Note) {
     const res = await fetch(PROTECTED_API_BASE_URL + '/notes/' + note.id + '/view', {
       method: 'POST',
-      headers: {
-        Authorization: `Bearer ${token}`
-      }
+      headers: { Authorization: `Bearer ${token}` }
     });
     if (!res.ok) swal('Erro', 'Não foi possível registar a visita ao resumo', 'error');
 
     const data = await res.json();
-
     window.open(data.url, '_blank');
   }
 
+  const userInitials = note.user.name
+    ? note.user.name
+        .split(' ')
+        .map((n) => n[0])
+        .slice(0, 2)
+        .join('')
+        .toUpperCase()
+    : '';
+
   return (
     <motion.div
-      initial={{ opacity: 0, x: 20, scale: 0.95 }}
-      whileInView={{ opacity: 1, x: 0, scale: 1 }}
+      initial={{ opacity: 0, y: 20, scale: 0.97 }}
+      whileInView={{ opacity: 1, y: 0, scale: 1 }}
       viewport={{ once: true }}
-      transition={{ duration: 0.8, type: 'spring', bounce: 0.4 }}
-      className="text-lg border border-slate-800 w-full max-w-[520px] p-4 md:p-8 h-full rounded-md shadow-sm md:text-xl font-bold transition-colors duration-200 flex items-center justify-between flex-col ease-in-out"
-      key={note.id}>
-      <div className="flex items-center flex-col md:flex-row md:items-center justify-between w-full my-2">
-        <h2 className="whitespace-nowrap text-left text-primary text-xl">{note.title}</h2>
-        <span className="font-bold text-sm md:text-base">
-          {new Date(note.created_at).toLocaleDateString('pt-PT', {
-            year: 'numeric',
-            month: 'long'
-          })}
-        </span>
-      </div>
-      <p className="text-left w-full mt-2 mb-4 text-base font-thin">{note.description}</p>
-      <div className="flex md:items-center w-full justify-between">
-        <div className="flex items-center gap-x-3">
-          <Image
-            className="w-6 md:w-8 rounded-full aspect-square"
-            src={`https://gravatar.com/avatar/${note.user.avatar}?s=64&d=identicon`}
-            alt={note.user.name}
-            loading="lazy"
-            width={32}
-            unoptimized
-            height={32}
-          />
-          <span className="text-base md:text-lg leading-5">
-            {note.user.name} {note.user.email === user?.email ? '(Tu)' : ''}
-          </span>
-        </div>
-        <div className="flex md:items-center items-end justify-end gap-x-6 flex-col md:flex-row">
-          {note.n_pages && (
-            <span className="flex items-center justify-center gap-x-1.5 text-base font-light">
-              <span>({note.n_pages} páginas)</span>
-            </span>
-          )}
-          <span className="flex items-center justify-center gap-x-1.5 text-base font-light">
-            <button
-              onClick={() => handleLikeNote(note.id)}
-              className="hover:bg-gray-100 dark:hover:bg-cool-gray-700 p-2 rounded-full ">
-              {isLiked ? (
-                <ThumbsUp className="text-base" />
-              ) : (
-                <ThumbsUpOutline className="text-base" />
-              )}
-            </button>
-            {likes}
-          </span>
-          <span className="flex items-center justify-center gap-x-1.5 font-light text-base">
-            <Eye className="text-base mr-2" />
-            {note.views}
-          </span>
-        </div>
-      </div>
-      <button
-        onClick={() => handleVisitNote(note)}
-        className="bg-primary border-slate-200 md:py-1.5 py-1 text-base rounded-sm text-white w-full mt-4">
-        Ver resumo
-      </button>
+      transition={{ duration: 0.5, type: 'spring', bounce: 0.3 }}
+    >
+      <Card className="h-full flex flex-col transition-all duration-200 hover:border-primary/40 hover:shadow-lg">
+        <CardContent className="p-5 md:p-6 flex flex-col gap-4 flex-1">
+          <div className="flex items-start justify-between gap-3">
+            <div className="flex items-start gap-3 min-w-0 flex-1">
+              <div className="flex size-10 items-center justify-center rounded-lg bg-primary/10 text-primary shrink-0">
+                <FileText className="size-5" />
+              </div>
+              <div className="min-w-0 flex-1">
+                <h3 className="text-base md:text-lg font-bold leading-tight truncate">
+                  {note.title}
+                </h3>
+                <p className="text-xs text-muted-foreground mt-0.5">
+                  {new Date(note.created_at).toLocaleDateString('pt-PT', {
+                    year: 'numeric',
+                    month: 'long'
+                  })}
+                </p>
+              </div>
+            </div>
+            {note.n_pages && (
+              <Badge variant="outline" className="shrink-0 font-medium">
+                {note.n_pages} pág
+              </Badge>
+            )}
+          </div>
+
+          <p className="text-sm text-muted-foreground leading-relaxed line-clamp-3 flex-1">
+            {note.description}
+          </p>
+
+          <div className="flex items-center justify-between gap-3 pt-3 border-t">
+            <div className="flex items-center gap-2 min-w-0">
+              <Avatar className="size-7">
+                <AvatarImage
+                  src={`https://gravatar.com/avatar/${note.user.avatar}?s=64&d=identicon`}
+                  alt={note.user.name}
+                />
+                <AvatarFallback className="text-[10px]">{userInitials}</AvatarFallback>
+              </Avatar>
+              <span className="text-xs font-medium truncate">
+                {note.user.name}
+                {note.user.email === user?.email && (
+                  <span className="text-muted-foreground"> (Tu)</span>
+                )}
+              </span>
+            </div>
+            <div className="flex items-center gap-1 shrink-0">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => handleLikeNote(note.id)}
+                className="h-8 px-2 text-muted-foreground"
+              >
+                <Heart
+                  className={`size-4 ${isLiked ? 'fill-primary text-primary' : ''}`}
+                />
+                <span className="text-xs tabular-nums">{likes}</span>
+              </Button>
+              <div className="inline-flex items-center gap-1 px-2 text-muted-foreground">
+                <Eye className="size-4" />
+                <span className="text-xs tabular-nums">{note.views}</span>
+              </div>
+            </div>
+          </div>
+
+          <Button onClick={() => handleVisitNote(note)} className="w-full">
+            <ExternalLink className="size-4" />
+            Ver resumo
+          </Button>
+        </CardContent>
+      </Card>
     </motion.div>
   );
 };

@@ -1,7 +1,19 @@
+'use client';
+
+import { Button } from '@/components/ui/button';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle
+} from '@/components/ui/dialog';
+import { Slider } from '@/components/ui/slider';
+import { cn } from '@/lib/utils';
 import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import swal from 'sweetalert';
-import Slider from '../../utils/Slider';
 
 interface ModalProps {
   isVisible?: boolean;
@@ -35,115 +47,117 @@ const CustomExamModal: React.FC<ModalProps> = ({ isVisible, setIsVisible, title,
 
   const router = useRouter();
 
-  useEffect(() => {
-    const closeWithEsc = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') setIsVisible(false);
-    };
-    window.addEventListener('keydown', closeWithEsc);
-
-    return () => window.removeEventListener('keydown', closeWithEsc);
-  }, [setIsVisible]);
-
   const handleSaveClick = () => {
-    if (numberOfQuestions && discount !== null) {
+    if (numberOfQuestions && discount !== null && filter !== null) {
       setIsVisible(false);
       router.push(
         `/exams/${params.id}/answer/${params.mode}?n_of_questions=${numberOfQuestions}&penalizing_factor=${discount}&filter=${filter}`
       );
     } else {
-      swal('Erro', 'Preencha todos os campos!', 'error');
+      swal('Erro', 'Preenche todos os campos!', 'error');
     }
   };
 
   return (
-    <div
-      className={`fixed left-0 top-0 h-screen w-full bg-gray-500/60 z-20 items-center justify-center ${
-        isVisible ? 'fixed' : 'hidden'
-      }`}>
-      <div className="fixed left-0 top-0 z-20 flex h-screen w-full items-center justify-center overflow-y-scroll">
-        <div
-          className={`flex w-full md:w-1/2 flex-col mx-6 rounded-lg p-14 lg:px-32 bg-gray-200 dark:bg-gray-700 items-center gap-y-6 justify-around relative min-h-[520px]`}>
-          <button
-            onClick={() => setIsVisible(false)}
-            className="text-2xl font-black text-red-500 hover:text-red-600 z-20 absolute top-10 right-10">
-            X
-          </button>
-          <span className="w-full text-center text-xl md:text-3xl font-black mb-6 px-2">
-            {title}
-          </span>
-          <div className="h-full w-full">
-            <div className="flex flex-col items-center justify-between mb-12">
-              <h2 className="w-full font-bold mb-6 text-lg text-center md:text-left">
-                Número de Questões
-              </h2>
-              <Slider min={5} max={50} value={numberOfQuestions} onChange={setNumberOfQuestions} />
-              <span className="mt-2">
-                Responde a{' '}
-                <span className="text-primary md:text-lg font-black">{numberOfQuestions}</span>{' '}
-                questões
+    <Dialog open={isVisible} onOpenChange={setIsVisible}>
+      <DialogContent className="sm:max-w-lg max-h-[90vh] overflow-y-auto">
+        <DialogHeader>
+          <DialogTitle className="text-xl md:text-2xl">{title}</DialogTitle>
+          <DialogDescription>
+            Configura as opções abaixo para criares o teu exame personalizado.
+          </DialogDescription>
+        </DialogHeader>
+
+        <div className="space-y-6 py-2">
+          {/* Number of Questions */}
+          <div className="space-y-3">
+            <div className="flex items-center justify-between">
+              <h3 className="text-sm font-semibold">Número de questões</h3>
+              <span className="text-sm">
+                <span className="text-primary font-bold text-base">{numberOfQuestions}</span>{' '}
+                <span className="text-muted-foreground">questões</span>
               </span>
             </div>
-            <div className="flex flex-col items-center justify-between gap-x-8 w-full mt-6 h-full">
-              <h2 className="w-full font-bold mb-6 text-lg text-center md:text-left">
-                Penalização nas perguntas
-              </h2>
-              <div className="w-full border-gray-400 border h-full md:h-12 text-sm md:text-base flex flex-col md:flex-row items-center justify-center rounded-lg">
-                {discounts.map((d, i) => (
-                  <button
-                    className={`${
-                      i === 0
-                        ? 'border-t-lg md:rounded-l-lg'
-                        : i === discounts.length - 1
-                        ? 'border-b-lg md:rounded-r-lg border-t md:border-l'
-                        : 'border-t md:border-l'
-                    } md:border-x-gray-400 border-y-gray-400 md:border-y-0 w-full h-8 md:h-full hover:bg-primary hover:text-white
-                    ${discount === d.value ? 'bg-primary text-white' : 'bg-transparent'}
-                    `}
-                    key={d.value}
-                    onClick={() => setDiscount(d.value)}>
-                    {d.label}
-                  </button>
-                ))}
-              </div>
-              <span className="md:text-sm text-xs mt-2">
-                (Escolhe a percentagem de penalização para cada resposta errada)
-              </span>
-            </div>
-            <div className="flex flex-col items-center justify-between gap-x-8 w-full mt-6 h-full">
-              <h2 className="w-full font-bold mb-6 text-lg text-center md:text-left">Filtro</h2>
-              <div className="w-full border-gray-400 border h-full md:h-12 text-sm md:text-base flex flex-col md:flex-row items-center justify-center rounded-lg">
-                {filters.map((f, i) => (
-                  <button
-                    className={`${
-                      i === 0
-                        ? 'border-t-lg md:rounded-l-lg'
-                        : i === filters.length - 1
-                        ? 'border-b-lg md:rounded-r-lg border-t md:border-l'
-                        : 'border-t md:border-l'
-                    } md:border-x-gray-400 border-y-gray-400 md:border-y-0 w-full h-8 md:h-full hover:bg-primary hover:text-white
-                    ${filter === f.value ? 'bg-primary text-white' : 'bg-transparent'}
-                    `}
-                    key={f.value}
-                    onClick={() => setFilter(f.value)}>
-                    {f.label}
-                  </button>
-                ))}
-              </div>
-              <span className="md:text-sm text-xs mt-2">
-                (Aplica um filtro às questões do teu exame)
-              </span>
+            <Slider
+              min={5}
+              max={50}
+              step={1}
+              value={[numberOfQuestions]}
+              onValueChange={(values) => setNumberOfQuestions(values[0])}
+            />
+            <div className="flex justify-between text-xs text-muted-foreground">
+              <span>5</span>
+              <span>50</span>
             </div>
           </div>
-          <button
-            name="Criar Exame"
-            onClick={handleSaveClick}
-            className="w-full mt-8 p-2 text-xl bg-primary rounded-md text-white disabled:bg-gray-300 dark:disabled:bg-gray-600 disabled:text-gray-500 font-bold enabled:hover:brightness-90 enabled:hover:text-white"
-            disabled={discount === null || filter === null}>
-            Criar exame
-          </button>
+
+          {/* Penalty */}
+          <div className="space-y-3">
+            <div className="flex items-center justify-between">
+              <h3 className="text-sm font-semibold">Penalização por erro</h3>
+            </div>
+            <div className="grid grid-cols-3 md:grid-cols-6 gap-2">
+              {discounts.map((d) => (
+                <button
+                  key={d.value}
+                  type="button"
+                  onClick={() => setDiscount(d.value)}
+                  className={cn(
+                    'inline-flex items-center justify-center rounded-md border h-10 text-sm font-medium transition-colors',
+                    discount === d.value
+                      ? 'bg-primary text-primary-foreground border-primary'
+                      : 'bg-background hover:bg-accent hover:text-accent-foreground'
+                  )}
+                >
+                  {d.label}
+                </button>
+              ))}
+            </div>
+            <p className="text-xs text-muted-foreground">
+              Escolhe a percentagem de penalização para cada resposta errada.
+            </p>
+          </div>
+
+          {/* Filter */}
+          <div className="space-y-3">
+            <h3 className="text-sm font-semibold">Filtro de questões</h3>
+            <div className="grid grid-cols-2 gap-2">
+              {filters.map((f) => (
+                <button
+                  key={f.value}
+                  type="button"
+                  onClick={() => setFilter(f.value)}
+                  className={cn(
+                    'inline-flex items-center justify-center rounded-md border h-10 text-sm font-medium transition-colors',
+                    filter === f.value
+                      ? 'bg-primary text-primary-foreground border-primary'
+                      : 'bg-background hover:bg-accent hover:text-accent-foreground'
+                  )}
+                >
+                  {f.label}
+                </button>
+              ))}
+            </div>
+            <p className="text-xs text-muted-foreground">
+              Aplica um filtro às questões do teu exame.
+            </p>
+          </div>
         </div>
-      </div>
-    </div>
+
+        <DialogFooter>
+          <Button variant="outline" onClick={() => setIsVisible(false)} className="w-full sm:w-auto">
+            Cancelar
+          </Button>
+          <Button
+            onClick={handleSaveClick}
+            disabled={discount === null || filter === null}
+            className="w-full sm:w-auto"
+          >
+            Criar exame
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
 };
 

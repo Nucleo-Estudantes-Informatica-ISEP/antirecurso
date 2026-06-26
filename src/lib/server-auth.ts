@@ -2,7 +2,7 @@ import { cookies } from 'next/headers';
 import { getServerSession } from 'next-auth';
 import { getToken } from 'next-auth/jwt';
 import type { JWT } from 'next-auth/jwt';
-import { authOptions } from '@/lib/auth';
+import { authOptions, refreshAccessToken } from '@/lib/auth';
 
 export const CLIENT_SESSION_TOKEN = 'server-session';
 const authDebugEnabled = process.env.AUTH_DEBUG === 'true';
@@ -26,7 +26,47 @@ export async function getAppAuthSession() {
 export async function getApiAccessToken() {
   const token = await getJwtTokenFromCookies();
 
-  if (!token || isAccessTokenExpired(token)) {
+  if (!token) {
+    return null;
+  }
+
+  if (isAccessTokenExpired(token)) {
+    if (token.refreshToken) {
+      if (authDebugEnabled) {
+        console.info('[auth][token] Access token expired, attempting to refresh...');
+      }
+      const refreshedToken = await refreshAccessToken(token);
+      if (refreshedToken && refreshedToken.accessToken && refreshedToken.error !== 'AccessTokenExpired') {
+        try {
+          const cookieStore = await cookies();
+          const { encode } = await import('next-auth/jwt');
+          const encodedToken = await encode({
+            token: refreshedToken,
+            secret: process.env.AUTH_SECRET ?? ''
+          });
+
+          const isSecure = process.env.NODE_ENV === 'production' || process.env.AUTH_ISSUER_URL?.startsWith('https');
+          const cookieName = isSecure ? '__Secure-next-auth.session-token' : 'next-auth.session-token';
+
+          cookieStore.set(cookieName, encodedToken, {
+            path: '/',
+            httpOnly: true,
+            secure: isSecure,
+            sameSite: 'lax',
+            maxAge: 30 * 24 * 60 * 60
+          });
+
+          if (authDebugEnabled) {
+            console.info('[auth][token] Successfully updated session cookie with refreshed token.');
+          }
+        } catch (error) {
+          if (authDebugEnabled) {
+            console.warn('[auth][token] Failed to write refreshed token to cookies (expected in Server Components):', error);
+          }
+        }
+        return refreshedToken.accessToken;
+      }
+    }
     return null;
   }
 

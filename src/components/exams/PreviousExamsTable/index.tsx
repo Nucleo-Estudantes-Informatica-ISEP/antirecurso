@@ -5,7 +5,6 @@ import { Paginate } from '@/types/Paginate';
 import { useTheme } from 'next-themes';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import 'react-loading-skeleton/dist/skeleton.css';
 import { PROTECTED_API_BASE_URL } from 'src/services/api';
 import fetchUserPreviousExams from 'src/utils/FetchAnswers';
 import swal from 'sweetalert';
@@ -26,7 +25,7 @@ const PreviousExamsTable: React.FC = () => {
       try {
         const data = await fetchUserPreviousExams(fetchUrl);
         setPreviousExamResponse(data);
-      } catch (error) {
+      } catch {
         swal({
           title: 'Erro',
           text: 'Não foi possível obter o resultado de exames.',
@@ -41,7 +40,7 @@ const PreviousExamsTable: React.FC = () => {
   }, [fetchUrl, router, theme]);
 
   return (
-    <section className="mt-5 w-full md:px-16 flex flex-col place-items-center px-6">
+    <section className="w-full flex flex-col items-center px-2 md:px-6 mt-2">
       {previousExamResponse === undefined ? (
         <ExamTableLoading />
       ) : previousExamResponse.data.length ? (
@@ -54,7 +53,7 @@ const PreviousExamsTable: React.FC = () => {
           />
         </>
       ) : (
-        <p>Ainda não realizaste nenhum exame...</p>
+        <p className="text-muted-foreground py-8">Ainda não realizaste nenhum exame.</p>
       )}
     </section>
   );

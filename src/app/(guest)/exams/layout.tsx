@@ -10,7 +10,7 @@ interface ExamLayoutProps {
 const ExamLayout: React.FC<ExamLayoutProps> = ({ children }) => {
   return (
     <ExamContextProvider>
-      <section className="w-full mt-8">{children}</section>
+      <section className="w-full">{children}</section>
     </ExamContextProvider>
   );
 };

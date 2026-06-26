@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getToken } from 'next-auth/jwt';
 import { BASE_URL } from '@/services/api';
+import { getApiAccessToken } from '@/lib/server-auth';
 
 export const dynamic = 'force-dynamic';
 
@@ -9,13 +9,9 @@ async function proxyRequest(
   { params }: { params: Promise<{ path: string[] }> }
 ) {
   const { path } = await params;
-  const token = await getToken({ req: request, secret: process.env.AUTH_SECRET });
-  const accessToken = typeof token?.accessToken === 'string' ? token.accessToken : null;
-  const isExpired =
-    token?.error === 'AccessTokenExpired' ||
-    (typeof token?.accessTokenExpiresAt === 'number' && Date.now() >= token.accessTokenExpiresAt);
+  const accessToken = await getApiAccessToken();
 
-  if (!accessToken || isExpired) {
+  if (!accessToken) {
     return NextResponse.json({ message: 'Authentication required' }, { status: 401 });
   }
 

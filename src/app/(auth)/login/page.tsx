@@ -1,6 +1,8 @@
 'use client';
 
-import PrimaryButton from '@/components/utils/PrimaryButton';
+import { Button } from '@/components/ui/button';
+import { Separator } from '@/components/ui/separator';
+import { ArrowRight, ShieldCheck } from 'lucide-react';
 import { signIn } from 'next-auth/react';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
@@ -23,34 +25,42 @@ const Login: React.FC = () => {
   }
 
   return (
-    <div className="relative flex flex-col items-center justify-center w-11/12 max-w-md px-4 py-12 sm:p-12 md:w-1/2 h-full">
-      <div className="w-full dark:text-white -mt-8 md:mt-0">
-        <h1 className="mb-6 text-2xl font-semibold">Bem-vindo!</h1>
-        <p className="mb-8 text-sm leading-7 text-gray-600 dark:text-gray-300">
-          O AntiRecurso utiliza agora o portal de autenticação do NEI. O login, registo e
-          recuperação de palavra-passe acontecem todos na página oficial de autenticação.
-        </p>
+    <div className="flex flex-col items-center justify-center w-full px-6 py-12 sm:px-12 sm:py-16 min-h-[36rem]">
+      <div className="w-full max-w-sm space-y-8">
+        <div className="space-y-3">
+          <div className="inline-flex items-center justify-center size-12 rounded-2xl bg-primary/10 text-primary">
+            <ShieldCheck className="size-6" />
+          </div>
+          <h1 className="text-3xl font-bold tracking-tight">Bem-vindo de volta</h1>
+          <p className="text-sm leading-6 text-muted-foreground">
+            O AntiRecurso usa o portal de autenticação do NEI. O login, registo e recuperação de
+            palavra-passe acontecem todos na página oficial.
+          </p>
+        </div>
 
-        <PrimaryButton type="button" className="block w-full" onClick={handleLogin}>
-          Continuar para o login
-        </PrimaryButton>
+        <div className="space-y-3">
+          <Button onClick={handleLogin} size="lg" className="w-full shadow-md shadow-primary/20">
+            Continuar para o login
+            <ArrowRight className="size-4" />
+          </Button>
+        </div>
 
-        <hr className="my-8" />
+        <Separator />
 
-        <p className="mt-4">
+        <div className="space-y-3 text-center text-sm">
           <Link
-            className="text-sm font-medium text-primary-600 hover:underline"
-            href={`/register?callbackUrl=${encodeURIComponent(callbackUrl)}`}>
-            Ainda não tens conta?
+            className="block text-primary font-medium hover:underline"
+            href={`/register?callbackUrl=${encodeURIComponent(callbackUrl)}`}
+          >
+            Ainda não tens conta? Cria uma agora
           </Link>
-        </p>
-        <p className="mt-2">
           <Link
-            className="text-sm font-medium text-primary-600 hover:underline text-primary"
-            href="/reset-password">
+            className="block text-muted-foreground hover:text-foreground hover:underline"
+            href="/reset-password"
+          >
             Precisas de recuperar o acesso?
           </Link>
-        </p>
+        </div>
       </div>
     </div>
   );

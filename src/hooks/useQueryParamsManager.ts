@@ -1,4 +1,5 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+'use client';
+
 import { usePathname, useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
@@ -10,17 +11,16 @@ export const useQueryParamsManager = () => {
   const [queryParams, setQueryParams] = useState<URLSearchParams>(searchParams);
 
   // if exists, update, else add
-  // eslint-disable-next-line
-  const set = (key: string, value: any) => {
+  const set = (key: string, value: string | number | boolean) => {
     const params = new URLSearchParams(queryParams.toString());
-    params.set(key, value);
+    params.set(key, String(value));
     setQueryParams(params);
   };
 
-  const setBulk = (params: { [key: string]: any }) => {
+  const setBulk = (params: Record<string, string | number | boolean>) => {
     const paramsObj = new URLSearchParams(queryParams.toString());
     Object.keys(params).forEach((key) => {
-      paramsObj.set(key, params[key]);
+      paramsObj.set(key, String(params[key]));
     });
     setQueryParams(paramsObj);
   };
@@ -42,12 +42,12 @@ export const useQueryParamsManager = () => {
   // update url
   useEffect(() => {
     replace(`${pathname}?${queryParams.toString()}`);
-  }, [queryParams]);
+  }, [pathname, queryParams, replace]);
 
   // on mount, set query params
   useEffect(() => {
     setQueryParams(new URLSearchParams(searchParams));
-  }, []);
+  }, [searchParams]);
 
   return {
     queryParams,

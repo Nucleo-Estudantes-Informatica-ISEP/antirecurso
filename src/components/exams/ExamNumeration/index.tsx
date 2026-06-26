@@ -1,7 +1,7 @@
 'use client';
 
+import { cn } from '@/lib/utils';
 import { motion } from 'framer-motion';
-import { useTheme } from 'next-themes';
 import React, { useEffect, useRef } from 'react';
 
 interface ExamNumerationProps {
@@ -21,13 +21,10 @@ const ExamNumeration: React.FC<ExamNumerationProps> = ({
   children,
   align
 }) => {
-  const ref = useRef<HTMLDivElement>(null);
-  const { theme } = useTheme();
+  const ref = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
-    if (active) {
-      if (!ref.current) return;
-
+    if (active && ref.current) {
       ref.current.scrollIntoView({
         behavior: 'smooth',
         block: 'nearest',
@@ -36,38 +33,26 @@ const ExamNumeration: React.FC<ExamNumerationProps> = ({
     }
   }, [active, align]);
 
-  const background = theme === 'dark' ? '#222026' : '#fff';
-
   return (
-    <motion.div
+    <motion.button
       animate={{
         opacity: [0, 1],
-        scale: active ? [1, 1.05] : [0.8, 1],
-        background: active
-          ? '#d35d19'
-          : wasAnswered
-          ? '#d35d1970'
-          : isWrong
-          ? '#ee4433'
-          : background
+        scale: active ? 1.05 : 1
       }}
-      transition={{
-        duration: 0.2,
-        delay: 0.1,
-        ease: 'easeInOut',
-        background: {
-          duration: 0.2
-        }
-      }}
-      style={{
-        border: active ? 'none' : wasAnswered ? 'none' : isWrong ? 'f00' : '1px solid #d35d19',
-        color: active ? background : wasAnswered ? '#d35d19' : isWrong ? background : '#d35d19'
-      }}
+      transition={{ duration: 0.2 }}
       ref={ref}
       onClick={onClick}
-      className="h-10 w-10 p-5 flex items-center justify-center rounded-full hover:cursor-pointer">
-      <p>{children}</p>
-    </motion.div>
+      className={cn(
+        'shrink-0 flex h-10 w-10 items-center justify-center rounded-full text-sm font-semibold transition-all',
+        'border border-border bg-card text-muted-foreground hover:border-primary/40 hover:text-primary',
+        wasAnswered && !active && 'border-primary/40 bg-primary/15 text-primary',
+        isWrong && !active && 'border-destructive bg-destructive/15 text-destructive',
+        active &&
+          'border-primary bg-primary text-primary-foreground shadow-md shadow-primary/30 hover:text-primary-foreground hover:border-primary'
+      )}
+    >
+      {children}
+    </motion.button>
   );
 };
 

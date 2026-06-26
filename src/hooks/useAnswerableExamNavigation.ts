@@ -1,22 +1,36 @@
 'use client';
 
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState, useContext } from 'react';
 
 import swal from 'sweetalert';
 
 import { useTheme } from 'next-themes';
 import Question from 'src/types/Question';
 import useExamNavigation from './useExamNavigation';
+import useSession from '@/hooks/useSession';
+import { ExamContext } from '@/contexts/ExamContext';
+import { PROTECTED_API_BASE_URL } from '@/services/api';
 
 export default function useAnswerableExamNavigation({
+  subjectId,
+  mode,
+  nOfQuestions,
+  filter,
   handleConfirm
 }: {
+  subjectId: number;
+  mode: string;
+  nOfQuestions?: string | null;
+  filter?: string | null;
   handleConfirm: () => Promise<void>;
 }) {
   const [answers, setAnswers] = useState<Map<number, string>>(new Map<number, string>());
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const submitRef = useRef<() => Promise<void>>(async () => {});
 
   const { theme } = useTheme();
+  const session = useSession();
+  const { examTime } = useContext(ExamContext);
 
   const {
     changeQuestion,
@@ -26,6 +40,66 @@ export default function useAnswerableExamNavigation({
     currentQuestion,
     setCurrentQuestion
   } = useExamNavigation<Question>();
+
+  const lastAnswersRef = useRef<string>(JSON.stringify(Array.from(new Map<number, string>().entries())));
+  const lastIndexRef = useRef<number>(0);
+  const lastSavedTimeRef = useRef<number>(0);
+
+  // Auto-save exam state on progress changes
+  useEffect(() => {
+    if (questions.length === 0) return;
+
+    const serializedAnswers = JSON.stringify(Array.from(answers.entries()));
+    
+    const stateData = {
+      subjectId,
+      mode,
+      questions,
+      answers: Array.from(answers.entries()),
+      time: examTime,
+      currentQuestionIndex,
+      savedAt: Date.now(),
+      n_of_questions: nOfQuestions ?? undefined,
+      filter: filter ?? undefined
+    };
+
+    // Save to localStorage immediately
+    localStorage.setItem(`exam-state-${subjectId}`, JSON.stringify(stateData));
+
+    if (!session.token) return;
+
+    // Save to backend if answers, current question, or >= 10s of time elapsed
+    const answersChanged = serializedAnswers !== lastAnswersRef.current;
+    const indexChanged = currentQuestionIndex !== lastIndexRef.current;
+    const timeThresholdPassed = lastSavedTimeRef.current === -1 || (examTime - lastSavedTimeRef.current) >= 10;
+
+    if (answersChanged || indexChanged || timeThresholdPassed) {
+      lastAnswersRef.current = serializedAnswers;
+      lastIndexRef.current = currentQuestionIndex;
+      lastSavedTimeRef.current = examTime;
+
+      const saveToBackend = async () => {
+        try {
+          await fetch(`${PROTECTED_API_BASE_URL}/exams/state`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${session.token}`
+            },
+            body: JSON.stringify({
+              subject_id: subjectId,
+              mode,
+              state: stateData
+            })
+          });
+        } catch (err) {
+          console.error('Failed to save exam state to backend:', err);
+        }
+      };
+
+      saveToBackend();
+    }
+  }, [questions, answers, currentQuestionIndex, examTime, session.token, subjectId, mode, nOfQuestions, filter]);
 
   const hasAnsweredAllQuestions = useCallback((): boolean => {
     if (answers.size === questions.length) return true;
@@ -37,25 +111,30 @@ export default function useAnswerableExamNavigation({
 
   const wasAnswered = useCallback(
     (i: number) => {
-      return answers.has(i);
+      const questionId = questions[i]?.id;
+      if (questionId === undefined) return false;
+      return answers.has(questionId);
     },
-    [answers]
+    [answers, questions]
   );
 
-  const selectAnswer = useCallback((question: number, order: string) => {
+  const selectAnswer = useCallback((questionIndex: number, order: string) => {
+    const questionId = questions[questionIndex]?.id;
+    if (questionId === undefined) return;
     setAnswers((prev) => {
       const newAnswers = new Map(prev);
-      if (newAnswers.get(question) === order) newAnswers.delete(question);
-      else newAnswers.set(question, order);
+      if (newAnswers.get(questionId) === order) newAnswers.delete(questionId);
+      else newAnswers.set(questionId, order);
       return newAnswers;
     });
-  }, []);
+  }, [questions]);
 
   const cycleOptions = useCallback(
     (direction: 'UP' | 'DOWN') => {
-      if (!optionOrders) return;
+      if (!optionOrders || !currentQuestion) return;
 
-      const currentOption = answers.get(currentQuestionIndex);
+      const questionId = currentQuestion.id;
+      const currentOption = answers.get(questionId);
       if (!currentOption && direction === 'DOWN')
         return selectAnswer(currentQuestionIndex, optionOrders[0]);
       if (!currentOption && direction === 'UP')
@@ -68,16 +147,15 @@ export default function useAnswerableExamNavigation({
       const nextIndex = currentIndex + 1 * multiplier;
 
       if (nextIndex >= optionOrders.length) selectAnswer(currentQuestionIndex, optionOrders[0]);
-      else if (nextIndex < 0)
-        selectAnswer(currentQuestionIndex, optionOrders[optionOrders.length - 1]);
+      else if (nextIndex < 0) selectAnswer(currentQuestionIndex, optionOrders[optionOrders.length - 1]);
       else selectAnswer(currentQuestionIndex, optionOrders[nextIndex]);
     },
-    [answers, currentQuestionIndex, optionOrders, selectAnswer]
+    [answers, currentQuestion, currentQuestionIndex, optionOrders, selectAnswer]
   );
 
   const handleKeyDown: (e: KeyboardEvent) => void = useCallback(
     async (e: KeyboardEvent) => {
-      if (!optionOrders) return;
+      if (!optionOrders || !currentQuestion) return;
 
       switch (e.key) {
         case '1':
@@ -106,7 +184,7 @@ export default function useAnswerableExamNavigation({
           break;
         case 'Enter':
           e.preventDefault();
-          if (currentQuestionIndex === questions.length - 1) await submit();
+          if (currentQuestionIndex === questions.length - 1) await submitRef.current();
           if (wasAnswered(currentQuestionIndex)) changeQuestion(currentQuestionIndex + 1);
         default:
           break;
@@ -162,6 +240,10 @@ export default function useAnswerableExamNavigation({
   );
 
   useEffect(() => {
+    submitRef.current = submit;
+  }, [submit]);
+
+  useEffect(() => {
     window.addEventListener('keydown', handleKeyDown);
 
     return removeEventListener;
@@ -189,6 +271,7 @@ export default function useAnswerableExamNavigation({
     removeEventListener,
     setQuestions,
     answers,
+    setAnswers,
     questions,
     currentQuestionIndex,
     currentQuestion,

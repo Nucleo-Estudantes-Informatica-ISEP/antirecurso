@@ -1,36 +1,39 @@
 'use client';
 
+import { Button } from '@/components/ui/button';
+import { Moon, Sun } from 'lucide-react';
 import { useTheme } from 'next-themes';
 import { useEffect, useState } from 'react';
-import { BsFillSunFill, BsMoonStarsFill } from 'react-icons/bs';
 
 export default function ThemeChanger() {
   const [mounted, setMounted] = useState(false);
-  const { theme, setTheme } = useTheme();
+  const { theme, setTheme, resolvedTheme } = useTheme();
 
-  // useEffect only runs on the client, so now we can safely show the UI
-  // This to prevent the theme change from being rendered on the server
   useEffect(() => {
     setMounted(true);
   }, []);
 
   if (!mounted) {
-    // Show default icons while loading from the server.
     return (
-      <div className="flex items-center justify-center w-5 h-5 rounded-full text-primary dark:text-primary ">
-        <BsMoonStarsFill className="dark:hidden" size={20} />
-        <BsFillSunFill className="hidden dark:block" size={20} />
-      </div>
+      <Button variant="ghost" size="icon" aria-label="Mudar tema" className="text-muted-foreground">
+        <Sun className="h-[1.1rem] w-[1.1rem]" />
+      </Button>
     );
   }
 
+  const current = theme === 'system' ? resolvedTheme : theme;
+  const next = current === 'dark' ? 'light' : 'dark';
+
   return (
-    <button className="flex items-center justify-center w-6 h-6 p-0.5 transition-colors text-primary hover:text-primary-dark dark:text-primary dark:hover:text-white">
-      {theme === 'light' ? (
-        <BsMoonStarsFill onClick={() => setTheme('dark')} size={20} />
-      ) : (
-        <BsFillSunFill onClick={() => setTheme('light')} size={20} />
-      )}
-    </button>
+    <Button
+      variant="ghost"
+      size="icon"
+      onClick={() => setTheme(next)}
+      aria-label={`Mudar para tema ${next === 'dark' ? 'escuro' : 'claro'}`}
+      className="text-muted-foreground hover:text-foreground"
+    >
+      <Sun className="h-[1.1rem] w-[1.1rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
+      <Moon className="absolute h-[1.1rem] w-[1.1rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
+    </Button>
   );
 }

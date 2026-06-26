@@ -1,84 +1,89 @@
+import { Badge } from '@/components/ui/badge';
+import { Card, CardContent } from '@/components/ui/card';
+
+const sections = [
+  {
+    title: 'O que são cookies?',
+    body: 'Cookies são pequenos ficheiros de texto armazenados no teu dispositivo quando visitas um website. São amplamente utilizados para tornar o website mais eficiente e melhorar a tua experiência.'
+  },
+  {
+    title: 'Quais cookies utilizamos?',
+    body: (
+      <>
+        <p>Geralmente existem três categorias de cookies:</p>
+        <ul className="mt-3 space-y-2 list-disc list-inside">
+          <li>
+            <span className="font-semibold">Essenciais:</span> necessários para o funcionamento
+            adequado do website (ex: autenticação).
+          </li>
+          <li>
+            <span className="font-semibold">Desempenho e análise:</span> recolhem informação sobre
+            como os visitantes usam o website e ajudam a melhorar o desempenho.
+          </li>
+          <li>
+            <span className="font-semibold">Personalização:</span> lembram as tuas preferências e
+            fornecem conteúdo personalizado.
+          </li>
+        </ul>
+        <p className="mt-3">
+          O AntiRecurso utiliza apenas cookies essenciais para garantir o seu funcionamento
+          adequado.
+        </p>
+      </>
+    )
+  },
+  {
+    title: 'Como controlar os cookies?',
+    body: 'Podes controlar ou limpar os cookies a qualquer momento e configurar o teu browser para os bloquear. Desativá-los pode afetar a funcionalidade da plataforma.'
+  },
+  {
+    title: 'Alterações nesta política',
+    body: 'Podemos atualizar esta política periodicamente para refletir alterações na forma como utilizamos cookies. Recomendamos que a revises regularmente.'
+  },
+  {
+    title: 'Contacta-nos',
+    body: (
+      <>
+        Se tiveres alguma dúvida sobre esta política, fala connosco em{' '}
+        <a className="text-primary font-medium hover:underline" href="mailto:info@nei-isep.org">
+          info@nei-isep.org
+        </a>
+        .
+      </>
+    )
+  }
+];
+
 const CookiePolicy: React.FC = () => {
   return (
-    <section className="w-full text-sm md:text-md px-5 md:px-24 md:pb-24 pb-48 mt-5">
-      <h1 className="text-primary font-black text-2xl">Política de Cookies</h1>
-      <div className="flex flex-col h-full gap-5 text-base">
-        <article className="mt-5">
-          <p>
-            Esta Política de Cookies explica como o website antirecurso.nei-isep.org
-            (&quot;Website&quot;) utiliza cookies e tecnologias similares para recolher e armazenar
-            informações quando um utilizador visita o Website. Ao continuar a usar o Website,
-            concorda com o uso de cookies de acordo com esta política.
-          </p>
-        </article>
-        <article>
-          <h3 className="mt-2 font-bold text-primary">O que são cookies?</h3>
-          <p>
-            Cookies são pequenos ficheiros de texto que são armazenados no seu dispositivo
-            (computador, telemóvel, etc.) quando visita um website. São amplamente utilizados para
-            tornar o website mais eficiente e melhorar a experiência do utilizador, fornecendo
-            informações aos proprietários do website.
-          </p>
-        </article>
-        <article>
-          <h3 className="mt-2 font-bold text-primary">Quais cookies utilizamos?</h3>
-          <p>Geralmente existem três categorias de cookies:</p>
-          <ul>
-            <li className="mt-1 ml-2">
-              - Cookies essenciais: São cookies necessários para o funcionamento adequado do
-              Website. Incluem, por exemplo, cookies de autenticação.
-            </li>
-            <li className="mt-1 ml-2">
-              - Cookies de desempenho e análise: São cookies que recolhem informações sobre como os
-              visitantes usam o Website, incluindo quais páginas são visitadas, como navegam pelo
-              Website e se encontram algum erro. Esses cookies ajudam a melhorar o desempenho do
-              Website.
-            </li>
-            <li className="mt-1 ml-2">
-              - Cookies de personalização: São cookies que lembram preferências do utilizador e
-              fornecem conteúdo personalizado com base nas interações anteriores com o Website.
-            </li>
-          </ul>
-          <p className="mt-2">
-            O Website utiliza cookies essencias de forma a garantir o seu funcionamento adequado.
-          </p>
-        </article>
-        <article>
-          <h3 className="mt-2 font-bold text-primary">Como controlar os cookies?</h3>
-          <p>
-            Pode controlar e/ou limpar os cookies do Website a qualquer momento. Também pode
-            configurar o seu browser para bloquear todos os cookies ou para receber um aviso antes
-            que um cookie seja armazenado. No entanto, observe que o desativar dos cookies pode
-            afetar a funcionalidade do Website.
-          </p>
-          <p>
-            A maioria dos browser permite gerir as preferências de cookies através das definições.
-            Para mais informações sobre como controlar os cookies, consulte a documentação do seu
-            browser.
-          </p>
-        </article>
-        <article>
-          <h3 className="mt-2 font-bold text-primary">Alterações nesta Política de Cookies</h3>
-          <p>
-            Podemos atualizar esta Política de Cookies periodicamente para refletir alterações na
-            forma como utilizamos cookies. Recomendamos que revise esta Política regularmente para
-            se manter informado sobre como usamos os cookies.
-          </p>
-        </article>
-        <article>
-          <h3 className="mt-2 font-bold text-primary">Entre em contato</h3>
-          <p>
-            Se tiver alguma dúvida ou preocupação sobre esta política, pode entrar em contacto com o
-            núcleo através do email{' '}
-            <a
-              className="text-blue-700 dark:text-blue-300 hover:underline"
-              href="mailto:info@nei-isep.org">
-              info@nei-isep.org
-            </a>
-            .
-          </p>
-        </article>
+    <section className="container py-10 md:py-14 w-full max-w-3xl">
+      <div className="mb-10">
+        <Badge variant="soft" className="mb-3">
+          Cookies
+        </Badge>
+        <h1 className="text-balance text-3xl md:text-4xl font-bold tracking-tight">
+          Política de <span className="gradient-text">Cookies</span>
+        </h1>
+        <p className="mt-3 text-muted-foreground">
+          Como utilizamos cookies em <span className="text-primary">antirecurso.nei-isep.org</span>.
+        </p>
       </div>
+
+      <Card>
+        <CardContent className="p-6 md:p-8 space-y-6 text-sm md:text-base leading-relaxed">
+          <p>
+            Esta política explica como o website antirecurso.nei-isep.org utiliza cookies e
+            tecnologias similares para recolher e armazenar informação quando o visitas. Ao
+            continuares a usá-lo, concordas com o uso de cookies de acordo com esta política.
+          </p>
+          {sections.map((section) => (
+            <article key={section.title}>
+              <h2 className="font-bold text-primary text-lg mb-2">{section.title}</h2>
+              <div className="text-foreground/90">{section.body}</div>
+            </article>
+          ))}
+        </CardContent>
+      </Card>
     </section>
   );
 };

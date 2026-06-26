@@ -3,18 +3,20 @@
 import React, { use, useCallback, useEffect } from 'react';
 
 import Image from 'next/image';
-import Skeleton from 'react-loading-skeleton';
-import 'react-loading-skeleton/dist/skeleton.css';
 
 import CommentSection from '@/components/comments/CommentSection';
 import ExamNumeration from '@/components/exams/ExamNumeration';
 import ExamNumerationContainer from '@/components/exams/ExamNumerationContainer';
 import QuestionReview from '@/components/exams/QuestionReview';
-import PrimaryButton from '@/components/utils/PrimaryButton';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Skeleton } from '@/components/ui/skeleton';
 import useSession from '@/hooks/useSession';
 import { PROTECTED_API_BASE_URL } from '@/services/api';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 import sampleImage from 'public/images/sample.webp';
 import useExamReviewNavigation from 'src/hooks/useExamReviewNavigation';
+import { getShuffleSeed, shuffleWithSeed } from '@/utils/examShuffle';
 
 interface ExamPageProps {
   params: Promise<{
@@ -37,17 +39,29 @@ const ReviewPage: React.FC<ExamPageProps> = ({ params }) => {
   } = useExamReviewNavigation();
 
   const getExamResult = useCallback(async () => {
-    const res = await fetch(`${PROTECTED_API_BASE_URL}/exams/${resolvedParams.id}`, {
+    const isAuthenticated = Boolean(session?.token)
+    const apiBase = PROTECTED_API_BASE_URL
+    const headers: HeadersInit = {
+      'Content-Type': 'application/json',
+    }
+    if (isAuthenticated && session.token) {
+      headers['Authorization'] = `Bearer ${session.token}`
+    }
+    const res = await fetch(`${apiBase}/exams/${resolvedParams.id}`, {
       method: 'GET',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      //? maybe separate this in two different methods, one with hydration for the first time and another without hydration for the fetch after comment
-      cache: 'no-cache'
-    });
+      headers,
+      cache: 'no-cache',
+    })
 
-    setExamResult(await res.json());
-  }, [resolvedParams.id, setExamResult]);
+    if (res.ok) {
+      const data = await res.json()
+      const storedSeed = getShuffleSeed(resolvedParams.id)
+      if (storedSeed && data.questions) {
+        data.questions = shuffleWithSeed(data.questions, storedSeed)
+      }
+      setExamResult(data)
+    }
+  }, [resolvedParams.id, setExamResult, session?.token])
 
   async function submitComment(comment: string) {
     if (!session.user) return;
@@ -72,105 +86,144 @@ const ReviewPage: React.FC<ExamPageProps> = ({ params }) => {
   }, [getExamResult]);
 
   const N_SKELETON_QUESTIONS = 10;
-  const N_SKELETON_OPTIONS = 4;
 
   return (
-    <section className="flex flex-col items-center overflow-x-scroll ">
-      <p className="px-4 my-5 ml-5 text-xl font-bold text-center uppercase">
-        Exame de{' '}
-        <span className="text-primary">
-          {examResult?.subject ? examResult.subject : <Skeleton width={150} />}
-        </span>
-      </p>
-      <div className="mb-12">
+    <section className="w-full">
+      <div className="sticky top-16 md:top-[4.5rem] z-20 bg-background/80 backdrop-blur-xl border-b">
+        <div className="container py-3 md:py-4 flex flex-col gap-3">
+          <div className="flex items-center justify-between gap-4 flex-wrap">
+            <div className="flex items-center gap-3 min-w-0">
+              <Badge variant="soft">Revisão</Badge>
+              <h1 className="text-sm md:text-lg font-semibold truncate">
+                Exame de{' '}
+                <span className="text-primary">
+                  {examResult?.subject || (
+                    <Skeleton className="inline-block h-5 w-32 align-middle" />
+                  )}
+                </span>
+              </h1>
+            </div>
+            {examResult && (
+              <Badge variant="outline" className="font-bold text-base">
+                {Math.round(examResult.score)}%
+              </Badge>
+            )}
+          </div>
+        </div>
+
         {examResult ? (
-          <ExamNumerationContainer>
-            {examResult.questions.length > 15 &&
-              Array.from({ length: examResult.questions.length * 0.75 }).map((_, i) => (
-                <div
-                  key={i}
-                  className="h-10 w-10 p-5 flex items-center justify-center rounded-full hover:cursor-pointer"
-                />
-              ))}
-            <PrimaryButton
-              className={`h-10 w-10 p-5 items-center !rounded-full flex justify-center mr-4 ${
-                currentQuestionIndex === 0 ? 'opacity-50' : ''
-              }`}
-              onClick={() => changeQuestion(currentQuestionIndex - 1)}
-              disabled={currentQuestionIndex === 0}>
-              {'<'}
-            </PrimaryButton>
-            {examResult.questions.map((question, i) => (
-              <ExamNumeration
-                key={i}
-                onClick={() => changeQuestion(i)}
-                isWrong={question.is_wrong}
-                active={currentQuestionIndex === i}
-                align={i < 2 ? 'end' : i > examResult.questions.length - 2 ? 'start' : 'center'}>
-                {i + 1}
-              </ExamNumeration>
-            ))}
-            <PrimaryButton
-              className={`h-10 w-10 p-5 items-center !rounded-full flex justify-center ${
-                currentQuestionIndex === examResult.questions.length - 1 ? 'opacity-50' : ''
-              }`}
-              onClick={() => changeQuestion(currentQuestionIndex + 1)}
-              disabled={currentQuestionIndex === examResult.questions.length - 1}>
-              {'>'}
-            </PrimaryButton>
-          </ExamNumerationContainer>
+          <div className="border-t">
+            <div className="container flex items-center gap-2 py-2">
+              <Button
+                size="icon"
+                variant="ghost"
+                className="size-9 rounded-full shrink-0"
+                onClick={() => changeQuestion(currentQuestionIndex - 1)}
+                disabled={currentQuestionIndex === 0}
+                aria-label="Pergunta anterior"
+              >
+                <ChevronLeft className="size-4" />
+              </Button>
+              <ExamNumerationContainer>
+                {examResult.questions.map((question, i) => (
+                  <ExamNumeration
+                    key={i}
+                    onClick={() => changeQuestion(i)}
+                    isWrong={question.is_wrong}
+                    active={currentQuestionIndex === i}
+                    align={
+                      i < 2 ? 'end' : i > examResult.questions.length - 2 ? 'start' : 'center'
+                    }
+                  >
+                    {i + 1}
+                  </ExamNumeration>
+                ))}
+              </ExamNumerationContainer>
+              <Button
+                size="icon"
+                variant="ghost"
+                className="size-9 rounded-full shrink-0"
+                onClick={() => changeQuestion(currentQuestionIndex + 1)}
+                disabled={currentQuestionIndex === examResult.questions.length - 1}
+                aria-label="Próxima pergunta"
+              >
+                <ChevronRight className="size-4" />
+              </Button>
+            </div>
+          </div>
         ) : (
-          <div className="flex items-center w-screen px-5 mt-5 space-x-10 overflow-x-scroll md:justify-center md:overflow-auto">
-            {Array.from({ length: N_SKELETON_QUESTIONS }).map((_, i) => (
-              <Skeleton
-                key={i}
-                className="flex items-center justify-center w-10 h-10 p-5 "
-                circle={true}
-              />
-            ))}
+          <div className="border-t">
+            <div className="container flex gap-2 py-2 overflow-hidden">
+              {Array.from({ length: N_SKELETON_QUESTIONS }).map((_, i) => (
+                <Skeleton key={i} className="h-10 w-10 rounded-full shrink-0" />
+              ))}
+            </div>
           </div>
         )}
-        <section className="px-5 mt-5 md:px-32">
-          {currentQuestion?.question ? (
-            <section className="mb-10">
-              <div
-                className={`relative w-full ${
-                  currentQuestion.question.image === ''
-                    ? 'md:h-[10rem] h-20'
-                    : 'md:h-[24rem] h-[16rem]'
-                }`}>
-                {currentQuestion.question.image === '' ? (
-                  <Image
-                    fill
-                    alt="Sample Image"
-                    className="object-cover w-full h-full"
-                    src={sampleImage}
-                  />
-                ) : (
-                  <Image
-                    fill
-                    alt="Question Image"
-                    className="w-full object-contain h-full"
-                    src={currentQuestion.question.image}
-                  />
-                )}
-              </div>
-              <QuestionReview currentQuestion={currentQuestion} />
-            </section>
-          ) : (
-            <div className="mt-12">
-              <Skeleton className="h-20 mt-6" count={N_SKELETON_OPTIONS} />
-            </div>
-          )}
-        </section>
+      </div>
 
-        <CommentSection
-          comments={examResult?.questions[currentQuestionIndex]?.comments}
-          submitComment={submitComment}
-          removeEventListener={removeEventListener}
-          addListener={addListener}
-          questionId={currentQuestion?.question.id}
-        />
+      <div className="container max-w-4xl py-6 md:py-10">
+        {currentQuestion?.question ? (
+          <article className="space-y-6">
+            <div
+              className={`relative w-full overflow-hidden rounded-2xl border bg-muted ${
+                currentQuestion.question.image === '' ? 'h-24 md:h-32' : 'h-64 md:h-[24rem]'
+              }`}
+            >
+              {currentQuestion.question.image === '' ? (
+                <Image fill alt="Sample" className="object-cover" src={sampleImage} />
+              ) : (
+                <Image
+                  fill
+                  alt="Question Image"
+                  className="object-contain"
+                  src={currentQuestion.question.image}
+                />
+              )}
+            </div>
+
+            <QuestionReview currentQuestion={currentQuestion} />
+
+            <div className="mt-10 pt-6 border-t flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+              <Button
+                variant="outline"
+                onClick={() => changeQuestion(currentQuestionIndex - 1)}
+                disabled={currentQuestionIndex === 0}
+                className="w-full sm:w-auto"
+              >
+                <ChevronLeft className="size-4" />
+                Anterior
+              </Button>
+              <Button
+                onClick={() => changeQuestion(currentQuestionIndex + 1)}
+                disabled={
+                  examResult ? currentQuestionIndex === examResult.questions.length - 1 : true
+                }
+                className="w-full sm:w-auto"
+              >
+                Próxima
+                <ChevronRight className="size-4" />
+              </Button>
+            </div>
+          </article>
+        ) : (
+          <div className="space-y-4">
+            <Skeleton className="h-48 w-full" />
+            <Skeleton className="h-16 w-full" />
+            <Skeleton className="h-16 w-full" />
+            <Skeleton className="h-16 w-full" />
+          </div>
+        )}
+
+        <div className="mt-10">
+          <CommentSection
+            comments={examResult?.questions[currentQuestionIndex]?.comments}
+            submitComment={submitComment}
+            removeEventListener={removeEventListener}
+            addListener={addListener}
+            questionId={currentQuestion?.question.id}
+          />
+        </div>
       </div>
     </section>
   );

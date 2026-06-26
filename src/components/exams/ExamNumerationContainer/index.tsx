@@ -4,7 +4,7 @@ interface ExamNumerationContainerProps {
 
 const ExamNumerationContainer: React.FC<ExamNumerationContainerProps> = ({ children }) => {
   return (
-    <div className="w-screen mx-auto flex items-center md:justify-center gap-x-10 overflow-x-scroll mt-5 px-5">
+    <div className="w-full flex items-center md:justify-center gap-x-2 md:gap-x-3 overflow-x-auto px-4 py-3">
       {children}
     </div>
   );
