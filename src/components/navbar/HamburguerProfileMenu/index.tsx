@@ -12,12 +12,13 @@ import {
 } from '@/components/ui/dropdown-menu';
 import useCallbackUrl from '@/hooks/useCallbackUrl';
 import useSession from '@/hooks/useSession';
-import { LogIn, LogOut, User, UserPlus } from 'lucide-react';
+import { LogIn, LogOut, RefreshCw, User, UserPlus } from 'lucide-react';
 import { useTheme } from 'next-themes';
 import { signOut } from 'next-auth/react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import swal from 'sweetalert';
+import { signOutFromApp, switchAuthNeiAccount } from '@/lib/client-auth-actions';
 
 const HamburgerProfileMenu: React.FC = () => {
   const pathname = useCallbackUrl();
@@ -71,6 +72,16 @@ const HamburgerProfileMenu: React.FC = () => {
       });
       router.refresh();
     }
+  };
+
+  const handleAppLogout = async () => {
+    session.clear();
+    await signOutFromApp('/');
+  };
+
+  const handleSwitchAccount = async () => {
+    session.clear();
+    await switchAuthNeiAccount(pathname || '/');
   };
 
   if (!session.user) {
@@ -127,12 +138,20 @@ const HamburgerProfileMenu: React.FC = () => {
           </Link>
         </DropdownMenuItem>
         <DropdownMenuSeparator />
+        <DropdownMenuItem onClick={handleAppLogout} className="cursor-pointer">
+          <LogOut className="size-4" />
+          <span>Sair apenas do AntiRecurso</span>
+        </DropdownMenuItem>
+        <DropdownMenuItem onClick={handleSwitchAccount} className="cursor-pointer">
+          <RefreshCw className="size-4" />
+          <span>Trocar de conta</span>
+        </DropdownMenuItem>
         <DropdownMenuItem
           onClick={handleLogout}
           className="cursor-pointer text-destructive focus:text-destructive"
         >
           <LogOut className="size-4" />
-          <span>Terminar sessão</span>
+          <span>Terminar sessão no AuthNEI</span>
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

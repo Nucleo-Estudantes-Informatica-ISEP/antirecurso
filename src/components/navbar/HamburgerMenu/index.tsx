@@ -2,17 +2,11 @@
 
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
-import {
-  Sheet,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger
-} from '@/components/ui/sheet';
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import ThemeChanger from '@/components/utils/Theme/ThemeChanger';
 import useSession from '@/hooks/useSession';
 import { cn } from '@/lib/utils';
-import { LogIn, LogOut, Menu, User, UserPlus } from 'lucide-react';
+import { LogIn, LogOut, Menu, RefreshCw, User, UserPlus } from 'lucide-react';
 import { signOut } from 'next-auth/react';
 import { useTheme } from 'next-themes';
 import Link from 'next/link';
@@ -20,6 +14,7 @@ import { usePathname, useRouter } from 'next/navigation';
 import { useState } from 'react';
 import swal from 'sweetalert';
 import { topBarLinks } from '../Topbar';
+import { signOutFromApp, switchAuthNeiAccount } from '@/lib/client-auth-actions';
 
 const HamburgerMenu: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -68,6 +63,18 @@ const HamburgerMenu: React.FC = () => {
     }
   };
 
+  const handleAppLogout = async () => {
+    close();
+    session.clear();
+    await signOutFromApp('/');
+  };
+
+  const handleSwitchAccount = async () => {
+    close();
+    session.clear();
+    await switchAuthNeiAccount(pathname || '/');
+  };
+
   const userInitials = session.user?.name
     ? session.user.name
         .split(' ')
@@ -82,12 +89,7 @@ const HamburgerMenu: React.FC = () => {
       <ThemeChanger />
       <Sheet open={isOpen} onOpenChange={setIsOpen}>
         <SheetTrigger asChild>
-          <Button
-            variant="ghost"
-            size="icon"
-            aria-label="Abrir menu"
-            className="text-foreground"
-          >
+          <Button variant="ghost" size="icon" aria-label="Abrir menu" className="text-foreground">
             <Menu className="size-5" />
           </Button>
         </SheetTrigger>
@@ -110,9 +112,7 @@ const HamburgerMenu: React.FC = () => {
                 </AvatarFallback>
               </Avatar>
               <div className="min-w-0 flex-1">
-                <p className="text-sm font-semibold leading-tight truncate">
-                  {session.user.name}
-                </p>
+                <p className="text-sm font-semibold leading-tight truncate">{session.user.name}</p>
                 <p className="text-xs text-muted-foreground truncate">{session.user.email}</p>
               </div>
             </div>
@@ -121,8 +121,7 @@ const HamburgerMenu: React.FC = () => {
           <nav className="flex-1 overflow-y-auto py-4">
             <ul className="space-y-1 px-3">
               {Object.entries(topBarLinks).map(([label, href]) => {
-                const isActive =
-                  href === '/' ? pathname === '/' : pathname?.startsWith(href);
+                const isActive = href === '/' ? pathname === '/' : pathname?.startsWith(href);
                 return (
                   <li key={href}>
                     <Link
@@ -151,13 +150,21 @@ const HamburgerMenu: React.FC = () => {
                     Aceder ao perfil
                   </Link>
                 </Button>
+                <Button variant="outline" className="w-full" onClick={handleAppLogout}>
+                  <LogOut className="size-4" />
+                  Sair apenas do AntiRecurso
+                </Button>
+                <Button variant="outline" className="w-full" onClick={handleSwitchAccount}>
+                  <RefreshCw className="size-4" />
+                  Trocar de conta
+                </Button>
                 <Button
                   variant="outline"
                   className="w-full text-destructive hover:text-destructive"
                   onClick={handleLogout}
                 >
                   <LogOut className="size-4" />
-                  Terminar sessão
+                  Terminar sessão no AuthNEI
                 </Button>
               </>
             ) : (

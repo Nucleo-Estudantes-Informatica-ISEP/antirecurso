@@ -1,6 +1,8 @@
 import type { NextAuthOptions, Profile } from 'next-auth';
 import type { JWT } from 'next-auth/jwt';
 import ZitadelProvider from 'next-auth/providers/zitadel';
+import { getAuthNeiRoles, getAuthNeiRolesFromJwt } from '@/lib/auth-nei-roles';
+import { provisionStudentForNormalOnboarding } from '@/lib/authnei-provisioner';
 
 type ZitadelProfile = Profile & {
   email_verified?: boolean;
@@ -19,8 +21,7 @@ const zitadelProviderConfig: Parameters<typeof ZitadelProvider>[0] = {
   clientSecret: process.env.AUTH_CLIENT_SECRET ?? '',
   authorization: {
     params: {
-      scope: process.env.AUTH_SCOPES ?? 'openid email profile offline_access',
-      prompt: 'select_account'
+      scope: process.env.AUTH_SCOPES ?? 'openid email profile offline_access'
     }
   }
 };
@@ -54,14 +55,18 @@ export async function refreshAccessToken(token: JWT): Promise<JWT> {
       console.info('[auth][jwt] Access token refreshed successfully.');
     }
 
+    const refreshedAccessToken = refreshedTokens.access_token;
+    const refreshedRoles = getAuthNeiRolesFromJwt(refreshedAccessToken);
+
     return {
       ...token,
-      accessToken: refreshedTokens.access_token,
+      accessToken: refreshedAccessToken,
       accessTokenExpiresAt: refreshedTokens.expires_in
         ? Date.now() + refreshedTokens.expires_in * 1000
         : undefined,
       refreshToken: refreshedTokens.refresh_token ?? token.refreshToken,
       idToken: refreshedTokens.id_token ?? token.idToken,
+      authNeiRoles: refreshedRoles,
       error: undefined
     };
   } catch (error) {
@@ -78,16 +83,36 @@ export async function refreshAccessToken(token: JWT): Promise<JWT> {
 export const authOptions: NextAuthOptions = {
   secret: process.env.AUTH_SECRET,
   session: {
-    strategy: 'jwt',
+    strategy: 'jwt'
   },
   pages: {
-    signIn: '/login',
+    signIn: '/login'
   },
   providers: [ZitadelProvider(zitadelProviderConfig)],
   callbacks: {
-    async signIn({ profile }) {
+    async signIn({ profile, account }) {
       const zitadelProfile = profile as ZitadelProfile | undefined;
-      return zitadelProfile?.email_verified !== false;
+      if (zitadelProfile?.email_verified !== true) return false;
+
+      const profileRoles = getAuthNeiRoles(profile as Record<string, unknown> | undefined);
+      const accessTokenRoles = getAuthNeiRolesFromJwt(account?.access_token);
+      const roles = profileRoles.length ? profileRoles : accessTokenRoles;
+      const subject =
+        (typeof profile?.sub === 'string' ? profile.sub : undefined) ?? account?.providerAccountId;
+
+      if (!subject) return false;
+
+      try {
+        const result = await provisionStudentForNormalOnboarding(subject, roles);
+        return result === 'provisioned' ? '/login?studentProvisioned=true' : true;
+      } catch (error) {
+        if (authDebugEnabled) {
+          console.warn('[auth][provisioning]', {
+            message: error instanceof Error ? error.message : 'Unknown provisioning failure'
+          });
+        }
+        return false;
+      }
     },
     async jwt({ token, account, profile }) {
       if (account) {
@@ -95,6 +120,9 @@ export const authOptions: NextAuthOptions = {
         token.accessTokenExpiresAt = account.expires_at ? account.expires_at * 1000 : undefined;
         token.idToken = account.id_token;
         token.refreshToken = account.refresh_token;
+        const profileRoles = getAuthNeiRoles(profile as Record<string, unknown> | undefined);
+        const accessTokenRoles = getAuthNeiRolesFromJwt(account.access_token);
+        token.authNeiRoles = profileRoles.length ? profileRoles : accessTokenRoles;
 
         if (authDebugEnabled) {
           console.info('[auth][jwt]', {
@@ -150,6 +178,7 @@ export const authOptions: NextAuthOptions = {
         session.user.email =
           typeof token.userEmail === 'string' ? token.userEmail : session.user.email;
         session.user.name = typeof token.userName === 'string' ? token.userName : session.user.name;
+        session.user.roles = token.authNeiRoles ?? [];
       }
 
       session.error = token.error;
