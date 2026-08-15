@@ -1,4 +1,3 @@
-import ChangelogPopUp from '@/components/changelog/ChangelogPopUp';
 import Topbar from '@/components/navbar/Topbar';
 import CookieConsent from '@/components/utils/CookieConsent';
 import ThemeProvider from '@/components/utils/Theme/ThemeProvider';
@@ -26,7 +25,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                   </div>
                 </main>
               </div>
-              <ChangelogPopUp />
             </Suspense>
             <CookieConsent />
           </ThemeProvider>
