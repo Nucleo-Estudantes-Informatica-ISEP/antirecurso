@@ -92,6 +92,8 @@ export const authOptions: NextAuthOptions = {
   callbacks: {
     async signIn({ profile, account }) {
       const zitadelProfile = profile as ZitadelProfile | undefined;
+      // Legacy email linking requires affirmative IdP verification. A missing optional
+      // OIDC claim is denied instead of weakening the account-link boundary.
       if (zitadelProfile?.email_verified !== true) return false;
 
       const profileRoles = getAuthNeiRoles(profile as Record<string, unknown> | undefined);

@@ -6,7 +6,7 @@ export async function provisionStudentForNormalOnboarding(
 ): Promise<'already-student' | 'provisioned'> {
   if (currentRoles.includes('student')) return 'already-student';
   if (currentRoles.includes('employee')) {
-    throw new Error('AuthNEI employee-only identities cannot be provisioned as students.');
+    throw new Error('AuthNEI identities with employee but without student cannot be provisioned.');
   }
 
   const baseUrl = process.env.AUTHNEI_PROVISIONER_URL?.trim().replace(/\/+$/, '');

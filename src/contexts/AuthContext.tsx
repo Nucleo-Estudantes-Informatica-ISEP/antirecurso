@@ -74,6 +74,16 @@ async function fetchSession(): Promise<SessionData | null> {
   }
   if (res.status === 401) return null;
 
+  if (res.status === 403) {
+    const data = (await res.json().catch(() => null)) as { message?: string } | null;
+    await swal(
+      'Acesso indisponível',
+      data?.message ?? 'A tua conta não tem a permissão de estudante necessária.',
+      'error'
+    );
+    return null;
+  }
+
   if (res.status === 404) {
     await swal('Sessão expirada', 'Por favor, inicia sessão novamente.', 'error');
   }

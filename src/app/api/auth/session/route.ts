@@ -24,7 +24,10 @@ export async function GET() {
   }
 
   if (!hasAuthNeiRole(session.user, 'student')) {
-    return NextResponse.json({ message: 'The student role is required' }, { status: 403 });
+    return NextResponse.json(
+      { message: 'A tua conta AuthNEI não tem a permissão de estudante necessária.' },
+      { status: 403 }
+    );
   }
 
   if (!accessToken) {
