@@ -12,7 +12,7 @@ import {
   TableCell,
   TableHead,
   TableHeader,
-  TableRow,
+  TableRow
 } from '@/components/ui/table';
 import { PROTECTED_API_BASE_URL } from '@/services/api';
 import fetchUserPendingExams from '@/utils/FetchPendingExams';
@@ -29,7 +29,7 @@ interface PendingExam {
 
 const PendingExamsTable: React.FC = () => {
   const router = useRouter();
-  const [fetchUrl, setFetchUrl] = useState<string | null>(`${PROTECTED_API_BASE_URL}/exams/pending`);
+  const fetchUrl = `${PROTECTED_API_BASE_URL}/exams/pending`;
   const [pendingExamResponse, setPendingExamResponse] = useState<PendingExam[] | null>(null);
   const { theme } = useTheme();
 
@@ -43,7 +43,7 @@ const PendingExamsTable: React.FC = () => {
           title: 'Erro',
           text: 'Não foi possível obter os exames por terminar.',
           icon: 'error',
-          className: theme === 'dark' ? 'swal-dark' : '',
+          className: theme === 'dark' ? 'swal-dark' : ''
         });
         router.push('/');
       }
@@ -56,7 +56,10 @@ const PendingExamsTable: React.FC = () => {
     return (
       <section className="w-full flex flex-col items-center px-2 md:px-6 mt-2">
         {Array.from({ length: 3 }).map((_, i) => (
-          <div key={i} className="h-10 w-full max-w-4xl rounded border bg-muted animate-pulse mb-2" />
+          <div
+            key={i}
+            className="h-10 w-full max-w-4xl rounded border bg-muted animate-pulse mb-2"
+          />
         ))}
       </section>
     );
@@ -91,7 +94,7 @@ const PendingExamsTable: React.FC = () => {
                   text: 'Tens a certeza? Esta ação não pode ser desfeita.',
                   icon: 'warning',
                   buttons: ['Cancelar', 'Eliminar'],
-                  className: theme === 'dark' ? 'swal-dark' : '',
+                  className: theme === 'dark' ? 'swal-dark' : ''
                 });
 
                 if (!confirmed) return;
@@ -114,7 +117,7 @@ const PendingExamsTable: React.FC = () => {
                     title: 'Erro',
                     text: 'Não foi possível eliminar o exame pendente.',
                     icon: 'error',
-                    className: theme === 'dark' ? 'swal-dark' : '',
+                    className: theme === 'dark' ? 'swal-dark' : ''
                   });
                 }
               };
@@ -124,7 +127,9 @@ const PendingExamsTable: React.FC = () => {
                   <TableCell className="capitalize">
                     <button
                       type="button"
-                      onClick={() => router.push(`/exams/${exam.subject_id}/answer/${exam.mode}?resume=true`)}
+                      onClick={() =>
+                        router.push(`/exams/${exam.subject_id}/answer/${exam.mode}?resume=true`)
+                      }
                       className="font-medium text-foreground hover:text-primary transition-colors hover:underline"
                     >
                       {exam.subject}

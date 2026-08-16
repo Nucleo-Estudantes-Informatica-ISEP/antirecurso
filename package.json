@@ -8,6 +8,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint .",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run --config vitest.config.ts",
     "preinstall": "npx only-allow pnpm"
   },
   "dependencies": {
@@ -34,7 +36,7 @@
     "lodash": "^4.17.21",
     "lucide-react": "^0.469.0",
     "next": "16.2.1",
-    "next-auth": "4.24.13",
+    "next-auth": "4.24.15",
     "next-themes": "^0.2.1",
     "postcss": "^8.4.39",
     "postcss-preset-env": "^8.5.1",
@@ -73,7 +75,8 @@
     "pdf-lib": "^1.17.1",
     "prettier": "^3.8.1",
     "sharp": "^0.33.4",
-    "swr": "^2.4.1"
+    "swr": "^2.4.1",
+    "vitest": "^4.1.10"
   },
   "pnpm": {
     "overrides": {
