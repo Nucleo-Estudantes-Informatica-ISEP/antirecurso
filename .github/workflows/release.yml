@@ -4,14 +4,10 @@ on:
   pull_request:
     branches: [main]
     types: [opened, reopened, synchronize, labeled, unlabeled, closed]
-  push:
-    branches: [main]
-    paths:
-      - ".github/workflows/release.yml"
 
 jobs:
   validate-release-label:
-    if: github.event_name == 'pull_request' && github.event.action != 'closed' && github.event.pull_request.head.ref != 'agent/release-automation-v2-bootstrap'
+    if: github.event.action != 'closed' && github.event.pull_request.head.ref != 'agent/release-automation-v2-bootstrap'
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -23,151 +19,15 @@ jobs:
           LABELS_JSON: ${{ toJSON(github.event.pull_request.labels.*.name) }}
         with:
           script: |
-            const releaseLabels = [
-              "release:major",
-              "release:minor",
-              "release:patch",
-            ];
+            const releaseLabels = ["release:major", "release:minor", "release:patch"];
             const labels = JSON.parse(process.env.LABELS_JSON || "[]");
             const selected = labels.filter((label) => releaseLabels.includes(label));
-
             if (selected.length !== 1) {
-              core.setFailed(
-                `PRs into main must have exactly one release label: ${releaseLabels.join(", ")}. Found: ${selected.join(", ") || "none"}.`
-              );
+              core.setFailed(`PRs into main must have exactly one release label: ${releaseLabels.join(", ")}. Found: ${selected.join(", ") || "none"}.`);
             }
-
-  bootstrap-v2:
-    if: github.event_name == 'push'
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write
-      issues: write
-    steps:
-      - name: Clean legacy release metadata and publish v2
-        uses: actions/github-script@v9
-        env:
-          BOOTSTRAP_SHA: ${{ github.event.before }}
-        with:
-          script: |
-            const { owner, repo } = context.repo;
-            const bootstrapSha = process.env.BOOTSTRAP_SHA;
-            const v2Tag = "v2.0.0";
-
-            if (!bootstrapSha || /^0+$/.test(bootstrapSha)) {
-              core.setFailed("Could not determine the pre-workflow main SHA for the v2 release.");
-              return;
-            }
-
-            const refs = await github.paginate(github.rest.git.listMatchingRefs, {
-              owner,
-              repo,
-              ref: "tags/",
-              per_page: 100,
-            });
-
-            if (refs.some((ref) => ref.ref === `refs/tags/${v2Tag}`)) {
-              core.info(`${v2Tag} already exists; bootstrap is complete.`);
-              return;
-            }
-
-            const releases = await github.paginate(github.rest.repos.listReleases, {
-              owner,
-              repo,
-              per_page: 100,
-            });
-
-            for (const release of releases) {
-              if (release.draft) {
-                core.info(`Deleting legacy draft release ${release.id} (${release.tag_name}).`);
-                await github.rest.repos.deleteRelease({ owner, repo, release_id: release.id });
-              }
-            }
-
-            const keepTags = new Set(["v1.4.1"]);
-            for (const ref of refs) {
-              const tagName = ref.ref.replace("refs/tags/", "");
-              if (/^v(?:0|1)\./.test(tagName) && !keepTags.has(tagName)) {
-                core.info(`Deleting legacy tag ${tagName}.`);
-                await github.rest.git.deleteRef({ owner, repo, ref: `tags/${tagName}` });
-              }
-            }
-
-            const releaseLabels = [
-              { name: "release:major", color: "b60205", description: "Next merge to main creates a new major release" },
-              { name: "release:minor", color: "0e8a16", description: "Next merge to main creates a new minor release" },
-              { name: "release:patch", color: "1d76db", description: "Next merge to main creates a new patch release" },
-            ];
-
-            for (const label of releaseLabels) {
-              try {
-                await github.rest.issues.createLabel({ owner, repo, ...label });
-              } catch (error) {
-                if (error.status !== 422) throw error;
-              }
-            }
-
-            await github.rest.git.createRef({
-              owner,
-              repo,
-              ref: `refs/tags/${v2Tag}`,
-              sha: bootstrapSha,
-            });
-
-            const body = `# Antirecurso v2
-
-Antirecurso v2 is a major frontend and platform refresh built on top of the last 1.x milestone, v1.4.1. It consolidates the large UI, authentication, runtime and engineering changes that landed on main since that release.
-
-## Highlights
-
-### Authentication and platform
-- Migrated the frontend authentication flow to AuthNEI/ZITADEL through NextAuth, replacing the old local password-oriented frontend flow.
-- Added server-side session/token helpers and protected backend/public proxy routes so authenticated frontend requests no longer need to call protected API origins directly.
-- Added account-resolution flows for linking and resolving authenticated identities.
-- Upgraded the application baseline to Next.js 16, React 19 and the current Node/tooling stack used by the project.
-
-### New UI and user experience
-- Large UI/UX refactor across the application with a reorganized component structure and reusable Radix/shadcn-style primitives.
-- Refreshed navigation, authentication pages, profile, notes, exams, scoreboard, statistics and policy/about pages.
-- Standardized the application typography around Inter and refreshed global styling and responsive behavior.
-
-### Exams, statistics and student workflows
-- Reworked exam answering, navigation, review and points flows.
-- Improved question handling, exam shuffling and previous/pending exam experiences.
-- Expanded scoreboard, profile and statistics presentation with reusable chart components.
-
-### Administration
-- Added and refreshed administration flows for events, notes, comments, users and question reports.
-- Added event and note management interfaces and improved protected admin data access.
-
-### Engineering and security
-- Added CI quality gates for linting, typechecking, tests, production builds, dependency auditing and secret scanning.
-- Added Dependabot and CODEOWNERS configuration.
-- Updated dependencies and fixed the critical NextAuth advisory that was present in the older baseline.
-- Removed the old automatic version-update popup while retaining the changelog page.
-
-## Scope
-
-This release points to the main branch state immediately before release automation was added. The still-open platform-stabilization PR #104 is intentionally **not** part of v2.0.0.
-
-**Previous milestone:** v1.4.1`;
-
-            await github.rest.repos.createRelease({
-              owner,
-              repo,
-              tag_name: v2Tag,
-              target_commitish: bootstrapSha,
-              name: "Antirecurso v2",
-              body,
-              draft: false,
-              prerelease: false,
-              make_latest: "true",
-            });
-
-            core.info(`Published ${v2Tag} at ${bootstrapSha}.`);
 
   publish-release:
-    if: github.event_name == 'pull_request' && github.event.action == 'closed' && github.event.pull_request.merged == true && github.event.pull_request.head.ref != 'agent/release-automation-v2-bootstrap'
+    if: github.event.action == 'closed' && github.event.pull_request.merged == true && github.event.pull_request.head.ref != 'agent/release-automation-v2-bootstrap'
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -183,92 +43,27 @@ This release points to the main branch state immediately before release automati
         with:
           script: |
             const { owner, repo } = context.repo;
+            const productName = "Antirecurso";
             const releaseLabels = ["release:major", "release:minor", "release:patch"];
             const labels = JSON.parse(process.env.LABELS_JSON || "[]");
             const selected = labels.filter((label) => releaseLabels.includes(label));
-
             if (selected.length !== 1) {
-              core.setFailed(
-                `Merged PR must have exactly one release label. Found: ${selected.join(", ") || "none"}.`
-              );
+              core.setFailed(`Merged PR must have exactly one release label. Found: ${selected.join(", ") || "none"}.`);
               return;
             }
-
-            const refs = await github.paginate(github.rest.git.listMatchingRefs, {
-              owner,
-              repo,
-              ref: "tags/v",
-              per_page: 100,
-            });
-
-            const versions = refs
-              .map((ref) => ref.ref.replace("refs/tags/", ""))
-              .map((name) => {
-                const match = /^v(\d+)\.(\d+)\.(\d+)$/.exec(name);
-                return match
-                  ? {
-                      name,
-                      major: Number(match[1]),
-                      minor: Number(match[2]),
-                      patch: Number(match[3]),
-                    }
-                  : null;
-              })
-              .filter(Boolean)
-              .sort(
-                (a, b) =>
-                  a.major - b.major || a.minor - b.minor || a.patch - b.patch
-              );
-
-            if (versions.length === 0) {
-              core.setFailed("No semantic-version release tag exists to bump from.");
-              return;
-            }
-
+            const refs = await github.paginate(github.rest.git.listMatchingRefs, { owner, repo, ref: "tags/v", per_page: 100 });
+            const versions = refs.map((ref) => ref.ref.replace("refs/tags/", "")).map((name) => {
+              const match = /^v(\d+)\.(\d+)\.(\d+)$/.exec(name);
+              return match ? { name, major: Number(match[1]), minor: Number(match[2]), patch: Number(match[3]) } : null;
+            }).filter(Boolean).sort((a, b) => a.major - b.major || a.minor - b.minor || a.patch - b.patch);
+            if (versions.length === 0) { core.setFailed("No semantic-version release tag exists to bump from."); return; }
             const latest = versions.at(-1);
             let { major, minor, patch } = latest;
-            const bump = selected[0];
-
-            if (bump === "release:major") {
-              major += 1;
-              minor = 0;
-              patch = 0;
-            } else if (bump === "release:minor") {
-              minor += 1;
-              patch = 0;
-            } else {
-              patch += 1;
-            }
-
+            if (selected[0] === "release:major") { major += 1; minor = 0; patch = 0; }
+            else if (selected[0] === "release:minor") { minor += 1; patch = 0; }
+            else patch += 1;
             const nextTag = `v${major}.${minor}.${patch}`;
             const mergeSha = process.env.MERGE_SHA;
-
-            const notes = await github.rest.repos.generateReleaseNotes({
-              owner,
-              repo,
-              tag_name: nextTag,
-              target_commitish: mergeSha,
-              previous_tag_name: latest.name,
-            });
-
-            await github.rest.git.createRef({
-              owner,
-              repo,
-              ref: `refs/tags/${nextTag}`,
-              sha: mergeSha,
-            });
-
-            const intro = `Released automatically from PR #${process.env.PR_NUMBER}: ${process.env.PR_TITLE}.`;
-            await github.rest.repos.createRelease({
-              owner,
-              repo,
-              tag_name: nextTag,
-              target_commitish: mergeSha,
-              name: `Antirecurso ${nextTag}`,
-              body: `${intro}\n\n${notes.data.body}`,
-              draft: false,
-              prerelease: false,
-              make_latest: "true",
-            });
-
-            core.info(`Published ${nextTag} from ${mergeSha}.`);
+            const notes = await github.rest.repos.generateReleaseNotes({ owner, repo, tag_name: nextTag, target_commitish: mergeSha, previous_tag_name: latest.name });
+            await github.rest.git.createRef({ owner, repo, ref: `refs/tags/${nextTag}`, sha: mergeSha });
+            await github.rest.repos.createRelease({ owner, repo, tag_name: nextTag, target_commitish: mergeSha, name: `${productName} ${nextTag}`, body: `Released automatically from PR #${process.env.PR_NUMBER}: ${process.env.PR_TITLE}.\n\n${notes.data.body}`, draft: false, prerelease: false, make_latest: "true" });
