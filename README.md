@@ -132,7 +132,7 @@ At minimum, define the variables below before starting the app.
 
 | Variable | Required | Description |
 | --- | --- | --- |
-| `NEXT_PUBLIC_BASE_URL` | Yes | Base URL of the AntiRecurso backend API. This is required by the frontend code but is not currently present in `.env.example`. |
+| `NEXT_PUBLIC_BASE_URL` | Yes | Base URL of the current AdonisJS AntiRecurso backend API. It is documented in `.env.example`. |
 | `AUTH_SECRET` | Yes | NextAuth secret used to sign and decrypt session tokens. |
 | `AUTH_ISSUER_URL` | Yes | Zitadel/AuthNEI issuer URL. |
 | `AUTH_CLIENT_ID` | Yes | OAuth client ID for the hosted login flow. |
@@ -177,6 +177,8 @@ Defined in [`package.json`](package.json):
 - `pnpm build` - create a production build
 - `pnpm start` - start the production server
 - `pnpm lint` - run ESLint
+- `pnpm typecheck` - run TypeScript without emitting files
+- `pnpm test` - run the Vitest regression suite
 
 ## Development Notes
 
@@ -199,6 +201,8 @@ The app uses a JWT session strategy:
 - server helpers in [`src/lib/server-auth.ts`](src/lib/server-auth.ts) read those tokens from cookies
 - authenticated server components fetch user data from the backend before rendering
 - the `/api/backend/*` proxy forwards the bearer token to the upstream API
+- expired access tokens are refreshed through a single in-flight request so concurrent server calls do not race
+- rotated session cookies are persisted, and an invalid refresh clears the session instead of looping
 
 ### Theming and Global UX
 
@@ -222,7 +226,7 @@ For production you need:
 - a reachable backend API URL for `NEXT_PUBLIC_BASE_URL`
 - a correctly configured callback and logout setup in Zitadel/AuthNEI
 
-A typical production flow is:
+A typical production build flow is:
 
 ```bash
 pnpm install --frozen-lockfile
@@ -235,6 +239,10 @@ If you deploy behind a reverse proxy or managed platform, ensure:
 - HTTPS is enabled
 - your auth issuer accepts the production callback URL
 - `AUTH_POST_LOGOUT_REDIRECT_URI` matches the deployed frontend URL
+
+GitHub CI does not itself deploy. It requires a frozen install, lint, typecheck, tests, production build, production dependency audit, and Gitleaks. After a reviewed merge, verify the deployed commit in the hosting control plane and smoke the root plus login/refresh/logout and the affected exam flow. When a web change depends on the Adonis API, deploy the API and its migrations first.
+
+For regressions, prefer TDD: add a focused failing test, implement the smallest correction, then refactor with the suite green. See [`AGENTS.md`](AGENTS.md) for the required workflow.
 
 ## Troubleshooting
 

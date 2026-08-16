@@ -4,6 +4,8 @@ Thank you for investing your time in contributing to our project! Any contributi
 
 Read our [Code of Conduct](./CODE_OF_CONDUCT.md) to keep our community approachable and respectable.
 
+Read [`AGENTS.md`](./AGENTS.md) before changing code. It defines the required `main` branch workflow, CI/CD gates, test-first expectations, backend deployment order, and documentation rules.
+
 In this guide you will get an overview of the contribution workflow from opening an issue, creating a PR, reviewing, and merging the PR.
 
 ## New contributor guide
@@ -57,6 +59,8 @@ Replace `branch-name` with a descriptive name for your branch.
 
 4. **Make Changes**: Now you're ready to add your amazing feature or fix. Make the necessary changes in the codebase.
 
+   For regressions and business logic, prefer TDD: reproduce the failure in a focused test, implement the smallest fix, then refactor with the suite green. Every behavior change needs regression coverage unless the PR explains why a hosted dependency makes deterministic automation impossible.
+
 5. **Commit Changes**: Once you're done, commit your changes with a clear and concise commit message:
 
 ```
@@ -72,6 +76,18 @@ git push origin branch-name
 7. **Create a Pull Request**: Go to your forked repository on GitHub and switch to the branch you just pushed. Click on the "New Pull Request" button next to the branch selection dropdown. Provide a descriptive title and detailed description for your pull request, and submit it for review.
 
 > Note: We recommend that the branch name looks something like "feat/comments".
+
+Before opening the PR, run:
+
+```bash
+pnpm install --frozen-lockfile
+pnpm lint
+pnpm typecheck
+pnpm test
+pnpm build
+```
+
+PRs target `main`. GitHub requires `Lint, typecheck, test & build`, `Secret scan`, resolved conversations, and one CODEOWNER approval. Use `Closes #N` only when the PR fully resolves the linked issue.
 
 ### Pull Request
 
