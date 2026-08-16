@@ -1,6 +1,6 @@
 'use client';
 
-import { createContext, useEffect, useState } from 'react';
+import { createContext, useCallback, useEffect, useState } from 'react';
 
 import User from '@/types/User';
 import swal from 'sweetalert';
@@ -26,7 +26,12 @@ export function AuthContextProvider({ children, ...props }: AuthContextProviderP
   const [token, setToken] = useState<string | null>(null);
   const [user, setUser] = useState<User | null>(null);
 
-  const revalidate = async () => {
+  const clear = useCallback(() => {
+    setUser(null);
+    setToken(null);
+  }, []);
+
+  const revalidate = useCallback(async () => {
     const session = await fetchSession();
     if (!session) {
       clear();
@@ -37,16 +42,11 @@ export function AuthContextProvider({ children, ...props }: AuthContextProviderP
     const { token, user } = session;
     setToken(token);
     setUser(user);
-  };
-
-  const clear = () => {
-    setUser(null);
-    setToken(null);
-  };
+  }, [clear]);
 
   useEffect(() => {
     revalidate();
-  }, []);
+  }, [revalidate]);
 
   return (
     <AuthContext.Provider value={{ user, token, clear, revalidate }} {...props}>

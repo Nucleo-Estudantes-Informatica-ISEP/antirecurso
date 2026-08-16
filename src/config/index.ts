@@ -3,11 +3,9 @@ const config = {
     token: `@AntiRecurso:token${process.env.NODE_ENV === 'development' ? '_dev' : ''}`
   },
   localStorage: {
-    consent: '@AntiRecurso:consent',
-    changelog: '@AntiRecurso:changelog'
+    consent: '@AntiRecurso:consent'
   },
-  mandatoryAuthModes: ['new', 'realistic', 'wrong', 'hard', 'custom'],
-  version: '1.4.2'
+  mandatoryAuthModes: ['new', 'realistic', 'wrong', 'hard', 'custom']
 };
 
 export default config;

@@ -1,5 +1,3 @@
-import DarkMainLogo from '@/images/logos/main-logo-dark.svg';
-import MainLogo from '@/images/logos/main-logo.svg';
 import Image from 'next/image';
 import Link from 'next/link';
 import HamburgerMenu from '../HamburgerMenu';
@@ -27,7 +25,7 @@ const Topbar: React.FC = () => {
             height={160}
             width={160}
             priority
-            src={MainLogo}
+            src="/images/logos/main-logo.svg"
             alt="AntiRecurso"
             className="block dark:hidden max-w-[7rem] md:max-w-[9rem] h-auto"
           />
@@ -35,7 +33,7 @@ const Topbar: React.FC = () => {
             height={160}
             width={160}
             priority
-            src={DarkMainLogo}
+            src="/images/logos/main-logo-dark.svg"
             alt="AntiRecurso"
             className="hidden dark:block max-w-[7rem] md:max-w-[9rem] h-auto"
           />
