@@ -21,12 +21,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import useAnswerableExamNavigation from '@/hooks/useAnswerableExamNavigation';
 import useSession from '@/hooks/useSession';
 import { ChevronLeft, ChevronRight, Clock, Loader2 } from 'lucide-react';
-import sampleImage from 'public/images/sample.webp';
-import {
-  getShuffleSeed,
-  setShuffleSeed,
-  shuffleWithSeed,
-} from '@/utils/examShuffle';
+import { getShuffleSeed, setShuffleSeed, shuffleWithSeed } from '@/utils/examShuffle';
 
 interface ExamPageProps {
   params: Promise<{
@@ -124,12 +119,15 @@ const Exam: React.FC<ExamPageProps> = ({ params }) => {
         localStorage.removeItem(`exam-state-${subjectId}`);
         if (session.token) {
           const mode = resolvedParams.mode;
-          fetch(`${PROTECTED_API_BASE_URL}/exams/state?subject_id=${subjectId}&mode=${encodeURIComponent(mode)}`, {
-            method: 'DELETE',
-            headers: {
-              Authorization: `Bearer ${session.token}`
+          fetch(
+            `${PROTECTED_API_BASE_URL}/exams/state?subject_id=${subjectId}&mode=${encodeURIComponent(mode)}`,
+            {
+              method: 'DELETE',
+              headers: {
+                Authorization: `Bearer ${session.token}`
+              }
             }
-          }).catch(console.error);
+          ).catch(console.error);
         }
       } catch (err) {
         console.error('Error clearing saved state:', err);
@@ -160,11 +158,14 @@ const Exam: React.FC<ExamPageProps> = ({ params }) => {
       try {
         if (session.token) {
           const mode = resolvedParams.mode;
-          const res = await fetch(`${PROTECTED_API_BASE_URL}/exams/state?subject_id=${subjectId}&mode=${encodeURIComponent(mode)}`, {
-            headers: {
-              Authorization: `Bearer ${session.token}`
+          const res = await fetch(
+            `${PROTECTED_API_BASE_URL}/exams/state?subject_id=${subjectId}&mode=${encodeURIComponent(mode)}`,
+            {
+              headers: {
+                Authorization: `Bearer ${session.token}`
+              }
             }
-          });
+          );
           if (res.status === 200) {
             const data = await res.json();
             savedState = data.state;
@@ -223,12 +224,15 @@ const Exam: React.FC<ExamPageProps> = ({ params }) => {
           localStorage.removeItem(`exam-state-${subjectId}`);
           if (session.token) {
             const mode = resolvedParams.mode;
-            fetch(`${PROTECTED_API_BASE_URL}/exams/state?subject_id=${subjectId}&mode=${encodeURIComponent(mode)}`, {
-              method: 'DELETE',
-              headers: {
-                Authorization: `Bearer ${session.token}`
+            fetch(
+              `${PROTECTED_API_BASE_URL}/exams/state?subject_id=${subjectId}&mode=${encodeURIComponent(mode)}`,
+              {
+                method: 'DELETE',
+                headers: {
+                  Authorization: `Bearer ${session.token}`
+                }
               }
-            }).catch(console.error);
+            ).catch(console.error);
           }
         }
       }
@@ -295,7 +299,8 @@ const Exam: React.FC<ExamPageProps> = ({ params }) => {
     changeQuestion,
     session.token,
     nOfQuestions,
-    filter
+    filter,
+    searchParams
   ]);
 
   useEffect(() => {
@@ -333,8 +338,7 @@ const Exam: React.FC<ExamPageProps> = ({ params }) => {
             <div className="flex items-center gap-2 text-sm font-bold tabular-nums">
               <Clock className="size-4 text-muted-foreground" />
               <span>
-                {minutes.toString().padStart(2, '0')}:
-                {seconds.toString().padStart(2, '0')}
+                {minutes.toString().padStart(2, '0')}:{seconds.toString().padStart(2, '0')}
               </span>
             </div>
           </div>
@@ -416,7 +420,7 @@ const Exam: React.FC<ExamPageProps> = ({ params }) => {
               }`}
             >
               {currentQuestion.image === '' ? (
-                <Image fill alt="Sample" className="object-cover" src={sampleImage} />
+                <Image fill alt="Sample" className="object-cover" src="/images/sample.webp" />
               ) : (
                 <Image
                   fill
@@ -452,8 +456,7 @@ const Exam: React.FC<ExamPageProps> = ({ params }) => {
                   <Button type="submit" disabled={isSubmitting} className="w-full sm:w-auto">
                     {isSubmitting ? (
                       <>
-                        <Loader2 className="size-4 animate-spin" />
-                        A submeter...
+                        <Loader2 className="size-4 animate-spin" />A submeter...
                       </>
                     ) : (
                       'Terminar exame'
