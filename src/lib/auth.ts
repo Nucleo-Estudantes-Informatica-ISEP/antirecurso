@@ -1,12 +1,14 @@
 import type { NextAuthOptions, Profile } from 'next-auth';
 import type { JWT } from 'next-auth/jwt';
 import ZitadelProvider from 'next-auth/providers/zitadel';
+import { shouldRefreshAccessToken } from './token-lifetime';
 
 type ZitadelProfile = Profile & {
   email_verified?: boolean;
 };
 
 const authDebugEnabled = process.env.AUTH_DEBUG === 'true';
+const refreshRequests = new Map<string, Promise<JWT>>();
 
 const requiredEnv = {
   authClientId: process.env.AUTH_CLIENT_ID ?? '',
@@ -25,7 +27,7 @@ const zitadelProviderConfig: Parameters<typeof ZitadelProvider>[0] = {
   }
 };
 
-export async function refreshAccessToken(token: JWT): Promise<JWT> {
+async function requestRefreshedAccessToken(token: JWT): Promise<JWT> {
   try {
     if (authDebugEnabled) {
       console.info('[auth][jwt] Attempting to refresh access token...');
@@ -44,10 +46,14 @@ export async function refreshAccessToken(token: JWT): Promise<JWT> {
       })
     });
 
-    const refreshedTokens = await response.json();
+    const refreshedTokens = (await response.json()) as Record<string, unknown>;
 
     if (!response.ok) {
-      throw refreshedTokens;
+      throw new Error(`Token endpoint returned HTTP ${response.status}`);
+    }
+
+    if (typeof refreshedTokens.access_token !== 'string') {
+      throw new Error('Token endpoint returned no access token');
     }
 
     if (authDebugEnabled) {
@@ -57,16 +63,21 @@ export async function refreshAccessToken(token: JWT): Promise<JWT> {
     return {
       ...token,
       accessToken: refreshedTokens.access_token,
-      accessTokenExpiresAt: refreshedTokens.expires_in
-        ? Date.now() + refreshedTokens.expires_in * 1000
-        : undefined,
-      refreshToken: refreshedTokens.refresh_token ?? token.refreshToken,
-      idToken: refreshedTokens.id_token ?? token.idToken,
+      accessTokenExpiresAt:
+        typeof refreshedTokens.expires_in === 'number' && refreshedTokens.expires_in > 0
+          ? Date.now() + refreshedTokens.expires_in * 1000
+          : undefined,
+      refreshToken:
+        typeof refreshedTokens.refresh_token === 'string'
+          ? refreshedTokens.refresh_token
+          : token.refreshToken,
+      idToken:
+        typeof refreshedTokens.id_token === 'string' ? refreshedTokens.id_token : token.idToken,
       error: undefined
     };
-  } catch (error) {
+  } catch {
     if (authDebugEnabled) {
-      console.error('[auth][jwt] Failed to refresh access token:', error);
+      console.error('[auth][jwt] Failed to refresh access token.');
     }
     return {
       ...token,
@@ -75,13 +86,33 @@ export async function refreshAccessToken(token: JWT): Promise<JWT> {
   }
 }
 
+export async function refreshAccessToken(token: JWT): Promise<JWT> {
+  if (!token.refreshToken) {
+    return { ...token, error: 'AccessTokenExpired' };
+  }
+
+  const existingRequest = refreshRequests.get(token.refreshToken);
+  if (existingRequest) return existingRequest;
+
+  const refreshRequest = requestRefreshedAccessToken(token);
+  refreshRequests.set(token.refreshToken, refreshRequest);
+
+  try {
+    return await refreshRequest;
+  } finally {
+    if (refreshRequests.get(token.refreshToken) === refreshRequest) {
+      refreshRequests.delete(token.refreshToken);
+    }
+  }
+}
+
 export const authOptions: NextAuthOptions = {
   secret: process.env.AUTH_SECRET,
   session: {
-    strategy: 'jwt',
+    strategy: 'jwt'
   },
   pages: {
-    signIn: '/login',
+    signIn: '/login'
   },
   providers: [ZitadelProvider(zitadelProviderConfig)],
   callbacks: {
@@ -114,10 +145,7 @@ export const authOptions: NextAuthOptions = {
         (typeof profile?.name === 'string' ? profile.name : undefined) ?? token.userName;
 
       // Check if access token is expired
-      const isExpired =
-        typeof token.accessTokenExpiresAt === 'number' &&
-        Number.isFinite(token.accessTokenExpiresAt) &&
-        Date.now() >= token.accessTokenExpiresAt;
+      const isExpired = shouldRefreshAccessToken(token.accessTokenExpiresAt);
 
       if (isExpired) {
         if (token.refreshToken) {

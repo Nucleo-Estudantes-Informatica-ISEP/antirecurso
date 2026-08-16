@@ -1,25 +1,16 @@
 import { NextResponse } from 'next/server';
 import { BASE_URL } from '@/services/api';
-import { CLIENT_SESSION_TOKEN, getApiAccessToken, getAppAuthSession } from '@/lib/server-auth';
+import { CLIENT_SESSION_TOKEN, getApiAccessToken } from '@/lib/server-auth';
 
 const authDebugEnabled = process.env.AUTH_DEBUG === 'true';
 
 export async function GET() {
-  const session = await getAppAuthSession();
   const accessToken = await getApiAccessToken();
 
   if (authDebugEnabled) {
     console.info('[auth][session-route]', {
-      hasSessionUser: Boolean(session?.user),
-      sessionUserId: session?.user?.id ?? null,
-      sessionUserEmail: session?.user?.email ?? null,
-      sessionError: session?.error ?? null,
       hasAccessToken: Boolean(accessToken)
     });
-  }
-
-  if (!session?.user) {
-    return new NextResponse(null, { status: 401 });
   }
 
   if (!accessToken) {
