@@ -14,6 +14,7 @@ import { useParams, useRouter } from 'next/navigation';
 import ReactCanvasConfetti from 'react-canvas-confetti';
 import { ExamContext } from 'src/contexts/ExamContext';
 import { PROTECTED_API_BASE_URL } from '@/services/api';
+import { getOwnedExamReviewPath } from '@/services/examReview';
 import swal from 'sweetalert';
 
 const Points: React.FC = () => {
@@ -40,22 +41,22 @@ const Points: React.FC = () => {
       setFetchError(false);
 
       try {
-        const isAuthenticated = Boolean(session?.token);
-        const apiBase = PROTECTED_API_BASE_URL;
         const examId = params?.id;
-        if (!examId) {
+        const examPath = getOwnedExamReviewPath(
+          typeof examId === 'string' ? examId : '',
+          session.token
+        );
+        if (!examPath) {
           setFetchError(true);
           return;
         }
-        const res = await fetch(`${apiBase}/exams/${examId}/review`, {
+        const res = await fetch(`${PROTECTED_API_BASE_URL}${examPath}`, {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
-            ...(isAuthenticated && session.token
-              ? { Authorization: `Bearer ${session.token}` }
-              : {}),
+            Authorization: `Bearer ${session.token}`
           },
-          cache: 'no-store',
+          cache: 'no-store'
         });
 
         if (res.ok) {
@@ -64,7 +65,7 @@ const Points: React.FC = () => {
             id: data.id,
             score: data.score,
             passed: data.score >= 50,
-            subject: data.subject,
+            subject: data.subject
           });
         } else {
           setFetchError(true);
@@ -85,9 +86,18 @@ const Points: React.FC = () => {
         title: 'Erro',
         text: 'Não foi possível obter o resultado do exame.',
         icon: 'error',
-        className: themeRef.current === 'dark' ? 'swal-dark' : '',
+        className: themeRef.current === 'dark' ? 'swal-dark' : ''
       });
       router.push('/');
+      return;
+    }
+    if (!session.token) {
+      swal({
+        title: 'Inicia sessão',
+        text: 'A revisão detalhada de exames guardados requer autenticação.',
+        icon: 'info',
+        className: themeRef.current === 'dark' ? 'swal-dark' : ''
+      });
       return;
     }
     router.push('/exams/' + examResult.id + '/review');
@@ -111,7 +121,7 @@ const Points: React.FC = () => {
       title: 'Erro',
       text: 'Não foi possível obter o resultado do exame.',
       icon: 'error',
-      className: themeRef.current === 'dark' ? 'swal-dark' : '',
+      className: themeRef.current === 'dark' ? 'swal-dark' : ''
     });
     router.push('/');
     return null;
@@ -177,8 +187,8 @@ const Points: React.FC = () => {
                   <span className="text-primary">Ohhh...</span> reprovaste no exame
                 </p>
                 <p className="mt-3 text-sm md:text-base text-muted-foreground">
-                  Os professores bem avisaram que as teóricas eram importantes... Continua a
-                  estudar e a resolver exames para melhorares. Vê a tua evolução no teu{' '}
+                  Os professores bem avisaram que as teóricas eram importantes... Continua a estudar
+                  e a resolver exames para melhorares. Vê a tua evolução no teu{' '}
                   <Link className="underline text-primary" href="/profile">
                     perfil
                   </Link>

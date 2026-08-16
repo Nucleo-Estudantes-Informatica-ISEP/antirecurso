@@ -13,9 +13,11 @@ import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import useSession from '@/hooks/useSession';
 import { PROTECTED_API_BASE_URL } from '@/services/api';
+import { getOwnedExamReviewPath } from '@/services/examReview';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import useExamReviewNavigation from 'src/hooks/useExamReviewNavigation';
 import { getShuffleSeed, shuffleWithSeed } from '@/utils/examShuffle';
+import { useRouter } from 'next/navigation';
 
 interface ExamPageProps {
   params: Promise<{
@@ -26,6 +28,7 @@ interface ExamPageProps {
 const ReviewPage: React.FC<ExamPageProps> = ({ params }) => {
   const resolvedParams = use(params);
   const session = useSession();
+  const router = useRouter();
 
   const {
     currentQuestionIndex,
@@ -38,15 +41,16 @@ const ReviewPage: React.FC<ExamPageProps> = ({ params }) => {
   } = useExamReviewNavigation();
 
   const getExamResult = useCallback(async () => {
-    const isAuthenticated = Boolean(session?.token);
-    const apiBase = PROTECTED_API_BASE_URL;
-    const headers: HeadersInit = {
-      'Content-Type': 'application/json'
-    };
-    if (isAuthenticated && session.token) {
-      headers['Authorization'] = `Bearer ${session.token}`;
+    const examPath = getOwnedExamReviewPath(resolvedParams.id, session.token);
+    if (!examPath) {
+      router.replace('/login');
+      return;
     }
-    const res = await fetch(`${apiBase}/exams/${resolvedParams.id}`, {
+    const headers: HeadersInit = {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${session.token}`
+    };
+    const res = await fetch(`${PROTECTED_API_BASE_URL}${examPath}`, {
       method: 'GET',
       headers,
       cache: 'no-cache'
@@ -60,7 +64,7 @@ const ReviewPage: React.FC<ExamPageProps> = ({ params }) => {
       }
       setExamResult(data);
     }
-  }, [resolvedParams.id, setExamResult, session?.token]);
+  }, [resolvedParams.id, router, setExamResult, session.token]);
 
   async function submitComment(comment: string) {
     if (!session.user) return;
