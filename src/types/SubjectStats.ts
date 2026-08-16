@@ -1,5 +1,6 @@
 export interface SubjectStats {
   n_of_answers: number;
+  n_of_answered: number;
   total_of_questions: number;
   n_of_wrong_answers: number;
   n_of_correct: number;
@@ -11,20 +12,13 @@ export interface SubjectStats {
   }[];
   exam_weight: number;
   min_grade: number;
-  average_grade: string;
-  percentage_of_exams_passed: string;
-  percentage_of_correct_answers: string;
-  percentage_of_questions_seen: string;
-  mode_scores: {
-    random: number;
-    new: number;
-    realistic: number;
-    wrong: number;
-    hard: number;
-    custom: number;
-  };
+  average_grade: number;
+  percentage_of_exams_passed: number;
+  percentage_of_correct_answers: number;
+  percentage_of_questions_seen: number;
+  mode_scores: Record<string, number>;
   suggested_mode: string;
-  times: number[];
-  mean_time: number;
+  times: { time: number | null }[];
+  mean_time: number | null;
   place_in_scoreboard: number | null;
 }

@@ -8,7 +8,7 @@ import GradeCalculator from '../GradeCalculator';
 
 interface GradeCalculatorProps {
   subjectStats: {
-    average_grade: string;
+    average_grade: number;
     exam_weight: number;
     min_grade: number;
   };
@@ -50,7 +50,7 @@ const GradeCalculatorContainer: React.FC<GradeCalculatorProps> = ({ subjectStats
       <Card>
         <CardContent className="p-6 md:p-8">
           <GradeCalculator
-            examGrade={parseInt(subjectStats.average_grade)}
+            examGrade={Math.round(subjectStats.average_grade)}
             weight={subjectStats.exam_weight}
             minGrade={subjectStats.min_grade}
           />
