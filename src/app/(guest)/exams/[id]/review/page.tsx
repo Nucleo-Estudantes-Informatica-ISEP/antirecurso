@@ -14,7 +14,6 @@ import { Skeleton } from '@/components/ui/skeleton';
 import useSession from '@/hooks/useSession';
 import { PROTECTED_API_BASE_URL } from '@/services/api';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
-import sampleImage from 'public/images/sample.webp';
 import useExamReviewNavigation from 'src/hooks/useExamReviewNavigation';
 import { getShuffleSeed, shuffleWithSeed } from '@/utils/examShuffle';
 
@@ -39,29 +38,29 @@ const ReviewPage: React.FC<ExamPageProps> = ({ params }) => {
   } = useExamReviewNavigation();
 
   const getExamResult = useCallback(async () => {
-    const isAuthenticated = Boolean(session?.token)
-    const apiBase = PROTECTED_API_BASE_URL
+    const isAuthenticated = Boolean(session?.token);
+    const apiBase = PROTECTED_API_BASE_URL;
     const headers: HeadersInit = {
-      'Content-Type': 'application/json',
-    }
+      'Content-Type': 'application/json'
+    };
     if (isAuthenticated && session.token) {
-      headers['Authorization'] = `Bearer ${session.token}`
+      headers['Authorization'] = `Bearer ${session.token}`;
     }
     const res = await fetch(`${apiBase}/exams/${resolvedParams.id}`, {
       method: 'GET',
       headers,
-      cache: 'no-cache',
-    })
+      cache: 'no-cache'
+    });
 
     if (res.ok) {
-      const data = await res.json()
-      const storedSeed = getShuffleSeed(resolvedParams.id)
+      const data = await res.json();
+      const storedSeed = getShuffleSeed(resolvedParams.id);
       if (storedSeed && data.questions) {
-        data.questions = shuffleWithSeed(data.questions, storedSeed)
+        data.questions = shuffleWithSeed(data.questions, storedSeed);
       }
-      setExamResult(data)
+      setExamResult(data);
     }
-  }, [resolvedParams.id, setExamResult, session?.token])
+  }, [resolvedParams.id, setExamResult, session?.token]);
 
   async function submitComment(comment: string) {
     if (!session.user) return;
@@ -131,9 +130,7 @@ const ReviewPage: React.FC<ExamPageProps> = ({ params }) => {
                     onClick={() => changeQuestion(i)}
                     isWrong={question.is_wrong}
                     active={currentQuestionIndex === i}
-                    align={
-                      i < 2 ? 'end' : i > examResult.questions.length - 2 ? 'start' : 'center'
-                    }
+                    align={i < 2 ? 'end' : i > examResult.questions.length - 2 ? 'start' : 'center'}
                   >
                     {i + 1}
                   </ExamNumeration>
@@ -171,7 +168,7 @@ const ReviewPage: React.FC<ExamPageProps> = ({ params }) => {
               }`}
             >
               {currentQuestion.question.image === '' ? (
-                <Image fill alt="Sample" className="object-cover" src={sampleImage} />
+                <Image fill alt="Sample" className="object-cover" src="/images/sample.webp" />
               ) : (
                 <Image
                   fill
