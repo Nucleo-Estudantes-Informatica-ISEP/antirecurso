@@ -2,9 +2,9 @@ name: CI
 
 on:
   pull_request:
-    branches: [main]
+    branches: [dev, main]
   push:
-    branches: [main]
+    branches: [dev, main]
   workflow_dispatch:
 
 permissions:
@@ -53,26 +53,4 @@ jobs:
     name: Secret scan
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout full history
-        uses: actions/checkout@v5
-        with:
-          fetch-depth: 0
-
-      - name: Install verified Gitleaks binary
-        env:
-          GITLEAKS_VERSION: 8.30.1
-        run: |
-          asset="gitleaks_${GITLEAKS_VERSION}_linux_x64.tar.gz"
-          base="https://github.com/gitleaks/gitleaks/releases/download/v${GITLEAKS_VERSION}"
-          curl --fail --silent --show-error --location --output "$asset" "$base/$asset"
-          curl --fail --silent --show-error --location --output checksums.txt "$base/gitleaks_${GITLEAKS_VERSION}_checksums.txt"
-          grep " $asset$" checksums.txt | sha256sum --check --strict
-          tar -xzf "$asset" gitleaks
-
-      - name: Scan pull-request commits
-        if: github.event_name == 'pull_request'
-        run: ./gitleaks git --redact --no-banner --log-opts="${{ github.event.pull_request.base.sha }}..${{ github.sha }}" .
-
-      - name: Scan pushed commit
-        if: github.event_name != 'pull_request'
-        run: ./gitleaks git --redact --no-banner --log-opts=-1 .
+      - uses: Nucleo-Estudantes-Informatica-ISEP/.github/.github/actions/secret-scan@master
