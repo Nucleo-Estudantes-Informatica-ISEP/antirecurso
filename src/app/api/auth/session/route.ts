@@ -1,7 +1,6 @@
 import { NextResponse } from 'next/server';
 import { BASE_URL } from '@/services/api';
 import { CLIENT_SESSION_TOKEN, getApiAccessToken, getAppAuthSession } from '@/lib/server-auth';
-import { hasAuthNeiRole } from '@/lib/auth-nei-roles';
 
 const authDebugEnabled = process.env.AUTH_DEBUG === 'true';
 
@@ -21,13 +20,6 @@ export async function GET() {
 
   if (!session?.user) {
     return new NextResponse(null, { status: 401 });
-  }
-
-  if (!hasAuthNeiRole(session.user, 'student')) {
-    return NextResponse.json(
-      { message: 'A tua conta AuthNEI não tem a permissão de estudante necessária.' },
-      { status: 403 }
-    );
   }
 
   if (!accessToken) {

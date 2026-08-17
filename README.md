@@ -138,9 +138,7 @@ At minimum, define the variables below before starting the app.
 | `AUTH_CLIENT_ID` | Yes | OAuth client ID for the hosted login flow. |
 | `AUTH_CLIENT_SECRET` | Usually | OAuth client secret for the Zitadel provider. |
 | `AUTH_SCOPES` | No | Defaults to `openid email profile`. |
-| `AUTH_ROLE_CLAIM` | No | Override for the shared-project ZITADEL role claim. |
-| `AUTHNEI_PROVISIONER_URL` | For unclassified users | Server-only AuthNEI Role Provisioner base URL. |
-| `AUTHNEI_PROVISIONER_TOKEN` | For unclassified users | Server-only provisioner caller credential. |
+| `AUTH_ROLE_CLAIM` | No | Override for the AntiRecurso Project's ZITADEL role claim. |
 | `AUTH_POST_LOGOUT_REDIRECT_URI` | Recommended | Redirect target after logout. Defaults to `/` if omitted. |
 | `AUTH_DEBUG` | No | Set to `true` to enable verbose auth logging. |
 
@@ -286,23 +284,21 @@ This project is licensed under the GNU General Public License v3.0. See [`LICENS
 - Email: `support.antirecurso@nei-isep.org`
 - Public site: [https://antirecurso.nei-isep.org](https://antirecurso.nei-isep.org)
 
-## AuthNEI shared-project authorization
+## AuthNEI project authorization
 
-AntiRecurso consumes the shared NEI Platform ZITADEL project roles. The supported role set is
-`student`, `nei_member`, `admin`, and `employee`; this application requires `student` for normal
-authenticated API use and `admin` for administration. `nei_member` does not grant AntiRecurso
-administrator access.
+AntiRecurso has its own ZITADEL Project. Normal authenticated use is not gated by a `student` role;
+users authenticate through AuthNEI and the application only consumes roles that are meaningful to
+AntiRecurso itself. At present, `admin` is the application authorization role used for privileged
+operations.
 
-Role data is normalized from the ZITADEL project-role claim into `session.user.roles`. The browser
-may use it for presentation, but the Adonis API remains the final authorization enforcement point.
+Role data is normalized only from the AntiRecurso Project role claim into `session.user.roles`.
+Claims belonging to other ZITADEL Projects are deliberately ignored so a role from another NEI
+application cannot grant AntiRecurso privileges. The browser may use role data for presentation,
+but the Adonis API remains the final authorization enforcement point.
+
 Normal login permits SSO without forcing an account picker. The user menu exposes separate actions
 for app-only logout, account switching (`prompt=select_account`), and central AuthNEI logout.
 
-`AUTH_ROLE_CLAIM` may override the default
-`urn:zitadel:iam:org:project:roles` claim name. Configure the OIDC application to include project
-roles in UserInfo/ID tokens and the API access token audience expected by the backend.
-
-For an unclassified first login, configure server-only `AUTHNEI_PROVISIONER_URL` and
-`AUTHNEI_PROVISIONER_TOKEN`. AntiRecurso calls only `POST /roles/ensure-student`, cancels the stale
-pre-grant login, and asks the user to continue once more so AuthNEI issues a fresh access token.
-Employee-only identities are denied and never auto-classified as students.
+`AUTH_ROLE_CLAIM` may override the default `urn:zitadel:iam:org:project:roles` claim name. Configure
+the AntiRecurso OIDC applications to include their own Project Role Assertions and the API audience
+expected by the backend.

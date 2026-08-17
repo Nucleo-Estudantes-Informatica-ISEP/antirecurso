@@ -11,7 +11,6 @@ import swal from 'sweetalert';
 const Login: React.FC = () => {
   const searchParams = useSearchParams();
   const callbackUrl = searchParams.get('callbackUrl') ?? '/';
-  const studentProvisioned = searchParams.get('studentProvisioned') === 'true';
 
   async function handleLogin() {
     try {
@@ -40,12 +39,6 @@ const Login: React.FC = () => {
         </div>
 
         <div className="space-y-3">
-          {studentProvisioned ? (
-            <p className="rounded-md border border-primary/30 bg-primary/10 px-4 py-3 text-sm">
-              Conta classificada como estudante. Continua novamente para obter uma sessão com os
-              novos acessos.
-            </p>
-          ) : null}
           <Button onClick={handleLogin} size="lg" className="w-full shadow-md shadow-primary/20">
             Continuar para o login
             <ArrowRight className="size-4" />

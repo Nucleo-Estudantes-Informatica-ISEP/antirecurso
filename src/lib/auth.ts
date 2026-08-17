@@ -2,7 +2,6 @@ import type { NextAuthOptions, Profile } from 'next-auth';
 import type { JWT } from 'next-auth/jwt';
 import ZitadelProvider from 'next-auth/providers/zitadel';
 import { getAuthNeiRoles, getAuthNeiRolesFromJwt } from '@/lib/auth-nei-roles';
-import { provisionStudentForNormalOnboarding } from '@/lib/authnei-provisioner';
 
 type ZitadelProfile = Profile & {
   email_verified?: boolean;
@@ -96,25 +95,10 @@ export const authOptions: NextAuthOptions = {
       // OIDC claim is denied instead of weakening the account-link boundary.
       if (zitadelProfile?.email_verified !== true) return false;
 
-      const profileRoles = getAuthNeiRoles(profile as Record<string, unknown> | undefined);
-      const accessTokenRoles = getAuthNeiRolesFromJwt(account?.access_token);
-      const roles = profileRoles.length ? profileRoles : accessTokenRoles;
       const subject =
         (typeof profile?.sub === 'string' ? profile.sub : undefined) ?? account?.providerAccountId;
 
-      if (!subject) return false;
-
-      try {
-        const result = await provisionStudentForNormalOnboarding(subject, roles);
-        return result === 'provisioned' ? '/login?studentProvisioned=true' : true;
-      } catch (error) {
-        if (authDebugEnabled) {
-          console.warn('[auth][provisioning]', {
-            message: error instanceof Error ? error.message : 'Unknown provisioning failure'
-          });
-        }
-        return false;
-      }
+      return Boolean(subject);
     },
     async jwt({ token, account, profile }) {
       if (account) {
@@ -143,7 +127,6 @@ export const authOptions: NextAuthOptions = {
       token.userName =
         (typeof profile?.name === 'string' ? profile.name : undefined) ?? token.userName;
 
-      // Check if access token is expired
       const isExpired =
         typeof token.accessTokenExpiresAt === 'number' &&
         Number.isFinite(token.accessTokenExpiresAt) &&

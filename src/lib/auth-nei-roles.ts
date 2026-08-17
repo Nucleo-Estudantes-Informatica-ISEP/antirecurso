@@ -1,10 +1,9 @@
-export const AUTH_NEI_ROLES = ['student', 'nei_member', 'admin', 'employee'] as const;
+export const AUTH_NEI_ROLES = ['admin'] as const;
 
 export type AuthNeiRole = (typeof AUTH_NEI_ROLES)[number];
 
 const ROLE_SET = new Set<string>(AUTH_NEI_ROLES);
 const DEFAULT_ROLE_CLAIM = 'urn:zitadel:iam:org:project:roles';
-const ZITADEL_PROJECT_ROLE_CLAIM = /^urn:zitadel:iam:org:project(?::id:[^:]+)?:roles$/;
 
 function rolesFromValue(value: unknown): string[] {
   if (Array.isArray(value)) return value.filter((role): role is string => typeof role === 'string');
@@ -19,11 +18,9 @@ export function getAuthNeiRoles(
 ): AuthNeiRole[] {
   if (!claims) return [];
 
-  const claimKeys = new Set([
-    configuredClaim,
-    DEFAULT_ROLE_CLAIM,
-    ...Object.keys(claims).filter((key) => ZITADEL_PROJECT_ROLE_CLAIM.test(key))
-  ]);
+  // Only consume the role claim for this AntiRecurso ZITADEL Project. Do not merge
+  // project-ID role claims from other applications, because roles are app-specific.
+  const claimKeys = new Set([configuredClaim, DEFAULT_ROLE_CLAIM]);
   const roles = new Set<AuthNeiRole>();
 
   claimKeys.forEach((key) => {
