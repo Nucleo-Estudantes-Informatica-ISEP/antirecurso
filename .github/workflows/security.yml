@@ -1,0 +1,26 @@
+name: Security
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  schedule:
+    - cron: "17 4 * * 1"
+  workflow_dispatch:
+
+jobs:
+  codeql:
+    if: github.event.repository.private == false
+    uses: Nucleo-Estudantes-Informatica-ISEP/.github/.github/workflows/codeql.yml@master
+    permissions:
+      security-events: write
+      packages: read
+      actions: read
+      contents: read
+
+  dependency-review:
+    if: github.event_name == 'pull_request' && github.event.repository.private == false
+    uses: Nucleo-Estudantes-Informatica-ISEP/.github/.github/workflows/dependency-review.yml@master
+    permissions:
+      contents: read
