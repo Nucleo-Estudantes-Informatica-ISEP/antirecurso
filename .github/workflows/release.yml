@@ -7,63 +7,24 @@ on:
 
 jobs:
   validate-release-label:
-    if: github.event.action != 'closed' && github.event.pull_request.head.ref != 'agent/release-automation-v2-bootstrap'
+    if: github.event.action != 'closed'
     runs-on: ubuntu-latest
     permissions:
       contents: read
       pull-requests: read
     steps:
-      - name: Require exactly one release label
-        uses: actions/github-script@v9
-        env:
-          LABELS_JSON: ${{ toJSON(github.event.pull_request.labels.*.name) }}
+      - uses: Nucleo-Estudantes-Informatica-ISEP/.github/.github/actions/release-policy@master
         with:
-          script: |
-            const releaseLabels = ["release:major", "release:minor", "release:patch"];
-            const labels = JSON.parse(process.env.LABELS_JSON || "[]");
-            const selected = labels.filter((label) => releaseLabels.includes(label));
-            if (selected.length !== 1) {
-              core.setFailed(`PRs into main must have exactly one release label: ${releaseLabels.join(", ")}. Found: ${selected.join(", ") || "none"}.`);
-            }
+          github-token: ${{ github.token }}
 
   publish-release:
-    if: github.event.action == 'closed' && github.event.pull_request.merged == true && github.event.pull_request.head.ref != 'agent/release-automation-v2-bootstrap'
+    if: github.event.action == 'closed' && github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     permissions:
       contents: write
       pull-requests: read
     steps:
-      - name: Tag merged main PR and publish release
-        uses: actions/github-script@v9
-        env:
-          LABELS_JSON: ${{ toJSON(github.event.pull_request.labels.*.name) }}
-          MERGE_SHA: ${{ github.event.pull_request.merge_commit_sha }}
-          PR_NUMBER: ${{ github.event.pull_request.number }}
-          PR_TITLE: ${{ github.event.pull_request.title }}
+      - uses: Nucleo-Estudantes-Informatica-ISEP/.github/.github/actions/release-publish@master
         with:
-          script: |
-            const { owner, repo } = context.repo;
-            const productName = "Antirecurso";
-            const releaseLabels = ["release:major", "release:minor", "release:patch"];
-            const labels = JSON.parse(process.env.LABELS_JSON || "[]");
-            const selected = labels.filter((label) => releaseLabels.includes(label));
-            if (selected.length !== 1) {
-              core.setFailed(`Merged PR must have exactly one release label. Found: ${selected.join(", ") || "none"}.`);
-              return;
-            }
-            const refs = await github.paginate(github.rest.git.listMatchingRefs, { owner, repo, ref: "tags/v", per_page: 100 });
-            const versions = refs.map((ref) => ref.ref.replace("refs/tags/", "")).map((name) => {
-              const match = /^v(\d+)\.(\d+)\.(\d+)$/.exec(name);
-              return match ? { name, major: Number(match[1]), minor: Number(match[2]), patch: Number(match[3]) } : null;
-            }).filter(Boolean).sort((a, b) => a.major - b.major || a.minor - b.minor || a.patch - b.patch);
-            if (versions.length === 0) { core.setFailed("No semantic-version release tag exists to bump from."); return; }
-            const latest = versions.at(-1);
-            let { major, minor, patch } = latest;
-            if (selected[0] === "release:major") { major += 1; minor = 0; patch = 0; }
-            else if (selected[0] === "release:minor") { minor += 1; patch = 0; }
-            else patch += 1;
-            const nextTag = `v${major}.${minor}.${patch}`;
-            const mergeSha = process.env.MERGE_SHA;
-            const notes = await github.rest.repos.generateReleaseNotes({ owner, repo, tag_name: nextTag, target_commitish: mergeSha, previous_tag_name: latest.name });
-            await github.rest.git.createRef({ owner, repo, ref: `refs/tags/${nextTag}`, sha: mergeSha });
-            await github.rest.repos.createRelease({ owner, repo, tag_name: nextTag, target_commitish: mergeSha, name: `${productName} ${nextTag}`, body: `Released automatically from PR #${process.env.PR_NUMBER}: ${process.env.PR_TITLE}.\n\n${notes.data.body}`, draft: false, prerelease: false, make_latest: "true" });
+          github-token: ${{ github.token }}
+          product-name: Antirecurso
