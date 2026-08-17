@@ -2,6 +2,7 @@ import type { NextAuthOptions, Profile } from 'next-auth';
 import type { JWT } from 'next-auth/jwt';
 import ZitadelProvider from 'next-auth/providers/zitadel';
 import { getAuthNeiRoles, getAuthNeiRolesFromJwt } from '@/lib/auth-nei-roles';
+import { fetchAuthNeiRolesFromUserInfo } from '@/lib/zitadel-userinfo';
 
 type ZitadelProfile = Profile & {
   email_verified?: boolean;
@@ -50,19 +51,35 @@ export async function refreshAccessToken(token: JWT): Promise<JWT> {
       throw refreshedTokens;
     }
 
-    if (authDebugEnabled) {
-      console.info('[auth][jwt] Access token refreshed successfully.');
+    const refreshedAccessToken = refreshedTokens.access_token;
+    const expiresIn = Number(refreshedTokens.expires_in);
+
+    if (
+      typeof refreshedAccessToken !== 'string' ||
+      refreshedAccessToken.length === 0 ||
+      !Number.isFinite(expiresIn) ||
+      expiresIn <= 0
+    ) {
+      throw new Error('ZITADEL refresh response is missing a valid access token or expiry.');
     }
 
-    const refreshedAccessToken = refreshedTokens.access_token;
-    const refreshedRoles = getAuthNeiRolesFromJwt(refreshedAccessToken);
+    // Re-read userinfo with the newly issued provider token instead of assuming
+    // the refreshed JWT always carries role assertions. The AntiRecurso Project
+    // is configured to assert roles on authentication, so userinfo is the stable
+    // source for current app-specific authorization after a refresh.
+    const refreshedRoles = await fetchAuthNeiRolesFromUserInfo({
+      issuer: requiredEnv.authIssuerUrl,
+      accessToken: refreshedAccessToken
+    });
+
+    if (authDebugEnabled) {
+      console.info('[auth][jwt] Access token refreshed and AuthNEI roles revalidated.');
+    }
 
     return {
       ...token,
       accessToken: refreshedAccessToken,
-      accessTokenExpiresAt: refreshedTokens.expires_in
-        ? Date.now() + refreshedTokens.expires_in * 1000
-        : undefined,
+      accessTokenExpiresAt: Date.now() + expiresIn * 1000,
       refreshToken: refreshedTokens.refresh_token ?? token.refreshToken,
       idToken: refreshedTokens.id_token ?? token.idToken,
       authNeiRoles: refreshedRoles,
@@ -72,8 +89,10 @@ export async function refreshAccessToken(token: JWT): Promise<JWT> {
     if (authDebugEnabled) {
       console.error('[auth][jwt] Failed to refresh access token:', error);
     }
+
     return {
       ...token,
+      authNeiRoles: [],
       error: 'AccessTokenExpired'
     };
   }
@@ -136,6 +155,7 @@ export const authOptions: NextAuthOptions = {
         if (token.refreshToken) {
           return await refreshAccessToken(token);
         }
+        token.authNeiRoles = [];
         token.error = 'AccessTokenExpired';
       } else {
         delete token.error;
@@ -163,7 +183,7 @@ export const authOptions: NextAuthOptions = {
         session.user.email =
           typeof token.userEmail === 'string' ? token.userEmail : session.user.email;
         session.user.name = typeof token.userName === 'string' ? token.userName : session.user.name;
-        session.user.roles = token.authNeiRoles ?? [];
+        session.user.roles = token.error ? [] : (token.authNeiRoles ?? []);
       }
 
       session.error = token.error;
