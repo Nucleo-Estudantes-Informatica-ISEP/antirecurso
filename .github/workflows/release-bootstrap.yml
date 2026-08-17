@@ -1,0 +1,90 @@
+name: Release Bootstrap
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - .github/workflows/release-bootstrap.yml
+  workflow_dispatch: {}
+
+jobs:
+  bootstrap-v2:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      issues: write
+    env:
+      GH_TOKEN: ${{ github.token }}
+      GH_REPO: ${{ github.repository }}
+      BOOTSTRAP_SHA: 3c0c3e829b5ee825b5c0b7cd55cf88c3dcbe857d
+    steps:
+      - name: Create release labels
+        run: |
+          gh label create release:major --color B60205 --description "Next merge to main creates a new major release" --force
+          gh label create release:minor --color 0E8A16 --description "Next merge to main creates a new minor release" --force
+          gh label create release:patch --color 1D76DB --description "Next merge to main creates a new patch release" --force
+
+      - name: Clean legacy release metadata
+        run: |
+          set -euo pipefail
+
+          while read -r release_id; do
+            [ -z "$release_id" ] && continue
+            gh api --method DELETE "repos/$GH_REPO/releases/$release_id"
+          done < <(gh api --paginate "repos/$GH_REPO/releases?per_page=100" --jq '.[] | select(.draft == true) | .id')
+
+          while read -r ref; do
+            [ -z "$ref" ] && continue
+            tag="${ref#refs/tags/}"
+            if [[ "$tag" =~ ^v(0|1)\. ]] && [ "$tag" != "v1.4.1" ]; then
+              echo "Removing legacy tag $tag"
+              gh api --method DELETE "repos/$GH_REPO/git/refs/tags/$tag"
+            fi
+          done < <(gh api --paginate "repos/$GH_REPO/git/matching-refs/tags/" --jq '.[].ref')
+
+      - name: Publish Antirecurso v2 baseline
+        run: |
+          set -euo pipefail
+
+          if gh release view v2.0.0 >/dev/null 2>&1; then
+            echo "v2.0.0 already exists; bootstrap is complete."
+            exit 0
+          fi
+
+          cat > /tmp/release-notes.md <<EOF
+          # Antirecurso v2
+
+          Antirecurso v2 is a major frontend and platform refresh built on top of the last 1.x milestone, v1.4.1. It consolidates the UI, authentication, runtime and engineering changes that landed on main since that release.
+
+          ## Authentication and platform
+
+          - Migrated frontend authentication to AuthNEI/ZITADEL through NextAuth.
+          - Added server-side session/token helpers and protected backend/public proxy routes.
+          - Added account-resolution flows for authenticated identities.
+          - Upgraded the application baseline to Next.js 16, React 19 and the current Node/tooling stack used by the project.
+
+          ## UI and student workflows
+
+          - Large UI/UX refactor with reorganized components and reusable Radix/shadcn-style primitives.
+          - Refreshed navigation, authentication, profile, notes, exams, scoreboard, statistics and policy/about pages.
+          - Reworked exam answering, navigation, review, points, shuffling and pending/previous exam flows.
+
+          ## Administration and engineering
+
+          - Added/refreshed admin flows for events, notes, comments, users and question reports.
+          - Added CI quality gates for lint, typecheck, tests, production builds, dependency auditing and secret scanning.
+          - Added Dependabot and CODEOWNERS and removed the old automatic version-update popup while keeping the changelog page.
+
+          ## Scope
+
+          This release points to main at ${BOOTSTRAP_SHA}. The open platform-stabilization work is intentionally not part of v2.0.0.
+
+          Previous historical milestone retained: v1.4.1.
+          EOF
+
+          gh release create v2.0.0 \
+            --target "$BOOTSTRAP_SHA" \
+            --title "Antirecurso v2" \
+            --notes-file /tmp/release-notes.md \
+            --latest
