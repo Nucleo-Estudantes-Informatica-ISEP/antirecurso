@@ -1,6 +1,8 @@
 import type { NextAuthOptions, Profile } from 'next-auth';
 import type { JWT } from 'next-auth/jwt';
 import ZitadelProvider from 'next-auth/providers/zitadel';
+import { getAuthNeiRoles, getAuthNeiRolesFromJwt } from '@/lib/auth-nei-roles';
+import { fetchAuthNeiRolesFromUserInfo } from '@/lib/zitadel-userinfo';
 
 type ZitadelProfile = Profile & {
   email_verified?: boolean;
@@ -19,8 +21,7 @@ const zitadelProviderConfig: Parameters<typeof ZitadelProvider>[0] = {
   clientSecret: process.env.AUTH_CLIENT_SECRET ?? '',
   authorization: {
     params: {
-      scope: process.env.AUTH_SCOPES ?? 'openid email profile offline_access',
-      prompt: 'select_account'
+      scope: process.env.AUTH_SCOPES ?? 'openid email profile offline_access'
     }
   }
 };
@@ -50,26 +51,48 @@ export async function refreshAccessToken(token: JWT): Promise<JWT> {
       throw refreshedTokens;
     }
 
+    const refreshedAccessToken = refreshedTokens.access_token;
+    const expiresIn = Number(refreshedTokens.expires_in);
+
+    if (
+      typeof refreshedAccessToken !== 'string' ||
+      refreshedAccessToken.length === 0 ||
+      !Number.isFinite(expiresIn) ||
+      expiresIn <= 0
+    ) {
+      throw new Error('ZITADEL refresh response is missing a valid access token or expiry.');
+    }
+
+    // Re-read userinfo with the newly issued provider token instead of assuming
+    // the refreshed JWT always carries role assertions. The AntiRecurso Project
+    // is configured to assert roles on authentication, so userinfo is the stable
+    // source for current app-specific authorization after a refresh.
+    const refreshedRoles = await fetchAuthNeiRolesFromUserInfo({
+      issuer: requiredEnv.authIssuerUrl,
+      accessToken: refreshedAccessToken
+    });
+
     if (authDebugEnabled) {
-      console.info('[auth][jwt] Access token refreshed successfully.');
+      console.info('[auth][jwt] Access token refreshed and AuthNEI roles revalidated.');
     }
 
     return {
       ...token,
-      accessToken: refreshedTokens.access_token,
-      accessTokenExpiresAt: refreshedTokens.expires_in
-        ? Date.now() + refreshedTokens.expires_in * 1000
-        : undefined,
+      accessToken: refreshedAccessToken,
+      accessTokenExpiresAt: Date.now() + expiresIn * 1000,
       refreshToken: refreshedTokens.refresh_token ?? token.refreshToken,
       idToken: refreshedTokens.id_token ?? token.idToken,
+      authNeiRoles: refreshedRoles,
       error: undefined
     };
   } catch (error) {
     if (authDebugEnabled) {
       console.error('[auth][jwt] Failed to refresh access token:', error);
     }
+
     return {
       ...token,
+      authNeiRoles: [],
       error: 'AccessTokenExpired'
     };
   }
@@ -78,16 +101,23 @@ export async function refreshAccessToken(token: JWT): Promise<JWT> {
 export const authOptions: NextAuthOptions = {
   secret: process.env.AUTH_SECRET,
   session: {
-    strategy: 'jwt',
+    strategy: 'jwt'
   },
   pages: {
-    signIn: '/login',
+    signIn: '/login'
   },
   providers: [ZitadelProvider(zitadelProviderConfig)],
   callbacks: {
-    async signIn({ profile }) {
+    async signIn({ profile, account }) {
       const zitadelProfile = profile as ZitadelProfile | undefined;
-      return zitadelProfile?.email_verified !== false;
+      // Legacy email linking requires affirmative IdP verification. A missing optional
+      // OIDC claim is denied instead of weakening the account-link boundary.
+      if (zitadelProfile?.email_verified !== true) return false;
+
+      const subject =
+        (typeof profile?.sub === 'string' ? profile.sub : undefined) ?? account?.providerAccountId;
+
+      return Boolean(subject);
     },
     async jwt({ token, account, profile }) {
       if (account) {
@@ -95,6 +125,9 @@ export const authOptions: NextAuthOptions = {
         token.accessTokenExpiresAt = account.expires_at ? account.expires_at * 1000 : undefined;
         token.idToken = account.id_token;
         token.refreshToken = account.refresh_token;
+        const profileRoles = getAuthNeiRoles(profile as Record<string, unknown> | undefined);
+        const accessTokenRoles = getAuthNeiRolesFromJwt(account.access_token);
+        token.authNeiRoles = profileRoles.length ? profileRoles : accessTokenRoles;
 
         if (authDebugEnabled) {
           console.info('[auth][jwt]', {
@@ -113,7 +146,6 @@ export const authOptions: NextAuthOptions = {
       token.userName =
         (typeof profile?.name === 'string' ? profile.name : undefined) ?? token.userName;
 
-      // Check if access token is expired
       const isExpired =
         typeof token.accessTokenExpiresAt === 'number' &&
         Number.isFinite(token.accessTokenExpiresAt) &&
@@ -123,6 +155,7 @@ export const authOptions: NextAuthOptions = {
         if (token.refreshToken) {
           return await refreshAccessToken(token);
         }
+        token.authNeiRoles = [];
         token.error = 'AccessTokenExpired';
       } else {
         delete token.error;
@@ -150,6 +183,7 @@ export const authOptions: NextAuthOptions = {
         session.user.email =
           typeof token.userEmail === 'string' ? token.userEmail : session.user.email;
         session.user.name = typeof token.userName === 'string' ? token.userName : session.user.name;
+        session.user.roles = token.error ? [] : (token.authNeiRoles ?? []);
       }
 
       session.error = token.error;
