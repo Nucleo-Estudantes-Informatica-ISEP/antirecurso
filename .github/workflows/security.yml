@@ -1,0 +1,13 @@
+name: Security
+
+on:
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  dependency-review:
+    if: github.event_name == 'pull_request'
+    uses: Nucleo-Estudantes-Informatica-ISEP/.github/.github/workflows/dependency-review.yml@master
+    permissions:
+      contents: read
