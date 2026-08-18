@@ -1,6 +1,7 @@
 import { BASE_URL } from '@/services/api';
 import { getToken } from 'next-auth/jwt';
 import { NextRequest, NextResponse } from 'next/server';
+import { hasAuthNeiRole } from '@/lib/auth-nei-roles';
 
 export const config = {
   matcher: '/admin/:path*'
@@ -13,7 +14,9 @@ export async function proxy(request: NextRequest) {
     token?.error === 'AccessTokenExpired' ||
     (typeof token?.accessTokenExpiresAt === 'number' && Date.now() >= token.accessTokenExpiresAt);
 
-  if (!accessToken || isExpired) return NextResponse.rewrite(new URL('/', request.url));
+  if (!accessToken || isExpired || !hasAuthNeiRole(token ?? undefined, 'admin')) {
+    return NextResponse.rewrite(new URL('/', request.url));
+  }
 
   const res = await fetch(`${BASE_URL}/admin`, {
     method: 'GET',
