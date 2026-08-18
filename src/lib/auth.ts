@@ -3,12 +3,14 @@ import type { JWT } from 'next-auth/jwt';
 import ZitadelProvider from 'next-auth/providers/zitadel';
 import { getAuthNeiRoles, getAuthNeiRolesFromJwt } from '@/lib/auth-nei-roles';
 import { fetchAuthNeiRolesFromUserInfo } from '@/lib/zitadel-userinfo';
+import { shouldRefreshAccessToken } from './token-lifetime';
 
 type ZitadelProfile = Profile & {
   email_verified?: boolean;
 };
 
 const authDebugEnabled = process.env.AUTH_DEBUG === 'true';
+const refreshRequests = new Map<string, Promise<JWT>>();
 
 const requiredEnv = {
   authClientId: process.env.AUTH_CLIENT_ID ?? '',
@@ -26,7 +28,7 @@ const zitadelProviderConfig: Parameters<typeof ZitadelProvider>[0] = {
   }
 };
 
-export async function refreshAccessToken(token: JWT): Promise<JWT> {
+async function requestRefreshedAccessToken(token: JWT): Promise<JWT> {
   try {
     if (authDebugEnabled) {
       console.info('[auth][jwt] Attempting to refresh access token...');
@@ -45,10 +47,10 @@ export async function refreshAccessToken(token: JWT): Promise<JWT> {
       })
     });
 
-    const refreshedTokens = await response.json();
+    const refreshedTokens = (await response.json()) as Record<string, unknown>;
 
     if (!response.ok) {
-      throw refreshedTokens;
+      throw new Error(`Token endpoint returned HTTP ${response.status}`);
     }
 
     const refreshedAccessToken = refreshedTokens.access_token;
@@ -64,9 +66,9 @@ export async function refreshAccessToken(token: JWT): Promise<JWT> {
     }
 
     // Re-read userinfo with the newly issued provider token instead of assuming
-    // the refreshed JWT always carries role assertions. The AntiRecurso Project
-    // is configured to assert roles on authentication, so userinfo is the stable
-    // source for current app-specific authorization after a refresh.
+    // the refreshed JWT always carries role assertions. This keeps app-specific
+    // authorization current while the single-flight refresh prevents concurrent
+    // requests from racing a rotating refresh token.
     const refreshedRoles = await fetchAuthNeiRolesFromUserInfo({
       issuer: requiredEnv.authIssuerUrl,
       accessToken: refreshedAccessToken
@@ -80,8 +82,12 @@ export async function refreshAccessToken(token: JWT): Promise<JWT> {
       ...token,
       accessToken: refreshedAccessToken,
       accessTokenExpiresAt: Date.now() + expiresIn * 1000,
-      refreshToken: refreshedTokens.refresh_token ?? token.refreshToken,
-      idToken: refreshedTokens.id_token ?? token.idToken,
+      refreshToken:
+        typeof refreshedTokens.refresh_token === 'string'
+          ? refreshedTokens.refresh_token
+          : token.refreshToken,
+      idToken:
+        typeof refreshedTokens.id_token === 'string' ? refreshedTokens.id_token : token.idToken,
       authNeiRoles: refreshedRoles,
       error: undefined
     };
@@ -95,6 +101,30 @@ export async function refreshAccessToken(token: JWT): Promise<JWT> {
       authNeiRoles: [],
       error: 'AccessTokenExpired'
     };
+  }
+}
+
+export async function refreshAccessToken(token: JWT): Promise<JWT> {
+  if (!token.refreshToken) {
+    return {
+      ...token,
+      authNeiRoles: [],
+      error: 'AccessTokenExpired'
+    };
+  }
+
+  const existingRequest = refreshRequests.get(token.refreshToken);
+  if (existingRequest) return existingRequest;
+
+  const refreshRequest = requestRefreshedAccessToken(token);
+  refreshRequests.set(token.refreshToken, refreshRequest);
+
+  try {
+    return await refreshRequest;
+  } finally {
+    if (refreshRequests.get(token.refreshToken) === refreshRequest) {
+      refreshRequests.delete(token.refreshToken);
+    }
   }
 }
 
@@ -146,10 +176,7 @@ export const authOptions: NextAuthOptions = {
       token.userName =
         (typeof profile?.name === 'string' ? profile.name : undefined) ?? token.userName;
 
-      const isExpired =
-        typeof token.accessTokenExpiresAt === 'number' &&
-        Number.isFinite(token.accessTokenExpiresAt) &&
-        Date.now() >= token.accessTokenExpiresAt;
+      const isExpired = shouldRefreshAccessToken(token.accessTokenExpiresAt);
 
       if (isExpired) {
         if (token.refreshToken) {
