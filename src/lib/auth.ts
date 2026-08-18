@@ -1,9 +1,9 @@
 import type { NextAuthOptions, Profile } from 'next-auth';
 import type { JWT } from 'next-auth/jwt';
 import ZitadelProvider from 'next-auth/providers/zitadel';
-import { getAuthNeiRoles, getAuthNeiRolesFromJwt } from '@/lib/auth-nei-roles';
-import { fetchAuthNeiRolesFromUserInfo } from '@/lib/zitadel-userinfo';
+import { getAuthNeiRoles, getAuthNeiRolesFromJwt } from './auth-nei-roles';
 import { shouldRefreshAccessToken } from './token-lifetime';
+import { fetchAuthNeiRolesFromUserInfo } from './zitadel-userinfo';
 
 type ZitadelProfile = Profile & {
   email_verified?: boolean;
