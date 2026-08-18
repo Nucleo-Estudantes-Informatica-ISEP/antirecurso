@@ -11,3 +11,11 @@ jobs:
     uses: Nucleo-Estudantes-Informatica-ISEP/.github/.github/workflows/dependency-review.yml@master
     permissions:
       contents: read
+
+  secret-scan:
+    name: Secret scan
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: Nucleo-Estudantes-Informatica-ISEP/.github/.github/actions/secret-scan@master
