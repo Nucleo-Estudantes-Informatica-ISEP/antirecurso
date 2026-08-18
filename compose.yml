@@ -7,16 +7,13 @@ services:
         NEXT_PUBLIC_BASE_URL: ${NEXT_PUBLIC_BASE_URL:-https://antirecurso-api.nei-isep.org}
         NEXT_PUBLIC_PROTECTED_API_BASE_URL: ${NEXT_PUBLIC_PROTECTED_API_BASE_URL:-${SERVICE_URL_WEB_3000:-http://localhost:3000}/api/backend}
     environment:
-      # Ask Coolify to generate/manage the public URL for the web service and
-      # route it explicitly to the Next.js container port.
-      SERVICE_URL_WEB_3000: /
-
       NODE_ENV: ${NODE_ENV:-production}
       PORT: ${PORT:-3000}
       HOSTNAME: ${HOSTNAME:-0.0.0.0}
 
       # Public frontend URLs are derived from Coolify's generated service URL.
-      # Local docker compose falls back to localhost when the magic variable is absent.
+      # The port suffix makes the proxy target explicit; local compose falls back
+      # to localhost when the magic variable is absent.
       NEXTAUTH_URL: ${NEXTAUTH_URL:-${SERVICE_URL_WEB_3000:-http://localhost:3000}}
       AUTH_POST_LOGOUT_REDIRECT_URI: ${AUTH_POST_LOGOUT_REDIRECT_URI:-${SERVICE_URL_WEB_3000:-http://localhost:3000}}
 
