@@ -10,6 +10,11 @@ import swal from 'sweetalert';
 import { ExamContext } from '@/contexts/ExamContext';
 import { BASE_URL, PROTECTED_API_BASE_URL } from '@/services/api';
 import generateExam from '@/services/generateExam';
+import {
+  getLocalExamStateKey,
+  parseSavedExamState,
+  type SavedExamState
+} from '@/services/examState';
 import getSubjectNameById from '@/utils/getSubjectNameById';
 
 import ExamNumeration from '@/components/exams/ExamNumeration';
@@ -21,7 +26,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import useAnswerableExamNavigation from '@/hooks/useAnswerableExamNavigation';
 import useSession from '@/hooks/useSession';
 import { ChevronLeft, ChevronRight, Clock, Loader2 } from 'lucide-react';
-import { getShuffleSeed, setShuffleSeed, shuffleWithSeed } from '@/utils/examShuffle';
+import { getShuffleSeed, reorderByIds, setShuffleSeed, shuffleWithSeed } from '@/utils/examShuffle';
 
 interface ExamPageProps {
   params: Promise<{
@@ -68,6 +73,7 @@ const Exam: React.FC<ExamPageProps> = ({ params }) => {
     subjectId: Number.parseInt(resolvedParams.id, 10),
     mode: resolvedParams.mode,
     nOfQuestions,
+    penalizingFactor,
     filter,
     handleConfirm
   });
@@ -116,10 +122,10 @@ const Exam: React.FC<ExamPageProps> = ({ params }) => {
       // Clear saved state
       try {
         const subjectId = Number.parseInt(resolvedParams.id, 10);
-        localStorage.removeItem(`exam-state-${subjectId}`);
+        localStorage.removeItem(getLocalExamStateKey(subjectId, resolvedParams.mode));
         if (session.token) {
           const mode = resolvedParams.mode;
-          fetch(
+          await fetch(
             `${PROTECTED_API_BASE_URL}/exams/state?subject_id=${subjectId}&mode=${encodeURIComponent(mode)}`,
             {
               method: 'DELETE',
@@ -127,7 +133,7 @@ const Exam: React.FC<ExamPageProps> = ({ params }) => {
                 Authorization: `Bearer ${session.token}`
               }
             }
-          ).catch(console.error);
+          );
         }
       } catch (err) {
         console.error('Error clearing saved state:', err);
@@ -152,8 +158,8 @@ const Exam: React.FC<ExamPageProps> = ({ params }) => {
 
     async function initExam() {
       const subjectId = Number.parseInt(resolvedParams.id, 10);
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      let savedState: any = null;
+      let savedState: SavedExamState | null = null;
+      let resumeState: SavedExamState | null = null;
 
       try {
         if (session.token) {
@@ -168,17 +174,18 @@ const Exam: React.FC<ExamPageProps> = ({ params }) => {
           );
           if (res.status === 200) {
             const data = await res.json();
-            savedState = data.state;
+            savedState = parseSavedExamState(data.state, subjectId, resolvedParams.mode);
           }
         } else {
-          const localStr = localStorage.getItem(`exam-state-${subjectId}`);
+          const localStateKey = getLocalExamStateKey(subjectId, resolvedParams.mode);
+          const localStr = localStorage.getItem(localStateKey);
           if (localStr) {
-            const data = JSON.parse(localStr);
+            const data = parseSavedExamState(JSON.parse(localStr), subjectId, resolvedParams.mode);
             // Check expiry (3 days = 3 * 24 * 60 * 60 * 1000)
-            if (Date.now() - data.savedAt < 3 * 24 * 60 * 60 * 1000) {
+            if (data && Date.now() - data.savedAt < 3 * 24 * 60 * 60 * 1000) {
               savedState = data;
             } else {
-              localStorage.removeItem(`exam-state-${subjectId}`);
+              localStorage.removeItem(localStateKey);
             }
           }
         }
@@ -205,26 +212,18 @@ const Exam: React.FC<ExamPageProps> = ({ params }) => {
           if (!active) return;
 
           if (shouldResume) {
-            setQuestions(savedState.questions);
-            setAnswers(new Map<number, string>(savedState.answers));
-            setExamTime(savedState.time);
-            changeQuestion(savedState.currentQuestionIndex || 0);
-            return;
+            resumeState = savedState;
           }
         } else if (resumeParam === 'true' && modeMatches) {
           resumePromptShownRef.current = true;
-          setQuestions(savedState.questions);
-          setAnswers(new Map<number, string>(savedState.answers));
-          setExamTime(savedState.time);
-          changeQuestion(savedState.currentQuestionIndex || 0);
-          return;
+          resumeState = savedState;
         }
 
-        if (modeMatches && !resumeParam) {
-          localStorage.removeItem(`exam-state-${subjectId}`);
+        if (modeMatches && !resumeState) {
+          localStorage.removeItem(getLocalExamStateKey(subjectId, resolvedParams.mode));
           if (session.token) {
             const mode = resolvedParams.mode;
-            fetch(
+            await fetch(
               `${PROTECTED_API_BASE_URL}/exams/state?subject_id=${subjectId}&mode=${encodeURIComponent(mode)}`,
               {
                 method: 'DELETE',
@@ -232,7 +231,7 @@ const Exam: React.FC<ExamPageProps> = ({ params }) => {
                   Authorization: `Bearer ${session.token}`
                 }
               }
-            ).catch(console.error);
+            );
           }
         }
       }
@@ -243,8 +242,9 @@ const Exam: React.FC<ExamPageProps> = ({ params }) => {
           subjectId,
           resolvedParams.mode,
           session.token,
-          nOfQuestions ? Number.parseInt(nOfQuestions, 10) : undefined,
-          filter ?? undefined
+          resumeState?.n_of_questions ??
+            (nOfQuestions ? Number.parseInt(nOfQuestions, 10) : undefined),
+          resumeState?.filter ?? filter ?? undefined
         );
 
         if (!active) return;
@@ -255,6 +255,19 @@ const Exam: React.FC<ExamPageProps> = ({ params }) => {
           });
           router.push('/exams');
           return;
+        }
+
+        if (resumeState) {
+          const restoredQuestions = reorderByIds(exam, resumeState.questionIds);
+          if (restoredQuestions.length === resumeState.questionIds.length) {
+            setQuestions(restoredQuestions);
+            setAnswers(new Map<number, string>(resumeState.answers));
+            setExamTime(resumeState.time);
+            changeQuestion(resumeState.currentQuestionIndex);
+            return;
+          }
+
+          localStorage.removeItem(getLocalExamStateKey(subjectId, resolvedParams.mode));
         }
 
         const storedSeed = getShuffleSeed(subjectId);

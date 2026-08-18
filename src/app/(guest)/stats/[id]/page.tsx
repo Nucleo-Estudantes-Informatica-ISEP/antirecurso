@@ -16,6 +16,7 @@ import { use, useEffect, useState } from 'react';
 import { BASE_URL } from 'src/services/api';
 import type { SubjectStats } from 'src/types/SubjectStats';
 import getSubjectNameById from 'src/utils/getSubjectNameById';
+import { getSubjectStatsViewModel } from '@/services/subjectStats';
 import useSWR from 'swr';
 
 interface SubjectStatsProps {
@@ -36,6 +37,7 @@ const SubjectStatsPage: React.FC<SubjectStatsProps> = ({ params }) => {
     ([url, token]) => fetcher(url, token as string),
     { revalidateOnFocus: false, keepPreviousData: true }
   );
+  const statsView = subjectStats ? getSubjectStatsViewModel(subjectStats) : null;
 
   useEffect(() => {
     async function fetchSubjectName() {
@@ -52,8 +54,7 @@ const SubjectStatsPage: React.FC<SubjectStatsProps> = ({ params }) => {
           Estatísticas
         </Badge>
         <h1 className="text-balance text-3xl md:text-4xl font-bold tracking-tight">
-          As tuas estatísticas de{' '}
-          <span className="gradient-text">{subjectName || '...'}</span>
+          As tuas estatísticas de <span className="gradient-text">{subjectName || '...'}</span>
         </h1>
       </div>
 
@@ -71,23 +72,13 @@ const SubjectStatsPage: React.FC<SubjectStatsProps> = ({ params }) => {
                 exames. Das{' '}
                 <span className="font-bold text-primary">{subjectStats.total_of_questions}</span>{' '}
                 questões disponíveis respondeste a{' '}
-                <span className="font-bold text-primary">{subjectStats.n_of_answers}</span>, ou
-                seja{' '}
+                <span className="font-bold text-primary">{statsView?.questionsSeen}</span>, ou seja{' '}
                 <span className="font-bold text-primary">
-                  {(
-                    (subjectStats.n_of_answers / subjectStats.total_of_questions) *
-                    100
-                  ).toFixed(1)}
-                  %
+                  {statsView?.questionsSeenPercentage}%
                 </span>
                 . Demoras, em média,{' '}
-                <span className="font-bold text-primary">
-                  {Math.floor(subjectStats.mean_time / 60) > 0
-                    ? `${Math.floor(subjectStats.mean_time / 60)} minutos e `
-                    : ''}
-                  {Math.floor(subjectStats.mean_time % 60)} segundos
-                </span>{' '}
-                a responder a um exame.
+                <span className="font-bold text-primary">{statsView?.meanTimeLabel}</span> a
+                responder a um exame.
               </p>
             ) : (
               <Skeleton className="h-16 w-full" />
@@ -102,7 +93,7 @@ const SubjectStatsPage: React.FC<SubjectStatsProps> = ({ params }) => {
               Média global
             </p>
             {subjectStats ? (
-              <ScoreIndicator score={Number.parseFloat(subjectStats.average_grade)} />
+              <ScoreIndicator score={statsView?.averageGrade ?? 0} />
             ) : (
               <Skeleton className="h-32 w-48 mt-2 rounded-t-full" />
             )}
@@ -196,11 +187,7 @@ const SubjectStatsPage: React.FC<SubjectStatsProps> = ({ params }) => {
                     'rgba(239, 68, 68, 1)',
                     'rgba(148, 163, 184, 1)'
                   ]}
-                  data={[
-                    subjectStats.n_of_correct,
-                    subjectStats.n_of_wrong_answers,
-                    subjectStats.total_of_questions - subjectStats.n_of_answers
-                  ]}
+                  data={statsView?.questionBreakdown ?? [0, 0, 0]}
                 />
               </CardContent>
             </Card>

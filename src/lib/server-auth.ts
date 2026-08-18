@@ -3,65 +3,57 @@ import { getServerSession } from 'next-auth';
 import { getToken } from 'next-auth/jwt';
 import type { JWT } from 'next-auth/jwt';
 import { authOptions, refreshAccessToken } from '@/lib/auth';
+import { buildSessionCookieUpdates } from '@/lib/session-cookie';
+import { shouldRefreshAccessToken } from '@/lib/token-lifetime';
 
 export const CLIENT_SESSION_TOKEN = 'server-session';
 const authDebugEnabled = process.env.AUTH_DEBUG === 'true';
+const SESSION_MAX_AGE_SECONDS = 30 * 24 * 60 * 60;
 
 export async function getAppAuthSession() {
-  const session = await getServerSession(authOptions);
-
-  if (authDebugEnabled) {
-    console.info('[auth][session]', {
-      source: 'getAppAuthSession',
-      hasUser: Boolean(session?.user),
-      userId: session?.user?.id ?? null,
-      userEmail: session?.user?.email ?? null,
-      error: session?.error ?? null
-    });
-  }
-
-  return session;
+  return getServerSession(authOptions);
 }
 
 export async function getApiAccessToken() {
-  const token = await getJwtTokenFromCookies();
+  const jwtSession = await getJwtSessionFromCookies();
+  const token = jwtSession?.token;
 
-  if (!token) {
+  if (!token || !jwtSession) {
     return null;
   }
 
   if (isAccessTokenExpired(token)) {
     if (token.refreshToken) {
+      const secret = process.env.AUTH_SECRET;
+      if (!secret) return null;
+
       if (authDebugEnabled) {
         console.info('[auth][token] Access token expired, attempting to refresh...');
       }
       const refreshedToken = await refreshAccessToken(token);
-      if (refreshedToken && refreshedToken.accessToken && refreshedToken.error !== 'AccessTokenExpired') {
+      if (
+        refreshedToken &&
+        refreshedToken.accessToken &&
+        refreshedToken.error !== 'AccessTokenExpired'
+      ) {
         try {
-          const cookieStore = await cookies();
           const { encode } = await import('next-auth/jwt');
           const encodedToken = await encode({
             token: refreshedToken,
-            secret: process.env.AUTH_SECRET ?? ''
+            secret,
+            maxAge: SESSION_MAX_AGE_SECONDS
           });
-
-          const isSecure = process.env.NODE_ENV === 'production' || process.env.AUTH_ISSUER_URL?.startsWith('https');
-          const cookieName = isSecure ? '__Secure-next-auth.session-token' : 'next-auth.session-token';
-
-          cookieStore.set(cookieName, encodedToken, {
-            path: '/',
-            httpOnly: true,
-            secure: isSecure,
-            sameSite: 'lax',
-            maxAge: 30 * 24 * 60 * 60
-          });
+          await writeSessionCookie(jwtSession, encodedToken);
 
           if (authDebugEnabled) {
             console.info('[auth][token] Successfully updated session cookie with refreshed token.');
           }
         } catch (error) {
           if (authDebugEnabled) {
-            console.warn('[auth][token] Failed to write refreshed token to cookies (expected in Server Components):', error);
+            console.warn(
+              '[auth][token] Failed to write refreshed token to cookies (expected in Server Components):',
+              error
+            );
           }
         }
         return refreshedToken.accessToken;
@@ -84,6 +76,17 @@ export async function getIdToken() {
 }
 
 export async function getJwtTokenFromCookies() {
+  return (await getJwtSessionFromCookies())?.token ?? null;
+}
+
+type JwtSession = {
+  token: JWT;
+  cookieName: string;
+  secureCookie: boolean;
+  existingCookieNames: string[];
+};
+
+async function getJwtSessionFromCookies(): Promise<JwtSession | null> {
   const cookieStore = await cookies();
   const allCookies = cookieStore.getAll();
 
@@ -148,7 +151,12 @@ export async function getJwtTokenFromCookies() {
     }
 
     if (token) {
-      return token;
+      return {
+        token,
+        cookieName: variant.cookieName,
+        secureCookie: variant.secureCookie,
+        existingCookieNames: allCookies.map((cookie) => cookie.name)
+      };
     }
   }
 
@@ -168,7 +176,15 @@ export async function getJwtTokenFromCookies() {
     });
   }
 
-  return fallbackToken;
+  if (!fallbackToken) return null;
+
+  const secureCookie = process.env.NODE_ENV === 'production';
+  return {
+    token: fallbackToken,
+    cookieName: secureCookie ? '__Secure-next-auth.session-token' : 'next-auth.session-token',
+    secureCookie,
+    existingCookieNames: allCookies.map((cookie) => cookie.name)
+  };
 }
 
 export function isAccessTokenExpired(token: JWT | null) {
@@ -180,13 +196,29 @@ export function isAccessTokenExpired(token: JWT | null) {
     return true;
   }
 
-  if (
-    typeof token.accessTokenExpiresAt === 'number' &&
-    Number.isFinite(token.accessTokenExpiresAt) &&
-    Date.now() >= token.accessTokenExpiresAt
-  ) {
+  if (shouldRefreshAccessToken(token.accessTokenExpiresAt)) {
     return true;
   }
 
   return false;
+}
+
+async function writeSessionCookie(session: JwtSession, encodedToken: string) {
+  const cookieStore = await cookies();
+  const updates = buildSessionCookieUpdates(
+    session.existingCookieNames,
+    session.cookieName,
+    encodedToken,
+    SESSION_MAX_AGE_SECONDS
+  );
+
+  for (const update of updates) {
+    cookieStore.set(update.name, update.value, {
+      path: '/',
+      httpOnly: true,
+      secure: session.secureCookie,
+      sameSite: 'lax',
+      maxAge: update.maxAge
+    });
+  }
 }

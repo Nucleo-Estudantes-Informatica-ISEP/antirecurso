@@ -16,16 +16,12 @@ import {
 } from '@/components/ui/table';
 import { PROTECTED_API_BASE_URL } from '@/services/api';
 import fetchUserPendingExams from '@/utils/FetchPendingExams';
-
-interface PendingExam {
-  id: number;
-  subject: string;
-  subject_id: number;
-  mode: string;
-  data: Record<string, unknown>;
-  created_at: string;
-  updated_at: string;
-}
+import {
+  getLocalExamStateKey,
+  getResumeSearchParams,
+  parseSavedExamState
+} from '@/services/examState';
+import PendingExam from '@/types/PendingExam';
 
 const PendingExamsTable: React.FC = () => {
   const router = useRouter();
@@ -84,8 +80,9 @@ const PendingExamsTable: React.FC = () => {
           </TableHeader>
           <TableBody>
             {pendingExamResponse.map((exam) => {
-              const total = (exam.data as { totalQuestions?: number })?.totalQuestions ?? 0;
-              const answered = (exam.data as { answered?: number })?.answered ?? 0;
+              const state = parseSavedExamState(exam.state, exam.subject_id, exam.mode);
+              const total = state?.questionIds.length ?? 0;
+              const answered = state?.answers.length ?? 0;
               const progress = total > 0 ? Math.round((answered / total) * 100) : 0;
 
               const handleDelete = async () => {
@@ -106,7 +103,7 @@ const PendingExamsTable: React.FC = () => {
                   );
 
                   if (res.ok) {
-                    localStorage.removeItem(`exam-state-${exam.subject_id}`);
+                    localStorage.removeItem(getLocalExamStateKey(exam.subject_id, exam.mode));
                     const data = await fetchUserPendingExams(fetchUrl);
                     setPendingExamResponse(data?.data ?? []);
                   } else {
@@ -127,9 +124,13 @@ const PendingExamsTable: React.FC = () => {
                   <TableCell className="capitalize">
                     <button
                       type="button"
-                      onClick={() =>
-                        router.push(`/exams/${exam.subject_id}/answer/${exam.mode}?resume=true`)
-                      }
+                      onClick={() => {
+                        if (!state) return;
+                        router.push(
+                          `/exams/${exam.subject_id}/answer/${exam.mode}?${getResumeSearchParams(state)}`
+                        );
+                      }}
+                      disabled={!state}
                       className="font-medium text-foreground hover:text-primary transition-colors hover:underline"
                     >
                       {exam.subject}
