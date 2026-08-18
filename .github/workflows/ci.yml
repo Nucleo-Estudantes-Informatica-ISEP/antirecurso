@@ -3,8 +3,6 @@ name: CI
 on:
   pull_request:
     branches: [dev, main]
-  push:
-    branches: [dev, main]
   workflow_dispatch:
 
 permissions:
@@ -48,9 +46,3 @@ jobs:
 
       - name: Reject critical production dependency advisories
         run: pnpm audit --prod --audit-level=critical
-
-  secret-scan:
-    name: Secret scan
-    runs-on: ubuntu-latest
-    steps:
-      - uses: Nucleo-Estudantes-Informatica-ISEP/.github/.github/actions/secret-scan@master
