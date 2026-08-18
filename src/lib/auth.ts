@@ -1,13 +1,9 @@
-import type { NextAuthOptions, Profile } from 'next-auth';
+import type { NextAuthOptions } from 'next-auth';
 import type { JWT } from 'next-auth/jwt';
 import ZitadelProvider from 'next-auth/providers/zitadel';
 import { getAuthNeiRoles, getAuthNeiRolesFromJwt } from './auth-nei-roles';
 import { shouldRefreshAccessToken } from './token-lifetime';
-import { fetchAuthNeiRolesFromUserInfo } from './zitadel-userinfo';
-
-type ZitadelProfile = Profile & {
-  email_verified?: boolean;
-};
+import { fetchAuthNeiRolesFromUserInfo, fetchAuthNeiUserInfo } from './zitadel-userinfo';
 
 const authDebugEnabled = process.env.AUTH_DEBUG === 'true';
 const refreshRequests = new Map<string, Promise<JWT>>();
@@ -139,15 +135,31 @@ export const authOptions: NextAuthOptions = {
   providers: [ZitadelProvider(zitadelProviderConfig)],
   callbacks: {
     async signIn({ profile, account }) {
-      const zitadelProfile = profile as ZitadelProfile | undefined;
-      // Legacy email linking requires affirmative IdP verification. A missing optional
-      // OIDC claim is denied instead of weakening the account-link boundary.
-      if (zitadelProfile?.email_verified !== true) return false;
-
-      const subject =
+      const accessToken = account?.access_token;
+      const callbackSubject =
         (typeof profile?.sub === 'string' ? profile.sub : undefined) ?? account?.providerAccountId;
 
-      return Boolean(subject);
+      if (typeof accessToken !== 'string' || accessToken.length === 0 || !callbackSubject) {
+        return false;
+      }
+
+      try {
+        // The ZITADEL NextAuth provider builds `profile` from the ID token. AuthNEI
+        // intentionally does not copy UserInfo claims into the ID token, so email
+        // verification must be checked against the OIDC UserInfo endpoint instead.
+        const userInfo = await fetchAuthNeiUserInfo({
+          issuer: requiredEnv.authIssuerUrl,
+          accessToken
+        });
+        const userInfoSubject = typeof userInfo.sub === 'string' ? userInfo.sub : undefined;
+
+        return userInfo.email_verified === true && userInfoSubject === callbackSubject;
+      } catch (error) {
+        if (authDebugEnabled) {
+          console.error('[auth][signIn] Failed to verify ZITADEL userinfo:', error);
+        }
+        return false;
+      }
     },
     async jwt({ token, account, profile }) {
       if (account) {

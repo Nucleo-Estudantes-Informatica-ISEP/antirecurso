@@ -6,62 +6,74 @@ The production container is defined by `Dockerfile` and `compose.yml`.
 
 Deploy the repository as a Docker Compose resource using `compose.yml`.
 
-The compose service listens on port `3000` inside the Docker network. Coolify should attach the public domain to the `web` service on port `3000`; the application does not publish a host port directly.
+The `web` service listens on port `3000`. The compose file declares `SERVICE_URL_WEB_3000`, so Coolify owns the public frontend URL and routes it to the correct internal port. `COOLIFY_URL` is not used.
 
-Coolify predefines `COOLIFY_URL` as the application URL. The compose file derives the frontend URLs from it:
+### Automatic/defaulted values
 
-- `NEXTAUTH_URL` uses `COOLIFY_URL`
-- `AUTH_POST_LOGOUT_REDIRECT_URI` defaults to `COOLIFY_URL`, but can be overridden explicitly
-- `NEXT_PUBLIC_BASE_URL` uses `<COOLIFY_URL>/api/backend`, the frontend's authenticated backend proxy
+The compose file derives these values automatically:
 
-This means changing the application's public URL in Coolify updates the normal login/logout URLs and the browser-facing backend proxy URL without duplicating the frontend domain in application environment variables.
+- `NEXTAUTH_URL` -> `SERVICE_URL_WEB_3000` (local fallback: `http://localhost:3000`)
+- `AUTH_POST_LOGOUT_REDIRECT_URI` -> `SERVICE_URL_WEB_3000` (local fallback: `http://localhost:3000`)
+- `NEXT_PUBLIC_PROTECTED_API_BASE_URL` -> `<SERVICE_URL_WEB_3000>/api/backend` (local fallback: `http://localhost:3000/api/backend`)
+- `AUTH_SECRET` -> a persistent Coolify-generated `SERVICE_REALBASE64_64_AUTH` value (local development fallback only when no value is supplied)
+- `AUTH_ISSUER_URL` -> `https://auth.nei-isep.org`
+- `AUTH_DEBUG` -> `false`
+- `NODE_ENV` -> `production`
+- `PORT` -> `3000`
+- `HOSTNAME` -> `0.0.0.0`
+- `NEXT_PUBLIC_BASE_URL` -> `https://antirecurso-api.nei-isep.org`
 
-Configure these variables in Coolify:
+`NEXT_PUBLIC_BASE_URL` is the external Adonis API. It must not point back to the Next.js `/api/backend` proxy. The proxy URL has its own `NEXT_PUBLIC_PROTECTED_API_BASE_URL` value.
+
+### Values that must come from AuthNEI
+
+Configure only the deployment-specific AuthNEI identifiers/credentials that cannot be inferred by Coolify:
 
 ```dotenv
-AUTH_SECRET=...
-AUTH_ISSUER_URL=https://auth.nei-isep.org
 AUTH_CLIENT_ID=...
 AUTH_CLIENT_SECRET=...
-AUTH_SCOPES="openid email profile offline_access urn:zitadel:iam:org:project:id:<ANTIRECURSO_PROJECT_ID>:aud"
-AUTH_ROLE_CLAIM=urn:zitadel:iam:org:project:roles
-AUTH_DEBUG=false
+AUTH_PROJECT_ID=...
+AUTH_GLOBAL_PROJECT_ID=...
 ```
 
-Optionally override the logout destination only if it should differ from the application URL:
+`AUTH_PROJECT_ID` is the AntiRecurso project ID. `AUTH_GLOBAL_PROJECT_ID` is the `NEI Global` project ID containing the shared `admin` role. Both are emitted by the AuthNEI bootstrap report.
 
-```dotenv
-AUTH_POST_LOGOUT_REDIRECT_URI=https://example.com
-```
-
-The compose file marks `AUTH_SECRET`, `AUTH_ISSUER_URL`, `AUTH_CLIENT_ID`, `AUTH_CLIENT_SECRET`, and `AUTH_SCOPES` as required. `AUTH_ROLE_CLAIM` and `AUTH_DEBUG` retain safe defaults.
-
-`NEXT_PUBLIC_BASE_URL` is passed both to the Docker build and to the runtime container because Next.js embeds `NEXT_PUBLIC_*` values into browser bundles at build time. In Coolify it is derived automatically as `<COOLIFY_URL>/api/backend`.
-
-Do not add `APP_BASE_URL` or `AUTH_REDIRECT_URI`; the frontend does not consume them. The effective callback URL is always:
+Unless explicitly overridden, the compose file builds the remaining auth values from those IDs:
 
 ```text
-<COOLIFY_URL>/api/auth/callback/zitadel
+AUTH_SCOPES=openid email profile offline_access urn:zitadel:iam:org:projects:roles urn:zitadel:iam:org:project:id:<AUTH_PROJECT_ID>:aud urn:zitadel:iam:org:project:id:<AUTH_GLOBAL_PROJECT_ID>:aud
+AUTH_ROLE_CLAIM=urn:zitadel:iam:org:project:<AUTH_GLOBAL_PROJECT_ID>:roles
 ```
 
-When the public domain changes, Coolify updates `COOLIFY_URL`, but ZITADEL still needs the new callback URL and post-logout URL registered on the AntiRecurso OIDC application.
+This gives the access token the AntiRecurso API audience while also requesting the project-specific role claim for `NEI Global`.
+
+You may override `AUTH_SCOPES`, `AUTH_ROLE_CLAIM`, `NEXT_PUBLIC_BASE_URL`, or the derived frontend URLs in Coolify when a non-standard deployment requires it.
+
+Do not add `APP_BASE_URL` or `AUTH_REDIRECT_URI`; this frontend does not consume them. The effective callback URL is:
+
+```text
+<SERVICE_URL_WEB_3000>/api/auth/callback/zitadel
+```
+
+The matching callback and post-logout URLs still need to be registered on the `antirecurso-web` ZITADEL application.
 
 ## Local Docker Compose
 
-Outside Coolify, define `COOLIFY_URL` yourself because the production compose file deliberately derives its public URLs from the same canonical value:
+For local development, `.env.example` contains localhost-oriented values. Copy it and replace the AuthNEI IDs/credentials:
 
-```dotenv
-COOLIFY_URL=http://localhost:3000
-AUTH_SECRET=...
-AUTH_ISSUER_URL=https://auth.example.com
-AUTH_CLIENT_ID=...
-AUTH_CLIENT_SECRET=...
-AUTH_SCOPES="openid email profile offline_access urn:zitadel:iam:org:project:id:<PROJECT_ID>:aud"
+```bash
+cp .env.example .env
 ```
 
-With that configuration, `NEXT_PUBLIC_BASE_URL` becomes `http://localhost:3000/api/backend`.
+The default local API addresses are:
 
-The production compose file only exposes port `3000` to the Docker network. For direct local browser access, add a local override such as:
+```text
+frontend: http://localhost:3000
+Adonis API: http://localhost:3333
+protected frontend proxy: http://localhost:3000/api/backend
+```
+
+The production compose only exposes port `3000` to the Docker network. For direct local browser access, add a local override:
 
 ```yaml
 services:
