@@ -8,12 +8,12 @@ Deploy the repository as a Docker Compose resource using `compose.yml`.
 
 The compose service listens on port `3000` inside the Docker network. Coolify should attach the public domain to the `web` service on port `3000`; the application does not publish a host port directly.
 
-Coolify predefines `COOLIFY_URL` as the application URL. The compose file maps it automatically to both:
+Coolify predefines `COOLIFY_URL` as the application URL. The compose file uses it as the canonical frontend URL:
 
-- `NEXTAUTH_URL`
-- `AUTH_POST_LOGOUT_REDIRECT_URI`
+- `NEXTAUTH_URL` always uses `COOLIFY_URL`
+- `AUTH_POST_LOGOUT_REDIRECT_URI` defaults to `COOLIFY_URL`, but can be overridden explicitly
 
-This means changing the application's public URL in Coolify updates those runtime values without duplicating the frontend URL in application environment variables.
+This means changing the application's public URL in Coolify updates the normal login/logout URLs without duplicating the frontend URL in application environment variables.
 
 Configure these variables in Coolify:
 
@@ -26,6 +26,12 @@ AUTH_SCOPES="openid email profile offline_access urn:zitadel:iam:org:project:id:
 AUTH_ROLE_CLAIM=urn:zitadel:iam:org:project:roles
 AUTH_DEBUG=false
 NEXT_PUBLIC_BASE_URL=https://antirecurso-api.nei-isep.org
+```
+
+Optionally override the logout destination only if it should differ from the application URL:
+
+```dotenv
+AUTH_POST_LOGOUT_REDIRECT_URI=https://example.com
 ```
 
 The compose file marks `AUTH_SECRET`, `AUTH_ISSUER_URL`, `AUTH_CLIENT_ID`, `AUTH_CLIENT_SECRET`, `AUTH_SCOPES`, and `NEXT_PUBLIC_BASE_URL` as required. `AUTH_ROLE_CLAIM` and `AUTH_DEBUG` retain safe defaults.
