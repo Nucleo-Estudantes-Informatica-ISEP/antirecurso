@@ -10,23 +10,27 @@ import useExamNavigation from './useExamNavigation';
 import useSession from '@/hooks/useSession';
 import { ExamContext } from '@/contexts/ExamContext';
 import { PROTECTED_API_BASE_URL } from '@/services/api';
+import { createSavedExamState, getLocalExamStateKey } from '@/services/examState';
 
 export default function useAnswerableExamNavigation({
   subjectId,
   mode,
   nOfQuestions,
+  penalizingFactor,
   filter,
   handleConfirm
 }: {
   subjectId: number;
   mode: string;
   nOfQuestions?: string | null;
+  penalizingFactor?: string | null;
   filter?: string | null;
   handleConfirm: () => Promise<void>;
 }) {
   const [answers, setAnswers] = useState<Map<number, string>>(new Map<number, string>());
   const [isSubmitting, setIsSubmitting] = useState(false);
   const submitRef = useRef<() => Promise<void>>(async () => {});
+  const saveRequestRef = useRef<AbortController | null>(null);
 
   const { theme } = useTheme();
   const session = useSession();
@@ -41,46 +45,53 @@ export default function useAnswerableExamNavigation({
     setCurrentQuestion
   } = useExamNavigation<Question>();
 
-  const lastAnswersRef = useRef<string>(JSON.stringify(Array.from(new Map<number, string>().entries())));
+  const lastAnswersRef = useRef<string>(
+    JSON.stringify(Array.from(new Map<number, string>().entries()))
+  );
   const lastIndexRef = useRef<number>(0);
   const lastSavedTimeRef = useRef<number>(0);
 
   // Auto-save exam state on progress changes
   useEffect(() => {
-    if (questions.length === 0) return;
+    if (questions.length === 0 || isSubmitting) return;
 
     const serializedAnswers = JSON.stringify(Array.from(answers.entries()));
-    
-    const stateData = {
+
+    const stateData = createSavedExamState({
       subjectId,
       mode,
       questions,
-      answers: Array.from(answers.entries()),
+      answers,
       time: examTime,
       currentQuestionIndex,
-      savedAt: Date.now(),
-      n_of_questions: nOfQuestions ?? undefined,
-      filter: filter ?? undefined
-    };
+      nOfQuestions,
+      penalizingFactor,
+      filter
+    });
 
     // Save to localStorage immediately
-    localStorage.setItem(`exam-state-${subjectId}`, JSON.stringify(stateData));
+    localStorage.setItem(getLocalExamStateKey(subjectId, mode), JSON.stringify(stateData));
 
     if (!session.token) return;
 
     // Save to backend if answers, current question, or >= 10s of time elapsed
     const answersChanged = serializedAnswers !== lastAnswersRef.current;
     const indexChanged = currentQuestionIndex !== lastIndexRef.current;
-    const timeThresholdPassed = lastSavedTimeRef.current === -1 || (examTime - lastSavedTimeRef.current) >= 10;
+    const timeThresholdPassed =
+      lastSavedTimeRef.current === -1 || examTime - lastSavedTimeRef.current >= 10;
 
     if (answersChanged || indexChanged || timeThresholdPassed) {
       lastAnswersRef.current = serializedAnswers;
       lastIndexRef.current = currentQuestionIndex;
       lastSavedTimeRef.current = examTime;
 
+      saveRequestRef.current?.abort();
+      const controller = new AbortController();
+      saveRequestRef.current = controller;
+
       const saveToBackend = async () => {
         try {
-          await fetch(`${PROTECTED_API_BASE_URL}/exams/state`, {
+          const response = await fetch(`${PROTECTED_API_BASE_URL}/exams/state`, {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
@@ -90,16 +101,36 @@ export default function useAnswerableExamNavigation({
               subject_id: subjectId,
               mode,
               state: stateData
-            })
+            }),
+            signal: controller.signal
           });
+          if (!response.ok && response.status !== 409) {
+            throw new Error(`Exam state save failed with HTTP ${response.status}`);
+          }
         } catch (err) {
-          console.error('Failed to save exam state to backend:', err);
+          if (!controller.signal.aborted) {
+            console.error('Failed to save exam state to backend:', err);
+          }
         }
       };
 
       saveToBackend();
     }
-  }, [questions, answers, currentQuestionIndex, examTime, session.token, subjectId, mode, nOfQuestions, filter]);
+
+    return () => saveRequestRef.current?.abort();
+  }, [
+    questions,
+    answers,
+    currentQuestionIndex,
+    examTime,
+    session.token,
+    subjectId,
+    mode,
+    nOfQuestions,
+    penalizingFactor,
+    filter,
+    isSubmitting
+  ]);
 
   const hasAnsweredAllQuestions = useCallback((): boolean => {
     if (answers.size === questions.length) return true;
@@ -118,16 +149,19 @@ export default function useAnswerableExamNavigation({
     [answers, questions]
   );
 
-  const selectAnswer = useCallback((questionIndex: number, order: string) => {
-    const questionId = questions[questionIndex]?.id;
-    if (questionId === undefined) return;
-    setAnswers((prev) => {
-      const newAnswers = new Map(prev);
-      if (newAnswers.get(questionId) === order) newAnswers.delete(questionId);
-      else newAnswers.set(questionId, order);
-      return newAnswers;
-    });
-  }, [questions]);
+  const selectAnswer = useCallback(
+    (questionIndex: number, order: string) => {
+      const questionId = questions[questionIndex]?.id;
+      if (questionId === undefined) return;
+      setAnswers((prev) => {
+        const newAnswers = new Map(prev);
+        if (newAnswers.get(questionId) === order) newAnswers.delete(questionId);
+        else newAnswers.set(questionId, order);
+        return newAnswers;
+      });
+    },
+    [questions]
+  );
 
   const cycleOptions = useCallback(
     (direction: 'UP' | 'DOWN') => {
@@ -147,7 +181,8 @@ export default function useAnswerableExamNavigation({
       const nextIndex = currentIndex + 1 * multiplier;
 
       if (nextIndex >= optionOrders.length) selectAnswer(currentQuestionIndex, optionOrders[0]);
-      else if (nextIndex < 0) selectAnswer(currentQuestionIndex, optionOrders[optionOrders.length - 1]);
+      else if (nextIndex < 0)
+        selectAnswer(currentQuestionIndex, optionOrders[optionOrders.length - 1]);
       else selectAnswer(currentQuestionIndex, optionOrders[nextIndex]);
     },
     [answers, currentQuestion, currentQuestionIndex, optionOrders, selectAnswer]
@@ -233,8 +268,12 @@ export default function useAnswerableExamNavigation({
       if (!confirmed) return;
 
       setIsSubmitting(true);
-      handleConfirm();
-      setIsSubmitting(false);
+      saveRequestRef.current?.abort();
+      try {
+        await handleConfirm();
+      } finally {
+        setIsSubmitting(false);
+      }
     },
     [handleConfirm, hasAnsweredAllQuestions, removeEventListener, theme]
   );
