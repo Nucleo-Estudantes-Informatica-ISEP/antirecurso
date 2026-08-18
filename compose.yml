@@ -1,0 +1,36 @@
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        NEXT_PUBLIC_BASE_URL: ${COOLIFY_URL}/api/backend
+    environment:
+      NODE_ENV: production
+      PORT: 3000
+      HOSTNAME: 0.0.0.0
+      NEXTAUTH_URL: ${COOLIFY_URL}
+      AUTH_POST_LOGOUT_REDIRECT_URI: ${AUTH_POST_LOGOUT_REDIRECT_URI:-${COOLIFY_URL}}
+      AUTH_SECRET: ${AUTH_SECRET:?}
+      AUTH_ISSUER_URL: ${AUTH_ISSUER_URL:?}
+      AUTH_CLIENT_ID: ${AUTH_CLIENT_ID:?}
+      AUTH_CLIENT_SECRET: ${AUTH_CLIENT_SECRET:?}
+      AUTH_SCOPES: ${AUTH_SCOPES:?}
+      AUTH_ROLE_CLAIM: ${AUTH_ROLE_CLAIM:-urn:zitadel:iam:org:project:roles}
+      AUTH_DEBUG: ${AUTH_DEBUG:-false}
+      NEXT_PUBLIC_BASE_URL: ${COOLIFY_URL}/api/backend
+    expose:
+      - "3000"
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "node",
+          "-e",
+          "fetch('http://127.0.0.1:3000/').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"
+        ]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
+    restart: unless-stopped

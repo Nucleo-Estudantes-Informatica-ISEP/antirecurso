@@ -132,31 +132,31 @@ At minimum, define the variables below before starting the app.
 
 | Variable | Required | Description |
 | --- | --- | --- |
-| `NEXT_PUBLIC_BASE_URL` | Yes | Base URL of the AntiRecurso backend API. This is required by the frontend code but is not currently present in `.env.example`. |
+| `NEXT_PUBLIC_BASE_URL` | Yes | Base URL of the current AdonisJS AntiRecurso backend API. It is documented in `.env.example`. |
+| `NEXTAUTH_URL` | Production | Canonical public URL of the deployed AntiRecurso frontend used by NextAuth. |
 | `AUTH_SECRET` | Yes | NextAuth secret used to sign and decrypt session tokens. |
 | `AUTH_ISSUER_URL` | Yes | Zitadel/AuthNEI issuer URL. |
 | `AUTH_CLIENT_ID` | Yes | OAuth client ID for the hosted login flow. |
 | `AUTH_CLIENT_SECRET` | Usually | OAuth client secret for the Zitadel provider. |
-| `AUTH_SCOPES` | No | Defaults to `openid email profile`. |
+| `AUTH_SCOPES` | Production | OIDC scopes. Keep `offline_access` for refresh tokens and include `urn:zitadel:iam:org:project:id:<ANTIRECURSO_PROJECT_ID>:aud` so the access token carries the AntiRecurso Project audience expected by the API. |
+| `AUTH_ROLE_CLAIM` | No | Override for the AntiRecurso Project's ZITADEL role claim. Defaults to `urn:zitadel:iam:org:project:roles`. |
 | `AUTH_POST_LOGOUT_REDIRECT_URI` | Recommended | Redirect target after logout. Defaults to `/` if omitted. |
 | `AUTH_DEBUG` | No | Set to `true` to enable verbose auth logging. |
 
-The sample file also contains:
+`APP_BASE_URL` and `AUTH_REDIRECT_URI` are not runtime configuration for this frontend and are intentionally omitted from `.env.example`. The effective NextAuth callback URL is derived from `NEXTAUTH_URL`; register `<NEXTAUTH_URL>/api/auth/callback/zitadel` on the ZITADEL application.
 
-- `APP_BASE_URL`
-- `AUTH_REDIRECT_URI`
-
-Those values may still be useful for external auth-provider setup, but they are not referenced directly by this frontend codebase.
+Do not include leading or trailing whitespace in credentials or URLs. In particular, whitespace in `AUTH_CLIENT_SECRET` changes the secret value and will make OAuth token exchanges fail.
 
 Example local configuration:
 
 ```dotenv
 NEXT_PUBLIC_BASE_URL=http://localhost:4000
+NEXTAUTH_URL=http://localhost:3000
 AUTH_SECRET=replace-with-a-long-random-secret
 AUTH_ISSUER_URL=https://auth.example.com
 AUTH_CLIENT_ID=replace-with-your-client-id
 AUTH_CLIENT_SECRET=replace-with-your-client-secret
-AUTH_SCOPES=openid email profile
+AUTH_SCOPES="openid email profile offline_access urn:zitadel:iam:org:project:id:<ANTIRECURSO_PROJECT_ID>:aud"
 AUTH_POST_LOGOUT_REDIRECT_URI=http://localhost:3000
 AUTH_DEBUG=false
 ```
@@ -177,6 +177,8 @@ Defined in [`package.json`](package.json):
 - `pnpm build` - create a production build
 - `pnpm start` - start the production server
 - `pnpm lint` - run ESLint
+- `pnpm typecheck` - run TypeScript without emitting files
+- `pnpm test` - run the Vitest regression suite
 
 ## Development Notes
 
@@ -199,6 +201,8 @@ The app uses a JWT session strategy:
 - server helpers in [`src/lib/server-auth.ts`](src/lib/server-auth.ts) read those tokens from cookies
 - authenticated server components fetch user data from the backend before rendering
 - the `/api/backend/*` proxy forwards the bearer token to the upstream API
+- expired access tokens are refreshed through a single in-flight request so concurrent server calls do not race
+- rotated session cookies are persisted, and an invalid refresh clears the session instead of looping
 
 ### Theming and Global UX
 
@@ -222,7 +226,7 @@ For production you need:
 - a reachable backend API URL for `NEXT_PUBLIC_BASE_URL`
 - a correctly configured callback and logout setup in Zitadel/AuthNEI
 
-A typical production flow is:
+A typical production build flow is:
 
 ```bash
 pnpm install --frozen-lockfile
@@ -233,8 +237,13 @@ pnpm start
 If you deploy behind a reverse proxy or managed platform, ensure:
 
 - HTTPS is enabled
+- `NEXTAUTH_URL` matches the canonical public frontend URL
 - your auth issuer accepts the production callback URL
 - `AUTH_POST_LOGOUT_REDIRECT_URI` matches the deployed frontend URL
+
+GitHub CI does not itself deploy. It requires a frozen install, lint, typecheck, tests, production build, production dependency audit, and Gitleaks. After a reviewed merge, verify the deployed commit in the hosting control plane and smoke the root plus login/refresh/logout and the affected exam flow. When a web change depends on the Adonis API, deploy the API and its migrations first.
+
+For regressions, prefer TDD: add a focused failing test, implement the smallest correction, then refactor with the suite green. See [`AGENTS.md`](AGENTS.md) for the required workflow.
 
 ## Troubleshooting
 
@@ -242,10 +251,12 @@ If you deploy behind a reverse proxy or managed platform, ensure:
 
 Check:
 
+- `NEXTAUTH_URL`
 - `AUTH_SECRET`
 - `AUTH_ISSUER_URL`
 - `AUTH_CLIENT_ID`
 - `AUTH_CLIENT_SECRET`
+- that none of those values contain accidental whitespace
 - whether the issued access token is expired
 
 The auth helper marks expired tokens with `AccessTokenExpired`, and protected routes will reject them.
@@ -282,3 +293,22 @@ This project is licensed under the GNU General Public License v3.0. See [`LICENS
 
 - Email: `support.antirecurso@nei-isep.org`
 - Public site: [https://antirecurso.nei-isep.org](https://antirecurso.nei-isep.org)
+
+## AuthNEI project authorization
+
+AntiRecurso has its own ZITADEL Project. Normal authenticated use is not gated by a `student` role;
+users authenticate through AuthNEI and the application only consumes roles that are meaningful to
+AntiRecurso itself. At present, `admin` is the application authorization role used for privileged
+operations.
+
+Role data is normalized only from the AntiRecurso Project role claim into `session.user.roles`.
+Claims belonging to other ZITADEL Projects are deliberately ignored so a role from another NEI
+application cannot grant AntiRecurso privileges. The browser may use role data for presentation,
+but the Adonis API remains the final authorization enforcement point.
+
+Normal login permits SSO without forcing an account picker. The user menu exposes separate actions
+for app-only logout, account switching (`prompt=select_account`), and central AuthNEI logout.
+
+`AUTH_ROLE_CLAIM` may override the default `urn:zitadel:iam:org:project:roles` claim name. Configure
+the AntiRecurso OIDC applications to include their own Project Role Assertions and the API audience
+expected by the backend.

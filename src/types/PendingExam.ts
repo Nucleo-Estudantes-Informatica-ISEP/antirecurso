@@ -3,7 +3,7 @@ export default interface PendingExam {
   subject: string;
   subject_id: number;
   mode: string;
-  data: Record<string, unknown>;
+  state: unknown;
   created_at: string;
   updated_at: string;
 }
