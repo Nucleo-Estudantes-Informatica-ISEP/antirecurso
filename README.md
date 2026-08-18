@@ -138,17 +138,12 @@ At minimum, define the variables below before starting the app.
 | `AUTH_ISSUER_URL` | Yes | Zitadel/AuthNEI issuer URL. |
 | `AUTH_CLIENT_ID` | Yes | OAuth client ID for the hosted login flow. |
 | `AUTH_CLIENT_SECRET` | Usually | OAuth client secret for the Zitadel provider. |
-| `AUTH_SCOPES` | No | Defaults to `openid email profile offline_access`. Keep `offline_access` enabled when refresh tokens are required. |
-| `AUTH_ROLE_CLAIM` | No | Override for the AntiRecurso Project's ZITADEL role claim. |
+| `AUTH_SCOPES` | Production | OIDC scopes. Keep `offline_access` for refresh tokens and include `urn:zitadel:iam:org:project:id:<ANTIRECURSO_PROJECT_ID>:aud` so the access token carries the AntiRecurso Project audience expected by the API. |
+| `AUTH_ROLE_CLAIM` | No | Override for the AntiRecurso Project's ZITADEL role claim. Defaults to `urn:zitadel:iam:org:project:roles`. |
 | `AUTH_POST_LOGOUT_REDIRECT_URI` | Recommended | Redirect target after logout. Defaults to `/` if omitted. |
 | `AUTH_DEBUG` | No | Set to `true` to enable verbose auth logging. |
 
-The sample file also contains:
-
-- `APP_BASE_URL`
-- `AUTH_REDIRECT_URI`
-
-Those values may still be useful for external auth-provider setup, but they are not referenced directly by this frontend codebase. The effective NextAuth callback URL is derived from `NEXTAUTH_URL`, so the corresponding `/api/auth/callback/zitadel` URL must also be registered on the ZITADEL application.
+`APP_BASE_URL` and `AUTH_REDIRECT_URI` are not runtime configuration for this frontend and are intentionally omitted from `.env.example`. The effective NextAuth callback URL is derived from `NEXTAUTH_URL`; register `<NEXTAUTH_URL>/api/auth/callback/zitadel` on the ZITADEL application.
 
 Do not include leading or trailing whitespace in credentials or URLs. In particular, whitespace in `AUTH_CLIENT_SECRET` changes the secret value and will make OAuth token exchanges fail.
 
@@ -161,7 +156,7 @@ AUTH_SECRET=replace-with-a-long-random-secret
 AUTH_ISSUER_URL=https://auth.example.com
 AUTH_CLIENT_ID=replace-with-your-client-id
 AUTH_CLIENT_SECRET=replace-with-your-client-secret
-AUTH_SCOPES=openid email profile offline_access
+AUTH_SCOPES="openid email profile offline_access urn:zitadel:iam:org:project:id:<ANTIRECURSO_PROJECT_ID>:aud"
 AUTH_POST_LOGOUT_REDIRECT_URI=http://localhost:3000
 AUTH_DEBUG=false
 ```
