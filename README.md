@@ -132,12 +132,13 @@ At minimum, define the variables below before starting the app.
 
 | Variable | Required | Description |
 | --- | --- | --- |
-| `NEXT_PUBLIC_BASE_URL` | Yes | Base URL of the AntiRecurso backend API. This is required by the frontend code but is not currently present in `.env.example`. |
+| `NEXT_PUBLIC_BASE_URL` | Yes | Base URL of the AntiRecurso backend API. |
+| `NEXTAUTH_URL` | Production | Canonical public URL of the deployed AntiRecurso frontend used by NextAuth. |
 | `AUTH_SECRET` | Yes | NextAuth secret used to sign and decrypt session tokens. |
 | `AUTH_ISSUER_URL` | Yes | Zitadel/AuthNEI issuer URL. |
 | `AUTH_CLIENT_ID` | Yes | OAuth client ID for the hosted login flow. |
 | `AUTH_CLIENT_SECRET` | Usually | OAuth client secret for the Zitadel provider. |
-| `AUTH_SCOPES` | No | Defaults to `openid email profile`. |
+| `AUTH_SCOPES` | No | Defaults to `openid email profile offline_access`. Keep `offline_access` enabled when refresh tokens are required. |
 | `AUTH_ROLE_CLAIM` | No | Override for the AntiRecurso Project's ZITADEL role claim. |
 | `AUTH_POST_LOGOUT_REDIRECT_URI` | Recommended | Redirect target after logout. Defaults to `/` if omitted. |
 | `AUTH_DEBUG` | No | Set to `true` to enable verbose auth logging. |
@@ -147,17 +148,20 @@ The sample file also contains:
 - `APP_BASE_URL`
 - `AUTH_REDIRECT_URI`
 
-Those values may still be useful for external auth-provider setup, but they are not referenced directly by this frontend codebase.
+Those values may still be useful for external auth-provider setup, but they are not referenced directly by this frontend codebase. The effective NextAuth callback URL is derived from `NEXTAUTH_URL`, so the corresponding `/api/auth/callback/zitadel` URL must also be registered on the ZITADEL application.
+
+Do not include leading or trailing whitespace in credentials or URLs. In particular, whitespace in `AUTH_CLIENT_SECRET` changes the secret value and will make OAuth token exchanges fail.
 
 Example local configuration:
 
 ```dotenv
 NEXT_PUBLIC_BASE_URL=http://localhost:4000
+NEXTAUTH_URL=http://localhost:3000
 AUTH_SECRET=replace-with-a-long-random-secret
 AUTH_ISSUER_URL=https://auth.example.com
 AUTH_CLIENT_ID=replace-with-your-client-id
 AUTH_CLIENT_SECRET=replace-with-your-client-secret
-AUTH_SCOPES=openid email profile
+AUTH_SCOPES=openid email profile offline_access
 AUTH_POST_LOGOUT_REDIRECT_URI=http://localhost:3000
 AUTH_DEBUG=false
 ```
@@ -234,6 +238,7 @@ pnpm start
 If you deploy behind a reverse proxy or managed platform, ensure:
 
 - HTTPS is enabled
+- `NEXTAUTH_URL` matches the canonical public frontend URL
 - your auth issuer accepts the production callback URL
 - `AUTH_POST_LOGOUT_REDIRECT_URI` matches the deployed frontend URL
 
@@ -243,10 +248,12 @@ If you deploy behind a reverse proxy or managed platform, ensure:
 
 Check:
 
+- `NEXTAUTH_URL`
 - `AUTH_SECRET`
 - `AUTH_ISSUER_URL`
 - `AUTH_CLIENT_ID`
 - `AUTH_CLIENT_SECRET`
+- that none of those values contain accidental whitespace
 - whether the issued access token is expired
 
 The auth helper marks expired tokens with `AccessTokenExpired`, and protected routes will reject them.
