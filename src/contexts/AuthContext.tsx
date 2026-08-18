@@ -34,8 +34,10 @@ export function AuthContextProvider({ children, ...props }: AuthContextProviderP
   const revalidate = useCallback(async () => {
     const session = await fetchSession();
     if (!session) {
+      // Being unauthenticated is a valid application state. Redirecting to `/`
+      // from the root layout causes an infinite full-page reload when the
+      // session endpoint returns 401, including for normal logged-out visitors.
       clear();
-      window.location.href = '/';
       return;
     }
 
@@ -63,12 +65,11 @@ async function fetchSession(): Promise<SessionData | null> {
 
   if (res.status === 200) {
     const data = (await res.json()) as SessionData & { user: User };
-    if (data.user.requires_account_resolution) {
-      if (window.location.pathname !== '/account/resolve') {
-        window.location.href = '/account/resolve';
-        return null;
-      }
-      return data;
+    if (
+      data.user.requires_account_resolution &&
+      window.location.pathname !== '/account/resolve'
+    ) {
+      window.location.href = '/account/resolve';
     }
     return data;
   }
