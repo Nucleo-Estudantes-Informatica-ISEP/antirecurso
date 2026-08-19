@@ -4,8 +4,8 @@ services:
       context: .
       dockerfile: Dockerfile
       args:
-        NEXT_PUBLIC_BASE_URL: ${NEXT_PUBLIC_BASE_URL:-https://antirecurso-api.nei-isep.org}
-        NEXT_PUBLIC_PROTECTED_API_BASE_URL: ${NEXT_PUBLIC_PROTECTED_API_BASE_URL:-${SERVICE_URL_WEB_3000:-http://localhost:3000}/api/backend}
+        NEXT_PUBLIC_BASE_URL: /api/backend
+        NEXT_PUBLIC_PROTECTED_API_BASE_URL: /api/protected
     environment:
       NODE_ENV: ${NODE_ENV:-production}
       PORT: ${PORT:-3000}
@@ -32,10 +32,14 @@ services:
       AUTH_ROLE_CLAIM: ${AUTH_ROLE_CLAIM:-urn:zitadel:iam:org:project:${AUTH_GLOBAL_PROJECT_ID}:roles}
       AUTH_DEBUG: ${AUTH_DEBUG:-false}
 
-      # NEXT_PUBLIC_BASE_URL is the external Adonis API. Authenticated browser
-      # traffic uses the same-origin Next.js proxy instead of pointing the proxy at itself.
-      NEXT_PUBLIC_BASE_URL: ${NEXT_PUBLIC_BASE_URL:-https://antirecurso-api.nei-isep.org}
-      NEXT_PUBLIC_PROTECTED_API_BASE_URL: ${NEXT_PUBLIC_PROTECTED_API_BASE_URL:-${SERVICE_URL_WEB_3000:-http://localhost:3000}/api/backend}
+      # Public browser requests go directly to the Adonis path mounted by Coolify.
+      # Server-side Next requests use an absolute URL to reach that same path.
+      NEXT_PUBLIC_BASE_URL: /api/backend
+      API_BASE_URL: ${API_BASE_URL:-${SERVICE_URL_WEB_3000:-http://localhost:3000}/api/backend}
+
+      # Authenticated browser requests must hit the Next BFF first so the real
+      # ZITADEL access token remains server-side. /api/backend belongs to Adonis.
+      NEXT_PUBLIC_PROTECTED_API_BASE_URL: /api/protected
     expose:
       - "3000"
     healthcheck:
