@@ -4,38 +4,35 @@ services:
       context: .
       dockerfile: Dockerfile
       args:
-        NEXT_PUBLIC_BASE_URL: ${NEXT_PUBLIC_BASE_URL:-https://antirecurso-api.nei-isep.org}
-        NEXT_PUBLIC_PROTECTED_API_BASE_URL: ${NEXT_PUBLIC_PROTECTED_API_BASE_URL:-${SERVICE_URL_WEB_3000:-http://localhost:3000}/api/backend}
+        NEXT_PUBLIC_BASE_URL: ${NEXT_PUBLIC_BASE_URL:-${SERVICE_URL_WEB:-http://localhost:3000}/api/backend}
+        NEXT_PUBLIC_PROTECTED_API_BASE_URL: ${NEXT_PUBLIC_PROTECTED_API_BASE_URL:-${SERVICE_URL_WEB:-http://localhost:3000}/api/protected}
     environment:
       NODE_ENV: ${NODE_ENV:-production}
       PORT: ${PORT:-3000}
       HOSTNAME: ${HOSTNAME:-0.0.0.0}
 
-      # Public frontend URLs are derived from Coolify's generated service URL.
-      # The port suffix makes the proxy target explicit; local compose falls back
-      # to localhost when the magic variable is absent.
-      NEXTAUTH_URL: ${NEXTAUTH_URL:-${SERVICE_URL_WEB_3000:-http://localhost:3000}}
-      AUTH_POST_LOGOUT_REDIRECT_URI: ${AUTH_POST_LOGOUT_REDIRECT_URI:-${SERVICE_URL_WEB_3000:-http://localhost:3000}}
+      NEXTAUTH_URL: ${NEXTAUTH_URL:-${SERVICE_URL_WEB:-http://localhost:3000}}
+      AUTH_POST_LOGOUT_REDIRECT_URI: ${AUTH_POST_LOGOUT_REDIRECT_URI:-${SERVICE_URL_WEB:-http://localhost:3000}}
 
-      # Coolify generates a persistent random Auth.js secret automatically. Local
-      # compose gets a development-only fallback unless AUTH_SECRET is supplied.
       AUTH_SECRET: ${AUTH_SECRET:-${SERVICE_REALBASE64_64_AUTH:-development-only-antirecurso-auth-secret-change-me}}
       AUTH_ISSUER_URL: ${AUTH_ISSUER_URL:-https://auth.nei-isep.org}
       AUTH_CLIENT_ID: ${AUTH_CLIENT_ID:?Configure AUTH_CLIENT_ID in Coolify}
       AUTH_CLIENT_SECRET: ${AUTH_CLIENT_SECRET:?Configure AUTH_CLIENT_SECRET in Coolify}
 
-      # These IDs come from the AuthNEI bootstrap output. The application project
-      # is the API audience; NEI Global carries the shared admin role.
       AUTH_PROJECT_ID: ${AUTH_PROJECT_ID:?Configure AUTH_PROJECT_ID in Coolify}
       AUTH_GLOBAL_PROJECT_ID: ${AUTH_GLOBAL_PROJECT_ID:?Configure AUTH_GLOBAL_PROJECT_ID in Coolify}
       AUTH_SCOPES: ${AUTH_SCOPES:-openid email profile offline_access urn:zitadel:iam:org:projects:roles urn:zitadel:iam:org:project:id:${AUTH_PROJECT_ID}:aud urn:zitadel:iam:org:project:id:${AUTH_GLOBAL_PROJECT_ID}:aud}
       AUTH_ROLE_CLAIM: ${AUTH_ROLE_CLAIM:-urn:zitadel:iam:org:project:${AUTH_GLOBAL_PROJECT_ID}:roles}
       AUTH_DEBUG: ${AUTH_DEBUG:-false}
 
-      # NEXT_PUBLIC_BASE_URL is the external Adonis API. Authenticated browser
-      # traffic uses the same-origin Next.js proxy instead of pointing the proxy at itself.
-      NEXT_PUBLIC_BASE_URL: ${NEXT_PUBLIC_BASE_URL:-https://antirecurso-api.nei-isep.org}
-      NEXT_PUBLIC_PROTECTED_API_BASE_URL: ${NEXT_PUBLIC_PROTECTED_API_BASE_URL:-${SERVICE_URL_WEB_3000:-http://localhost:3000}/api/backend}
+      # /api/backend belongs to Adonis. Browser-side public calls use the same
+      # public application URL, while server-side Next calls need an absolute URL.
+      NEXT_PUBLIC_BASE_URL: ${NEXT_PUBLIC_BASE_URL:-${SERVICE_URL_WEB:-http://localhost:3000}/api/backend}
+      API_BASE_URL: ${API_BASE_URL:-${SERVICE_URL_WEB:-http://localhost:3000}/api/backend}
+
+      # Protected browser calls hit the Next BFF first; it replaces the client
+      # session marker with the real ZITADEL access token before calling Adonis.
+      NEXT_PUBLIC_PROTECTED_API_BASE_URL: ${NEXT_PUBLIC_PROTECTED_API_BASE_URL:-${SERVICE_URL_WEB:-http://localhost:3000}/api/protected}
     expose:
       - "3000"
     healthcheck:

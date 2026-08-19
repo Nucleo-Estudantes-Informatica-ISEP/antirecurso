@@ -5,13 +5,15 @@ const compose = readFileSync(new URL('../../compose.yml', import.meta.url), 'utf
 const dockerfile = readFileSync(new URL('../../Dockerfile', import.meta.url), 'utf8');
 
 describe('Coolify deployment configuration', () => {
-  it('uses Coolify service URLs instead of COOLIFY_URL', () => {
+  it('uses the web service URL without a port suffix', () => {
     expect(compose).not.toContain('COOLIFY_URL');
-    expect(compose).toContain('SERVICE_URL_WEB_3000');
-    expect(compose).toContain('/api/backend');
+    expect(compose).toContain('SERVICE_URL_WEB');
+    expect(compose).not.toContain('SERVICE_URL_WEB_3000');
   });
 
-  it('keeps the upstream API separate from the protected frontend proxy', () => {
+  it('keeps Adonis and the protected Next BFF on separate paths', () => {
+    expect(compose).toContain('/api/backend');
+    expect(compose).toContain('/api/protected');
     expect(compose).toContain('NEXT_PUBLIC_BASE_URL');
     expect(compose).toContain('NEXT_PUBLIC_PROTECTED_API_BASE_URL');
     expect(dockerfile).toContain('ARG NEXT_PUBLIC_BASE_URL');
