@@ -24,4 +24,12 @@ describe('Coolify deployment configuration', () => {
     expect(compose).toContain('urn:zitadel:iam:org:projects:roles');
     expect(compose).toContain('urn:zitadel:iam:org:project:${AUTH_GLOBAL_PROJECT_ID}:roles');
   });
+
+  it('does not allow stale Coolify auth scope overrides', () => {
+    expect(compose).not.toContain('AUTH_SCOPES: ${AUTH_SCOPES:-');
+    expect(compose).not.toContain('AUTH_ROLE_CLAIM: ${AUTH_ROLE_CLAIM:-');
+    expect(compose).toContain(
+      'urn:zitadel:iam:org:project:id:${AUTH_PROJECT_ID}:aud'
+    );
+  });
 });
