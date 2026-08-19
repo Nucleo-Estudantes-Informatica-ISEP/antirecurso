@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { BASE_URL } from '@/services/api';
+import { SERVER_API_BASE_URL } from '@/services/api';
 import { getApiAccessToken } from '@/lib/server-auth';
 
 export const dynamic = 'force-dynamic';
@@ -15,11 +15,7 @@ async function proxyRequest(
     return NextResponse.json({ message: 'Authentication required' }, { status: 401 });
   }
 
-  if (!BASE_URL) {
-    return NextResponse.json({ message: 'API base URL is not configured' }, { status: 500 });
-  }
-
-  const targetUrl = new URL(`${BASE_URL}/${path.join('/')}`);
+  const targetUrl = new URL(`${SERVER_API_BASE_URL}/${path.join('/')}`);
   request.nextUrl.searchParams.forEach((value, key) => {
     targetUrl.searchParams.append(key, value);
   });
