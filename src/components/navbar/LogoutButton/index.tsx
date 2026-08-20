@@ -69,7 +69,7 @@ const LogoutButton: React.FC<LogoutButtonProps> = ({ className, onClick }) => {
       onClick={logoutButtonHandler}
     >
       <LogOut className="size-4" />
-      Terminar sessão no AuthNEI
+      Terminar sessão
     </Button>
   );
 };
