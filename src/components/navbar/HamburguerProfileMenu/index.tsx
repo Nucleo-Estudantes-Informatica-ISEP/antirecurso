@@ -127,10 +127,10 @@ const HamburgerProfileMenu: React.FC = () => {
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuItem asChild>
-          <a href="/api/auth/profile" className="cursor-pointer">
+          <Link href="/api/auth/profile" className="cursor-pointer">
             <UserCog className="size-4" />
             <span>Gerir perfil</span>
-          </a>
+          </Link>
         </DropdownMenuItem>
         <DropdownMenuItem onClick={handleSwitchAccount} className="cursor-pointer">
           <RefreshCw className="size-4" />
