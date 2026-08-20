@@ -139,10 +139,10 @@ const HamburgerMenu: React.FC = () => {
             {session.user ? (
               <>
                 <Button asChild variant="default" className="w-full" onClick={close}>
-                  <a href="/api/auth/profile">
+                  <Link href="/api/auth/profile">
                     <UserCog className="size-4" />
                     Gerir perfil
-                  </a>
+                  </Link>
                 </Button>
                 <Button variant="outline" className="w-full" onClick={handleSwitchAccount}>
                   <RefreshCw className="size-4" />
