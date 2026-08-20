@@ -12,13 +12,13 @@ import {
 } from '@/components/ui/dropdown-menu';
 import useCallbackUrl from '@/hooks/useCallbackUrl';
 import useSession from '@/hooks/useSession';
-import { LogIn, LogOut, RefreshCw, User, UserPlus } from 'lucide-react';
-import { useTheme } from 'next-themes';
+import { switchAuthNeiAccount } from '@/lib/client-auth-actions';
+import { LogIn, LogOut, RefreshCw, UserCog, UserPlus } from 'lucide-react';
 import { signOut } from 'next-auth/react';
+import { useTheme } from 'next-themes';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import swal from 'sweetalert';
-import { signOutFromApp, switchAuthNeiAccount } from '@/lib/client-auth-actions';
 
 const HamburgerProfileMenu: React.FC = () => {
   const pathname = useCallbackUrl();
@@ -74,11 +74,6 @@ const HamburgerProfileMenu: React.FC = () => {
     }
   };
 
-  const handleAppLogout = async () => {
-    session.clear();
-    await signOutFromApp('/');
-  };
-
   const handleSwitchAccount = async () => {
     session.clear();
     await switchAuthNeiAccount(pathname || '/');
@@ -132,15 +127,10 @@ const HamburgerProfileMenu: React.FC = () => {
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuItem asChild>
-          <Link href="/profile" className="cursor-pointer">
-            <User className="size-4" />
-            <span>O meu perfil</span>
-          </Link>
-        </DropdownMenuItem>
-        <DropdownMenuSeparator />
-        <DropdownMenuItem onClick={handleAppLogout} className="cursor-pointer">
-          <LogOut className="size-4" />
-          <span>Sair apenas do AntiRecurso</span>
+          <a href="/api/auth/profile" className="cursor-pointer">
+            <UserCog className="size-4" />
+            <span>Gerir perfil</span>
+          </a>
         </DropdownMenuItem>
         <DropdownMenuItem onClick={handleSwitchAccount} className="cursor-pointer">
           <RefreshCw className="size-4" />
@@ -151,7 +141,7 @@ const HamburgerProfileMenu: React.FC = () => {
           className="cursor-pointer text-destructive focus:text-destructive"
         >
           <LogOut className="size-4" />
-          <span>Terminar sessão no AuthNEI</span>
+          <span>Terminar sessão</span>
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

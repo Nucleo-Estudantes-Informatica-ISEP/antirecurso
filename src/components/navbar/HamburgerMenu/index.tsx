@@ -5,8 +5,9 @@ import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import ThemeChanger from '@/components/utils/Theme/ThemeChanger';
 import useSession from '@/hooks/useSession';
+import { switchAuthNeiAccount } from '@/lib/client-auth-actions';
 import { cn } from '@/lib/utils';
-import { LogIn, LogOut, Menu, RefreshCw, User, UserPlus } from 'lucide-react';
+import { LogIn, LogOut, Menu, RefreshCw, UserCog, UserPlus } from 'lucide-react';
 import { signOut } from 'next-auth/react';
 import { useTheme } from 'next-themes';
 import Link from 'next/link';
@@ -14,7 +15,6 @@ import { usePathname, useRouter } from 'next/navigation';
 import { useState } from 'react';
 import swal from 'sweetalert';
 import { topBarLinks } from '../Topbar';
-import { signOutFromApp, switchAuthNeiAccount } from '@/lib/client-auth-actions';
 
 const HamburgerMenu: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -61,12 +61,6 @@ const HamburgerMenu: React.FC = () => {
         className: theme === 'dark' ? 'swal-dark' : ''
       });
     }
-  };
-
-  const handleAppLogout = async () => {
-    close();
-    session.clear();
-    await signOutFromApp('/');
   };
 
   const handleSwitchAccount = async () => {
@@ -145,14 +139,10 @@ const HamburgerMenu: React.FC = () => {
             {session.user ? (
               <>
                 <Button asChild variant="default" className="w-full" onClick={close}>
-                  <Link href="/profile">
-                    <User className="size-4" />
-                    Aceder ao perfil
-                  </Link>
-                </Button>
-                <Button variant="outline" className="w-full" onClick={handleAppLogout}>
-                  <LogOut className="size-4" />
-                  Sair apenas do AntiRecurso
+                  <a href="/api/auth/profile">
+                    <UserCog className="size-4" />
+                    Gerir perfil
+                  </a>
                 </Button>
                 <Button variant="outline" className="w-full" onClick={handleSwitchAccount}>
                   <RefreshCw className="size-4" />
@@ -164,7 +154,7 @@ const HamburgerMenu: React.FC = () => {
                   onClick={handleLogout}
                 >
                   <LogOut className="size-4" />
-                  Terminar sessão no AuthNEI
+                  Terminar sessão
                 </Button>
               </>
             ) : (
