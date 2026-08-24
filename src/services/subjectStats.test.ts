@@ -1,7 +1,7 @@
-import { describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import type { SubjectStats } from '@/types/SubjectStats';
-import { getSubjectStatsViewModel } from './subjectStats';
+import { fetchSubjectStats, getSubjectStatsViewModel } from './subjectStats';
 
 function stats(overrides: Partial<SubjectStats> = {}): SubjectStats {
   return {
@@ -44,5 +44,23 @@ describe('subject stats view model', () => {
 
     expect(view.questionsSeenPercentage).toBe(0);
     expect(view.meanTimeLabel).toBe('sem dados suficientes');
+  });
+});
+
+describe('authenticated subject stats request', () => {
+  afterEach(() => vi.unstubAllGlobals());
+
+  it('uses the protected BFF without forwarding the browser session marker', async () => {
+    const fetchMock = vi.fn<typeof fetch>(async () => Response.json(stats()));
+    vi.stubGlobal('fetch', fetchMock);
+
+    await fetchSubjectStats(17);
+
+    expect(fetchMock).toHaveBeenCalledWith('/api/protected/subjects/17/stats', {
+      headers: expect.any(Headers),
+      credentials: 'same-origin'
+    });
+    const headers = fetchMock.mock.calls[0][1]?.headers as Headers;
+    expect(headers.has('authorization')).toBe(false);
   });
 });
