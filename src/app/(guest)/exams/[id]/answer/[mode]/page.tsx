@@ -8,8 +8,13 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import swal from 'sweetalert';
 
 import { ExamContext } from '@/contexts/ExamContext';
-import { BASE_URL, PROTECTED_API_BASE_URL } from '@/services/api';
+import { BASE_URL } from '@/services/api';
 import generateExam from '@/services/generateExam';
+import {
+  authenticatedBackendFetch,
+  BackendResponseError,
+  throwBackendResponseError
+} from '@/services/authenticatedBackend';
 import {
   getLocalExamStateKey,
   parseSavedExamState,
@@ -99,22 +104,16 @@ const Exam: React.FC<ExamPageProps> = ({ params }) => {
       urlParams.set('penalizing_factor', penalizingFactor);
     }
 
-    const baseUrl = session.token ? PROTECTED_API_BASE_URL : BASE_URL;
-    const url = `${baseUrl}/exams/verify?${urlParams.toString()}`;
+    const path = `exams/verify?${urlParams.toString()}`;
 
     const headers: HeadersInit = {
       'Content-Type': 'application/json'
     };
 
-    if (session.token) {
-      headers.Authorization = `Bearer ${session.token}`;
-    }
-
-    const res = await fetch(url, {
-      method: 'POST',
-      headers,
-      body: JSON.stringify(data)
-    });
+    const request = { method: 'POST', headers, body: JSON.stringify(data) };
+    const res = session.token
+      ? await authenticatedBackendFetch(path, request)
+      : await fetch(`${BASE_URL}/${path}`, request);
 
     if (res.status === 200) {
       setExamResult(await res.json());
@@ -125,14 +124,9 @@ const Exam: React.FC<ExamPageProps> = ({ params }) => {
         localStorage.removeItem(getLocalExamStateKey(subjectId, resolvedParams.mode));
         if (session.token) {
           const mode = resolvedParams.mode;
-          await fetch(
-            `${PROTECTED_API_BASE_URL}/exams/state?subject_id=${subjectId}&mode=${encodeURIComponent(mode)}`,
-            {
-              method: 'DELETE',
-              headers: {
-                Authorization: `Bearer ${session.token}`
-              }
-            }
+          await authenticatedBackendFetch(
+            `exams/state?subject_id=${subjectId}&mode=${encodeURIComponent(mode)}`,
+            { method: 'DELETE' }
           );
         }
       } catch (err) {
@@ -141,13 +135,19 @@ const Exam: React.FC<ExamPageProps> = ({ params }) => {
 
       router.push(`/exams/${resolvedParams.id}/points`);
     } else {
-      swal('Ocorreu um erro ao submeter o exame.', 'Por favor tenta novamente.', 'error', {
+      const detail = await throwBackendResponseError(
+        res,
+        'Não foi possível submeter o exame.'
+      ).catch((error: unknown) => (error instanceof Error ? error.message : String(error)));
+      swal('Ocorreu um erro ao submeter o exame.', detail, 'error', {
         className: themeRef.current === 'dark' ? 'swal-dark' : ''
       });
     }
   }
 
   useEffect(() => {
+    if (session.isLoading) return;
+
     let active = true;
 
     const examKey = `${resolvedParams.id}-${resolvedParams.mode}`;
@@ -164,13 +164,8 @@ const Exam: React.FC<ExamPageProps> = ({ params }) => {
       try {
         if (session.token) {
           const mode = resolvedParams.mode;
-          const res = await fetch(
-            `${PROTECTED_API_BASE_URL}/exams/state?subject_id=${subjectId}&mode=${encodeURIComponent(mode)}`,
-            {
-              headers: {
-                Authorization: `Bearer ${session.token}`
-              }
-            }
+          const res = await authenticatedBackendFetch(
+            `exams/state?subject_id=${subjectId}&mode=${encodeURIComponent(mode)}`
           );
           if (res.status === 200) {
             const data = await res.json();
@@ -223,14 +218,9 @@ const Exam: React.FC<ExamPageProps> = ({ params }) => {
           localStorage.removeItem(getLocalExamStateKey(subjectId, resolvedParams.mode));
           if (session.token) {
             const mode = resolvedParams.mode;
-            await fetch(
-              `${PROTECTED_API_BASE_URL}/exams/state?subject_id=${subjectId}&mode=${encodeURIComponent(mode)}`,
-              {
-                method: 'DELETE',
-                headers: {
-                  Authorization: `Bearer ${session.token}`
-                }
-              }
+            await authenticatedBackendFetch(
+              `exams/state?subject_id=${subjectId}&mode=${encodeURIComponent(mode)}`,
+              { method: 'DELETE' }
             );
           }
         }
@@ -248,14 +238,6 @@ const Exam: React.FC<ExamPageProps> = ({ params }) => {
         );
 
         if (!active) return;
-
-        if (exam === null) {
-          swal('Ocorreu um erro ao carregar o exame.', 'Por favor tenta novamente.', 'error', {
-            className: themeRef.current === 'dark' ? 'swal-dark' : ''
-          });
-          router.push('/exams');
-          return;
-        }
 
         if (resumeState) {
           const restoredQuestions = reorderByIds(exam, resumeState.questionIds);
@@ -283,11 +265,16 @@ const Exam: React.FC<ExamPageProps> = ({ params }) => {
 
         setQuestions(orderedQuestions);
         setExamTime(0);
-      } catch {
+      } catch (error) {
         if (!active) return;
-        swal('Error', 'Por favor tenta novamente.', 'error', {
+        const detail =
+          error instanceof BackendResponseError
+            ? error.message
+            : 'Não foi possível contactar o serviço de exames.';
+        await swal('Ocorreu um erro ao carregar o exame.', detail, 'error', {
           className: themeRef.current === 'dark' ? 'swal-dark' : ''
         });
+        router.push('/exams');
       }
     }
 
@@ -311,6 +298,7 @@ const Exam: React.FC<ExamPageProps> = ({ params }) => {
     setExamTime,
     changeQuestion,
     session.token,
+    session.isLoading,
     nOfQuestions,
     filter,
     searchParams
