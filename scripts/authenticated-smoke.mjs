@@ -54,6 +54,12 @@ for (const mode of ['default', 'realistic', 'new', 'wrong', 'hard', 'custom']) {
 await request('/api/protected/exams');
 console.info('PASS authenticated exam history');
 
+const subjectStats = await request(`/api/protected/subjects/${subjectId}/stats`);
+if (typeof subjectStats?.n_of_exams_taken !== 'number') {
+  throw new Error('Authenticated subject stats response is invalid.');
+}
+console.info('PASS authenticated subject stats');
+
 const noteVisit = await request(`/api/protected/notes/${noteId}/view`, { method: 'POST' });
 if (typeof noteVisit?.url !== 'string' || !noteVisit.url) {
   throw new Error('Authenticated note visit did not return a URL.');

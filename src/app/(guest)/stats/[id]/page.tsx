@@ -9,14 +9,12 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import useSession from '@/hooks/useSession';
 import { sanitizeMode } from '@/utils/sanitizeMode';
-import { fetcher } from '@/utils/SWRFetcher';
 import { Info, LineChart as LineChartIcon, Sparkles, Trophy } from 'lucide-react';
 import Link from 'next/link';
 import { use, useEffect, useState } from 'react';
-import { BASE_URL } from 'src/services/api';
 import type { SubjectStats } from 'src/types/SubjectStats';
 import getSubjectNameById from 'src/utils/getSubjectNameById';
-import { getSubjectStatsViewModel } from '@/services/subjectStats';
+import { fetchSubjectStats, getSubjectStatsViewModel } from '@/services/subjectStats';
 import useSWR from 'swr';
 
 interface SubjectStatsProps {
@@ -30,11 +28,11 @@ const SubjectStatsPage: React.FC<SubjectStatsProps> = ({ params }) => {
   const [subjectName, setSubjectName] = useState('');
   const { token } = useSession();
   const subjectId = Number.parseInt(resolvedParams.id, 10);
-  const url = `${BASE_URL}/subjects/${resolvedParams.id}/stats`;
+  const statsPath = `subjects/${subjectId}/stats`;
 
   const { data: subjectStats } = useSWR<SubjectStats>(
-    token ? [url, token as string] : null,
-    ([url, token]) => fetcher(url, token as string),
+    token ? statsPath : null,
+    () => fetchSubjectStats(subjectId),
     { revalidateOnFocus: false, keepPreviousData: true }
   );
   const statsView = subjectStats ? getSubjectStatsViewModel(subjectStats) : null;
