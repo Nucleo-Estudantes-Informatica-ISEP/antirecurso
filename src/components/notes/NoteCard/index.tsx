@@ -5,7 +5,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import useSession from '@/hooks/useSession';
-import { PROTECTED_API_BASE_URL } from '@/services/api';
+import { requestNoteVisit, toggleNoteLike } from '@/services/noteActions';
 import Note from '@/types/Note';
 import { motion } from 'framer-motion';
 import { Eye, ExternalLink, FileText, Heart } from 'lucide-react';
@@ -20,32 +20,33 @@ const NoteCard: React.FC<NoteCardParams> = ({ note }) => {
   const [likes, setLikes] = useState(note.likes);
   const [isLiked, setIsLiked] = useState(note.is_liked);
 
-  const { token, user } = useSession();
+  const { user } = useSession();
 
   async function handleLikeNote(id: number) {
-    const res = await fetch(PROTECTED_API_BASE_URL + '/notes/' + id + '/like', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`
-      }
-    });
-
-    if (!res.ok) swal('Erro', 'Não foi possível gostar do resumo', 'error');
-
-    setLikes((cur) => (isLiked ? cur - 1 : cur + 1));
-    setIsLiked((cur) => !cur);
+    try {
+      await toggleNoteLike(id);
+      setLikes((cur) => (isLiked ? cur - 1 : cur + 1));
+      setIsLiked((cur) => !cur);
+    } catch (error) {
+      await swal(
+        'Erro',
+        error instanceof Error ? error.message : 'Não foi possível gostar do resumo',
+        'error'
+      );
+    }
   }
 
   async function handleVisitNote(note: Note) {
-    const res = await fetch(PROTECTED_API_BASE_URL + '/notes/' + note.id + '/view', {
-      method: 'POST',
-      headers: { Authorization: `Bearer ${token}` }
-    });
-    if (!res.ok) swal('Erro', 'Não foi possível registar a visita ao resumo', 'error');
-
-    const data = await res.json();
-    window.open(data.url, '_blank');
+    try {
+      const url = await requestNoteVisit(note.id);
+      window.open(url, '_blank', 'noopener,noreferrer');
+    } catch (error) {
+      await swal(
+        'Erro',
+        error instanceof Error ? error.message : 'Não foi possível registar a visita ao resumo',
+        'error'
+      );
+    }
   }
 
   const userInitials = note.user.name
@@ -117,9 +118,7 @@ const NoteCard: React.FC<NoteCardParams> = ({ note }) => {
                 onClick={() => handleLikeNote(note.id)}
                 className="h-8 px-2 text-muted-foreground"
               >
-                <Heart
-                  className={`size-4 ${isLiked ? 'fill-primary text-primary' : ''}`}
-                />
+                <Heart className={`size-4 ${isLiked ? 'fill-primary text-primary' : ''}`} />
                 <span className="text-xs tabular-nums">{likes}</span>
               </Button>
               <div className="inline-flex items-center gap-1 px-2 text-muted-foreground">

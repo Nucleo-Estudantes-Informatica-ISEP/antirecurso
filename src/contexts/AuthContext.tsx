@@ -12,6 +12,7 @@ interface SessionData {
 
 export interface AuthContextData extends SessionData {
   clear: () => void;
+  isLoading: boolean;
   revalidate: () => void;
 }
 
@@ -22,7 +23,7 @@ interface AuthContextProviderProps {
 const AuthContext = createContext<AuthContextData>({} as AuthContextData);
 
 export function AuthContextProvider({ children, ...props }: AuthContextProviderProps) {
-  // isLoading could be implemented to prevent the user from seeing the no auth version for a split second
+  const [isLoading, setIsLoading] = useState(true);
   const [token, setToken] = useState<string | null>(null);
   const [user, setUser] = useState<User | null>(null);
 
@@ -32,18 +33,23 @@ export function AuthContextProvider({ children, ...props }: AuthContextProviderP
   }, []);
 
   const revalidate = useCallback(async () => {
-    const session = await fetchSession();
-    if (!session) {
-      // Being unauthenticated is a valid application state. Redirecting to `/`
-      // from the root layout causes an infinite full-page reload when the
-      // session endpoint returns 401, including for normal logged-out visitors.
-      clear();
-      return;
-    }
+    setIsLoading(true);
+    try {
+      const session = await fetchSession();
+      if (!session) {
+        // Being unauthenticated is a valid application state. Redirecting to `/`
+        // from the root layout causes an infinite full-page reload when the
+        // session endpoint returns 401, including for normal logged-out visitors.
+        clear();
+        return;
+      }
 
-    const { token, user } = session;
-    setToken(token);
-    setUser(user);
+      const { token, user } = session;
+      setToken(token);
+      setUser(user);
+    } finally {
+      setIsLoading(false);
+    }
   }, [clear]);
 
   useEffect(() => {
@@ -51,7 +57,7 @@ export function AuthContextProvider({ children, ...props }: AuthContextProviderP
   }, [revalidate]);
 
   return (
-    <AuthContext.Provider value={{ user, token, clear, revalidate }} {...props}>
+    <AuthContext.Provider value={{ user, token, isLoading, clear, revalidate }} {...props}>
       {children}
     </AuthContext.Provider>
   );
@@ -65,10 +71,7 @@ async function fetchSession(): Promise<SessionData | null> {
 
   if (res.status === 200) {
     const data = (await res.json()) as SessionData & { user: User };
-    if (
-      data.user.requires_account_resolution &&
-      window.location.pathname !== '/account/resolve'
-    ) {
+    if (data.user.requires_account_resolution && window.location.pathname !== '/account/resolve') {
       window.location.href = '/account/resolve';
     }
     return data;
