@@ -28,7 +28,7 @@ The compose file derives these values automatically:
 - `AUTH_POST_LOGOUT_REDIRECT_URI` -> `SERVICE_URL_WEB` (local fallback: `http://localhost:3000`)
 - `NEXT_PUBLIC_BASE_URL` -> `<SERVICE_URL_WEB>/api/backend`
 - `API_BASE_URL` -> `<SERVICE_URL_WEB>/api/backend`
-- `NEXT_PUBLIC_PROTECTED_API_BASE_URL` -> `<SERVICE_URL_WEB>/api/protected`
+- authenticated browser requests always use the same-origin `/api/protected` BFF
 - `AUTH_SECRET` -> persistent Coolify-generated `SERVICE_REALBASE64_64_AUTH`
 - `AUTH_ISSUER_URL` -> `https://auth.nei-isep.org`
 - `AUTH_DEBUG` -> `false`
@@ -74,3 +74,21 @@ Copy it and replace the AuthNEI IDs/credentials:
 ```bash
 cp .env.example .env
 ```
+
+## Authenticated smoke test
+
+After deploying the API first and then the web app, copy the complete cookie header from an
+authenticated browser session and run the protected-flow smoke against a subject that supports
+realistic mode and an existing note:
+
+```bash
+AUTH_SMOKE_BASE_URL=https://antirecurso.nei-isep.org \
+AUTH_SMOKE_COOKIE='next-auth.session-token=...' \
+AUTH_SMOKE_SUBJECT_ID=... \
+AUTH_SMOKE_NOTE_ID=... \
+pnpm smoke:auth
+```
+
+The smoke validates the backend user session, default, realistic, new, wrong, hard, and custom
+exam generation, exam history, and note visit tracking through `/api/protected`. The note visit
+increments its view count, so use a designated smoke-test note.
