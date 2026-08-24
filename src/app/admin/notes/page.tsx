@@ -14,6 +14,7 @@ import SelectInput, { InputSelectOption } from '@/components/utils/SelectInput';
 import useSession from '@/hooks/useSession';
 import { PROTECTED_API_BASE_URL } from '@/services/api';
 import { fetchSubjects } from '@/services/fetchSubjects';
+import { requestNoteVisit } from '@/services/noteActions';
 import { Add, Eye, Pencil, Trash } from '@/styles/Icons';
 import Note from '@/types/Note';
 import Pagination from '@/types/Pagination';
@@ -68,13 +69,16 @@ const NotesPage: React.FC = () => {
   };
 
   const handleOpenPreview = async (id: number) => {
-    const res = await fetch(`${PROTECTED_API_BASE_URL}/notes/${id}/view`, {
-      method: 'POST',
-      headers: { Authorization: `Bearer ${session.token}` }
-    });
-    if (!res.ok) swal('Erro', 'Não foi abrir a pré-visualização', 'error');
-    const data = await res.json();
-    window.open(data.url, '_blank');
+    try {
+      const url = await requestNoteVisit(id);
+      window.open(url, '_blank', 'noopener,noreferrer');
+    } catch (error) {
+      await swal(
+        'Erro',
+        error instanceof Error ? error.message : 'Não foi possível abrir a pré-visualização',
+        'error'
+      );
+    }
   };
 
   const handleEdit = (note: Note) => {
@@ -138,7 +142,8 @@ const NotesPage: React.FC = () => {
             )}
             <button
               className="rounded-md text-white bg-primary p-1 ml-auto text-2xl hover:bg-opacity-80 transition-colors"
-              onClick={handleUploadClick}>
+              onClick={handleUploadClick}
+            >
               <Add />
             </button>
           </div>
@@ -184,7 +189,8 @@ const NotesPage: React.FC = () => {
                     {notes.data.map((n) => (
                       <tr
                         key={n.id}
-                        className="odd:bg-gray-200 hover:bg-gray-300 dark:odd:bg-gray-600 dark:hover:bg-gray-500 transition-colors">
+                        className="odd:bg-gray-200 hover:bg-gray-300 dark:odd:bg-gray-600 dark:hover:bg-gray-500 transition-colors"
+                      >
                         <th className="p-3 truncate">
                           <span>{n.title}</span>
                         </th>
@@ -219,7 +225,8 @@ const NotesPage: React.FC = () => {
                         <th>
                           <button
                             className="hover:text-primary transition-colors p-3"
-                            onClick={() => handleOpenPreview(n.id)}>
+                            onClick={() => handleOpenPreview(n.id)}
+                          >
                             <Eye />
                           </button>
                         </th>
@@ -231,7 +238,8 @@ const NotesPage: React.FC = () => {
                         <th>
                           <button
                             className="hover:text-red-500 transition-colors p-3"
-                            onClick={() => handleDelete(n)}>
+                            onClick={() => handleDelete(n)}
+                          >
                             <Trash />
                           </button>
                         </th>

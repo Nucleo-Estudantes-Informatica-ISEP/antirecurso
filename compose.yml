@@ -5,7 +5,6 @@ services:
       dockerfile: Dockerfile
       args:
         NEXT_PUBLIC_BASE_URL: ${NEXT_PUBLIC_BASE_URL:-${SERVICE_URL_WEB:-http://localhost:3000}/api/backend}
-        NEXT_PUBLIC_PROTECTED_API_BASE_URL: ${NEXT_PUBLIC_PROTECTED_API_BASE_URL:-${SERVICE_URL_WEB:-http://localhost:3000}/api/protected}
     environment:
       NODE_ENV: ${NODE_ENV:-production}
       PORT: ${PORT:-3000}
@@ -30,9 +29,8 @@ services:
       NEXT_PUBLIC_BASE_URL: ${NEXT_PUBLIC_BASE_URL:-${SERVICE_URL_WEB:-http://localhost:3000}/api/backend}
       API_BASE_URL: ${API_BASE_URL:-${SERVICE_URL_WEB:-http://localhost:3000}/api/backend}
 
-      # Protected browser calls hit the Next BFF first; it replaces the client
-      # session marker with the real ZITADEL access token before calling Adonis.
-      NEXT_PUBLIC_PROTECTED_API_BASE_URL: ${NEXT_PUBLIC_PROTECTED_API_BASE_URL:-${SERVICE_URL_WEB:-http://localhost:3000}/api/protected}
+      # Protected browser calls always use the same-origin /api/protected BFF.
+      # The path is deliberately not configurable at build or runtime.
     expose:
       - "3000"
     healthcheck:

@@ -3,6 +3,7 @@ import { describe, expect, it } from 'vitest';
 
 const compose = readFileSync(new URL('../../compose.yml', import.meta.url), 'utf8');
 const dockerfile = readFileSync(new URL('../../Dockerfile', import.meta.url), 'utf8');
+const apiService = readFileSync(new URL('../services/api.ts', import.meta.url), 'utf8');
 
 describe('Coolify deployment configuration', () => {
   it('uses the web service URL without a port suffix', () => {
@@ -15,9 +16,11 @@ describe('Coolify deployment configuration', () => {
     expect(compose).toContain('/api/backend');
     expect(compose).toContain('/api/protected');
     expect(compose).toContain('NEXT_PUBLIC_BASE_URL');
-    expect(compose).toContain('NEXT_PUBLIC_PROTECTED_API_BASE_URL');
     expect(dockerfile).toContain('ARG NEXT_PUBLIC_BASE_URL');
-    expect(dockerfile).toContain('ARG NEXT_PUBLIC_PROTECTED_API_BASE_URL');
+    expect(compose).not.toContain('NEXT_PUBLIC_PROTECTED_API_BASE_URL');
+    expect(dockerfile).not.toContain('NEXT_PUBLIC_PROTECTED_API_BASE_URL');
+    expect(apiService).toContain("PROTECTED_API_BASE_URL = '/api/protected'");
+    expect(apiService).not.toContain('process.env.NEXT_PUBLIC_PROTECTED_API_BASE_URL');
   });
 
   it('derives AuthNEI scopes and the shared admin claim from project IDs', () => {

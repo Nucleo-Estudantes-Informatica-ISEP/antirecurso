@@ -42,7 +42,7 @@ export async function GET() {
     cache: 'no-store'
   });
 
-  if (res.status !== 200) {
+  if (!res.ok) {
     if (authDebugEnabled) {
       console.warn('[auth][session-route]', {
         reason: 'backend-user-fetch-failed',
@@ -50,7 +50,13 @@ export async function GET() {
       });
     }
 
-    return new NextResponse(null, { status: 502 });
+    const headers = new Headers();
+    const contentType = res.headers.get('content-type');
+    const requestId = res.headers.get('x-request-id');
+    if (contentType) headers.set('content-type', contentType);
+    if (requestId) headers.set('x-request-id', requestId);
+
+    return new NextResponse(res.body, { status: res.status, headers });
   }
 
   return NextResponse.json(

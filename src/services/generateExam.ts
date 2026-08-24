@@ -1,6 +1,11 @@
-import config from 'src/config';
-import { BASE_URL, PROTECTED_API_BASE_URL } from 'src/services/api';
-import Question from 'src/types/Question';
+import config from '../config';
+import { BASE_URL } from './api';
+import Question from '../types/Question';
+import {
+  authenticatedBackendFetch,
+  BackendResponseError,
+  throwBackendResponseError
+} from './authenticatedBackend';
 
 const generateExam = async (
   id: number,
@@ -8,37 +13,34 @@ const generateExam = async (
   token: string | null,
   n_of_questions?: number,
   filter?: string
-): Promise<Question[] | null> => {
-  if (config.mandatoryAuthModes.includes(mode) && !token) return null;
+): Promise<Question[]> => {
+  if (config.mandatoryAuthModes.includes(mode) && !token) {
+    throw new BackendResponseError(401, 'Inicia sessão para usar este modo de exame.');
+  }
 
   const urlParams = new URLSearchParams();
   urlParams.set('mode', mode);
   if (n_of_questions) urlParams.set('n_of_questions', n_of_questions.toString());
   if (filter) urlParams.set('filter', filter);
 
-  const baseUrl = token ? PROTECTED_API_BASE_URL : BASE_URL;
-  const url = `${baseUrl}/exams/generate/${id}?${urlParams.toString()}`;
+  const path = `exams/generate/${id}?${urlParams.toString()}`;
 
   const headers: HeadersInit = {
     'Content-Type': 'application/json'
   };
 
-  if (token) {
-    headers.Authorization = `Bearer ${token}`;
+  const res = token
+    ? await authenticatedBackendFetch(path, {
+        method: 'GET',
+        headers
+      })
+    : await fetch(`${BASE_URL}/${path}`, { method: 'GET', headers });
+
+  if (!res.ok) {
+    await throwBackendResponseError(res, 'Não foi possível carregar o exame.');
   }
 
-  try {
-    const res = await fetch(url, {
-      method: 'GET',
-      headers
-    });
-    if (res.status !== 200) return null;
-
-    const exam = await res.json();
-    return exam;
-  } catch {
-    return null;
-  }
+  return (await res.json()) as Question[];
 };
 
 export default generateExam;
