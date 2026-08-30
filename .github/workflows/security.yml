@@ -2,20 +2,19 @@ name: Security
 
 on:
   pull_request:
-    branches: [dev, main]
   workflow_dispatch:
+    inputs:
+      full_history:
+        description: Scan all reachable history instead of the latest change.
+        required: false
+        type: boolean
+        default: true
 
 jobs:
-  dependency-review:
-    if: github.event_name == 'pull_request'
-    uses: Nucleo-Estudantes-Informatica-ISEP/.github/.github/workflows/dependency-review.yml@master
+  security:
+    name: Security
     permissions:
       contents: read
-
-  secret-scan:
-    name: Secret scan
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-    steps:
-      - uses: Nucleo-Estudantes-Informatica-ISEP/.github/.github/actions/secret-scan@master
+    uses: Nucleo-Estudantes-Informatica-ISEP/.github/.github/workflows/security.yml@master
+    with:
+      full_history: ${{ github.event_name == 'workflow_dispatch' && inputs.full_history || false }}

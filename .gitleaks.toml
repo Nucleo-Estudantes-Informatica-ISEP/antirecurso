@@ -1,0 +1,12 @@
+title = "Antirecurso Gitleaks configuration"
+
+[extend]
+useDefault = true
+
+[[allowlists]]
+description = "React list keys in the static changelog are UI identifiers, not API keys."
+targetRules = ["generic-api-key"]
+condition = "AND"
+paths = ['''(^|/)src/app/\(guest\)/changelog/page\.tsx$''']
+regexTarget = "match"
+regexes = ['''key="[0-9]+\.[0-9]+\.[0-9]+-[a-z0-9-]+"''']
