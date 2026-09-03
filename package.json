@@ -87,7 +87,11 @@
       "@babel/core@<=7.29.0": ">=7.29.6",
       "picomatch@<2.3.2": ">=2.3.2",
       "postcss@<8.4.31": ">=8.4.31",
-      "yaml@>=2.0.0 <2.8.3": ">=2.8.3"
+      "yaml@>=2.0.0 <2.8.3": ">=2.8.3",
+      "flatted@<3.4.2": ">=3.4.2",
+      "brace-expansion@<1.1.18": ">=1.1.18",
+      "brace-expansion@>=4.0.0 <5.0.9": ">=5.0.9",
+      "@humanfs/node@<0.16.8": ">=0.16.8"
     }
   },
   "packageManager": "pnpm@9.1.4+sha256.30a1801ac4e723779efed13a21f4c39f9eb6c9fbb4ced101bce06b422593d7c9"
