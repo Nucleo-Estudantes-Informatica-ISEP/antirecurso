@@ -4,7 +4,9 @@ Contributor and automation instructions for the Antirecurso web application. `RE
 
 ## Workflow
 
-- Branch from `main` using a conventional prefix (`fix/`, `feat/`, `docs/`, `test/`, `build/`, `chore/`) and open a PR back to `main`.
+- `dev` is the work integration branch; `main` is the release and default branch.
+- Branch from `dev` using a conventional prefix (`fix/`, `feat/`, `docs/`, `test/`, `build/`, `chore/`) and open a PR back to `dev`, never directly to `main`.
+- Promote reviewed work from `dev` to `main` through a release PR.
 - Use Conventional Commits and split unrelated concerns. Put `Closes #N` in the PR body only when the merged PR fully resolves the issue.
 - Prefer TDD for bug fixes, session behavior, exam state, calculations, authorization, and pure logic: write a focused failing test, implement the smallest correction, then refactor with the suite green. If a live identity/API dependency prevents the red test, document the constraint and add the nearest deterministic regression plus a staging smoke step.
 - Do not duplicate an existing PR. Preserve useful authored commits in the replacement and close the superseded PR once reviewers have one complete path.
@@ -22,7 +24,7 @@ pnpm audit --prod
 
 Every behavior change needs a regression test. Test visible behavior and contracts, not component implementation details.
 
-GitHub CI requires the frozen install, lint, typecheck, Vitest suite, production build, production dependency audit, and Gitleaks. `main` requires both named checks, resolved conversations, and one CODEOWNER approval. Never weaken a gate to obtain green status.
+GitHub CI requires the frozen install, lint, typecheck, Vitest suite, production build, production dependency audit, and Gitleaks for every PR to `dev` or `main`. `main` requires both named checks, resolved conversations, and one CODEOWNER approval. Never weaken a gate to obtain green status.
 
 ## Deployment and API coupling
 
