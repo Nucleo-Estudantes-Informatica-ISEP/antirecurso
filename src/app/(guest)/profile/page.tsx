@@ -6,7 +6,14 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { getServerSession, getUserScores, getPendingExams } from '@/services/getServerSession';
-import { ArrowRight, BookOpenCheck, CalendarDays, GraduationCap, History, Settings } from 'lucide-react';
+import {
+  ArrowRight,
+  BookOpenCheck,
+  CalendarDays,
+  GraduationCap,
+  History,
+  Settings
+} from 'lucide-react';
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
 
@@ -39,6 +46,7 @@ const Profile: React.FC = async () => {
             <h1 className="text-2xl md:text-3xl font-bold tracking-tight">
               Boas vindas, <span className="text-primary">{user.name}</span>
             </h1>
+            <p className="mt-1 text-sm text-muted-foreground">{user.email}</p>
             <p className="mt-2 text-muted-foreground inline-flex items-center gap-2 text-sm">
               <CalendarDays className="size-4" />
               Hoje é dia {today}. Tens algum exame perto?
@@ -57,19 +65,20 @@ const Profile: React.FC = async () => {
                   Ver resumos
                 </Link>
               </Button>
-              {process.env.AUTH_ISSUER_URL && (
-                <Button asChild variant="ghost" className="text-muted-foreground hover:text-foreground">
-                  <a
-                    href={`${process.env.AUTH_ISSUER_URL}/ui/console`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    <Settings className="size-4" />
-                    Gerir conta
-                  </a>
-                </Button>
-              )}
+              <Button
+                asChild
+                variant="ghost"
+                className="text-muted-foreground hover:text-foreground"
+              >
+                <Link href="/api/auth/profile">
+                  <Settings className="size-4" />
+                  Gerir Conta no AuthNEI
+                </Link>
+              </Button>
             </div>
+            <p className="mt-3 text-xs text-muted-foreground">
+              Nome, email e imagem são geridos pelo AuthNEI.
+            </p>
           </div>
         </CardContent>
       </Card>
@@ -84,9 +93,7 @@ const Profile: React.FC = async () => {
                 </div>
                 <div>
                   <h2 className="text-lg md:text-xl font-bold">Exames por terminar</h2>
-                  <p className="text-xs md:text-sm text-muted-foreground">
-                    Continua onde paraste
-                  </p>
+                  <p className="text-xs md:text-sm text-muted-foreground">Continua onde paraste</p>
                 </div>
               </div>
               <PendingExamsTable />

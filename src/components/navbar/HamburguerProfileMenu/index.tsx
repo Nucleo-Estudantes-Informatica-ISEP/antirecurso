@@ -13,12 +13,13 @@ import {
 import useCallbackUrl from '@/hooks/useCallbackUrl';
 import useSession from '@/hooks/useSession';
 import { switchAuthNeiAccount } from '@/lib/client-auth-actions';
-import { LogIn, LogOut, RefreshCw, UserCog, UserPlus } from 'lucide-react';
+import { LogIn, LogOut, RefreshCw, User, UserCog, UserPlus } from 'lucide-react';
 import { signOut } from 'next-auth/react';
 import { useTheme } from 'next-themes';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import swal from 'sweetalert';
+import { APP_PROFILE_LINK, AUTHNEI_ACCOUNT_LINK } from '../profileLinks';
 
 const HamburgerProfileMenu: React.FC = () => {
   const pathname = useCallbackUrl();
@@ -127,9 +128,16 @@ const HamburgerProfileMenu: React.FC = () => {
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuItem asChild>
-          <Link href="/api/auth/profile" className="cursor-pointer">
+          <Link href={APP_PROFILE_LINK.href} className="cursor-pointer">
+            <User className="size-4" />
+            <span>{APP_PROFILE_LINK.label}</span>
+          </Link>
+        </DropdownMenuItem>
+        <DropdownMenuSeparator />
+        <DropdownMenuItem asChild>
+          <Link href={AUTHNEI_ACCOUNT_LINK.href} className="cursor-pointer">
             <UserCog className="size-4" />
-            <span>Gerir perfil</span>
+            <span>{AUTHNEI_ACCOUNT_LINK.label}</span>
           </Link>
         </DropdownMenuItem>
         <DropdownMenuItem onClick={handleSwitchAccount} className="cursor-pointer">

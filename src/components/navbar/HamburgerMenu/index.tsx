@@ -2,12 +2,13 @@
 
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
+import { Separator } from '@/components/ui/separator';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import ThemeChanger from '@/components/utils/Theme/ThemeChanger';
 import useSession from '@/hooks/useSession';
 import { switchAuthNeiAccount } from '@/lib/client-auth-actions';
 import { cn } from '@/lib/utils';
-import { LogIn, LogOut, Menu, RefreshCw, UserCog, UserPlus } from 'lucide-react';
+import { LogIn, LogOut, Menu, RefreshCw, User, UserCog, UserPlus } from 'lucide-react';
 import { signOut } from 'next-auth/react';
 import { useTheme } from 'next-themes';
 import Link from 'next/link';
@@ -15,6 +16,7 @@ import { usePathname, useRouter } from 'next/navigation';
 import { useState } from 'react';
 import swal from 'sweetalert';
 import { topBarLinks } from '../Topbar';
+import { APP_PROFILE_LINK, AUTHNEI_ACCOUNT_LINK } from '../profileLinks';
 
 const HamburgerMenu: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -139,9 +141,16 @@ const HamburgerMenu: React.FC = () => {
             {session.user ? (
               <>
                 <Button asChild variant="default" className="w-full" onClick={close}>
-                  <Link href="/api/auth/profile">
+                  <Link href={APP_PROFILE_LINK.href}>
+                    <User className="size-4" />
+                    {APP_PROFILE_LINK.label}
+                  </Link>
+                </Button>
+                <Separator />
+                <Button asChild variant="outline" className="w-full" onClick={close}>
+                  <Link href={AUTHNEI_ACCOUNT_LINK.href}>
                     <UserCog className="size-4" />
-                    Gerir perfil
+                    {AUTHNEI_ACCOUNT_LINK.label}
                   </Link>
                 </Button>
                 <Button variant="outline" className="w-full" onClick={handleSwitchAccount}>
