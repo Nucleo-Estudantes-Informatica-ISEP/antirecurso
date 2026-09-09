@@ -1,55 +1,56 @@
-import { NextRequest, NextResponse } from 'next/server'
-import { BASE_URL } from '@/services/api'
+import { NextRequest, NextResponse } from 'next/server';
+import { BASE_URL } from '@/services/api';
+import { apiFetch } from '@/services/apiClient';
 
-export const dynamic = 'force-dynamic'
+export const dynamic = 'force-dynamic';
 
 async function proxyRequest(
   request: NextRequest,
   { params }: { params: Promise<{ path: string[] }> }
 ) {
-  const { path } = await params
+  const { path } = await params;
 
   if (!BASE_URL) {
-    return NextResponse.json({ message: 'API base URL is not configured' }, { status: 500 })
+    return NextResponse.json({ message: 'API base URL is not configured' }, { status: 500 });
   }
 
-  const targetUrl = new URL(`${BASE_URL}/${path.join('/')}`)
+  const targetUrl = new URL(`${BASE_URL}/${path.join('/')}`);
   request.nextUrl.searchParams.forEach((value, key) => {
-    targetUrl.searchParams.append(key, value)
-  })
+    targetUrl.searchParams.append(key, value);
+  });
 
-  const headers = new Headers()
-  headers.set('accept', 'application/json')
+  const headers = new Headers();
+  headers.set('accept', 'application/json');
 
-  const contentType = request.headers.get('content-type')
+  const contentType = request.headers.get('content-type');
   if (contentType) {
-    headers.set('content-type', contentType)
+    headers.set('content-type', contentType);
   }
 
   const body =
-    request.method === 'GET' || request.method === 'HEAD' ? undefined : await request.text()
+    request.method === 'GET' || request.method === 'HEAD' ? undefined : await request.text();
 
-  const upstreamResponse = await fetch(targetUrl, {
+  const upstreamResponse = await apiFetch(targetUrl.toString(), {
     method: request.method,
     headers,
     body,
     cache: 'no-store'
-  })
+  });
 
-  const responseHeaders = new Headers()
-  const upstreamContentType = upstreamResponse.headers.get('content-type')
+  const responseHeaders = new Headers();
+  const upstreamContentType = upstreamResponse.headers.get('content-type');
   if (upstreamContentType) {
-    responseHeaders.set('content-type', upstreamContentType)
+    responseHeaders.set('content-type', upstreamContentType);
   }
 
   return new NextResponse(upstreamResponse.body, {
     status: upstreamResponse.status,
     headers: responseHeaders
-  })
+  });
 }
 
-export const GET = proxyRequest
-export const POST = proxyRequest
-export const PATCH = proxyRequest
-export const PUT = proxyRequest
-export const DELETE = proxyRequest
+export const GET = proxyRequest;
+export const POST = proxyRequest;
+export const PATCH = proxyRequest;
+export const PUT = proxyRequest;
+export const DELETE = proxyRequest;

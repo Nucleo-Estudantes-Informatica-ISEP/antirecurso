@@ -1,4 +1,4 @@
-import { BASE_URL } from '@/services/api';
+import { apiFetch } from '@/services/apiClient';
 import { getToken } from 'next-auth/jwt';
 import { NextRequest, NextResponse } from 'next/server';
 import { hasAuthNeiRole } from '@/lib/auth-nei-roles';
@@ -18,12 +18,9 @@ export async function proxy(request: NextRequest) {
     return NextResponse.rewrite(new URL('/', request.url));
   }
 
-  const res = await fetch(`${BASE_URL}/admin`, {
-    method: 'GET',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${accessToken}`
-    }
+  const res = await apiFetch('admin', {
+    authenticated: true,
+    accessToken
   });
 
   if (res.status !== 200) return NextResponse.rewrite(new URL('/', request.url));

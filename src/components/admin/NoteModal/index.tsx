@@ -10,11 +10,12 @@ import FileInput from '@/components/utils/FileInput';
 import PrimaryButton from '@/components/utils/PrimaryButton';
 import SelectInput, { InputSelectOption } from '@/components/utils/SelectInput';
 import UserSelector from '@/components/utils/UserSelector';
-import useSession from '@/hooks/useSession';
 import { getSignedUrl, uploadToBucket } from '@/lib/upload';
 import { PROTECTED_API_BASE_URL } from '@/services/api';
+import { apiRequest } from '@/services/apiClient';
 import { Pdf } from '@/styles/Icons';
 import Note from '@/types/Note';
+import Pagination from '@/types/Pagination';
 import { UploadedFile } from '@/types/UploadedFile';
 import User from '@/types/User';
 import { readFile } from '@/utils/files';
@@ -23,13 +24,12 @@ import LoadingSpinner from '../../utils/LoadingSpinner';
 interface ModalProps {
   setIsVisible: React.Dispatch<React.SetStateAction<boolean>>;
   subjects?: InputSelectOption[];
-  mutate: KeyedMutator<string>;
+  mutate: KeyedMutator<Pagination<Note>>;
   edit?: Note;
   setEdit: Dispatch<SetStateAction<Note | undefined>>;
 }
 
 const NoteModal: React.FC<ModalProps> = ({ setIsVisible, subjects, mutate, edit, setEdit }) => {
-  const session = useSession();
   const { theme } = useTheme();
 
   const titleRef = useRef<HTMLInputElement>(null);
@@ -81,24 +81,20 @@ const NoteModal: React.FC<ModalProps> = ({ setIsVisible, subjects, mutate, edit,
     const url = !edit
       ? `${PROTECTED_API_BASE_URL}/subjects/${subject}/notes`
       : `${PROTECTED_API_BASE_URL}/notes/${edit.id}`;
-    const res = await fetch(url, {
-      method: !edit ? 'POST' : 'PATCH',
-      body: JSON.stringify({
-        upload_id: uploadedFile?.id,
-        author_id: author.id,
-        title,
-        description,
-        n_pages: uploadedFile?.pages,
-        subject_id: subject
-      }),
-      headers: {
-        Accept: 'application/json',
-        'content-type': 'application/json',
-        Authorization: 'Bearer ' + session.token
-      }
-    });
-
-    if (!res.ok) {
+    try {
+      await apiRequest(url, {
+        authenticated: true,
+        method: !edit ? 'POST' : 'PATCH',
+        json: {
+          upload_id: uploadedFile?.id,
+          author_id: author.id,
+          title,
+          description,
+          n_pages: uploadedFile?.pages,
+          subject_id: subject
+        }
+      });
+    } catch {
       swal(
         'Oops!',
         'Ocorreu um erro ao tentar adicionar o resumo. Por favor, tente novamente.',
@@ -116,7 +112,7 @@ const NoteModal: React.FC<ModalProps> = ({ setIsVisible, subjects, mutate, edit,
       timer: 2000
     });
     handleClose();
-  }, [author, subject, uploadedFile, isFileLoading, edit, session.token, theme, handleClose]);
+  }, [author, subject, uploadedFile, isFileLoading, edit, theme, handleClose]);
 
   const handleSubjectChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setSubject(e.target.value);
@@ -129,7 +125,7 @@ const NoteModal: React.FC<ModalProps> = ({ setIsVisible, subjects, mutate, edit,
       setIsFileLoading(true);
 
       try {
-        const signed = await getSignedUrl('notes', file.type, session.token as string);
+        const signed = await getSignedUrl('notes', file.type);
         if (!signed) throw new Error('Ocorreu um erro no upload (getSignedUrl).');
 
         if (file.size > signed.maxSize) throw new Error('O ficheiro é demasiado grande.');
@@ -193,10 +189,12 @@ const NoteModal: React.FC<ModalProps> = ({ setIsVisible, subjects, mutate, edit,
     <div className="fixed left-0 top-0 h-screen w-full bg-gray-500/60 z-40 items-center justify-center">
       <div className="fixed left-0 z-40 flex h-screen w-full outline-none items-center justify-center overflow-y-auto">
         <div
-          className={`flex flex-col w-full md:w-1/2 rounded-lg lg:px-32 bg-gray-200 dark:bg-gray-700 items-center justify-around relative overflow-x-hidden overflow-y-scroll`}>
+          className={`flex flex-col w-full md:w-1/2 rounded-lg lg:px-32 bg-gray-200 dark:bg-gray-700 items-center justify-around relative overflow-x-hidden overflow-y-scroll`}
+        >
           <button
             onClick={handleClose}
-            className="text-2xl font-black text-red-500 hover:text-red-600 z-20 absolute top-10 right-10">
+            className="text-2xl font-black text-red-500 hover:text-red-600 z-20 absolute top-10 right-10"
+          >
             X
           </button>
           <span className="w-full text-center text-xl lg:text-3xl font-black mb-6 px-2 pt-10">
@@ -259,7 +257,8 @@ const NoteModal: React.FC<ModalProps> = ({ setIsVisible, subjects, mutate, edit,
               <PrimaryButton
                 onClick={handleSubmit}
                 disabled={isSubmitting}
-                className="w-full text-xl !font-bold">
+                className="w-full text-xl !font-bold"
+              >
                 {isSubmitting ? (
                   <LoadingSpinner className="mx-auto" />
                 ) : !edit ? (

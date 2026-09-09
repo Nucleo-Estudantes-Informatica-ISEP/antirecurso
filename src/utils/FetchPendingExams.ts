@@ -1,22 +1,16 @@
 import PendingExam from '@/types/PendingExam';
+import { apiRequest } from '@/services/apiClient';
 
 const fetchUserPendingExams = async (
   url: string | null
 ): Promise<{ data: PendingExam[] } | null> => {
   if (!url) return null;
 
-  const res = await fetch(url, {
-    method: 'GET',
-    headers: { 'Content-Type': 'application/json' },
+  return apiRequest<{ data: PendingExam[] }>(url, {
+    authenticated: true,
     cache: 'no-store',
+    errorMessage: 'Could not fetch pending exams'
   });
-
-  if (res.status !== 200) return null;
-
-  const data = await res.json();
-  return {
-    data: data.data as PendingExam[],
-  };
 };
 
 export default fetchUserPendingExams;

@@ -1,11 +1,6 @@
 import config from '../config';
-import { BASE_URL } from './api';
 import Question from '../types/Question';
-import {
-  authenticatedBackendFetch,
-  BackendResponseError,
-  throwBackendResponseError
-} from './authenticatedBackend';
+import { apiRequest, ApiResponseError } from './apiClient';
 
 const generateExam = async (
   id: number,
@@ -15,7 +10,7 @@ const generateExam = async (
   filter?: string
 ): Promise<Question[]> => {
   if (config.mandatoryAuthModes.includes(mode) && !token) {
-    throw new BackendResponseError(401, 'Inicia sessão para usar este modo de exame.');
+    throw new ApiResponseError(401, 'Inicia sessão para usar este modo de exame.');
   }
 
   const urlParams = new URLSearchParams();
@@ -25,22 +20,11 @@ const generateExam = async (
 
   const path = `exams/generate/${id}?${urlParams.toString()}`;
 
-  const headers: HeadersInit = {
-    'Content-Type': 'application/json'
-  };
-
-  const res = token
-    ? await authenticatedBackendFetch(path, {
-        method: 'GET',
-        headers
-      })
-    : await fetch(`${BASE_URL}/${path}`, { method: 'GET', headers });
-
-  if (!res.ok) {
-    await throwBackendResponseError(res, 'Não foi possível carregar o exame.');
-  }
-
-  return (await res.json()) as Question[];
+  return apiRequest<Question[]>(path, {
+    authenticated: Boolean(token),
+    method: 'GET',
+    errorMessage: 'Não foi possível carregar o exame.'
+  });
 };
 
 export default generateExam;

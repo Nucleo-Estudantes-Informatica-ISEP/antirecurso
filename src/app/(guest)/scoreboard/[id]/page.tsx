@@ -34,7 +34,7 @@ const ScoreboardPage: React.FC<ScoreboardPageProps> = ({ params }) => {
 
   const { data: scoreboard } = useSWR<Leaderboard>(
     `${BASE_URL}/subjects/${resolvedParams.id}/scoreboard/${mode}`,
-    (url) => fetcher(url, null),
+    (url) => fetcher<Leaderboard>(url, null),
     { revalidateOnFocus: false, keepPreviousData: true }
   );
 

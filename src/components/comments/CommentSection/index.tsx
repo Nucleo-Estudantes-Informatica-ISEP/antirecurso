@@ -6,7 +6,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Textarea } from '@/components/ui/textarea';
 import useSession from '@/hooks/useSession';
-import { PROTECTED_API_BASE_URL } from '@/services/api';
+import { apiRequest } from '@/services/apiClient';
 import { Comment } from '@/types/Comment';
 import { Flag, MessageSquare } from 'lucide-react';
 import { useTheme } from 'next-themes';
@@ -57,16 +57,12 @@ const CommentSection: React.FC<CommentSectionProps> = ({
 
     if (result === null) return;
 
-    const res = await fetch(PROTECTED_API_BASE_URL + '/question-reports', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${session.token}`
-      },
-      body: JSON.stringify({ question_id: questionId, reason: result })
-    });
-
-    if (res.status === 201)
+    try {
+      await apiRequest('question-reports', {
+        authenticated: true,
+        method: 'POST',
+        json: { question_id: questionId, reason: result }
+      });
       swal({
         title: 'Reportado!',
         text: 'A tua denúncia foi enviada com sucesso!',
@@ -74,13 +70,14 @@ const CommentSection: React.FC<CommentSectionProps> = ({
         className: theme === 'dark' ? 'swal-dark' : '',
         timer: 2000
       });
-    else
+    } catch {
       swal({
         title: 'Erro!',
         text: 'Algo correu mal ao enviar a tua denúncia. Por favor, tenta novamente.',
         icon: 'error',
         className: theme === 'dark' ? 'swal-dark' : ''
       });
+    }
   }
 
   return (

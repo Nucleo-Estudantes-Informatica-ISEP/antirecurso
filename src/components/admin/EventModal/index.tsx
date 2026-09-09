@@ -6,20 +6,20 @@ import swal from 'sweetalert';
 import { KeyedMutator } from 'swr';
 
 import PrimaryButton from '@/components/utils/PrimaryButton';
-import useSession from '@/hooks/useSession';
 import { PROTECTED_API_BASE_URL } from '@/services/api';
+import { apiRequest } from '@/services/apiClient';
 import Event from '@/types/Event';
+import Pagination from '@/types/Pagination';
 import LoadingSpinner from '../../utils/LoadingSpinner';
 
 interface ModalProps {
   setIsVisible: React.Dispatch<React.SetStateAction<boolean>>;
   edit?: Event;
-  mutate: KeyedMutator<Event[]>;
+  mutate: KeyedMutator<Pagination<Event> | null>;
   setEdit: Dispatch<SetStateAction<Event | undefined>>;
 }
 
 const EventModal: React.FC<ModalProps> = ({ setIsVisible, edit, mutate, setEdit }) => {
-  const session = useSession();
   const { theme } = useTheme();
 
   const titleRef = useRef<HTMLInputElement>(null);
@@ -91,17 +91,13 @@ const EventModal: React.FC<ModalProps> = ({ setIsVisible, edit, mutate, setEdit 
     const url = !edit
       ? `${PROTECTED_API_BASE_URL}/events/new`
       : `${PROTECTED_API_BASE_URL}/events/${edit.id}`;
-    const res = await fetch(url, {
-      method: !edit ? 'POST' : 'PATCH',
-      body: JSON.stringify(eventData),
-      headers: {
-        Accept: 'application/json',
-        'content-type': 'application/json',
-        Authorization: 'Bearer ' + session.token
-      }
-    });
-
-    if (!res.ok) {
+    try {
+      await apiRequest(url, {
+        authenticated: true,
+        method: !edit ? 'POST' : 'PATCH',
+        json: eventData
+      });
+    } catch {
       swal(
         'Oops!',
         'Ocorreu um erro ao tentar adicionar o evento. Por favor, tente novamente.',
@@ -119,7 +115,7 @@ const EventModal: React.FC<ModalProps> = ({ setIsVisible, edit, mutate, setEdit 
       timer: 2000
     });
     handleClose();
-  }, [edit, session.token, theme, handleClose]);
+  }, [edit, theme, handleClose]);
 
   useEffect(() => {
     const keydownEvent = (e: KeyboardEvent) => {

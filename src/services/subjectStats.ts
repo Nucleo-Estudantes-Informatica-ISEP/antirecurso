@@ -1,5 +1,5 @@
 import type { SubjectStats } from '@/types/SubjectStats';
-import { authenticatedBackendFetch, throwBackendResponseError } from './authenticatedBackend';
+import { apiRequest } from './apiClient';
 
 export type SubjectStatsViewModel = {
   averageGrade: number;
@@ -10,13 +10,10 @@ export type SubjectStatsViewModel = {
 };
 
 export async function fetchSubjectStats(subjectId: number): Promise<SubjectStats> {
-  const response = await authenticatedBackendFetch(`subjects/${subjectId}/stats`);
-
-  if (!response.ok) {
-    await throwBackendResponseError(response, 'Não foi possível carregar as estatísticas.');
-  }
-
-  return (await response.json()) as SubjectStats;
+  return apiRequest<SubjectStats>(`subjects/${subjectId}/stats`, {
+    authenticated: true,
+    errorMessage: 'Não foi possível carregar as estatísticas.'
+  });
 }
 
 export function getSubjectStatsViewModel(stats: SubjectStats): SubjectStatsViewModel {

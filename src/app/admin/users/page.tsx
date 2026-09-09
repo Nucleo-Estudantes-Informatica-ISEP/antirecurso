@@ -1,6 +1,6 @@
 import UserAvatar from '@/components/scoreboard/UserAvatar';
 import { getApiAccessToken } from '@/lib/server-auth';
-import { BASE_URL } from '@/services/api';
+import { apiRequest, ApiResponseError } from '@/services/apiClient';
 import User from '@/types/User';
 import { redirect } from 'next/navigation';
 import React from 'react';
@@ -12,28 +12,23 @@ interface UsersResponse {
 const UsersPage: React.FC = async () => {
   const token = await getApiAccessToken();
 
-  if (!token || !BASE_URL) {
+  if (!token) {
     redirect('/');
   }
 
-  const res = await fetch(`${BASE_URL}/users`, {
-    method: 'GET',
-    cache: 'no-store',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${token}`
-    }
-  });
-
-  if (res.status === 401 || res.status === 403) {
-    redirect('/');
+  let payload: UsersResponse;
+  try {
+    payload = await apiRequest<UsersResponse>('users', {
+      authenticated: true,
+      accessToken: token,
+      cache: 'no-store',
+      errorMessage: 'Failed to load users'
+    });
+  } catch (error) {
+    if (error instanceof ApiResponseError && [401, 403].includes(error.status)) redirect('/');
+    throw error;
   }
 
-  if (!res.ok) {
-    throw new Error(`Failed to load users: ${res.status}`);
-  }
-
-  const payload = (await res.json()) as UsersResponse;
   const users = Array.isArray(payload?.data) ? payload.data : [];
 
   return (
