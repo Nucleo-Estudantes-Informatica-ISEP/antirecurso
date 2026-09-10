@@ -21,6 +21,13 @@ vi.mock('@/hooks/useSession', () => ({
 }));
 vi.mock('next/navigation', () => ({ useRouter: () => ({ push: vi.fn(), refresh: vi.fn() }) }));
 vi.mock('next-themes', () => ({ useTheme: () => ({ theme: 'light' }) }));
+vi.mock('next/link', () => ({
+  default: ({ href, children }: { href: string; children: React.ReactNode }) => (
+    <a href={href} data-next-link="true">
+      {children}
+    </a>
+  )
+}));
 vi.mock('@/components/ui/dropdown-menu', () => ({
   DropdownMenu: ({ children }: { children: React.ReactNode }) => children,
   DropdownMenuTrigger: ({ children }: { children: React.ReactNode }) => children,
@@ -40,11 +47,10 @@ describe('authenticated profile menu', () => {
   it('separates the app profile from AuthNEI account management', () => {
     render(<HamburgerProfileMenu />);
 
-    expect(screen.getByRole('link', { name: 'Perfil' })).toHaveAttribute('href', '/profile');
-    expect(screen.getByRole('link', { name: 'Gerir Conta' })).toHaveAttribute(
-      'href',
-      '/api/auth/profile'
-    );
+    expect(screen.getByRole('link', { name: 'Perfil' })).toHaveAttribute('data-next-link', 'true');
+    const accountLink = screen.getByRole('link', { name: 'Gerir Conta' });
+    expect(accountLink).toHaveAttribute('href', '/api/auth/profile');
+    expect(accountLink).not.toHaveAttribute('data-next-link');
     expect(screen.getAllByRole('separator')).toHaveLength(2);
   });
 });

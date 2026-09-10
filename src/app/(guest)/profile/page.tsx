@@ -70,10 +70,12 @@ const Profile: React.FC = async () => {
                 variant="ghost"
                 className="text-muted-foreground hover:text-foreground"
               >
-                <Link href="/api/auth/profile">
+                {/* Full navigation required: endpoint redirects outside the Next.js app. */}
+                {/* eslint-disable-next-line @next/next/no-html-link-for-pages */}
+                <a href="/api/auth/profile">
                   <Settings className="size-4" />
                   Gerir Conta no AuthNEI
-                </Link>
+                </a>
               </Button>
             </div>
             <p className="mt-3 text-xs text-muted-foreground">

@@ -135,10 +135,10 @@ const HamburgerProfileMenu: React.FC = () => {
         </DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem asChild>
-          <Link href={AUTHNEI_ACCOUNT_LINK.href} className="cursor-pointer">
+          <a href={AUTHNEI_ACCOUNT_LINK.href} className="cursor-pointer">
             <UserCog className="size-4" />
             <span>{AUTHNEI_ACCOUNT_LINK.label}</span>
-          </Link>
+          </a>
         </DropdownMenuItem>
         <DropdownMenuItem onClick={handleSwitchAccount} className="cursor-pointer">
           <RefreshCw className="size-4" />

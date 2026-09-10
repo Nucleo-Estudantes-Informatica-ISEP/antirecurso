@@ -148,10 +148,10 @@ const HamburgerMenu: React.FC = () => {
                 </Button>
                 <Separator />
                 <Button asChild variant="outline" className="w-full" onClick={close}>
-                  <Link href={AUTHNEI_ACCOUNT_LINK.href}>
+                  <a href={AUTHNEI_ACCOUNT_LINK.href}>
                     <UserCog className="size-4" />
                     {AUTHNEI_ACCOUNT_LINK.label}
-                  </Link>
+                  </a>
                 </Button>
                 <Button variant="outline" className="w-full" onClick={handleSwitchAccount}>
                   <RefreshCw className="size-4" />
