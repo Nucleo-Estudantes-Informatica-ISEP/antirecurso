@@ -86,4 +86,20 @@ describe('API client', () => {
       backendMessage: 'connection refused'
     });
   });
+
+  it('preserves request IDs when a successful response contains invalid JSON', async () => {
+    const fetchMock = vi.fn<typeof fetch>(
+      async () =>
+        new Response('{invalid', {
+          status: 200,
+          headers: { 'content-type': 'application/json', 'x-request-id': 'request-invalid-json' }
+        })
+    );
+
+    await expect(apiRequest('subjects', {}, fetchMock)).rejects.toMatchObject({
+      status: 200,
+      backendMessage: 'Backend returned invalid JSON',
+      requestId: 'request-invalid-json'
+    });
+  });
 });

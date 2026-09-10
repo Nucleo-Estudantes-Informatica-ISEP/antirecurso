@@ -98,7 +98,12 @@ export async function apiRequest<T>(
     return JSON.parse(body) as T;
   } catch {
     if (response.headers.get('content-type')?.includes('json')) {
-      throw new ApiResponseError(response.status, 'Backend returned invalid JSON', body);
+      throw new ApiResponseError(
+        response.status,
+        'Backend returned invalid JSON',
+        body,
+        response.headers.get('x-request-id') ?? undefined
+      );
     }
     return body as T;
   }
