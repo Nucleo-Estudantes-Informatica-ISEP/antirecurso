@@ -12,8 +12,9 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import useSession from '@/hooks/useSession';
-import { PROTECTED_API_BASE_URL } from '@/services/api';
+import { apiRequest } from '@/services/apiClient';
 import { getOwnedExamReviewPath } from '@/services/examReview';
+import ExamReview from '@/types/ExamReview';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import useExamReviewNavigation from 'src/hooks/useExamReviewNavigation';
 import { getShuffleSeed, shuffleWithSeed } from '@/utils/examShuffle';
@@ -46,39 +47,28 @@ const ReviewPage: React.FC<ExamPageProps> = ({ params }) => {
       router.replace('/login');
       return;
     }
-    const headers: HeadersInit = {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${session.token}`
-    };
-    const res = await fetch(`${PROTECTED_API_BASE_URL}${examPath}`, {
+    const data = await apiRequest<ExamReview>(examPath, {
+      authenticated: true,
       method: 'GET',
-      headers,
       cache: 'no-cache'
     });
-
-    if (res.ok) {
-      const data = await res.json();
-      const storedSeed = getShuffleSeed(resolvedParams.id);
-      if (storedSeed && data.questions) {
-        data.questions = shuffleWithSeed(data.questions, storedSeed);
-      }
-      setExamResult(data);
+    const storedSeed = getShuffleSeed(resolvedParams.id);
+    if (storedSeed && data.questions) {
+      data.questions = shuffleWithSeed(data.questions, storedSeed);
     }
+    setExamResult(data);
   }, [resolvedParams.id, router, setExamResult, session.token]);
 
   async function submitComment(comment: string) {
     if (!session.user) return;
 
-    await fetch(`${PROTECTED_API_BASE_URL}/comments`, {
+    await apiRequest('comments', {
+      authenticated: true,
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${session.token}`
-      },
-      body: JSON.stringify({
+      json: {
         comment: comment,
         question_id: currentQuestion?.question.id
-      })
+      }
     });
 
     getExamResult();

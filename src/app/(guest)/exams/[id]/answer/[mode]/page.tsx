@@ -8,13 +8,8 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import swal from 'sweetalert';
 
 import { ExamContext } from '@/contexts/ExamContext';
-import { BASE_URL } from '@/services/api';
 import generateExam from '@/services/generateExam';
-import {
-  authenticatedBackendFetch,
-  BackendResponseError,
-  throwBackendResponseError
-} from '@/services/authenticatedBackend';
+import { apiFetch, ApiResponseError, throwApiResponseError } from '@/services/apiClient';
 import {
   getLocalExamStateKey,
   parseSavedExamState,
@@ -111,9 +106,7 @@ const Exam: React.FC<ExamPageProps> = ({ params }) => {
     };
 
     const request = { method: 'POST', headers, body: JSON.stringify(data) };
-    const res = session.token
-      ? await authenticatedBackendFetch(path, request)
-      : await fetch(`${BASE_URL}/${path}`, request);
+    const res = await apiFetch(path, { ...request, authenticated: Boolean(session.token) });
 
     if (res.status === 200) {
       setExamResult(await res.json());
@@ -124,10 +117,10 @@ const Exam: React.FC<ExamPageProps> = ({ params }) => {
         localStorage.removeItem(getLocalExamStateKey(subjectId, resolvedParams.mode));
         if (session.token) {
           const mode = resolvedParams.mode;
-          await authenticatedBackendFetch(
-            `exams/state?subject_id=${subjectId}&mode=${encodeURIComponent(mode)}`,
-            { method: 'DELETE' }
-          );
+          await apiFetch(`exams/state?subject_id=${subjectId}&mode=${encodeURIComponent(mode)}`, {
+            authenticated: true,
+            method: 'DELETE'
+          });
         }
       } catch (err) {
         console.error('Error clearing saved state:', err);
@@ -135,10 +128,9 @@ const Exam: React.FC<ExamPageProps> = ({ params }) => {
 
       router.push(`/exams/${resolvedParams.id}/points`);
     } else {
-      const detail = await throwBackendResponseError(
-        res,
-        'Não foi possível submeter o exame.'
-      ).catch((error: unknown) => (error instanceof Error ? error.message : String(error)));
+      const detail = await throwApiResponseError(res, 'Não foi possível submeter o exame.').catch(
+        (error: unknown) => (error instanceof Error ? error.message : String(error))
+      );
       swal('Ocorreu um erro ao submeter o exame.', detail, 'error', {
         className: themeRef.current === 'dark' ? 'swal-dark' : ''
       });
@@ -164,8 +156,9 @@ const Exam: React.FC<ExamPageProps> = ({ params }) => {
       try {
         if (session.token) {
           const mode = resolvedParams.mode;
-          const res = await authenticatedBackendFetch(
-            `exams/state?subject_id=${subjectId}&mode=${encodeURIComponent(mode)}`
+          const res = await apiFetch(
+            `exams/state?subject_id=${subjectId}&mode=${encodeURIComponent(mode)}`,
+            { authenticated: true }
           );
           if (res.status === 200) {
             const data = await res.json();
@@ -218,10 +211,10 @@ const Exam: React.FC<ExamPageProps> = ({ params }) => {
           localStorage.removeItem(getLocalExamStateKey(subjectId, resolvedParams.mode));
           if (session.token) {
             const mode = resolvedParams.mode;
-            await authenticatedBackendFetch(
-              `exams/state?subject_id=${subjectId}&mode=${encodeURIComponent(mode)}`,
-              { method: 'DELETE' }
-            );
+            await apiFetch(`exams/state?subject_id=${subjectId}&mode=${encodeURIComponent(mode)}`, {
+              authenticated: true,
+              method: 'DELETE'
+            });
           }
         }
       }
@@ -268,7 +261,7 @@ const Exam: React.FC<ExamPageProps> = ({ params }) => {
       } catch (error) {
         if (!active) return;
         const detail =
-          error instanceof BackendResponseError
+          error instanceof ApiResponseError
             ? error.message
             : 'Não foi possível contactar o serviço de exames.';
         await swal('Ocorreu um erro ao carregar o exame.', detail, 'error', {

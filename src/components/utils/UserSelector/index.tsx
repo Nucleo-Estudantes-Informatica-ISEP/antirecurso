@@ -3,8 +3,8 @@
 import { MD5 } from 'crypto-js';
 import React, { Dispatch, SetStateAction, useState } from 'react';
 
-import useSession from '@/hooks/useSession';
 import { PROTECTED_API_BASE_URL } from '@/services/api';
+import { apiRequest } from '@/services/apiClient';
 import User from '@/types/User';
 import Image from 'next/image';
 import useSWR from 'swr';
@@ -15,6 +15,10 @@ interface UserSelectorProps {
   setSelected: Dispatch<SetStateAction<User | null>>;
 }
 
+interface UsersResponse {
+  data: User[];
+}
+
 const UserSelector: React.FC<UserSelectorProps> = ({ selected, setSelected }) => {
   const [query, setQuery] = useState<string>('');
   const avatarFromEmail = (email?: string | null) => {
@@ -22,18 +26,19 @@ const UserSelector: React.FC<UserSelectorProps> = ({ selected, setSelected }) =>
     return MD5(normalizedEmail || 'unknown-user').toString();
   };
 
-  const fetcher = (url: RequestInfo | URL) => {
-    if (!query.length) return;
-    return fetch(url, { headers: { Authorization: 'Bearer ' + token } }).then((res) => res.json());
+  const fetcher = (url: string) => {
+    return apiRequest<UsersResponse>(url.toString(), { authenticated: true });
   };
 
-  const { data, isLoading } = useSWR(PROTECTED_API_BASE_URL + `/search?query=${query}`, fetcher, {
-    keepPreviousData: true
-  });
+  const { data, isLoading } = useSWR<UsersResponse>(
+    query.length ? PROTECTED_API_BASE_URL + `/search?query=${query}` : null,
+    fetcher,
+    {
+      keepPreviousData: true
+    }
+  );
 
   const users: User[] | null = data && !!query.length ? data.data : null;
-
-  const { token } = useSession();
 
   const handleSelectUser = async (user: User) => {
     setSelected(user);
@@ -84,7 +89,8 @@ const UserSelector: React.FC<UserSelectorProps> = ({ selected, setSelected }) =>
                       <button
                         className="flex items-center gap-2 px-4 py-4 w-64 cursor-pointer rounded-md hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
                         key={r.id}
-                        onClick={() => handleSelectUser(r)}>
+                        onClick={() => handleSelectUser(r)}
+                      >
                         <Image
                           src={`https://gravatar.com/avatar/${avatarFromEmail(r.email)}?s=256&d=identicon`}
                           alt={r.name}

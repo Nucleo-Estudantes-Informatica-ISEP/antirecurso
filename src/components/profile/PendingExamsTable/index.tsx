@@ -15,6 +15,7 @@ import {
   TableRow
 } from '@/components/ui/table';
 import { PROTECTED_API_BASE_URL } from '@/services/api';
+import { apiRequest } from '@/services/apiClient';
 import fetchUserPendingExams from '@/utils/FetchPendingExams';
 import {
   getLocalExamStateKey,
@@ -97,18 +98,13 @@ const PendingExamsTable: React.FC = () => {
                 if (!confirmed) return;
 
                 try {
-                  const res = await fetch(
-                    `${PROTECTED_API_BASE_URL}/exams/state?subject_id=${exam.subject_id}&mode=${encodeURIComponent(exam.mode)}`,
-                    { method: 'DELETE' }
+                  await apiRequest(
+                    `exams/state?subject_id=${exam.subject_id}&mode=${encodeURIComponent(exam.mode)}`,
+                    { authenticated: true, method: 'DELETE' }
                   );
-
-                  if (res.ok) {
-                    localStorage.removeItem(getLocalExamStateKey(exam.subject_id, exam.mode));
-                    const data = await fetchUserPendingExams(fetchUrl);
-                    setPendingExamResponse(data?.data ?? []);
-                  } else {
-                    throw new Error('Failed');
-                  }
+                  localStorage.removeItem(getLocalExamStateKey(exam.subject_id, exam.mode));
+                  const data = await fetchUserPendingExams(fetchUrl);
+                  setPendingExamResponse(data?.data ?? []);
                 } catch {
                   swal({
                     title: 'Erro',

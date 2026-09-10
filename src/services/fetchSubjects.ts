@@ -1,5 +1,5 @@
-import { BASE_URL } from 'src/services/api';
 import Subject from 'src/types/Subject';
+import { apiRequest } from './apiClient';
 
 const normalizeSubjectsResponse = (payload: unknown): Subject[] => {
   if (Array.isArray(payload)) {
@@ -19,21 +19,18 @@ const normalizeSubjectsResponse = (payload: unknown): Subject[] => {
 };
 
 const fetchSubjectsWithQuestions = async (): Promise<Subject[]> => {
-  const res = await fetch(`${BASE_URL}/subjects?with_questions=true`, {
-    cache: 'no-store'
-  });
-  if (!res.ok) throw new Error('Error fetching subjects');
-
-  return normalizeSubjectsResponse(await res.json());
+  return normalizeSubjectsResponse(
+    await apiRequest('subjects?with_questions=true', {
+      cache: 'no-store',
+      errorMessage: 'Error fetching subjects'
+    })
+  );
 };
 
 const fetchSubjects = async (): Promise<Subject[]> => {
-  const res = await fetch(`${BASE_URL}/subjects`, {
-    cache: 'no-store'
-  });
-  if (!res.ok) throw new Error('Error fetching subjects');
-
-  return normalizeSubjectsResponse(await res.json());
+  return normalizeSubjectsResponse(
+    await apiRequest('subjects', { cache: 'no-store', errorMessage: 'Error fetching subjects' })
+  );
 };
 
 export { fetchSubjectsWithQuestions, fetchSubjects };
