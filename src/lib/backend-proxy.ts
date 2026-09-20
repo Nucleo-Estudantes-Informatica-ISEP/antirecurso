@@ -1,3 +1,5 @@
+import { apiFetch } from '@/services/apiClient';
+
 const FORWARDED_RESPONSE_HEADERS = [
   'content-type',
   'retry-after',
@@ -37,8 +39,6 @@ export async function forwardAuthenticatedBackendRequest({
 
   const headers = new Headers();
   headers.set('accept', request.headers.get('accept') ?? 'application/json');
-  headers.set('authorization', `Bearer ${accessToken}`);
-
   const contentType = request.headers.get('content-type');
   if (contentType) headers.set('content-type', contentType);
 
@@ -46,12 +46,18 @@ export async function forwardAuthenticatedBackendRequest({
     request.method === 'GET' || request.method === 'HEAD' ? undefined : await request.text();
 
   try {
-    const upstreamResponse = await fetchImpl(targetUrl, {
-      method: request.method,
-      headers,
-      body,
-      cache: 'no-store'
-    });
+    const upstreamResponse = await apiFetch(
+      targetUrl.toString(),
+      {
+        authenticated: true,
+        accessToken,
+        method: request.method,
+        headers,
+        body,
+        cache: 'no-store'
+      },
+      fetchImpl
+    );
     const responseHeaders = new Headers();
 
     for (const header of FORWARDED_RESPONSE_HEADERS) {

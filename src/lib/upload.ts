@@ -1,24 +1,14 @@
 import { UploadResponse } from '@/types/UploadResponse';
-import { BASE_URL, PROTECTED_API_BASE_URL } from '@/services/api';
+import { BASE_URL } from '@/services/api';
+import { apiRequest } from '@/services/apiClient';
 
-export async function getSignedUrl(target: string, contentType: string, token: string) {
-  const res = await fetch(PROTECTED_API_BASE_URL + '/upload', {
-    body: JSON.stringify({ target, contentType }),
-    headers: {
-      Accept: 'application/json',
-      Authorization: 'Bearer ' + token,
-      'Content-Type': 'application/json'
-    },
-    method: 'POST'
+export async function getSignedUrl(target: string, contentType: string) {
+  const signed = await apiRequest<Partial<UploadResponse>>('upload', {
+    authenticated: true,
+    method: 'POST',
+    json: { target, contentType },
+    errorMessage: 'Ocorreu um erro no upload (getSignedUrl).'
   });
-
-  if (!res.ok) {
-    const errorBody = await res.text();
-    const details = errorBody ? ` ${errorBody}` : '';
-    throw new Error(`Ocorreu um erro no upload (getSignedUrl ${res.status}).${details}`);
-  }
-
-  const signed = (await res.json()) as Partial<UploadResponse>;
 
   if (!signed.url || !signed.id || !signed.target || typeof signed.maxSize !== 'number') {
     throw new Error('Ocorreu um erro no upload (getSignedUrl inválido).');
@@ -52,10 +42,9 @@ export async function uploadToBucket(signed: UploadResponse, blob: Blob) {
 }
 
 export async function setTarget(code: string, signed: UploadResponse) {
-  const res = await fetch(`${BASE_URL}/students/${code}/${signed.target}`, {
-    body: JSON.stringify({ uploadId: signed.id }),
-    method: 'POST'
+  const { url } = await apiRequest<{ url: string }>(`students/${code}/${signed.target}`, {
+    method: 'POST',
+    json: { uploadId: signed.id }
   });
-  const { url }: { url: string } = await res.json();
   return url;
 }

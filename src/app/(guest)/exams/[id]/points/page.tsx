@@ -13,7 +13,7 @@ import { useTheme } from 'next-themes';
 import { useParams, useRouter } from 'next/navigation';
 import ReactCanvasConfetti from 'react-canvas-confetti';
 import { ExamContext } from 'src/contexts/ExamContext';
-import { PROTECTED_API_BASE_URL } from '@/services/api';
+import { apiRequest } from '@/services/apiClient';
 import { getOwnedExamReviewPath } from '@/services/examReview';
 import swal from 'sweetalert';
 
@@ -50,26 +50,17 @@ const Points: React.FC = () => {
           setFetchError(true);
           return;
         }
-        const res = await fetch(`${PROTECTED_API_BASE_URL}${examPath}`, {
+        const data = await apiRequest<{ id: number; score: number; subject: string }>(examPath, {
+          authenticated: true,
           method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${session.token}`
-          },
           cache: 'no-store'
         });
-
-        if (res.ok) {
-          const data = await res.json();
-          setExamResult({
-            id: data.id,
-            score: data.score,
-            passed: data.score >= 50,
-            subject: data.subject
-          });
-        } else {
-          setFetchError(true);
-        }
+        setExamResult({
+          id: data.id,
+          score: data.score,
+          passed: data.score >= 50,
+          subject: data.subject
+        });
       } catch {
         setFetchError(true);
       } finally {

@@ -23,9 +23,9 @@ const Comments: React.FC = () => {
   const [endpoint, setEndpoint] = useState<string | null>(null);
 
   // conditional data fetching https://swr.vercel.app/docs/conditional-fetching
-  const { data, error, isLoading } = useSWR(
-    session.token && endpoint ? [endpoint, session.token as string] : null,
-    ([url, token]) => fetcher(url, token),
+  const { data, error, isLoading } = useSWR<CommentsResponse>(
+    session.token ? endpoint : null,
+    (url: string) => fetcher<CommentsResponse>(url, 'authenticated'),
     { revalidateOnFocus: false }
   );
 
@@ -77,7 +77,8 @@ const Comments: React.FC = () => {
       <div className="w-3/4 py-2 flex gap-6 my-4 bg-gray-100 dark:bg-gray-700 items-center justify-center">
         <button
           className="bg-gray-400 hover:bg-gray-500 text-white px-4 py-2 shadow-md"
-          onClick={() => handleResetFilters()}>
+          onClick={() => handleResetFilters()}
+        >
           Repor Filtros
         </button>
       </div>

@@ -11,8 +11,8 @@ import useSWR from 'swr';
 import NoteModal from '@/components/admin/NoteModal';
 import LoadingSpinner from '@/components/utils/LoadingSpinner';
 import SelectInput, { InputSelectOption } from '@/components/utils/SelectInput';
-import useSession from '@/hooks/useSession';
 import { PROTECTED_API_BASE_URL } from '@/services/api';
+import { apiRequest } from '@/services/apiClient';
 import { fetchSubjects } from '@/services/fetchSubjects';
 import { requestNoteVisit } from '@/services/noteActions';
 import { Add, Eye, Pencil, Trash } from '@/styles/Icons';
@@ -26,8 +26,6 @@ const NotesPage: React.FC = () => {
   const [selectedSubject, setSelectedSubject] = useState<string>();
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [editNote, setEditNote] = useState<Note | undefined>();
-
-  const session = useSession();
 
   const getSubjects = useCallback(async () => {
     try {
@@ -47,18 +45,17 @@ const NotesPage: React.FC = () => {
     getSubjects();
   }, [getSubjects]);
 
-  const fetcher = (url: RequestInfo | URL) => {
-    if (!selectedSubject) return;
-    return fetch(url, { headers: { Authorization: 'Bearer ' + session.token } }).then((res) =>
-      res.json()
-    );
+  const fetcher = (url: RequestInfo | URL): Promise<Pagination<Note>> => {
+    return apiRequest<Pagination<Note>>(url.toString(), { authenticated: true });
   };
 
-  const { data, isLoading, mutate } = useSWR(
-    `${PROTECTED_API_BASE_URL}/subjects/${selectedSubject}/notes?limit=999`,
+  const { data, isLoading, mutate } = useSWR<Pagination<Note>>(
+    selectedSubject
+      ? `${PROTECTED_API_BASE_URL}/subjects/${selectedSubject}/notes?limit=999`
+      : null,
     fetcher
   );
-  const notes: Pagination<Note> = data;
+  const notes = data;
 
   const handleSubjectChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setSelectedSubject(e.target.value);
@@ -98,12 +95,9 @@ const NotesPage: React.FC = () => {
 
     if (!confirmed) return;
 
-    const res = await fetch(`${PROTECTED_API_BASE_URL}/notes/${note.id}`, {
-      method: 'DELETE',
-      headers: { Authorization: `Bearer ${session.token}` }
-    });
-
-    if (!res.ok) {
+    try {
+      await apiRequest(`notes/${note.id}`, { authenticated: true, method: 'DELETE' });
+    } catch {
       return swal('Erro', 'Não foi possível remover o resumo.', 'error', {
         className: theme === 'dark' ? 'swal-dark' : ''
       });

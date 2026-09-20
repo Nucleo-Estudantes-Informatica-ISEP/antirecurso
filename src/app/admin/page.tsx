@@ -1,7 +1,7 @@
 import BarChart from '@/components/charts/BarChart';
 import UserAvatar from '@/components/scoreboard/UserAvatar';
 import { getApiAccessToken } from '@/lib/server-auth';
-import { BASE_URL } from '@/services/api';
+import { apiRequest } from '@/services/apiClient';
 import { getServerSession } from '@/services/getServerSession';
 import { AdminExamsStats } from '@/types/AdminExamsStats';
 import { redirect } from 'next/navigation';
@@ -20,14 +20,10 @@ const AdminPage: React.FC = async () => {
     redirect('/');
   }
 
-  const res = await fetch(`${BASE_URL}/admin/exams`, {
-    method: 'GET',
-    headers: {
-      Authorization: `Bearer ${accessToken}`
-    }
+  const data = await apiRequest<AdminExamsStats>('admin/exams', {
+    authenticated: true,
+    accessToken
   });
-
-  const data = (await res.json()) as AdminExamsStats;
 
   return (
     <div className="w-full h-full flex flex-col items-center justify-center">

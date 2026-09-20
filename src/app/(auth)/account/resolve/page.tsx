@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import swal from 'sweetalert';
 import useSession from '@/hooks/useSession';
+import { apiRequest } from '@/services/apiClient';
 
 const Resolver: React.FC = () => {
   const { user } = useSession();
@@ -23,7 +24,7 @@ const Resolver: React.FC = () => {
           : 'Vamos associar esta conta ao email existente. Os teus dados serão mantidos.',
       icon: action === 'discard' ? 'warning' : 'info',
       buttons: ['Cancelar', 'Confirmar'],
-      className: document.documentElement.classList.contains('dark') ? 'swal-dark' : '',
+      className: document.documentElement.classList.contains('dark') ? 'swal-dark' : ''
     });
 
     if (!confirmed) {
@@ -31,30 +32,30 @@ const Resolver: React.FC = () => {
       return;
     }
 
-    const res = await fetch('/api/backend/user/account-resolution', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ action }),
-    });
-
-    if (res.ok) {
+    try {
+      await apiRequest('user/account-resolution', {
+        authenticated: true,
+        method: 'POST',
+        json: { action }
+      });
       await swal({
         title: 'Sucesso',
-        text: action === 'discard'
-          ? 'Os teus dados antigos foram eliminados. A tua conta foi recriada do zero.'
-          : 'A tua conta foi associada com sucesso.',
+        text:
+          action === 'discard'
+            ? 'Os teus dados antigos foram eliminados. A tua conta foi recriada do zero.'
+            : 'A tua conta foi associada com sucesso.',
         icon: 'success',
         buttons: ['Fechar'],
-        className: document.documentElement.classList.contains('dark') ? 'swal-dark' : '',
+        className: document.documentElement.classList.contains('dark') ? 'swal-dark' : ''
       });
       window.location.href = '/';
-    } else {
+    } catch {
       await swal({
         title: 'Erro',
         text: 'Não foi possível resolver a conta. Tenta novamente.',
         icon: 'error',
         buttons: ['Fechar'],
-        className: document.documentElement.classList.contains('dark') ? 'swal-dark' : '',
+        className: document.documentElement.classList.contains('dark') ? 'swal-dark' : ''
       });
     }
 
@@ -85,9 +86,8 @@ const Resolver: React.FC = () => {
         <CardHeader>
           <CardTitle className="text-2xl">Resolver associação da conta</CardTitle>
           <CardDescription>
-            O email{' '}
-            <span className="font-mono font-bold text-foreground">{summary?.email}</span>{' '}
-            já existe na nossa base de dados com dados e exames associados.
+            O email <span className="font-mono font-bold text-foreground">{summary?.email}</span> já
+            existe na nossa base de dados com dados e exames associados.
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">

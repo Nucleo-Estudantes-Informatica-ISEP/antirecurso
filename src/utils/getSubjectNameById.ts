@@ -1,7 +1,6 @@
-import { BASE_URL } from 'src/services/api';
+import { apiRequest } from '@/services/apiClient';
 
 export default async function getSubjectNameById(id: number) {
-  const res = await fetch(`${BASE_URL}/subjects/${id}`);
-  const { name } = await res.json();
+  const { name } = await apiRequest<{ name: string }>(`subjects/${id}`);
   return name;
 }
