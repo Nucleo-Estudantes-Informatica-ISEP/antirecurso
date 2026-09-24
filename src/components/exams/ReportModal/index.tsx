@@ -1,7 +1,6 @@
 'use client';
 
-import useSession from '@/hooks/useSession';
-import { PROTECTED_API_BASE_URL } from '@/services/api';
+import { apiRequest } from '@/services/apiClient';
 import { Check } from '@/styles/Icons';
 import Option from '@/types/Option';
 import { Report } from '@/types/Report';
@@ -25,7 +24,6 @@ const ReportModal: React.FC<ModalProps> = ({
   solveReport,
   revalidateReports
 }) => {
-  const session = useSession();
   const { theme } = useTheme();
 
   // form
@@ -72,20 +70,16 @@ const ReportModal: React.FC<ModalProps> = ({
   const handleFixQuestion = async () => {
     if (!report) return;
 
-    const res = await fetch(PROTECTED_API_BASE_URL + '/questions/' + report.question.id, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${session.token}`
-      },
-      body: JSON.stringify({
-        correct_option: correctOption,
-        question: questionTitle,
-        options: options
-      })
-    });
-
-    if (res.status === 200) {
+    try {
+      await apiRequest('questions/' + report.question.id, {
+        authenticated: true,
+        method: 'PUT',
+        json: {
+          correct_option: correctOption,
+          question: questionTitle,
+          options: options
+        }
+      });
       // revalidate data
       revalidateReports();
 
@@ -96,7 +90,7 @@ const ReportModal: React.FC<ModalProps> = ({
         className: theme === 'dark' ? 'swal-dark' : '',
         timer: 2000
       });
-    } else {
+    } catch {
       swal({
         title: 'Erro!',
         text: 'Algo correu mal ao salvar as tuas alterações. Por favor, tenta novamente.',
@@ -131,13 +125,16 @@ const ReportModal: React.FC<ModalProps> = ({
     <div
       className={`fixed left-0 top-0 h-screen w-full bg-gray-500/60 z-20 items-center justify-center ${
         isVisible ? 'fixed' : 'hidden'
-      }`}>
+      }`}
+    >
       <div className="fixed left-0 z-20 pt-44 flex h-screen w-full outline-none items-center justify-center overflow-y-auto ">
         <div
-          className={`flex flex-col w-full md:w-1/2 rounded-lg top-14 pb-8 lg:px-32 bg-gray-200 dark:bg-gray-700 items-center justify-around relative overflow-x-hidden overflow-y-scroll`}>
+          className={`flex flex-col w-full md:w-1/2 rounded-lg top-14 pb-8 lg:px-32 bg-gray-200 dark:bg-gray-700 items-center justify-around relative overflow-x-hidden overflow-y-scroll`}
+        >
           <button
             onClick={() => setIsVisible(false)}
-            className="text-2xl font-black text-red-500 hover:text-red-600 z-20 absolute top-10 right-10">
+            className="text-2xl font-black text-red-500 hover:text-red-600 z-20 absolute top-10 right-10"
+          >
             X
           </button>
           <span className="w-full text-center text-xl lg:text-3xl font-black mb-6 px-2 pt-10 ">
@@ -172,7 +169,8 @@ const ReportModal: React.FC<ModalProps> = ({
                     className={`w-full flex items-center justify-between px-1.5 md:px-4 py-2 md:py-3 border border-gray-100 min-h-[4rem] md:min-h-[5rem] rounded cursor-pointer
                     ${correctOption === option.order ? 'bg-primary text-white' : ''}`}
                     onClick={() => handleOptionEdit(index)}
-                    title="Editar">
+                    title="Editar"
+                  >
                     {editingOption === index && !report?.solved ? (
                       <textarea
                         className="w-full px-1.5 md:px-4 py-2 md:py-3 rounded bg-transparent border focus:outline-none focus:border-none"
@@ -201,7 +199,8 @@ const ReportModal: React.FC<ModalProps> = ({
               <div className="flex items-left mb-12">
                 <button
                   className="w-full p-2 mr-8 text-xl bg-primary rounded-md text-white font-bold hover:brightness-90 hover:text-white"
-                  onClick={handleFixQuestion}>
+                  onClick={handleFixQuestion}
+                >
                   Salvar
                 </button>
               </div>
@@ -231,7 +230,8 @@ const ReportModal: React.FC<ModalProps> = ({
               onClick={() => {
                 solveReport(report?.id ?? 0);
                 setIsVisible(false);
-              }}>
+              }}
+            >
               Marcar Como Resolvido
             </button>
           )}

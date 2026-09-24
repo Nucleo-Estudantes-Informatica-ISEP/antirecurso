@@ -4,6 +4,7 @@ import ReportTable from '@/components/admin/ReportTable';
 import ReportModal from '@/components/exams/ReportModal';
 import { useQueryParamsManager } from '@/hooks/useQueryParamsManager';
 import useSession from '@/hooks/useSession';
+import { apiRequest } from '@/services/apiClient';
 import { Filter } from '@/types/Filter';
 import { Report } from '@/types/Report';
 import { fetcher } from '@/utils/SWRFetcher';
@@ -25,15 +26,15 @@ const Reports: React.FC = () => {
   const [endpoint, setEndpoint] = useState<string | null>(null);
 
   // conditional data fetching https://swr.vercel.app/docs/conditional-fetching
-  const { data, error, isLoading } = useSWR(
-    session.token && endpoint ? [endpoint, session.token as string] : null,
-    ([url, token]) => fetcher(url, token),
+  const { data, error, isLoading } = useSWR<Report[]>(
+    session.token ? endpoint : null,
+    (url: string) => fetcher<Report[]>(url, 'authenticated'),
     { revalidateOnFocus: false }
   );
 
   const reports = data?.map((r: Report) => ({
     ...r,
-    question_id: r.question.id,
+    question_id: String(r.question.id),
     solved: r.solved ? 'Sim' : 'Não'
   }));
 
@@ -68,18 +69,14 @@ const Reports: React.FC = () => {
   const handleMarkAsResolve = async (reportId?: number) => {
     if (selectedReports.length === 0 && !reportId) return;
 
-    const res = await fetch(PROTECTED_API_BASE_URL + '/question-reports/review', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${session.token}`
-      },
-      body: JSON.stringify({
-        question_ids: reportId ? [reportId] : selectedReports
-      })
-    });
-
-    if (res.status === 200) {
+    try {
+      await apiRequest('question-reports/review', {
+        authenticated: true,
+        method: 'POST',
+        json: {
+          question_ids: reportId ? [reportId] : selectedReports
+        }
+      });
       // revalidate data
       revalidateReports();
 
@@ -94,7 +91,7 @@ const Reports: React.FC = () => {
         className: theme === 'dark' ? 'swal-dark' : '',
         timer: 2000
       });
-    } else {
+    } catch {
       swal({
         title: 'Erro!',
         text: 'Algo correu mal ao marcar o(s) teu(s) report(s). Por favor, tenta novamente.',
@@ -105,7 +102,7 @@ const Reports: React.FC = () => {
   };
 
   const revalidateReports = () => {
-    mutate([endpoint, session.token as string]);
+    mutate(endpoint);
   };
 
   // handle filter checkboxes
@@ -191,7 +188,8 @@ const Reports: React.FC = () => {
             id="filters"
             className="w-44 bg-gray-50 border border-gray-300 text-gray-900 text-sm focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
             onChange={(e) => handleChangeFilter(e)}
-            value={filter}>
+            value={filter}
+          >
             {filters.map((f: Filter) => (
               <option key={f.value} value={f.value}>
                 {f.name}
@@ -200,14 +198,16 @@ const Reports: React.FC = () => {
           </select>
           <button
             className="bg-gray-400 hover:bg-gray-500 text-white px-4 py-2 shadow-md"
-            onClick={() => handleResetFilters()}>
+            onClick={() => handleResetFilters()}
+          >
             Repor Filtros
           </button>
         </div>
         <div className="flex gap-x-2">
           <button
             className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 shadow-md"
-            onClick={() => handleMarkAsResolve()}>
+            onClick={() => handleMarkAsResolve()}
+          >
             Resolver
           </button>
         </div>

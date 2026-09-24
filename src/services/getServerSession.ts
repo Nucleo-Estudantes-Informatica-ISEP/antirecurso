@@ -1,56 +1,37 @@
-import { BASE_URL } from '@/services/api';
 import { CLIENT_SESSION_TOKEN, getApiAccessToken, getAppAuthSession } from '@/lib/server-auth';
 import { Session } from '@/types/Session';
 import User from '@/types/User';
+import Score from '@/types/Score';
+import PendingExam from '@/types/PendingExam';
+import { apiRequest } from './apiClient';
+
+async function requestAuthenticated<T>(path: string): Promise<T | null> {
+  const accessToken = await getApiAccessToken();
+  if (!accessToken) return null;
+
+  try {
+    return await apiRequest<T>(path, {
+      authenticated: true,
+      accessToken,
+      cache: 'no-store'
+    });
+  } catch {
+    return null;
+  }
+}
 
 export async function getServerSession(): Promise<Session | null> {
-  const token = await getApiAccessToken();
   const session = await getAppAuthSession();
-  if (!session?.user || !token) return null;
+  if (!session?.user) return null;
 
-  const res = await fetch(`${BASE_URL}/user`, {
-    method: 'GET',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${token}`
-    },
-    cache: 'no-store'
-  });
-
-  if (res.status !== 200) return null;
-  return { token: CLIENT_SESSION_TOKEN, user: (await res.json()) as User };
+  const user = await requestAuthenticated<User>('user');
+  return user ? { token: CLIENT_SESSION_TOKEN, user } : null;
 }
 
 export async function getUserScores() {
-  const token = await getApiAccessToken();
-  if (!token) return null;
-
-  const res = await fetch(`${BASE_URL}/user/scores`, {
-    method: 'GET',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${token}`
-    },
-    cache: 'no-store'
-  });
-
-  if (res.status !== 200) return null;
-  return await res.json();
+  return requestAuthenticated<Score[]>('user/scores');
 }
 
 export async function getPendingExams() {
-  const token = await getApiAccessToken();
-  if (!token) return null;
-
-  const res = await fetch(`${BASE_URL}/exams/pending`, {
-    method: 'GET',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${token}`
-    },
-    cache: 'no-store'
-  });
-
-  if (res.status !== 200) return null;
-  return await res.json();
+  return requestAuthenticated<{ data: PendingExam[] }>('exams/pending');
 }

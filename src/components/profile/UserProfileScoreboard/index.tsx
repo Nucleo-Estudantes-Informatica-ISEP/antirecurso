@@ -11,8 +11,7 @@ import {
   TableHeader,
   TableRow
 } from '@/components/ui/table';
-import useSession from '@/hooks/useSession';
-import { PROTECTED_API_BASE_URL } from '@/services/api';
+import { apiRequest } from '@/services/apiClient';
 import Score from '@/types/Score';
 import { Eye, EyeOff } from 'lucide-react';
 import Link from 'next/link';
@@ -24,7 +23,6 @@ interface UsePreviousExamsTableProps {
 }
 
 const UserProfileScoreboard: React.FC<UsePreviousExamsTableProps> = ({ userScores }) => {
-  const { token } = useSession();
   const [scores, setScores] = React.useState(userScores);
 
   async function handleVisibilityChange(subjectId: number, show_scoreboard: boolean) {
@@ -37,15 +35,13 @@ const UserProfileScoreboard: React.FC<UsePreviousExamsTableProps> = ({ userScore
     }).then(async (willChange) => {
       if (!willChange) return;
 
-      const res = await fetch(`${PROTECTED_API_BASE_URL}/subjects/${subjectId}/scoreboard`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`
-        },
-        body: JSON.stringify({ visibility: !show_scoreboard })
-      });
-      if (!res.ok) {
+      try {
+        await apiRequest(`subjects/${subjectId}/scoreboard`, {
+          authenticated: true,
+          method: 'POST',
+          json: { visibility: !show_scoreboard }
+        });
+      } catch {
         swal('Ocorreu um erro ao alterar a visibilidade!', {
           icon: 'error',
           timer: 1500

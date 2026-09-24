@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
-import { BASE_URL } from '@/services/api';
 import { CLIENT_SESSION_TOKEN, getApiAccessToken } from '@/lib/server-auth';
+import { apiFetch } from '@/services/apiClient';
 
 const authDebugEnabled = process.env.AUTH_DEBUG === 'true';
 
@@ -23,22 +23,9 @@ export async function GET() {
     return new NextResponse(null, { status: 401 });
   }
 
-  if (!BASE_URL) {
-    if (authDebugEnabled) {
-      console.error('[auth][session-route]', {
-        reason: 'missing-base-url'
-      });
-    }
-
-    return NextResponse.json({ message: 'API base URL is not configured' }, { status: 500 });
-  }
-
-  const res = await fetch(`${BASE_URL}/user`, {
-    method: 'GET',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${accessToken}`
-    },
+  const res = await apiFetch('user', {
+    authenticated: true,
+    accessToken,
     cache: 'no-store'
   });
 

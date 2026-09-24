@@ -9,7 +9,7 @@ import Question from 'src/types/Question';
 import useExamNavigation from './useExamNavigation';
 import useSession from '@/hooks/useSession';
 import { ExamContext } from '@/contexts/ExamContext';
-import { PROTECTED_API_BASE_URL } from '@/services/api';
+import { apiFetch, throwApiResponseError } from '@/services/apiClient';
 import { createSavedExamState, getLocalExamStateKey } from '@/services/examState';
 
 export default function useAnswerableExamNavigation({
@@ -91,21 +91,18 @@ export default function useAnswerableExamNavigation({
 
       const saveToBackend = async () => {
         try {
-          const response = await fetch(`${PROTECTED_API_BASE_URL}/exams/state`, {
+          const response = await apiFetch('exams/state', {
+            authenticated: true,
             method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              Authorization: `Bearer ${session.token}`
-            },
-            body: JSON.stringify({
+            json: {
               subject_id: subjectId,
               mode,
               state: stateData
-            }),
+            },
             signal: controller.signal
           });
           if (!response.ok && response.status !== 409) {
-            throw new Error(`Exam state save failed with HTTP ${response.status}`);
+            await throwApiResponseError(response, 'Não foi possível guardar o estado do exame.');
           }
         } catch (err) {
           if (!controller.signal.aborted) {

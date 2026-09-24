@@ -5,6 +5,7 @@ import EventModal from '@/components/admin/EventModal';
 import LoadingSpinner from '@/components/utils/LoadingSpinner';
 import useSession from '@/hooks/useSession';
 import { PROTECTED_API_BASE_URL } from '@/services/api';
+import { apiRequest } from '@/services/apiClient';
 import { Add, Pencil, Trash } from '@/styles/Icons';
 import Event from '@/types/Event';
 import Pagination from '@/types/Pagination';
@@ -18,20 +19,17 @@ const EventsPage: React.FC = () => {
   const session = useSession();
   const [editEvent, setEditEvent] = useState<Event | undefined>();
 
-  const fetcher = async (url: RequestInfo | URL) => {
+  const fetcher = async (url: RequestInfo | URL): Promise<Pagination<Event> | null> => {
     if (!session.token) return null;
 
-    const res = await fetch(url, { headers: { Authorization: 'Bearer ' + session.token } });
-    if (!res.ok) return null;
-
-    return res.json();
+    return apiRequest<Pagination<Event>>(url.toString(), { authenticated: true });
   };
 
-  const { data, isLoading, mutate } = useSWR(
+  const { data, isLoading, mutate } = useSWR<Pagination<Event> | null>(
     session.token ? `${PROTECTED_API_BASE_URL}/events` : null,
     fetcher
   );
-  const events: Pagination<Event> = data;
+  const events = data ?? undefined;
 
   const handleAddEventClick = () => {
     setIsModalOpen(true);
@@ -54,12 +52,9 @@ const EventsPage: React.FC = () => {
 
     if (!confirmed) return;
 
-    const res = await fetch(`${PROTECTED_API_BASE_URL}/events/${event.id}`, {
-      method: 'DELETE',
-      headers: { Authorization: `Bearer ${session.token}` }
-    });
-
-    if (!res.ok) {
+    try {
+      await apiRequest(`events/${event.id}`, { authenticated: true, method: 'DELETE' });
+    } catch {
       return swal('Erro', 'Não foi possível remover o evento.', 'error', {
         className: theme === 'dark' ? 'swal-dark' : ''
       });
