@@ -43,7 +43,7 @@ export async function forwardAuthenticatedBackendRequest({
   if (contentType) headers.set('content-type', contentType);
 
   const body =
-    request.method === 'GET' || request.method === 'HEAD' ? undefined : await request.text();
+    request.method === 'GET' || request.method === 'HEAD' ? undefined : await request.arrayBuffer();
 
   try {
     const upstreamResponse = await apiFetch(

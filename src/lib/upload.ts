@@ -1,5 +1,4 @@
 import { UploadResponse } from '@/types/UploadResponse';
-import { BASE_URL } from '@/services/api';
 import { apiRequest } from '@/services/apiClient';
 
 export async function getSignedUrl(target: string, contentType: string) {
@@ -22,18 +21,7 @@ export async function uploadToBucket(signed: UploadResponse, blob: Blob) {
     throw new Error('Ocorreu um erro no upload (bucket URL inválido).');
   }
 
-  const uploadUrl = BASE_URL ? new URL(signed.url, BASE_URL).toString() : signed.url;
-
-  if (signed.uploadMode === 'supabase-signed-put') {
-    const res = await fetch(uploadUrl, {
-      body: blob,
-      method: 'PUT',
-      headers: signed.headers
-    });
-    return res;
-  }
-
-  const res = await fetch(uploadUrl, {
+  const res = await fetch(signed.url, {
     body: blob,
     method: 'PUT',
     headers: signed.headers
