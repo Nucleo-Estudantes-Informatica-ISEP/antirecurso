@@ -2,6 +2,27 @@ import { describe, expect, it, vi } from 'vitest';
 import { forwardAuthenticatedBackendRequest } from './backend-proxy';
 
 describe('authenticated backend proxy', () => {
+  it('forwards PDF bytes unchanged', async () => {
+    const bytes = new Uint8Array([37, 80, 68, 70, 45, 0, 255]);
+    const fetchMock = vi.fn<typeof fetch>(async (_url, init) => {
+      expect(new Uint8Array(init?.body as ArrayBuffer)).toEqual(bytes);
+      return new Response(null, { status: 204 });
+    });
+    const response = await forwardAuthenticatedBackendRequest({
+      request: new Request('https://web.test/api/protected/uploads/file-id', {
+        method: 'PUT',
+        headers: { 'content-type': 'application/pdf' },
+        body: bytes
+      }),
+      path: ['uploads', 'file-id'],
+      accessToken: 'valid-token',
+      backendBaseUrl: 'https://api.test',
+      fetchImpl: fetchMock
+    });
+    expect(response.status).toBe(204);
+    expect(fetchMock).toHaveBeenCalledOnce();
+  });
+
   it('replaces any browser marker with the AuthNEI access token', async () => {
     const fetchMock = vi.fn<typeof fetch>(async () =>
       Response.json(
