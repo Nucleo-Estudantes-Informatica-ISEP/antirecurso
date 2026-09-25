@@ -1,11 +1,12 @@
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
-import { Github, History, Info, Mail, ShieldCheck } from 'lucide-react';
+import { History, Info, Mail, ShieldCheck } from 'lucide-react';
+import { FaGithub } from 'react-icons/fa';
 import Link from 'next/link';
 
 const links = [
   {
-    icon: Github,
+    icon: FaGithub,
     title: 'Repositório Git',
     description: 'AntiRecurso é open-source no GitHub do NEI-ISEP',
     href: 'https://github.com/Nucleo-Estudantes-Informatica-ISEP/antirecurso',

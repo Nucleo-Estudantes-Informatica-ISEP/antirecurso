@@ -12,7 +12,7 @@ import { ArrowRight, Clock, PartyPopper, Sparkles } from 'lucide-react';
 import { useTheme } from 'next-themes';
 import { useParams, useRouter } from 'next/navigation';
 import ReactCanvasConfetti from 'react-canvas-confetti';
-import { ExamContext } from 'src/contexts/ExamContext';
+import { ExamContext } from '@/contexts/ExamContext';
 import { apiRequest } from '@/services/apiClient';
 import { getOwnedExamReviewPath } from '@/services/examReview';
 import swal from 'sweetalert';
@@ -21,7 +21,6 @@ const Points: React.FC = () => {
   const session = useSession();
   const router = useRouter();
   const params = useParams();
-  const [fire, setFire] = useState(false);
   const [loading, setLoading] = useState(false);
   const [fetchError, setFetchError] = useState(false);
   const { examResult, setExamResult, examTime } = useContext(ExamContext);
@@ -29,10 +28,6 @@ const Points: React.FC = () => {
   const { theme } = useTheme();
   const themeRef = useRef(theme);
   themeRef.current = theme;
-
-  useEffect(() => {
-    setFire(true);
-  }, []);
 
   useEffect(() => {
     async function fetchExamResult() {
@@ -166,9 +161,9 @@ const Points: React.FC = () => {
                   .
                 </p>
                 <ReactCanvasConfetti
-                  particleCount={150}
-                  fire={fire}
-                  origin={{ y: 0.9 }}
+                  onInit={({ confetti }) => {
+                    confetti({ particleCount: 150, origin: { y: 0.9 } });
+                  }}
                   className="fixed inset-0 z-20 pointer-events-none"
                 />
               </>
