@@ -80,7 +80,7 @@
     "prettier": "^3.9.8",
     "sharp": "^0.35.4",
     "swr": "^2.5.1",
-    "vitest": "^4.1.11"
+    "vitest": "^5.0.1"
   },
   "pnpm": {
     "overrides": {
