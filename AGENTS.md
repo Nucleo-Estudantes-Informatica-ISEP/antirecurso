@@ -13,6 +13,8 @@ Contributor and automation instructions for the Antirecurso web application. `RE
 
 ## Required verification
 
+For documentation-only changes (including `AGENTS.md`, `README.md`, and `docs/`), verify changed content, links, filenames, and `git diff --check`. Local application installs, lint, typecheck, tests, builds, audits, schema/migration checks, Docker builds, and runtime smoke checks are unnecessary. CI still runs its configured checks on the PR.
+
 ```bash
 pnpm install --frozen-lockfile
 pnpm lint
