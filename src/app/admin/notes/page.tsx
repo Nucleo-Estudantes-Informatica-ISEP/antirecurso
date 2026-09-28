@@ -135,7 +135,7 @@ const NotesPage: React.FC = () => {
               </div>
             )}
             <button
-              className="rounded-md text-white bg-primary p-1 ml-auto text-2xl hover:bg-opacity-80 transition-colors"
+              className="rounded-md text-white bg-primary p-1 ml-auto text-2xl hover:bg-primary/80 transition-colors"
               onClick={handleUploadClick}
             >
               <Add />

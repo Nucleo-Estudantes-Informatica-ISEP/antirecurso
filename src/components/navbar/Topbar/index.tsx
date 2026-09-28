@@ -19,7 +19,7 @@ const Topbar: React.FC = () => {
       <nav className="container flex h-16 md:h-[4.5rem] items-center justify-between gap-4">
         <Link
           href="/"
-          className="flex items-center group focus:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-md"
+          className="flex items-center group focus:outline-hidden focus-visible:ring-2 focus-visible:ring-ring rounded-md"
         >
           <Image
             height={160}

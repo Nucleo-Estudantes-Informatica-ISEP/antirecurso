@@ -75,7 +75,7 @@ const Notes: React.FC = async () => {
             <Link
               key={subject.id}
               href={`/notes/${subject.id}`}
-              className="rounded-xl focus:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+              className="rounded-xl focus:outline-hidden focus-visible:ring-2 focus-visible:ring-ring"
             >
               {card}
             </Link>

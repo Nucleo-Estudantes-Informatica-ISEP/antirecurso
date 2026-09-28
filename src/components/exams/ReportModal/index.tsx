@@ -127,7 +127,7 @@ const ReportModal: React.FC<ModalProps> = ({
         isVisible ? 'fixed' : 'hidden'
       }`}
     >
-      <div className="fixed left-0 z-20 pt-44 flex h-screen w-full outline-none items-center justify-center overflow-y-auto ">
+      <div className="fixed left-0 z-20 pt-44 flex h-screen w-full outline-hidden items-center justify-center overflow-y-auto ">
         <div
           className={`flex flex-col w-full md:w-1/2 rounded-lg top-14 pb-8 lg:px-32 bg-gray-200 dark:bg-gray-700 items-center justify-around relative overflow-x-hidden overflow-y-scroll`}
         >
@@ -173,7 +173,7 @@ const ReportModal: React.FC<ModalProps> = ({
                   >
                     {editingOption === index && !report?.solved ? (
                       <textarea
-                        className="w-full px-1.5 md:px-4 py-2 md:py-3 rounded bg-transparent border focus:outline-none focus:border-none"
+                        className="w-full px-1.5 md:px-4 py-2 md:py-3 rounded bg-transparent border focus:outline-hidden focus:border-none"
                         rows={4}
                         defaultValue={option.name}
                         onBlur={(e) => handleOnBlurOption(e, index)}

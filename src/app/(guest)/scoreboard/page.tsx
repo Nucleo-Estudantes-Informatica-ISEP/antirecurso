@@ -28,7 +28,7 @@ const Scoreboard: React.FC = async () => {
           <Link
             key={subject.id}
             href={`/scoreboard/${subject.id}`}
-            className="group rounded-xl focus:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            className="group rounded-xl focus:outline-hidden focus-visible:ring-2 focus-visible:ring-ring"
           >
             <Card className="h-full transition-all duration-200 hover:border-primary/40 hover:shadow-lg hover:-translate-y-1 hover:bg-accent/30">
               <CardContent className="p-5 md:p-6 flex flex-col items-start gap-3 h-full">
