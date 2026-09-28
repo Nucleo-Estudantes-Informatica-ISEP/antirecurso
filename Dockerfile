@@ -6,14 +6,15 @@ RUN corepack enable
 
 FROM base AS deps
 COPY package.json pnpm-lock.yaml ./
-RUN pnpm install --frozen-lockfile
+RUN NODE_ENV=development pnpm install --frozen-lockfile
 
 FROM base AS builder
+ARG NODE_ENV
 ARG NEXT_PUBLIC_BASE_URL
 ENV NEXT_PUBLIC_BASE_URL=$NEXT_PUBLIC_BASE_URL
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
-RUN pnpm build
+RUN NODE_ENV=production pnpm build
 
 FROM base AS runner
 ENV NODE_ENV=production
