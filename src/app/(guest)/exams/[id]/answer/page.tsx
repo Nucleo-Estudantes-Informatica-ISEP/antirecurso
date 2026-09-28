@@ -171,7 +171,7 @@ const Exams: React.FC<ExamAnswerPageProps> = ({ params }) => {
             <Link
               key={mode.id}
               href={`/exams/${resolvedParams.id}/answer/${mode.slug}`}
-              className="block rounded-xl focus:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+              className="block rounded-xl focus:outline-hidden focus-visible:ring-2 focus-visible:ring-ring"
             >
               {card}
             </Link>

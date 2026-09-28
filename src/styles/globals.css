@@ -71,6 +71,10 @@
     @apply border-border;
   }
 
+  button:not(:disabled) {
+    cursor: pointer;
+  }
+
   html {
     scroll-behavior: smooth;
     font-family: 'Inter', 'Poppins', system-ui, sans-serif;

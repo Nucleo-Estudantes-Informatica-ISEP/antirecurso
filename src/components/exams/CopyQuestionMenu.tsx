@@ -71,7 +71,7 @@ const CopyQuestionMenu: React.FC<CopyQuestionMenuProps> = ({ questionText, optio
     <div className="relative inline-flex text-left shrink-0" ref={menuRef}>
       <button
         onClick={handleCopy}
-        className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-muted-foreground bg-card border border-r-0 border-border rounded-l-xl hover:bg-muted focus:outline-none transition-colors"
+        className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-muted-foreground bg-card border border-r-0 border-border rounded-l-xl hover:bg-muted focus:outline-hidden transition-colors"
       >
         {copied ? (
           <>
@@ -87,13 +87,13 @@ const CopyQuestionMenu: React.FC<CopyQuestionMenuProps> = ({ questionText, optio
       </button>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center px-2 py-2 text-sm font-medium text-muted-foreground bg-card border border-border rounded-r-xl hover:bg-muted focus:outline-none transition-colors"
+        className="flex items-center px-2 py-2 text-sm font-medium text-muted-foreground bg-card border border-border rounded-r-xl hover:bg-muted focus:outline-hidden transition-colors"
       >
         <ChevronDown className="w-4 h-4" />
       </button>
 
       {isOpen && (
-        <div className="absolute right-0 top-full z-10 w-48 mt-2 origin-top-right bg-popover border border-border rounded-xl shadow-md outline-none overflow-hidden">
+        <div className="absolute right-0 top-full z-10 w-48 mt-2 origin-top-right bg-popover border border-border rounded-xl shadow-md outline-hidden overflow-hidden">
           <div className="py-1">
             <button
               onClick={() => handleSendTo('chatgpt')}
