@@ -81,17 +81,5 @@
     "swr": "^2.5.1",
     "vitest": "^5.0.1"
   },
-  "pnpm": {
-    "overrides": {
-      "@babel/core@<=7.29.0": ">=7.29.6",
-      "picomatch@<2.3.2": ">=2.3.2",
-      "postcss@<8.4.31": ">=8.4.31",
-      "yaml@>=2.0.0 <2.8.3": ">=2.8.3",
-      "flatted@<3.4.2": ">=3.4.2",
-      "brace-expansion@<1.1.18": "1.1.18",
-      "brace-expansion@>=4.0.0 <5.0.9": ">=5.0.9",
-      "@humanfs/node@<0.16.8": ">=0.16.8"
-    }
-  },
-  "packageManager": "pnpm@9.1.4+sha256.30a1801ac4e723779efed13a21f4c39f9eb6c9fbb4ced101bce06b422593d7c9"
+  "packageManager": "pnpm@12.6.0+sha512.3ef68f951cb111ac204b4a5a16f0b2ddf0da56a96e0413e81d855d9f0b55ef926714709028e1cd00c405c2c5fb7b9e8ec4dc46777c805d0373c2f2ff00fd20ec"
 }

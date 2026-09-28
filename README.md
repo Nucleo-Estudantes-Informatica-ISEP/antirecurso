@@ -13,7 +13,7 @@ AntiRecurso is the web frontend for NEI ISEP's exam-preparation platform. It giv
 
 ## Tech Stack
 
-- **Runtime**: Node.js 20.9+ and pnpm 9
+- **Runtime**: Node.js 20.9+ and pnpm 12.6.0
 - **Framework**: Next.js 16 App Router
 - **UI**: React 19, Tailwind CSS, Framer Motion
 - **Auth**: NextAuth 4 with the Zitadel provider
@@ -85,7 +85,7 @@ These endpoints intentionally return `410 Gone` and direct users to the hosted A
 Install the following before running the project locally:
 
 - Node.js `>=20.9.0`
-- pnpm `>=9`
+- pnpm `12.6.0` (via Corepack)
 - Access to a running AntiRecurso backend API
 - Access to a Zitadel/AuthNEI client configuration for local login testing
 
