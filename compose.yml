@@ -6,7 +6,7 @@ services:
       args:
         NEXT_PUBLIC_BASE_URL: ${NEXT_PUBLIC_BASE_URL:-${SERVICE_URL_WEB:-http://localhost:3000}/api/backend}
     environment:
-      NODE_ENV: ${NODE_ENV:-production}
+      NODE_ENV: production
       PORT: ${PORT:-3000}
       HOSTNAME: ${HOSTNAME:-0.0.0.0}
 

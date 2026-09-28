@@ -217,7 +217,7 @@ The root layout in [`src/app/layout.tsx`](src/app/layout.tsx) wires up:
 
 ## Deployment Guidance
 
-No deployment manifests such as `Dockerfile`, `vercel.json`, `render.yaml`, or `fly.toml` are currently committed in this repository. That means deployment is flexible, but you need to provide the surrounding infrastructure yourself.
+The committed `Dockerfile` and `compose.yml` support Coolify deployment. Docker installs dependencies with `NODE_ENV=development`, builds with `NODE_ENV=production`, and runs with `NODE_ENV=production`. Do not configure `NODE_ENV` in Coolify; the deployment files set it for each stage.
 
 For production you need:
 
@@ -241,7 +241,7 @@ If you deploy behind a reverse proxy or managed platform, ensure:
 - your auth issuer accepts the production callback URL
 - `AUTH_POST_LOGOUT_REDIRECT_URI` matches the deployed frontend URL
 
-GitHub CI does not itself deploy. It requires a frozen install, lint, typecheck, tests, production build, production dependency audit, and Gitleaks. After a reviewed merge, verify the deployed commit in the hosting control plane and smoke the root plus login/refresh/logout and the affected exam flow. When a web change depends on the Adonis API, deploy the API and its migrations first.
+GitHub CI does not itself deploy. It requires a frozen install, lint, typecheck, tests, production and Docker builds, production dependency audit, and Gitleaks. After a reviewed merge, verify the deployed commit in the hosting control plane and smoke the root plus login/refresh/logout and the affected exam flow. When a web change depends on the Adonis API, deploy the API and its migrations first.
 
 For regressions, prefer TDD: add a focused failing test, implement the smallest correction, then refactor with the suite green. See [`AGENTS.md`](AGENTS.md) for the required workflow.
 
