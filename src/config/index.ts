@@ -5,7 +5,7 @@ const config = {
   localStorage: {
     consent: '@AntiRecurso:consent'
   },
-  mandatoryAuthModes: ['new', 'realistic', 'wrong', 'hard', 'custom']
+  mandatoryAuthModes: ['new', 'wrong', 'hard', 'custom']
 };
 
 export default config;
