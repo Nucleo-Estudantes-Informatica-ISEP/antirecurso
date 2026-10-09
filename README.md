@@ -46,6 +46,10 @@ This repository is a frontend application, not the full AntiRecurso platform.
 
 ### Authentication Notes
 
+Guests can generate and submit random (`default`) and realistic (`realistic`) exams, matching the
+Adonis API. New, wrong, hard, and custom exam modes require login. Saved exam history and detailed
+review remain authenticated features.
+
 This codebase no longer supports password-based local auth forms.
 
 - `POST /api/auth/login`

@@ -3,6 +3,7 @@
 import CustomExamModal from '@/components/exams/CustomExamModal';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
+import config from '@/config';
 import useSession from '@/hooks/useSession';
 import { cn } from '@/lib/utils';
 import { Lock } from 'lucide-react';
@@ -30,8 +31,7 @@ const modes = [
     description:
       'Desafia-te em condições de exame. Resolve um exame com o número de questões, opções e penalizações aproximadas às do exame real!',
     slug: 'realistic',
-    icon: '📝',
-    needsAuth: true
+    icon: '📝'
   },
   {
     id: 3,
@@ -39,8 +39,7 @@ const modes = [
     description:
       'Resolve um exame com perguntas que nunca resolveste antes. Ideal para treinar para o exame!',
     slug: 'new',
-    icon: '🆕',
-    needsAuth: true
+    icon: '🆕'
   },
   {
     id: 4,
@@ -49,7 +48,6 @@ const modes = [
       'Resolve um exame com perguntas que erraste anteriormente. Ideal para perceberes onde tens de melhorar!',
     slug: 'wrong',
     icon: '❌',
-    needsAuth: true,
     comingSoon: false
   },
   {
@@ -58,7 +56,6 @@ const modes = [
     description: 'Desafia-te com as perguntas mais erradas por todos os estudantes!',
     slug: 'hard',
     icon: '🤯',
-    needsAuth: true,
     comingSoon: false
   },
   {
@@ -67,7 +64,6 @@ const modes = [
     description: 'Cria um exame com as características que quiseres!',
     slug: 'custom',
     icon: '⚙️',
-    needsAuth: true,
     comingSoon: false
   },
   {
@@ -76,7 +72,6 @@ const modes = [
     description: 'Desafia um amigo para descobrir quem acerta mais perguntas!',
     slug: 'duel',
     icon: '👥',
-    needsAuth: true,
     comingSoon: true
   }
 ];
@@ -102,7 +97,8 @@ const Exams: React.FC<ExamAnswerPageProps> = ({ params }) => {
 
       <div className="grid gap-4 md:gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
         {modes.map((mode) => {
-          const locked = mode.comingSoon || (mode.needsAuth && !session);
+          const needsAuth = config.mandatoryAuthModes.includes(mode.slug);
+          const locked = mode.comingSoon || (needsAuth && !session);
           const card = (
             <Card
               className={cn(
@@ -125,7 +121,7 @@ const Exams: React.FC<ExamAnswerPageProps> = ({ params }) => {
                     Em breve
                   </Badge>
                 )}
-                {!mode.comingSoon && mode.needsAuth && !session && (
+                {!mode.comingSoon && needsAuth && !session && (
                   <Badge variant="destructive" className="absolute top-3 right-3 gap-1">
                     <Lock className="size-3" /> Conta necessária
                   </Badge>

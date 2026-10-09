@@ -1,5 +1,6 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import generateExam from './generateExam';
+import { BASE_URL } from './api';
 
 describe('exam generation request path', () => {
   afterEach(() => vi.unstubAllGlobals());
@@ -20,13 +21,27 @@ describe('exam generation request path', () => {
     }
   );
 
-  it('keeps anonymous default mode on the public backend path', async () => {
-    const fetchMock = vi.fn<typeof fetch>(async () => Response.json([{ id: 1 }]));
+  it.each(['default', 'realistic'])(
+    'allows anonymous %s mode on the public backend path',
+    async (mode) => {
+      const fetchMock = vi.fn<typeof fetch>(async () => Response.json([{ id: 1 }]));
+      vi.stubGlobal('fetch', fetchMock);
+
+      await expect(generateExam(17, mode, null)).resolves.toEqual([{ id: 1 }]);
+
+      expect(fetchMock).toHaveBeenCalledOnce();
+      const [url, init] = fetchMock.mock.calls[0];
+      expect(String(url)).toBe(`${BASE_URL}/exams/generate/17?mode=${mode}`);
+      expect(new Headers(init?.headers).has('authorization')).toBe(false);
+    }
+  );
+
+  it.each(['new', 'wrong', 'hard', 'custom'])('requires login for %s mode', async (mode) => {
+    const fetchMock = vi.fn<typeof fetch>();
     vi.stubGlobal('fetch', fetchMock);
 
-    await generateExam(17, 'default', null);
-
-    expect(String(fetchMock.mock.calls[0][0])).not.toContain('/api/protected/');
+    await expect(generateExam(17, mode, null)).rejects.toMatchObject({ status: 401 });
+    expect(fetchMock).not.toHaveBeenCalled();
   });
 
   it('throws the backend status and message instead of returning a generic null', async () => {
