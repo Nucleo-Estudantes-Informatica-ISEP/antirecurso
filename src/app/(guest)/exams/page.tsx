@@ -1,25 +1,28 @@
+import { getMessages } from '@/i18n/server';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
 import { fetchSubjectsWithQuestions } from '@/services/fetchSubjects';
 import { ArrowRight, BookOpen } from 'lucide-react';
-import Link from 'next/link';
+import Link from '@/i18n/navigation';
 
 export const dynamic = 'force-dynamic';
 
 const Exams: React.FC = async () => {
+  const t = await getMessages();
+
   const subjects = await fetchSubjectsWithQuestions();
 
   return (
     <section className="container py-10 md:py-14 w-full">
       <div className="flex flex-col items-center text-center mb-10">
         <Badge variant="soft" className="mb-3">
-          Simulações de exame
+          {t('copy.practice_exams')}
         </Badge>
         <h1 className="text-balance text-3xl md:text-4xl font-bold tracking-tight">
-          Escolhe uma <span className="gradient-text">disciplina</span>
+          {t('copy.choose_a')} <span className="gradient-text">{t('copy.subject')}</span>
         </h1>
         <p className="mt-3 max-w-xl text-muted-foreground">
-          Carrega numa cadeira para começares a resolver um exame.
+          {t('copy.select_a_subject_to_start_a_practice_exam')}
         </p>
       </div>
 

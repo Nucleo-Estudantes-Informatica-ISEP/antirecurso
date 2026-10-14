@@ -1,5 +1,7 @@
 'use client';
 
+import { useMessages } from '@/i18n/client';
+
 import { useTheme } from 'next-themes';
 import { Dispatch, SetStateAction, useCallback, useEffect, useRef, useState } from 'react';
 import swal from 'sweetalert';
@@ -20,6 +22,8 @@ interface ModalProps {
 }
 
 const EventModal: React.FC<ModalProps> = ({ setIsVisible, edit, mutate, setEdit }) => {
+  const t = useMessages();
+
   const { theme } = useTheme();
 
   const titleRef = useRef<HTMLInputElement>(null);
@@ -60,22 +64,22 @@ const EventModal: React.FC<ModalProps> = ({ setIsVisible, edit, mutate, setEdit 
     const endDate = parseDateInput(endDateRef.current?.value);
 
     if (!title || title.length < 2)
-      return swal('Oops!', 'Título inválido.', 'error', {
+      return swal('Oops!', t('copy.invalid_title'), 'error', {
         className: theme === 'dark' ? 'swal-dark' : ''
       });
 
     if (!startDate || !endDate)
-      return swal('Oops!', 'Datas inválidas.', 'error', {
+      return swal('Oops!', t('copy.invalid_dates'), 'error', {
         className: theme === 'dark' ? 'swal-dark' : ''
       });
 
     if (startDate > endDate)
-      return swal('Oops!', 'Data de início não pode ser maior que a data de fim.', 'error', {
+      return swal('Oops!', t('copy.the_start_date_cannot_be_after_the_end_date'), 'error', {
         className: theme === 'dark' ? 'swal-dark' : ''
       });
 
     if (startDate < startOfDay(new Date()))
-      return swal('Oops!', 'Data de início não pode ser menor que a data atual.', 'error', {
+      return swal('Oops!', t('copy.the_start_date_cannot_be_in_the_past'), 'error', {
         className: theme === 'dark' ? 'swal-dark' : ''
       });
 
@@ -98,24 +102,21 @@ const EventModal: React.FC<ModalProps> = ({ setIsVisible, edit, mutate, setEdit 
         json: eventData
       });
     } catch {
-      swal(
-        'Oops!',
-        'Ocorreu um erro ao tentar adicionar o evento. Por favor, tente novamente.',
-        'error',
-        { className: theme === 'dark' ? 'swal-dark' : '' }
-      );
+      swal('Oops!', t('copy.an_error_occurred_while_adding_the_event_please_try_again'), 'error', {
+        className: theme === 'dark' ? 'swal-dark' : ''
+      });
       return setIsSubmitting(false);
     }
 
     swal({
-      title: 'Sucesso',
-      text: 'Evento adicionado com sucesso.',
+      title: t('copy.success'),
+      text: t('copy.event_added_successfully'),
       icon: 'success',
       className: theme === 'dark' ? 'swal-dark' : '',
       timer: 2000
     });
     handleClose();
-  }, [edit, theme, handleClose]);
+  }, [edit, theme, handleClose, t]);
 
   useEffect(() => {
     const keydownEvent = (e: KeyboardEvent) => {
@@ -144,11 +145,11 @@ const EventModal: React.FC<ModalProps> = ({ setIsVisible, edit, mutate, setEdit 
             X
           </button>
           <span className="w-full text-center text-xl lg:text-3xl font-black mb-6 px-2 pt-10">
-            {!edit ? 'Adicionar Evento' : 'Editar Evento'}
+            {!edit ? t('copy.add_event') : t('copy.edit_event')}
           </span>
           <div className="h-full w-full">
             <div className="flex flex-col justify-between mb-6">
-              <h2 className="w-full font-bold mb-3 text-lg md:text-left">Título</h2>
+              <h2 className="w-full font-bold mb-3 text-lg md:text-left">{t('copy.title')}</h2>
               <input
                 type="text"
                 className="w-full px-1.5 md:px-4 py-2 rounded bg-transparent border"
@@ -158,7 +159,9 @@ const EventModal: React.FC<ModalProps> = ({ setIsVisible, edit, mutate, setEdit 
             </div>
 
             <div className="flex flex-col justify-between mb-6">
-              <h2 className="w-full font-bold mb-3 text-lg md:text-left">Descrição</h2>
+              <h2 className="w-full font-bold mb-3 text-lg md:text-left">
+                {t('copy.description')}
+              </h2>
               <textarea
                 className="w-full px-1.5 md:px-4 py-2 rounded bg-transparent border"
                 rows={2}
@@ -168,7 +171,9 @@ const EventModal: React.FC<ModalProps> = ({ setIsVisible, edit, mutate, setEdit 
             </div>
 
             <div className="flex flex-col justify-between mb-6">
-              <h2 className="w-full font-bold mb-3 text-lg md:text-left">Data de Início</h2>
+              <h2 className="w-full font-bold mb-3 text-lg md:text-left">
+                {t('copy.start_date_2')}
+              </h2>
               <input
                 type="date"
                 className="w-full px-1.5 md:px-4 py-2 rounded bg-transparent border"
@@ -178,7 +183,7 @@ const EventModal: React.FC<ModalProps> = ({ setIsVisible, edit, mutate, setEdit 
             </div>
 
             <div className="flex flex-col justify-between mb-6">
-              <h2 className="w-full font-bold mb-3 text-lg md:text-left">Data de Fim</h2>
+              <h2 className="w-full font-bold mb-3 text-lg md:text-left">{t('copy.end_date_2')}</h2>
               <input
                 type="date"
                 className="w-full px-1.5 md:px-4 py-2 rounded bg-transparent border"
@@ -196,9 +201,9 @@ const EventModal: React.FC<ModalProps> = ({ setIsVisible, edit, mutate, setEdit 
                 {isSubmitting ? (
                   <LoadingSpinner className="mx-auto" />
                 ) : !edit ? (
-                  'Adicionar'
+                  t('copy.add')
                 ) : (
-                  'Guardar'
+                  t('copy.save_2')
                 )}
               </PrimaryButton>
             </div>

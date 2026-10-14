@@ -1,5 +1,7 @@
 'use client';
 
+import { useMessages } from '@/i18n/client';
+
 import { useState, useRef, useEffect } from 'react';
 import { Copy, ChevronDown, Check } from 'lucide-react';
 import sanitizeOption from 'src/utils/sanitizeOption';
@@ -10,6 +12,8 @@ interface CopyQuestionMenuProps {
 }
 
 const CopyQuestionMenu: React.FC<CopyQuestionMenuProps> = ({ questionText, options }) => {
+  const t = useMessages();
+
   const [isOpen, setIsOpen] = useState(false);
   const [copied, setCopied] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
@@ -34,11 +38,13 @@ const CopyQuestionMenu: React.FC<CopyQuestionMenuProps> = ({ questionText, optio
   const sortedOptions = [...options].sort((a, b) => a.order.localeCompare(b.order));
 
   const getFormattedText = () => {
-    const optionsText = sortedOptions.map((opt, idx) => {
-      const letter = String.fromCharCode(65 + idx);
-      return `${letter}) ${sanitizeOption(opt.name)}`;
-    }).join('\n');
-    return `Explica-me esta pergunta e as respetivas opções:\n\n${questionText}\n\n${optionsText}`;
+    const optionsText = sortedOptions
+      .map((opt, idx) => {
+        const letter = String.fromCharCode(65 + idx);
+        return `${letter}) ${sanitizeOption(opt.name)}`;
+      })
+      .join('\n');
+    return `${t('exam.explainPrompt')}\n\n${questionText}\n\n${optionsText}`;
   };
 
   const handleCopy = async () => {
@@ -51,10 +57,10 @@ const CopyQuestionMenu: React.FC<CopyQuestionMenuProps> = ({ questionText, optio
   const handleSendTo = async (platform: 'chatgpt' | 'claude' | 'gemini') => {
     const promptText = getFormattedText();
     await navigator.clipboard.writeText(promptText);
-    
+
     const encodedPrompt = encodeURIComponent(promptText);
     let url = '';
-    
+
     if (platform === 'chatgpt') {
       url = `https://chatgpt.com/?q=${encodedPrompt}`;
     } else if (platform === 'claude') {
@@ -62,7 +68,7 @@ const CopyQuestionMenu: React.FC<CopyQuestionMenuProps> = ({ questionText, optio
     } else if (platform === 'gemini') {
       url = 'https://gemini.google.com/app';
     }
-    
+
     window.open(url, '_blank');
     setIsOpen(false);
   };
@@ -76,12 +82,12 @@ const CopyQuestionMenu: React.FC<CopyQuestionMenuProps> = ({ questionText, optio
         {copied ? (
           <>
             <Check className="w-4 h-4 text-green-500" />
-            <span className="hidden sm:inline">Copiado</span>
+            <span className="hidden sm:inline">{t('copy.copied')}</span>
           </>
         ) : (
           <>
             <Copy className="w-4 h-4" />
-            <span className="hidden sm:inline">Copiar</span>
+            <span className="hidden sm:inline">{t('copy.copy')}</span>
           </>
         )}
       </button>
@@ -99,19 +105,19 @@ const CopyQuestionMenu: React.FC<CopyQuestionMenuProps> = ({ questionText, optio
               onClick={() => handleSendTo('chatgpt')}
               className="block w-full px-4 py-2 text-sm text-left text-popover-foreground hover:bg-muted transition-colors"
             >
-              Perguntar ao ChatGPT
+              {t('copy.ask_chatgpt')}
             </button>
             <button
               onClick={() => handleSendTo('claude')}
               className="block w-full px-4 py-2 text-sm text-left text-popover-foreground hover:bg-muted transition-colors"
             >
-              Perguntar ao Claude
+              {t('copy.ask_claude')}
             </button>
             <button
               onClick={() => handleSendTo('gemini')}
               className="block w-full px-4 py-2 text-sm text-left text-popover-foreground hover:bg-muted transition-colors"
             >
-              Perguntar ao Gemini
+              {t('copy.ask_gemini')}
             </button>
           </div>
         </div>

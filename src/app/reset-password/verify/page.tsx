@@ -1,20 +1,25 @@
 'use client';
 
+import { useLanguage, useMessages } from '@/i18n/client';
+
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { ArrowRight, ShieldCheck } from 'lucide-react';
 import { signIn } from 'next-auth/react';
-import Link from 'next/link';
+import Link from '@/i18n/navigation';
 import swal from 'sweetalert';
 
 const ResetPasswordVerify: React.FC = () => {
+  const t = useMessages();
+  const lang = useLanguage();
+
   async function handleOpenAuthPortal() {
     try {
-      await signIn('zitadel', { callbackUrl: '/' });
+      await signIn('zitadel', { callbackUrl: `/${lang}` });
     } catch {
       await swal(
         'Oops!',
-        'Não foi possível abrir o portal de autenticação. Por favor tenta novamente.',
+        t('copy.could_not_open_the_authentication_portal_please_try_again'),
         'error'
       );
     }
@@ -27,10 +32,11 @@ const ResetPasswordVerify: React.FC = () => {
           <div className="inline-flex items-center justify-center size-12 rounded-2xl bg-primary/10 text-primary">
             <ShieldCheck className="size-6" />
           </div>
-          <h1 className="text-3xl font-bold tracking-tight">Verificação de acesso</h1>
+          <h1 className="text-3xl font-bold tracking-tight">{t('copy.access_verification')}</h1>
           <p className="text-sm leading-6 text-muted-foreground">
-            A verificação e recuperação de credenciais acontecem agora diretamente no portal do
-            AuthNEI. Abre o portal para continuar.
+            {t(
+              'copy.credential_verification_and_recovery_now_take_place_directly_on_the_authnei_portal_op'
+            )}
           </p>
         </div>
 
@@ -39,7 +45,7 @@ const ResetPasswordVerify: React.FC = () => {
           size="lg"
           className="w-full shadow-md shadow-primary/20"
         >
-          Abrir portal de autenticação
+          {t('copy.open_authentication_portal')}
           <ArrowRight className="size-4" />
         </Button>
 
@@ -47,7 +53,7 @@ const ResetPasswordVerify: React.FC = () => {
 
         <div className="text-center text-sm">
           <Link className="text-primary font-medium hover:underline" href="/login">
-            Voltar ao login
+            {t('copy.back_to_sign_in')}
           </Link>
         </div>
       </div>

@@ -1,5 +1,7 @@
 'use client';
 
+import { useMessages } from '@/i18n/client';
+
 import ReportTable from '@/components/admin/ReportTable';
 import ReportModal from '@/components/exams/ReportModal';
 import { useQueryParamsManager } from '@/hooks/useQueryParamsManager';
@@ -17,6 +19,8 @@ import swal from 'sweetalert';
 import useSWR, { mutate } from 'swr';
 
 const Reports: React.FC = () => {
+  const t = useMessages();
+
   const { theme } = useTheme();
   const session = useSession();
 
@@ -35,21 +39,21 @@ const Reports: React.FC = () => {
   const reports = data?.map((r: Report) => ({
     ...r,
     question_id: String(r.question.id),
-    solved: r.solved ? 'Sim' : 'Não'
+    solved: r.solved ? t('common.yes') : t('common.no')
   }));
 
   // logic
   const filters = [
     {
-      name: 'Todos',
+      name: t('copy.all'),
       value: 'all'
     },
     {
-      name: 'Resolvidos',
+      name: t('common.resolvedPlural'),
       value: 'solved'
     },
     {
-      name: 'Não resolvidos',
+      name: t('copy.unresolved'),
       value: 'notSolved'
     }
   ];
@@ -81,11 +85,11 @@ const Reports: React.FC = () => {
       revalidateReports();
 
       swal({
-        title: 'Resolvido!',
+        title: t('feedback.resolved'),
         text: `${
           selectedReports.length > 1
-            ? 'Os reports foram marcados como resolvidos'
-            : 'O report foi marcado como resolvido'
+            ? t('copy.reports_marked_as_resolved')
+            : t('copy.report_marked_as_resolved')
         }.`,
         icon: 'success',
         className: theme === 'dark' ? 'swal-dark' : '',
@@ -93,8 +97,8 @@ const Reports: React.FC = () => {
       });
     } catch {
       swal({
-        title: 'Erro!',
-        text: 'Algo correu mal ao marcar o(s) teu(s) report(s). Por favor, tenta novamente.',
+        title: t('feedback.error'),
+        text: t('copy.something_went_wrong_while_marking_your_reports_please_try_again'),
         icon: 'error',
         className: theme === 'dark' ? 'swal-dark' : ''
       });
@@ -182,7 +186,7 @@ const Reports: React.FC = () => {
       />
 
       <div className="w-full h-full mt-4 flex flex-col items-center justify-center">
-        <h2 className="text-4xl font-black">Reports</h2>
+        <h2 className="text-4xl font-black">{t('copy.reports')}</h2>
         <div className="w-3/4 py-2 flex gap-6 my-4 bg-gray-100 dark:bg-gray-700 items-center justify-center">
           <select
             id="filters"
@@ -200,7 +204,7 @@ const Reports: React.FC = () => {
             className="bg-gray-400 hover:bg-gray-500 text-white px-4 py-2 shadow-md"
             onClick={() => handleResetFilters()}
           >
-            Repor Filtros
+            {t('copy.reset_filters')}
           </button>
         </div>
         <div className="flex gap-x-2">
@@ -208,7 +212,7 @@ const Reports: React.FC = () => {
             className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 shadow-md"
             onClick={() => handleMarkAsResolve()}
           >
-            Resolver
+            {t('copy.resolve')}
           </button>
         </div>
         <div className="flex flex-col w-3/4">
@@ -218,8 +222,8 @@ const Reports: React.FC = () => {
             <Skeleton count={5} />
           ) : error ? (
             <div className="w-full h-full mt-4 flex flex-col items-center justify-center">
-              <h1 className="text-2xl font-bold">Erro ao carregar reports</h1>
-              <p className="text-lg">Por favor, tente novamente mais tarde.</p>
+              <h1 className="text-2xl font-bold">{t('copy.error_loading_reports')}</h1>
+              <p className="text-lg">{t('copy.please_try_again_later')}</p>
             </div>
           ) : (
             <ReportTable

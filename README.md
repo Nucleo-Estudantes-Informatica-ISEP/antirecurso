@@ -316,3 +316,10 @@ for app-only logout, account switching (`prompt=select_account`), and central Au
 `AUTH_ROLE_CLAIM` may override the default `urn:zitadel:iam:org:project:roles` claim name. Configure
 the AntiRecurso OIDC applications to include their own Project Role Assertions and the API audience
 expected by the backend.
+
+## Internationalization
+
+The PT/EN interface and language routing follow the simple JSON dictionary pattern
+used by SEI 2026. Language priority is URL, saved choice, browser, then Portuguese.
+Translations live in `src/i18n/pt.json` and `en.json`. Language changes automatically
+refresh server content while retaining client state.

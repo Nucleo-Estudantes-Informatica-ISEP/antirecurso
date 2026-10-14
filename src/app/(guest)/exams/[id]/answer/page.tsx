@@ -1,5 +1,7 @@
 'use client';
 
+import { useMessages } from '@/i18n/client';
+
 import CustomExamModal from '@/components/exams/CustomExamModal';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
@@ -7,7 +9,7 @@ import config from '@/config';
 import useSession from '@/hooks/useSession';
 import { cn } from '@/lib/utils';
 import { Lock } from 'lucide-react';
-import Link from 'next/link';
+import Link from '@/i18n/navigation';
 import { use, useState } from 'react';
 
 interface ExamAnswerPageProps {
@@ -16,67 +18,71 @@ interface ExamAnswerPageProps {
   }>;
 }
 
-const modes = [
-  {
-    id: 1,
-    name: 'Modo Aleatório',
-    description:
-      'Resolve um exame com um conjunto aleatório de todas as perguntas que temos disponíveis!',
-    slug: 'default',
-    icon: '🎲'
-  },
-  {
-    id: 2,
-    name: 'Modo Realista',
-    description:
-      'Desafia-te em condições de exame. Resolve um exame com o número de questões, opções e penalizações aproximadas às do exame real!',
-    slug: 'realistic',
-    icon: '📝'
-  },
-  {
-    id: 3,
-    name: 'Modo Novas Perguntas',
-    description:
-      'Resolve um exame com perguntas que nunca resolveste antes. Ideal para treinar para o exame!',
-    slug: 'new',
-    icon: '🆕'
-  },
-  {
-    id: 4,
-    name: 'Modo Perguntas Erradas',
-    description:
-      'Resolve um exame com perguntas que erraste anteriormente. Ideal para perceberes onde tens de melhorar!',
-    slug: 'wrong',
-    icon: '❌',
-    comingSoon: false
-  },
-  {
-    id: 5,
-    name: 'Modo Perguntas Difíceis',
-    description: 'Desafia-te com as perguntas mais erradas por todos os estudantes!',
-    slug: 'hard',
-    icon: '🤯',
-    comingSoon: false
-  },
-  {
-    id: 6,
-    name: 'Modo Personalizado',
-    description: 'Cria um exame com as características que quiseres!',
-    slug: 'custom',
-    icon: '⚙️',
-    comingSoon: false
-  },
-  {
-    id: 7,
-    name: 'Modo Duelo',
-    description: 'Desafia um amigo para descobrir quem acerta mais perguntas!',
-    slug: 'duel',
-    icon: '👥',
-    comingSoon: true
-  }
-];
-
 const Exams: React.FC<ExamAnswerPageProps> = ({ params }) => {
+  const t = useMessages();
+
+  const modes = [
+    {
+      id: 1,
+      name: t('copy.random_mode'),
+      description: t('copy.take_an_exam_with_a_random_selection_from_all_available_questions'),
+      slug: 'default',
+      icon: '🎲'
+    },
+    {
+      id: 2,
+      name: t('copy.realistic_mode'),
+      description: t(
+        'copy.challenge_yourself_under_exam_conditions_with_a_number_of_questions_options_and_penal'
+      ),
+      slug: 'realistic',
+      icon: '📝'
+    },
+    {
+      id: 3,
+      name: t('copy.new_questions_mode'),
+      description: t(
+        'copy.take_an_exam_with_questions_you_have_never_answered_before_ideal_for_exam_practice'
+      ),
+      slug: 'new',
+      icon: '🆕'
+    },
+    {
+      id: 4,
+      name: t('copy.wrong_answers_mode'),
+      description: t(
+        'copy.take_an_exam_with_questions_you_previously_got_wrong_find_out_where_you_need_to_impro'
+      ),
+      slug: 'wrong',
+      icon: '❌',
+      comingSoon: false
+    },
+    {
+      id: 5,
+      name: t('copy.difficult_questions_mode'),
+      description: t('copy.challenge_yourself_with_the_questions_students_get_wrong_most_often'),
+      slug: 'hard',
+      icon: '🤯',
+      comingSoon: false
+    },
+    {
+      id: 6,
+      name: t('copy.custom_mode'),
+      description: t('copy.create_an_exam_with_your_own_settings'),
+      slug: 'custom',
+      icon: '⚙️',
+      comingSoon: false
+    },
+    {
+      id: 7,
+      name: t('copy.duel_mode'),
+      description: t('copy.challenge_a_friend_to_see_who_answers_more_questions_correctly'),
+      slug: 'duel',
+      icon: '👥',
+      comingSoon: true
+    }
+  ];
+
   const resolvedParams = use(params);
   const { token: session } = useSession();
   const [isCustomExamModalOpen, setIsCustomExamModalOpen] = useState(false);
@@ -85,13 +91,14 @@ const Exams: React.FC<ExamAnswerPageProps> = ({ params }) => {
     <section className="container py-10 md:py-14 w-full">
       <div className="flex flex-col items-center text-center mb-10">
         <Badge variant="soft" className="mb-3">
-          Modos de exame
+          {t('copy.exam_modes')}
         </Badge>
         <h1 className="text-balance text-3xl md:text-4xl font-bold tracking-tight">
-          Escolhe o <span className="gradient-text">modo</span> do teu exame
+          {t('copy.choose_the')} <span className="gradient-text">{t('copy.mode')}</span>{' '}
+          {t('copy.for_your_exam')}
         </h1>
         <p className="mt-3 max-w-xl text-muted-foreground">
-          Treina como mais te ajuda — explora os modos abaixo.
+          {t('copy.practice_your_way_explore_the_modes_below')}
         </p>
       </div>
 
@@ -112,18 +119,16 @@ const Exams: React.FC<ExamAnswerPageProps> = ({ params }) => {
                 <span className="text-4xl">{mode.icon}</span>
                 <div className="flex-1">
                   <p className="text-base md:text-lg font-semibold leading-tight">{mode.name}</p>
-                  <p className="mt-2 text-sm text-muted-foreground leading-6">
-                    {mode.description}
-                  </p>
+                  <p className="mt-2 text-sm text-muted-foreground leading-6">{mode.description}</p>
                 </div>
                 {mode.comingSoon && (
                   <Badge variant="warning" className="absolute top-3 right-3">
-                    Em breve
+                    {t('copy.coming_soon')}
                   </Badge>
                 )}
                 {!mode.comingSoon && needsAuth && !session && (
                   <Badge variant="destructive" className="absolute top-3 right-3 gap-1">
-                    <Lock className="size-3" /> Conta necessária
+                    <Lock className="size-3" /> {t('copy.account_required')}
                   </Badge>
                 )}
               </CardContent>
@@ -147,7 +152,7 @@ const Exams: React.FC<ExamAnswerPageProps> = ({ params }) => {
                 <CustomExamModal
                   setIsVisible={setIsCustomExamModalOpen}
                   isVisible={isCustomExamModalOpen}
-                  title="Personaliza o teu exame"
+                  title={t('copy.customize_your_exam')}
                   onClose={() => setIsCustomExamModalOpen(false)}
                   params={{ id: Number(resolvedParams.id), mode: mode.slug }}
                 />

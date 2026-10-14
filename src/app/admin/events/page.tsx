@@ -1,5 +1,7 @@
 'use client';
 
+import { useMessages } from '@/i18n/client';
+
 import { useTheme } from 'next-themes';
 import EventModal from '@/components/admin/EventModal';
 import LoadingSpinner from '@/components/utils/LoadingSpinner';
@@ -14,6 +16,8 @@ import swal from 'sweetalert';
 import useSWR from 'swr';
 
 const EventsPage: React.FC = () => {
+  const t = useMessages();
+
   const { theme } = useTheme();
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const session = useSession();
@@ -42,10 +46,10 @@ const EventsPage: React.FC = () => {
 
   const handleDelete = async (event: Event) => {
     const confirmed = await swal({
-      title: 'Tens a certeza?',
+      title: t('copy.are_you_sure'),
       text: `Vais remover o evento "${event.name}".`,
       icon: 'warning',
-      buttons: ['Cancelar', 'Remover'],
+      buttons: [t('copy.cancel'), t('copy.remove')],
       dangerMode: true,
       className: theme === 'dark' ? 'swal-dark' : ''
     });
@@ -55,21 +59,21 @@ const EventsPage: React.FC = () => {
     try {
       await apiRequest(`events/${event.id}`, { authenticated: true, method: 'DELETE' });
     } catch {
-      return swal('Erro', 'Não foi possível remover o evento.', 'error', {
+      return swal(t('copy.error_2'), t('copy.could_not_remove_the_event'), 'error', {
         className: theme === 'dark' ? 'swal-dark' : ''
       });
     }
 
     await mutate();
 
-    swal('Sucesso', 'Evento removido com sucesso.', 'success', {
+    swal(t('copy.success'), t('copy.event_removed_successfully'), 'success', {
       className: theme === 'dark' ? 'swal-dark' : ''
     });
   };
 
   return (
     <>
-      <h1 className="text-4xl font-bold mb-4">Eventos</h1>
+      <h1 className="text-4xl font-bold mb-4">{t('copy.events')}</h1>
 
       <div className="bg-gray-100 dark:bg-gray-700 rounded-md p-4 shadow-md">
         <div className="flex items-center mb-4">
@@ -86,16 +90,16 @@ const EventsPage: React.FC = () => {
             <LoadingSpinner className="text-xl" />
           </div>
         ) : !events || !events.meta.total ? (
-          <p>Não existem eventos disponíveis</p>
+          <p>{t('copy.no_events_available')}</p>
         ) : (
           <table className="table-auto">
             <thead>
               <tr>
-                <th className="px-4 py-2">ID</th>
-                <th className="px-4 py-2">Nome</th>
-                <th className="px-4 py-2">Descrição</th>
-                <th className="px-4 py-2">Data de início</th>
-                <th className="px-4 py-2">Data de fim</th>
+                <th className="px-4 py-2">{t('copy.id')}</th>
+                <th className="px-4 py-2">{t('copy.name')}</th>
+                <th className="px-4 py-2">{t('copy.description')}</th>
+                <th className="px-4 py-2">{t('copy.start_date')}</th>
+                <th className="px-4 py-2">{t('copy.end_date')}</th>
                 <th className="px-4 py-2"></th>
                 <th className="px-4 py-2"></th>
               </tr>

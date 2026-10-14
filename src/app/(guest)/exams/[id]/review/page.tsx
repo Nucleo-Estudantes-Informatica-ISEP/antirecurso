@@ -1,5 +1,7 @@
 'use client';
 
+import { useMessages } from '@/i18n/client';
+
 import React, { use, useCallback, useEffect } from 'react';
 
 import Image from 'next/image';
@@ -18,7 +20,7 @@ import ExamReview from '@/types/ExamReview';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import useExamReviewNavigation from 'src/hooks/useExamReviewNavigation';
 import { getShuffleSeed, shuffleWithSeed } from '@/utils/examShuffle';
-import { useRouter } from 'next/navigation';
+import { useRouter } from '@/i18n/navigation';
 
 interface ExamPageProps {
   params: Promise<{
@@ -27,6 +29,8 @@ interface ExamPageProps {
 }
 
 const ReviewPage: React.FC<ExamPageProps> = ({ params }) => {
+  const t = useMessages();
+
   const resolvedParams = use(params);
   const session = useSession();
   const router = useRouter();
@@ -86,9 +90,9 @@ const ReviewPage: React.FC<ExamPageProps> = ({ params }) => {
         <div className="container py-3 md:py-4 flex flex-col gap-3">
           <div className="flex items-center justify-between gap-4 flex-wrap">
             <div className="flex items-center gap-3 min-w-0">
-              <Badge variant="soft">Revisão</Badge>
+              <Badge variant="soft">{t('copy.review')}</Badge>
               <h1 className="text-sm md:text-lg font-semibold truncate">
-                Exame de{' '}
+                {t('copy.exam_for')}{' '}
                 <span className="text-primary">
                   {examResult?.subject || (
                     <Skeleton className="inline-block h-5 w-32 align-middle" />
@@ -113,7 +117,7 @@ const ReviewPage: React.FC<ExamPageProps> = ({ params }) => {
                 className="size-9 rounded-full shrink-0"
                 onClick={() => changeQuestion(currentQuestionIndex - 1)}
                 disabled={currentQuestionIndex === 0}
-                aria-label="Pergunta anterior"
+                aria-label={t('copy.previous_question')}
               >
                 <ChevronLeft className="size-4" />
               </Button>
@@ -136,7 +140,7 @@ const ReviewPage: React.FC<ExamPageProps> = ({ params }) => {
                 className="size-9 rounded-full shrink-0"
                 onClick={() => changeQuestion(currentQuestionIndex + 1)}
                 disabled={currentQuestionIndex === examResult.questions.length - 1}
-                aria-label="Próxima pergunta"
+                aria-label={t('copy.next_question')}
               >
                 <ChevronRight className="size-4" />
               </Button>
@@ -162,11 +166,16 @@ const ReviewPage: React.FC<ExamPageProps> = ({ params }) => {
               }`}
             >
               {currentQuestion.question.image === '' ? (
-                <Image fill alt="Sample" className="object-cover" src="/images/sample.webp" />
+                <Image
+                  fill
+                  alt={t('copy.illustration')}
+                  className="object-cover"
+                  src="/images/sample.webp"
+                />
               ) : (
                 <Image
                   fill
-                  alt="Question Image"
+                  alt={t('copy.question_image')}
                   className="object-contain"
                   src={currentQuestion.question.image}
                 />
@@ -183,7 +192,7 @@ const ReviewPage: React.FC<ExamPageProps> = ({ params }) => {
                 className="w-full sm:w-auto"
               >
                 <ChevronLeft className="size-4" />
-                Anterior
+                {t('copy.previous')}
               </Button>
               <Button
                 onClick={() => changeQuestion(currentQuestionIndex + 1)}
@@ -192,7 +201,7 @@ const ReviewPage: React.FC<ExamPageProps> = ({ params }) => {
                 }
                 className="w-full sm:w-auto"
               >
-                Próxima
+                {t('copy.next')}
                 <ChevronRight className="size-4" />
               </Button>
             </div>

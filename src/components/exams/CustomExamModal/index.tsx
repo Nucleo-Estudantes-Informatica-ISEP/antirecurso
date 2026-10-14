@@ -1,5 +1,7 @@
 'use client';
 
+import { useMessages } from '@/i18n/client';
+
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -11,7 +13,7 @@ import {
 } from '@/components/ui/dialog';
 import { Slider } from '@/components/ui/slider';
 import { cn } from '@/lib/utils';
-import { useRouter } from 'next/navigation';
+import { useRouter } from '@/i18n/navigation';
 import { useState } from 'react';
 import swal from 'sweetalert';
 
@@ -35,12 +37,14 @@ const discounts = [
   { value: 1, label: '100%' }
 ];
 
-const filters = [
-  { value: 'all', label: 'Todas' },
-  { value: 'new', label: 'Novas' }
-];
-
 const CustomExamModal: React.FC<ModalProps> = ({ isVisible, setIsVisible, title, params }) => {
+  const t = useMessages();
+
+  const filters = [
+    { value: 'all', label: t('copy.all_2') },
+    { value: 'new', label: t('copy.new') }
+  ];
+
   const [numberOfQuestions, setNumberOfQuestions] = useState(10);
   const [discount, setDiscount] = useState<number | null>(null);
   const [filter, setFilter] = useState<string | null>(null);
@@ -54,7 +58,7 @@ const CustomExamModal: React.FC<ModalProps> = ({ isVisible, setIsVisible, title,
         `/exams/${params.id}/answer/${params.mode}?n_of_questions=${numberOfQuestions}&penalizing_factor=${discount}&filter=${filter}`
       );
     } else {
-      swal('Erro', 'Preenche todos os campos!', 'error');
+      swal(t('copy.error_2'), t('copy.fill_in_all_fields'), 'error');
     }
   };
 
@@ -64,7 +68,7 @@ const CustomExamModal: React.FC<ModalProps> = ({ isVisible, setIsVisible, title,
         <DialogHeader>
           <DialogTitle className="text-xl md:text-2xl">{title}</DialogTitle>
           <DialogDescription>
-            Configura as opções abaixo para criares o teu exame personalizado.
+            {t('copy.configure_the_options_below_to_create_your_custom_exam')}
           </DialogDescription>
         </DialogHeader>
 
@@ -72,10 +76,10 @@ const CustomExamModal: React.FC<ModalProps> = ({ isVisible, setIsVisible, title,
           {/* Number of Questions */}
           <div className="space-y-3">
             <div className="flex items-center justify-between">
-              <h3 className="text-sm font-semibold">Número de questões</h3>
+              <h3 className="text-sm font-semibold">{t('copy.number_of_questions')}</h3>
               <span className="text-sm">
                 <span className="text-primary font-bold text-base">{numberOfQuestions}</span>{' '}
-                <span className="text-muted-foreground">questões</span>
+                <span className="text-muted-foreground">{t('copy.questions')}</span>
               </span>
             </div>
             <Slider
@@ -94,7 +98,7 @@ const CustomExamModal: React.FC<ModalProps> = ({ isVisible, setIsVisible, title,
           {/* Penalty */}
           <div className="space-y-3">
             <div className="flex items-center justify-between">
-              <h3 className="text-sm font-semibold">Penalização por erro</h3>
+              <h3 className="text-sm font-semibold">{t('copy.wrong_answer_penalty')}</h3>
             </div>
             <div className="grid grid-cols-3 md:grid-cols-6 gap-2">
               {discounts.map((d) => (
@@ -114,13 +118,13 @@ const CustomExamModal: React.FC<ModalProps> = ({ isVisible, setIsVisible, title,
               ))}
             </div>
             <p className="text-xs text-muted-foreground">
-              Escolhe a percentagem de penalização para cada resposta errada.
+              {t('copy.choose_the_penalty_percentage_for_each_wrong_answer')}
             </p>
           </div>
 
           {/* Filter */}
           <div className="space-y-3">
-            <h3 className="text-sm font-semibold">Filtro de questões</h3>
+            <h3 className="text-sm font-semibold">{t('copy.question_filter')}</h3>
             <div className="grid grid-cols-2 gap-2">
               {filters.map((f) => (
                 <button
@@ -139,21 +143,25 @@ const CustomExamModal: React.FC<ModalProps> = ({ isVisible, setIsVisible, title,
               ))}
             </div>
             <p className="text-xs text-muted-foreground">
-              Aplica um filtro às questões do teu exame.
+              {t('copy.apply_a_filter_to_the_exam_questions')}
             </p>
           </div>
         </div>
 
         <DialogFooter>
-          <Button variant="outline" onClick={() => setIsVisible(false)} className="w-full sm:w-auto">
-            Cancelar
+          <Button
+            variant="outline"
+            onClick={() => setIsVisible(false)}
+            className="w-full sm:w-auto"
+          >
+            {t('copy.cancel')}
           </Button>
           <Button
             onClick={handleSaveClick}
             disabled={discount === null || filter === null}
             className="w-full sm:w-auto"
           >
-            Criar exame
+            {t('copy.create_exam')}
           </Button>
         </DialogFooter>
       </DialogContent>

@@ -1,23 +1,26 @@
+import { getMessages } from '@/i18n/server';
 import ChangelogVersion from '@/components/changelog/ChangelogVersion';
 import { Badge } from '@/components/ui/badge';
-import Link from 'next/link';
+import Link from '@/i18n/navigation';
 
-const Changelog: React.FC = () => {
+const Changelog: React.FC = async () => {
+  const t = await getMessages();
   return (
     <section className="container py-10 md:py-14 w-full max-w-3xl">
       <div className="flex flex-col items-center text-center mb-10">
         <Badge variant="soft" className="mb-3">
-          Versões
+          {t('changelog.versions')}
         </Badge>
         <h1 className="text-balance text-3xl md:text-4xl font-bold tracking-tight">
           <span className="gradient-text">Changelog</span>
         </h1>
         <p className="mt-3 max-w-xl text-muted-foreground">
-          Acompanha tudo o que tem acontecido no AntiRecurso.
+          {t('changelog.intro')}
         </p>
       </div>
 
-      <div className="relative md:pl-8 space-y-6 before:hidden md:before:block before:absolute before:left-1.5 before:top-2 before:bottom-2 before:w-px before:bg-border">
+      <p className="mb-6 text-sm text-muted-foreground">{t('changelog.original')}</p>
+      <div lang="pt" className="relative md:pl-8 space-y-6 before:hidden md:before:block before:absolute before:left-1.5 before:top-2 before:bottom-2 before:w-px before:bg-border">
       {/* <ChangelogVersion
         title="v1.4.3 🛠"
         date={new Date(2024, .., ..)}

@@ -1,5 +1,7 @@
 'use client';
 
+import { useMessages } from '@/i18n/client';
+
 import { apiRequest } from '@/services/apiClient';
 import { Check } from '@/styles/Icons';
 import Option from '@/types/Option';
@@ -24,6 +26,8 @@ const ReportModal: React.FC<ModalProps> = ({
   solveReport,
   revalidateReports
 }) => {
+  const t = useMessages();
+
   const { theme } = useTheme();
 
   // form
@@ -84,16 +88,16 @@ const ReportModal: React.FC<ModalProps> = ({
       revalidateReports();
 
       swal({
-        title: 'Salvo!',
-        text: 'As tuas alterações foram salvas com sucesso!',
+        title: t('feedback.saved'),
+        text: t('copy.your_changes_were_saved_successfully'),
         icon: 'success',
         className: theme === 'dark' ? 'swal-dark' : '',
         timer: 2000
       });
     } catch {
       swal({
-        title: 'Erro!',
-        text: 'Algo correu mal ao salvar as tuas alterações. Por favor, tenta novamente.',
+        title: t('feedback.error'),
+        text: t('copy.something_went_wrong_while_saving_your_changes_please_try_again'),
         icon: 'error',
         className: theme === 'dark' ? 'swal-dark' : ''
       });
@@ -138,15 +142,18 @@ const ReportModal: React.FC<ModalProps> = ({
             X
           </button>
           <span className="w-full text-center text-xl lg:text-3xl font-black mb-6 px-2 pt-10 ">
-            Report [{report?.id}]
+            {t('copy.report')}
+            {report?.id}]
           </span>
           <div className="h-full w-full">
             <div className="flex flex-col justify-between mb-12">
-              <h2 className="w-full font-bold mb-6 text-lg  md:text-left">Razão do report</h2>
+              <h2 className="w-full font-bold mb-6 text-lg  md:text-left">
+                {t('copy.report_reason')}
+              </h2>
               <span>{report?.reason}</span>
             </div>
             <div className="flex flex-col justify-between mb-6">
-              <h2 className="w-full font-bold mb-6 text-lg md:text-left">Questão</h2>
+              <h2 className="w-full font-bold mb-6 text-lg md:text-left">{t('copy.question_2')}</h2>
               <span className="pb-4 flex" onClick={handleQuestionEdit}>
                 {editingQuestionTitle && !report?.solved ? (
                   <textarea
@@ -157,7 +164,7 @@ const ReportModal: React.FC<ModalProps> = ({
                     onBlur={(e) => handleOnBlurQuestionTitle(e)}
                   />
                 ) : (
-                  <div className="flex cursor-pointer" title="Editar">
+                  <div className="flex cursor-pointer" title={t('copy.edit')}>
                     {questionTitle} <FaEdit className="mx-8" />
                   </div>
                 )}
@@ -169,7 +176,7 @@ const ReportModal: React.FC<ModalProps> = ({
                     className={`w-full flex items-center justify-between px-1.5 md:px-4 py-2 md:py-3 border border-gray-100 min-h-[4rem] md:min-h-[5rem] rounded cursor-pointer
                     ${correctOption === option.order ? 'bg-primary text-white' : ''}`}
                     onClick={() => handleOptionEdit(index)}
-                    title="Editar"
+                    title={t('copy.edit')}
                   >
                     {editingOption === index && !report?.solved ? (
                       <textarea
@@ -186,7 +193,7 @@ const ReportModal: React.FC<ModalProps> = ({
                   {!report?.solved && (
                     <div className="mt-2 ml-4 cursor-pointer">
                       <Check
-                        title="Marcar como correta"
+                        title={t('copy.mark_as_correct')}
                         onClick={() => handleSetCorrectOption(index)}
                       />
                     </div>
@@ -201,21 +208,21 @@ const ReportModal: React.FC<ModalProps> = ({
                   className="w-full p-2 mr-8 text-xl bg-primary rounded-md text-white font-bold hover:brightness-90 hover:text-white"
                   onClick={handleFixQuestion}
                 >
-                  Salvar
+                  {t('copy.save')}
                 </button>
               </div>
             )}
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               <div className="flex flex-col  mb-12">
-                <h2 className="w-full font-bold mb-6 text-lg ">Reportado por</h2>
+                <h2 className="w-full font-bold mb-6 text-lg ">{t('copy.reported_by')}</h2>
                 <p>{report?.user}</p>
                 <p>{report?.email}</p>
                 <p>{report?.created_at}</p>
               </div>
               {report?.solved.toString().toLowerCase() === 'sim' && (
                 <div className="flex flex-col mb-12">
-                  <h2 className="w-full font-bold mb-6 text-lg">Resolvido por</h2>
+                  <h2 className="w-full font-bold mb-6 text-lg">{t('copy.resolved_by')}</h2>
                   <p>{report?.reviewed_by?.name}</p>
                   <p>{report?.reviewed_by?.email}</p>
                   <p>{report?.reviewed_at}</p>
@@ -232,7 +239,7 @@ const ReportModal: React.FC<ModalProps> = ({
                 setIsVisible(false);
               }}
             >
-              Marcar Como Resolvido
+              {t('copy.mark_as_resolved')}
             </button>
           )}
         </div>

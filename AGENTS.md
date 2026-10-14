@@ -56,3 +56,9 @@ Keep `README.md`, `CONTRIBUTING.md`, `.env.example`, and this file synchronized 
   keyword. Do not link a parent for closure unless its full scope is completed.
 - Verify the labels, creator assignment and Development issue link before
   reporting the PR as opened.
+
+## Internationalization
+
+Keep PT/EN keys synchronized in `src/i18n/pt.json` and `en.json`. Use the locale-aware
+navigation helpers for pages; API/auth callbacks stay unprefixed. Preserve exam
+state when changing language.

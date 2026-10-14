@@ -1,10 +1,13 @@
+import { getMessages } from '@/i18n/server';
 import Image from 'next/image';
 
 interface AuthLayoutProps {
   children: React.ReactNode;
 }
 
-const AuthLayout: React.FC<AuthLayoutProps> = ({ children }) => {
+const AuthLayout: React.FC<AuthLayoutProps> = async ({ children }) => {
+  const t = await getMessages();
+
   return (
     <div className="relative flex items-center justify-center w-full p-4 md:p-8 overflow-hidden">
       <div className="absolute inset-0 bg-hero-gradient pointer-events-none" />
@@ -23,12 +26,11 @@ const AuthLayout: React.FC<AuthLayoutProps> = ({ children }) => {
           <div className="absolute inset-0 bg-gradient-to-br from-primary/80 via-brand-600/70 to-brand-800/80" />
           <div className="absolute inset-0 flex flex-col justify-end p-10 text-white">
             <p className="text-3xl font-bold leading-tight">
-              Bem-vindo ao <br />
+              {t('copy.welcome_to')} <br />
               <span className="text-white">AntiRecurso</span>
             </p>
             <p className="mt-4 text-white/85 max-w-sm">
-              A plataforma feita por estudantes do DEI-ISEP para passares à primeira em qualquer
-              cadeira.
+              {t('copy.built_by_dei_isep_students_to_help_you_pass_every_subject_the_first_time')}
             </p>
           </div>
         </div>
