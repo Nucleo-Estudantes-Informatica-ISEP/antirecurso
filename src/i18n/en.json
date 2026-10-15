@@ -453,6 +453,7 @@
   "copy.correct_2": "Correct",
   "copy.passed": "Passed",
   "copy.failed": "Failed",
+  "stats.incorrectQuestions": "Incorrect",
   "copy.users_2": "Users",
   "copy.dashboard": "Dashboard",
   "copy.add": "Add",

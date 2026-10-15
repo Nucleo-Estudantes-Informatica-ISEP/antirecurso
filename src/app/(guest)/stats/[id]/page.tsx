@@ -15,7 +15,7 @@ import { Info, LineChart as LineChartIcon, Sparkles, Trophy } from 'lucide-react
 import Link from '@/i18n/navigation';
 import { use, useEffect, useState } from 'react';
 import type { SubjectStats } from 'src/types/SubjectStats';
-import getSubjectNameById from 'src/utils/getSubjectNameById';
+import getSubjectNameById from '@/utils/getSubjectNameById';
 import { fetchSubjectStats, getSubjectStatsViewModel } from '@/services/subjectStats';
 import useSWR from 'swr';
 
@@ -162,7 +162,7 @@ const SubjectStatsPage: React.FC<SubjectStatsProps> = ({ params }) => {
                   {t('copy.number_of_exams')}
                 </Badge>
                 <PieChart
-                  labels={['Aprovado', 'Reprovado']}
+                  labels={[t('copy.passed'), t('copy.failed')]}
                   text={t('stats.examCount')}
                   backgroundColor={['rgba(34, 197, 94, 0.75)', 'rgba(239, 68, 68, 0.75)']}
                   borderColor={['rgba(34, 197, 94, 1)', 'rgba(239, 68, 68, 1)']}
@@ -180,7 +180,7 @@ const SubjectStatsPage: React.FC<SubjectStatsProps> = ({ params }) => {
                   {t('copy.number_of_questions')}
                 </Badge>
                 <PieChart
-                  labels={[t('copy.correct'), 'Incorretas', t('copy.unanswered')]}
+                  labels={[t('copy.correct'), t('stats.incorrectQuestions'), t('copy.unanswered')]}
                   text={t('exam.questionCount')}
                   backgroundColor={[
                     'rgba(34, 197, 94, 0.75)',
