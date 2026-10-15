@@ -1,3 +1,4 @@
+import { getMessages } from '@/i18n/server';
 import NoteCard from '@/components/notes/NoteCard';
 import Custom403 from '@/components/pages/Custom403';
 import { Badge } from '@/components/ui/badge';
@@ -12,6 +13,8 @@ interface SubjectNotesProps {
 }
 
 const SubjectNotes: React.FC<SubjectNotesProps> = async ({ params }) => {
+  const t = await getMessages();
+
   const { id } = await params;
   const token = await getApiAccessToken();
 
@@ -26,15 +29,15 @@ const SubjectNotes: React.FC<SubjectNotesProps> = async ({ params }) => {
     <section className="container py-10 md:py-14 w-full">
       <div className="flex flex-col items-center text-center mb-10">
         <Badge variant="soft" className="mb-3">
-          Resumos
+          {t('nav.notes')}
         </Badge>
         {subject ? (
           <h1 className="text-balance text-3xl md:text-4xl font-bold tracking-tight">
-            Resumos de <span className="gradient-text capitalize">{subject}</span>
+            {t('copy.study_notes_for')} <span className="gradient-text capitalize">{subject}</span>
           </h1>
         ) : (
           <h1 className="text-balance text-3xl md:text-4xl font-bold tracking-tight">
-            Resumos da <span className="gradient-text">disciplina</span>
+            {t('copy.study_notes_for_2')} <span className="gradient-text">{t('copy.subject')}</span>
           </h1>
         )}
       </div>
@@ -46,12 +49,12 @@ const SubjectNotes: React.FC<SubjectNotesProps> = async ({ params }) => {
           </div>
           <div>
             <p className="text-xl font-semibold">
-              Parece que ainda não há nenhum{' '}
-              <span className="font-bold text-primary">resumo</span> aqui...
+              {t('copy.it_looks_like_there_are_no')}{' '}
+              <span className="font-bold text-primary">{t('copy.study_notes')}</span>{' '}
+              {t('copy.here_yet')}
             </p>
             <p className="mt-3 max-w-lg mx-auto text-sm text-muted-foreground">
-              Queres ajudar os teus colegas a prepararem-se para os exames? Envia-nos os teus
-              resumos.
+              {t('copy.want_to_help_your_classmates_prepare_for_exams_send_us_your_study_notes')}
             </p>
           </div>
           <a

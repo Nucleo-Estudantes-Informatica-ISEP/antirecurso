@@ -1,5 +1,7 @@
 'use client';
 
+import { useMessages } from '@/i18n/client';
+
 import { Card, CardContent } from '@/components/ui/card';
 import toFixed from '@/utils/toFixed';
 import GradeCalculatorContextProvider from 'src/contexts/GradeCalculatorContext';
@@ -15,33 +17,35 @@ interface GradeCalculatorProps {
 }
 
 const GradeCalculatorContainer: React.FC<GradeCalculatorProps> = ({ subjectStats }) => {
+  const t = useMessages();
+
   return (
     <GradeCalculatorContextProvider>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-5 mb-6">
         <Card>
           <CardContent className="p-6 flex flex-col items-center text-center gap-2">
             <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">
-              Peso do exame
+              {t('copy.exam_weight')}
             </h2>
             <p className="text-3xl md:text-4xl font-bold text-primary">
               {toFixed(subjectStats.exam_weight * 100, 2)}%
             </p>
             <p className="text-sm text-muted-foreground max-w-xs">
-              A tua nota final é calculada com base neste peso.
+              {t('copy.your_final_grade_is_calculated_using_this_weight')}
             </p>
           </CardContent>
         </Card>
         <Card>
           <CardContent className="p-6 flex flex-col items-center text-center gap-2">
             <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">
-              Nota mínima
+              {t('copy.minimum_grade')}
             </h2>
             <p className="text-3xl md:text-4xl font-bold text-primary">
               {subjectStats.min_grade}{' '}
-              <span className="text-lg text-muted-foreground font-medium">valores</span>
+              <span className="text-lg text-muted-foreground font-medium">{t('copy.points')}</span>
             </p>
             <p className="text-sm text-muted-foreground max-w-xs">
-              Abaixo deste valor no exame és reprovado automaticamente.
+              {t('copy.an_exam_grade_below_this_value_automatically_results_in_a_fail')}
             </p>
           </CardContent>
         </Card>

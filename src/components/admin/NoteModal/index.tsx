@@ -1,5 +1,7 @@
 'use client';
 
+import { useLanguage, useMessages } from '@/i18n/client';
+
 import { useTheme } from 'next-themes';
 import { PDFDocument } from 'pdf-lib';
 import { Dispatch, SetStateAction, useCallback, useEffect, useRef, useState } from 'react';
@@ -30,6 +32,9 @@ interface ModalProps {
 }
 
 const NoteModal: React.FC<ModalProps> = ({ setIsVisible, subjects, mutate, edit, setEdit }) => {
+  const t = useMessages();
+  const lang = useLanguage();
+
   const { theme } = useTheme();
 
   const titleRef = useRef<HTMLInputElement>(null);
@@ -57,22 +62,22 @@ const NoteModal: React.FC<ModalProps> = ({ setIsVisible, subjects, mutate, edit,
     const description = descRef.current?.value;
 
     if (!title || title.length < 2)
-      return swal('Oops!', 'Título inválido.', 'error', {
+      return swal('Oops!', t('copy.invalid_title'), 'error', {
         className: theme === 'dark' ? 'swal-dark' : ''
       });
 
     if (!subject || subject === '')
-      return swal('Oops!', 'Disciplina inválida.', 'error', {
+      return swal('Oops!', t('copy.invalid_subject'), 'error', {
         className: theme === 'dark' ? 'swal-dark' : ''
       });
 
     if (!edit && (isFileLoading || !uploadedFile))
-      return swal('Oops!', 'Tens de carregar um ficheiro.', 'error', {
+      return swal('Oops!', t('copy.you_must_upload_a_file'), 'error', {
         className: theme === 'dark' ? 'swal-dark' : ''
       });
 
     if (!author)
-      return swal('Oops!', 'Autor inválido.', 'error', {
+      return swal('Oops!', t('copy.invalid_author'), 'error', {
         className: theme === 'dark' ? 'swal-dark' : ''
       });
 
@@ -97,7 +102,7 @@ const NoteModal: React.FC<ModalProps> = ({ setIsVisible, subjects, mutate, edit,
     } catch {
       swal(
         'Oops!',
-        'Ocorreu um erro ao tentar adicionar o resumo. Por favor, tente novamente.',
+        t('copy.an_error_occurred_while_adding_the_study_notes_please_try_again'),
         'error',
         { className: theme === 'dark' ? 'swal-dark' : '' }
       );
@@ -105,14 +110,14 @@ const NoteModal: React.FC<ModalProps> = ({ setIsVisible, subjects, mutate, edit,
     }
 
     swal({
-      title: 'Sucesso',
-      text: 'Resumo adicionado com sucesso.',
+      title: t('copy.success'),
+      text: t('copy.study_notes_added_successfully'),
       icon: 'success',
       className: theme === 'dark' ? 'swal-dark' : '',
       timer: 2000
     });
     handleClose();
-  }, [author, subject, uploadedFile, isFileLoading, edit, theme, handleClose]);
+  }, [author, subject, uploadedFile, isFileLoading, edit, theme, handleClose, t]);
 
   const handleSubjectChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setSubject(e.target.value);
@@ -125,16 +130,16 @@ const NoteModal: React.FC<ModalProps> = ({ setIsVisible, subjects, mutate, edit,
       setIsFileLoading(true);
 
       try {
-        const signed = await getSignedUrl('notes', file.type);
-        if (!signed) throw new Error('Ocorreu um erro no upload (getSignedUrl).');
+        const signed = await getSignedUrl('notes', file.type, lang);
+        if (!signed) throw new Error(t('copy.an_error_occurred_while_preparing_the_upload'));
 
-        if (file.size > signed.maxSize) throw new Error('O ficheiro é demasiado grande.');
+        if (file.size > signed.maxSize) throw new Error(t('copy.the_file_is_too_large'));
 
-        const res = await uploadToBucket(signed, file);
+        const res = await uploadToBucket(signed, file, lang);
         if (!res.ok) {
           const errorBody = await res.text();
           const details = errorBody ? ` ${errorBody}` : '';
-          throw new Error(`Ocorreu um erro no upload (bucket ${res.status}).${details}`);
+          throw new Error(`${t('error.upload')} (${res.status})${details}`);
         }
 
         const previewUrl = URL.createObjectURL(file);
@@ -154,7 +159,7 @@ const NoteModal: React.FC<ModalProps> = ({ setIsVisible, subjects, mutate, edit,
         if (error instanceof Error) {
           let msg = error.message;
           if (msg === '_this.catalog is undefined')
-            msg = 'Não foi possível ler o pdf, verifica se o ficheiro está corrompido.';
+            msg = t('copy.could_not_read_the_pdf_check_whether_the_file_is_corrupted');
 
           swal('Oops!', msg, 'error', {
             className: theme === 'dark' ? 'swal-dark' : ''
@@ -198,11 +203,11 @@ const NoteModal: React.FC<ModalProps> = ({ setIsVisible, subjects, mutate, edit,
             X
           </button>
           <span className="w-full text-center text-xl lg:text-3xl font-black mb-6 px-2 pt-10">
-            {!edit ? 'Adicionar Resumo' : 'Editar Resumo'}
+            {!edit ? t('copy.add_study_notes') : t('copy.edit_study_notes')}
           </span>
           <div className="h-full w-full">
             <div className="flex flex-col justify-between mb-6">
-              <h2 className="w-full font-bold mb-3 text-lg md:text-left">Título</h2>
+              <h2 className="w-full font-bold mb-3 text-lg md:text-left">{t('copy.title')}</h2>
               <input
                 type="text"
                 className="w-full px-1.5 md:px-4 py-2 rounded bg-transparent border"
@@ -212,7 +217,9 @@ const NoteModal: React.FC<ModalProps> = ({ setIsVisible, subjects, mutate, edit,
             </div>
 
             <div className="flex flex-col justify-between mb-6">
-              <h2 className="w-full font-bold mb-3 text-lg md:text-left">Descrição</h2>
+              <h2 className="w-full font-bold mb-3 text-lg md:text-left">
+                {t('copy.description')}
+              </h2>
               <textarea
                 className="w-full px-1.5 md:px-4 py-2 rounded bg-transparent border"
                 rows={2}
@@ -222,20 +229,20 @@ const NoteModal: React.FC<ModalProps> = ({ setIsVisible, subjects, mutate, edit,
             </div>
 
             <div className="flex flex-col justify-between mb-6">
-              <h2 className="w-full font-bold mb-3 text-lg md:text-left">Disciplina</h2>
+              <h2 className="w-full font-bold mb-3 text-lg md:text-left">{t('copy.subject_2')}</h2>
               <SelectInput
                 options={subjects?.sort((a, b) => a.label.localeCompare(b.label))}
                 onChange={handleSubjectChange}
-                placeholder="Seleciona uma disciplina."
+                placeholder={t('copy.select_a_subject')}
                 defaultValue={edit?.subject.id}
               />
             </div>
 
             <div className="flex flex-col justify-between mb-6">
-              <h2 className="w-full font-bold mb-3 text-lg md:text-left">Documento</h2>
+              <h2 className="w-full font-bold mb-3 text-lg md:text-left">{t('copy.document')}</h2>
               <FileInput
                 name="Insere um ficheiro"
-                placeholder="PDF Resumo"
+                placeholder={t('copy.study_notes_pdf')}
                 accept="application/pdf"
                 onChange={handleFileChange}
                 file={uploadedFile}
@@ -244,12 +251,14 @@ const NoteModal: React.FC<ModalProps> = ({ setIsVisible, subjects, mutate, edit,
                 onClear={() => setUploadedFile(undefined)}
               />
               {uploadedFile?.pages && (
-                <span className="text-sm mt-2">{uploadedFile.pages} páginas</span>
+                <span className="text-sm mt-2">
+                  {uploadedFile.pages} {t('copy.pages_2')}
+                </span>
               )}
             </div>
 
             <div className="flex flex-col justify-between mb-6">
-              <h2 className="w-full font-bold mb-3 text-lg md:text-left">Autor</h2>
+              <h2 className="w-full font-bold mb-3 text-lg md:text-left">{t('copy.author')}</h2>
               <UserSelector selected={author} setSelected={setAuthor} />
             </div>
 
@@ -262,9 +271,9 @@ const NoteModal: React.FC<ModalProps> = ({ setIsVisible, subjects, mutate, edit,
                 {isSubmitting ? (
                   <LoadingSpinner className="mx-auto" />
                 ) : !edit ? (
-                  'Adicionar'
+                  t('copy.add')
                 ) : (
-                  'Guardar'
+                  t('copy.save_2')
                 )}
               </PrimaryButton>
             </div>

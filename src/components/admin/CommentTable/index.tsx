@@ -1,5 +1,7 @@
 'use client';
 
+import { useMessages } from '@/i18n/client';
+
 import { Comment } from '@/types/Comment';
 import { TableColumn } from '@/types/TableColumn';
 import { TableProps } from '@/types/TableProps';
@@ -12,29 +14,31 @@ const CommentTable: React.FC<TableProps<Comment>> = ({
   sortBy,
   setSortBy
 }) => {
+  const t = useMessages();
+
   const columns: TableColumn<Comment>[] = [
     {
-      name: 'ID',
+      name: t('copy.id'),
       key: 'id',
       w: 'w-1'
     },
     {
-      name: 'Autor',
+      name: t('copy.author'),
       key: 'user',
       w: 'w-12'
     },
     {
-      name: 'Comentário',
+      name: t('copy.comment'),
       key: 'comment',
       w: 'w-12'
     },
     {
-      name: 'ID Questão',
+      name: t('copy.question_id'),
       key: 'question_id',
       w: 'w-1'
     },
     {
-      name: 'Criado em',
+      name: t('copy.created_at'),
       key: 'created_at',
       w: 'w-12'
     }
@@ -72,7 +76,7 @@ const CommentTable: React.FC<TableProps<Comment>> = ({
         {data.length === 0 ? (
           <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
             <tr>
-              <th className="px-4 py-3">Nenhum comentário encontrado</th>
+              <th className="px-4 py-3">{t('copy.no_comments_found')}</th>
             </tr>
           </thead>
         ) : (
@@ -90,7 +94,8 @@ const CommentTable: React.FC<TableProps<Comment>> = ({
                   <th
                     className={`cursor-pointer px-6 py-4 ${column.w}`}
                     onClick={() => handleSort(column)}
-                    key={column.key}>
+                    key={column.key}
+                  >
                     {column.name}
                     {sortBy.key === column.key &&
                       (!sortBy.desc ? (
@@ -110,7 +115,8 @@ const CommentTable: React.FC<TableProps<Comment>> = ({
                     selected.includes(comment.id)
                       ? 'cursor-pointer dark:bg-gray-600 bg-blue-200 border-b dark:border-gray-700'
                       : 'cursor-pointer bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600'
-                  }>
+                  }
+                >
                   <td className="px-4 py-3">
                     <input
                       type="checkbox"
@@ -132,15 +138,18 @@ const CommentTable: React.FC<TableProps<Comment>> = ({
       <div className="relative overflow-hidden bg-white shadow-md dark:bg-gray-800">
         <nav
           className="flex flex-row items-center justify-between p-4"
-          aria-label="Table navigation">
+          aria-label={t('copy.table_navigation')}
+        >
           <p className="text-sm">
-            <span className="font-normal text-gray-500 dark:text-gray-400">Selecionados:</span>
+            <span className="font-normal text-gray-500 dark:text-gray-400">
+              {t('copy.selected')}
+            </span>
             <span className="font-semibold text-gray-900 dark:text-white pl-1">
               {selected.length}
             </span>
           </p>
           <p className="text-sm">
-            <span className="font-normal text-gray-500 dark:text-gray-400">Total:</span>
+            <span className="font-normal text-gray-500 dark:text-gray-400">{t('copy.total')}</span>
             <span className="font-semibold text-gray-900 dark:text-white pl-1">{data.length}</span>
           </p>
         </nav>

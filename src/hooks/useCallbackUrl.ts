@@ -1,21 +1,19 @@
 'use client';
 
 import { usePathname, useSearchParams } from 'next/navigation';
+import { useLanguage } from '@/i18n/client';
+import { localizedPath, withoutLang } from '@/i18n/translations';
 
 const useCallbackUrl = (): string => {
-  const omittedPathnames = ['/login', '/register'];
-  const path = decodeURI(usePathname());
-  const callbackUrl = useSearchParams().get('callbackUrl');
-
-  const isInOmittedPaths = (value: string): boolean => {
-    return omittedPathnames.find((item) => item === value) ? true : false;
-  };
-
-  if (callbackUrl && !isInOmittedPaths(callbackUrl)) return encodeURI(callbackUrl);
-
-  if (path.length === 0 || isInOmittedPaths(path)) return encodeURI('/');
-
-  return encodeURI(path);
+  const lang = useLanguage();
+  const path = usePathname();
+  const search = useSearchParams();
+  const callback = search.get('callbackUrl');
+  const authPage = ['/login', '/register'].includes(withoutLang(path));
+  const destination =
+    callback ??
+    (authPage ? localizedPath('/', lang) : path + (search.size ? '?' + search.toString() : ''));
+  return encodeURIComponent(destination);
 };
 
 export default useCallbackUrl;

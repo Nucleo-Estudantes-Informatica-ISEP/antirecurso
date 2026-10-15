@@ -1,5 +1,7 @@
 'use client';
 
+import { useMessages } from '@/i18n/client';
+
 import ResetPasswordContextProvider from '@/contexts/ResetPasswordContext';
 import Image from 'next/image';
 
@@ -8,6 +10,8 @@ interface AuthLayoutProps {
 }
 
 const AuthLayout: React.FC<AuthLayoutProps> = ({ children }) => {
+  const t = useMessages();
+
   return (
     <ResetPasswordContextProvider>
       <div className="relative flex items-center justify-center w-full p-4 md:p-8 overflow-hidden">
@@ -21,17 +25,17 @@ const AuthLayout: React.FC<AuthLayoutProps> = ({ children }) => {
               fill
               className="object-cover"
               src="/images/login-office.jpeg"
-              alt="Office"
+              alt={t('image.isepBuilding')}
               sizes="(max-width: 1024px) 100vw, 50vw"
             />
             <div className="absolute inset-0 bg-gradient-to-br from-primary/80 via-brand-600/70 to-brand-800/80" />
             <div className="absolute inset-0 flex flex-col justify-end p-10 text-white">
               <p className="text-3xl font-bold leading-tight">
-                Recupera o teu <br />
-                <span className="text-white">acesso</span>
+                {t('copy.recover_your')} <br />
+                <span className="text-white">{t('copy.access')}</span>
               </p>
               <p className="mt-4 text-white/85 max-w-sm">
-                A partir do portal oficial do NEI consegues redefinir a tua palavra-passe em segundos.
+                {t('copy.reset_your_password_through_the_official_nei_portal')}
               </p>
             </div>
           </div>

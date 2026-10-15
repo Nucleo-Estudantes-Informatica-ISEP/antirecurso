@@ -1,14 +1,17 @@
+import { getMessages } from '@/i18n/server';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
 import { getAppAuthSession } from '@/lib/server-auth';
 import { fetchSubjects } from '@/services/fetchSubjects';
 import { ArrowRight, BookText, Lock, Mail } from 'lucide-react';
-import Link from 'next/link';
+import Link from '@/i18n/navigation';
 
 export const dynamic = 'force-dynamic';
 
 const Notes: React.FC = async () => {
+  const t = await getMessages();
+
   const session = await getAppAuthSession();
   const hasSession = Boolean(session?.user);
 
@@ -18,13 +21,13 @@ const Notes: React.FC = async () => {
     <section className="container py-10 md:py-14 w-full">
       <div className="flex flex-col items-center text-center mb-10">
         <Badge variant="soft" className="mb-3">
-          Resumos
+          {t('nav.notes')}
         </Badge>
         <h1 className="text-balance text-3xl md:text-4xl font-bold tracking-tight">
-          Escolhe uma <span className="gradient-text">disciplina</span>
+          {t('copy.choose_a')} <span className="gradient-text">{t('copy.subject')}</span>
         </h1>
         <p className="mt-3 max-w-xl text-muted-foreground">
-          Acede aos resumos partilhados pela comunidade do DEI-ISEP.
+          {t('copy.access_study_notes_shared_by_the_dei_isep_community')}
         </p>
       </div>
 
@@ -60,7 +63,7 @@ const Notes: React.FC = async () => {
                   <ArrowRight className="size-4 text-muted-foreground group-hover:text-primary group-hover:translate-x-1 transition-all" />
                 ) : (
                   <Badge variant="destructive" className="gap-1">
-                    <Lock className="size-3" /> Conta necessária
+                    <Lock className="size-3" /> {t('copy.account_required')}
                   </Badge>
                 )}
               </CardContent>
@@ -89,10 +92,11 @@ const Notes: React.FC = async () => {
             <Mail className="size-6" />
           </div>
           <div className="flex-1">
-            <h3 className="font-semibold text-lg">Tens resumos para partilhar?</h3>
+            <h3 className="font-semibold text-lg">{t('copy.have_study_notes_to_share')}</h3>
             <p className="mt-2 text-sm text-muted-foreground">
-              Ajuda os teus colegas a prepararem-se para os exames. Envia-nos os teus resumos por
-              email e nós tratamos do resto.
+              {t(
+                'copy.help_your_classmates_prepare_for_exams_email_us_your_notes_and_we_will_take_care_of_t'
+              )}
             </p>
             <a
               className="mt-3 inline-flex items-center text-sm font-semibold text-primary hover:underline"

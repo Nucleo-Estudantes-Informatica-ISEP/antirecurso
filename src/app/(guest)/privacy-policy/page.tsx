@@ -1,42 +1,41 @@
+import { getMessages } from '@/i18n/server';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
 
-const PrivacyPolicy: React.FC = () => {
+const PrivacyPolicy: React.FC = async () => {
+  const t = await getMessages();
+
   return (
     <section className="container py-10 md:py-14 w-full max-w-3xl">
       <div className="mb-10">
         <Badge variant="soft" className="mb-3">
-          Privacidade
+          {t('copy.privacy')}
         </Badge>
         <h1 className="text-balance text-3xl md:text-4xl font-bold tracking-tight">
-          Política de <span className="gradient-text">Privacidade</span>
+          <span className="gradient-text">{t('policy.privacyTitle')}</span>
         </h1>
-        <p className="mt-3 text-muted-foreground">
-          Em vigor a partir de 20 de junho de 2023.
-        </p>
+        <p className="mt-3 text-muted-foreground">{t('copy.effective_from_20_june_2023')}</p>
       </div>
 
       <Card>
         <CardContent className="p-6 md:p-8 space-y-6 text-sm md:text-base leading-relaxed">
           <article>
             <h2 className="font-bold text-primary text-lg mb-2">
-              Aplicação do Regulamento Geral sobre a Proteção de Dados
+              {t('copy.application_of_the_general_data_protection_regulation')}
             </h2>
             <p>
-              Para compreenderes que informações são recolhidas e como são utilizadas, o Núcleo de
-              Estudantes de Informática do Instituto Superior de Engenharia do Porto (NEI-ISEP)
-              aconselha que leias esta Política de Privacidade. O AntiRecurso respeita a tua
-              privacidade e cumpre a legislação em vigor, nomeadamente o Regulamento (UE) 2016/679
-              do Parlamento Europeu e do Conselho. O AntiRecurso ajuda os alunos do DEI-ISEP a
-              estudarem de forma mais simples e eficaz.
+              {t(
+                'copy.to_understand_what_information_is_collected_and_how_it_is_used_the_computer_science_s'
+              )}
             </p>
           </article>
 
           <article>
-            <h2 className="font-bold text-primary text-lg mb-2">Responsável pelo tratamento</h2>
+            <h2 className="font-bold text-primary text-lg mb-2">{t('copy.data_controller')}</h2>
             <p>
-              O NEI-ISEP é a organização responsável pelo tratamento dos teus dados pessoais. Podes
-              contactar-nos por{' '}
+              {t(
+                'copy.nei_isep_is_responsible_for_processing_your_personal_data_you_can_contact_us_by'
+              )}{' '}
               <a
                 className="text-primary font-medium hover:underline"
                 href="mailto:info@nei-isep.org"
@@ -48,24 +47,28 @@ const PrivacyPolicy: React.FC = () => {
           </article>
 
           <article>
-            <h2 className="font-bold text-primary text-lg mb-2">Recolha de informações</h2>
+            <h2 className="font-bold text-primary text-lg mb-2">
+              {t('copy.information_collection')}
+            </h2>
             <p>
-              Para usares a aplicação é necessário ter uma conta. Para isso precisamos do teu nome,
-              palavra-passe e endereço de email. Todos os dados solicitados têm um fim específico e
-              justificado, conforme a alínea c) do nº1 do Artigo 5° do RGPD.
+              {t(
+                'copy.an_account_is_required_to_use_the_application_this_requires_your_name_password_and_em'
+              )}
             </p>
           </article>
 
           <article>
-            <h2 className="font-bold text-primary text-lg mb-2">Direitos dos titulares dos dados</h2>
+            <h2 className="font-bold text-primary text-lg mb-2">
+              {t('copy.rights_of_data_subjects')}
+            </h2>
             <p>
-              Tens o direito de aceder, retificar, portar, apagar, limitar e opor-te ao tratamento
-              dos teus dados, bem como apresentar reclamação junto da CNPD (
+              {t(
+                'copy.you_have_the_right_to_access_rectify_transfer_erase_restrict_and_object_to_the_proces'
+              )}
               <a className="text-primary font-medium hover:underline" href="mailto:geral@cnpd.pt">
                 geral@cnpd.pt
               </a>
-              ). Para exercer os teus direitos contacta o nosso Encarregado da Proteção de Dados
-              em{' '}
+              {t('copy.to_exercise_your_rights_contact_our_data_protection_officer_at')}{' '}
               <a
                 className="text-primary font-medium hover:underline"
                 href="mailto:info@nei-isep.org"
@@ -77,27 +80,31 @@ const PrivacyPolicy: React.FC = () => {
           </article>
 
           <article>
-            <h2 className="font-bold text-primary text-lg mb-2">Conservação das informações</h2>
+            <h2 className="font-bold text-primary text-lg mb-2">
+              {t('copy.information_retention')}
+            </h2>
             <p>
-              Quando a tua conta for eliminada, o NEI-ISEP anonimiza as tuas informações pessoais,
-              não sendo possível recuperar esse conteúdo mais tarde.
+              {t(
+                'copy.when_your_account_is_deleted_nei_isep_anonymizes_your_personal_information_which_cann'
+              )}
             </p>
           </article>
 
           <article>
-            <h2 className="font-bold text-primary text-lg mb-2">Obrigações do utilizador</h2>
+            <h2 className="font-bold text-primary text-lg mb-2">{t('copy.user_obligations')}</h2>
             <p>
-              Ao usares o AntiRecurso, declaras que leste esta política de privacidade e concordas
-              com todas as informações nela presentes.
+              {t(
+                'copy.by_using_antirecurso_you_declare_that_you_have_read_this_privacy_policy_and_agree_wit'
+              )}
             </p>
           </article>
 
           <article>
-            <h2 className="font-bold text-primary text-lg mb-2">Outros termos</h2>
+            <h2 className="font-bold text-primary text-lg mb-2">{t('copy.other_terms')}</h2>
             <p>
-              Os teus dados pessoais poderão ser comunicados a entidades públicas ou autoridades
-              judiciais, se assim for obrigatório por lei ou para prevenir ou punir a prática de
-              crimes.
+              {t(
+                'copy.your_personal_data_may_be_disclosed_to_public_bodies_or_judicial_authorities_when_req'
+              )}
             </p>
           </article>
         </CardContent>

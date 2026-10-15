@@ -1,13 +1,17 @@
 'use client';
 
+import { useMessages } from '@/i18n/client';
+
 import { Button } from '@/components/ui/button';
 import config from '@/config';
 import { AnimatePresence, motion } from 'framer-motion';
 import { Cookie } from 'lucide-react';
-import Link from 'next/link';
+import Link from '@/i18n/navigation';
 import { useEffect, useState } from 'react';
 
 const CookieConsent: React.FC = () => {
+  const t = useMessages();
+
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
@@ -36,18 +40,18 @@ const CookieConsent: React.FC = () => {
                 <Cookie className="size-5" />
               </div>
               <p className="text-sm leading-6">
-                Usamos cookies essenciais para garantir que o AntiRecurso funcione corretamente.{' '}
+                {t('copy.we_use_essential_cookies_to_ensure_antirecurso_works_correctly')}{' '}
                 <Link
                   href="/cookie-policy"
                   className="text-primary font-medium hover:underline"
                   tabIndex={1}
                 >
-                  Sabe mais aqui.
+                  {t('copy.learn_more_here')}
                 </Link>
               </p>
             </div>
             <Button onClick={handleConfirm} className="w-full md:w-auto" tabIndex={2}>
-              Confirmar
+              {t('copy.confirm')}
             </Button>
           </div>
         </motion.div>

@@ -1,5 +1,7 @@
 'use client';
 
+import { useMessages } from '@/i18n/client';
+
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
@@ -14,7 +16,7 @@ interface ScoreboardPodiumProps {
 
 const podiumConfig = [
   {
-    label: '1.º',
+    label: 'scoreboard.first' as const,
     medal: '🥇',
     cardClass:
       'bg-gradient-to-b from-amber-400/30 via-amber-400/10 to-transparent border-amber-400/40',
@@ -24,7 +26,7 @@ const podiumConfig = [
     height: 'pb-8 md:pb-16'
   },
   {
-    label: '2.º',
+    label: 'scoreboard.second' as const,
     medal: '🥈',
     cardClass: 'bg-gradient-to-b from-slate-400/20 to-transparent border-slate-400/30',
     badgeClass: 'bg-slate-400 text-white',
@@ -33,7 +35,7 @@ const podiumConfig = [
     height: 'pb-6 md:pb-10 mt-6'
   },
   {
-    label: '3.º',
+    label: 'scoreboard.third' as const,
     medal: '🥉',
     cardClass: 'bg-gradient-to-b from-orange-700/20 to-transparent border-orange-700/30',
     badgeClass: 'bg-orange-700 text-white',
@@ -44,6 +46,8 @@ const podiumConfig = [
 ];
 
 const ScoreboardPodium: React.FC<ScoreboardPodiumProps> = ({ scores, uid }) => {
+  const t = useMessages();
+
   const ordering = [scores[1], scores[0], scores[2]].filter(Boolean);
   const orderedConfig = [podiumConfig[1], podiumConfig[0], podiumConfig[2]];
 
@@ -77,16 +81,11 @@ const ScoreboardPodium: React.FC<ScoreboardPodiumProps> = ({ scores, uid }) => {
           >
             {isYou && (
               <Badge variant="default" className="absolute -top-3 left-1/2 -translate-x-1/2">
-                Estás no pódio!
+                {t('copy.you_are_on_the_podium')}
               </Badge>
             )}
             <div className="relative">
-              <Avatar
-                className={cn(
-                  'size-16 md:size-24',
-                  cfg.ringClass
-                )}
-              >
+              <Avatar className={cn('size-16 md:size-24', cfg.ringClass)}>
                 <AvatarImage
                   src={`https://gravatar.com/avatar/${score.avatar}?s=160&d=identicon`}
                   alt={score.user_name}
@@ -101,7 +100,7 @@ const ScoreboardPodium: React.FC<ScoreboardPodiumProps> = ({ scores, uid }) => {
                   cfg.badgeClass
                 )}
               >
-                {cfg.label}
+                {t(cfg.label)}
               </div>
             </div>
             <div className="mt-5 flex flex-col items-center">
@@ -113,7 +112,7 @@ const ScoreboardPodium: React.FC<ScoreboardPodiumProps> = ({ scores, uid }) => {
                 <p className="text-lg md:text-2xl font-bold text-primary">{score.score}</p>
               </div>
               <p className="text-xs text-muted-foreground">
-                {score.exams} {score.exams === 1 ? 'exame' : 'exames'}
+                {score.exams} {score.exams === 1 ? t('copy.exam') : 'exames'}
               </p>
             </div>
           </motion.div>

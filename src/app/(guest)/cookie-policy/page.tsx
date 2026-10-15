@@ -1,80 +1,91 @@
+import { getMessages } from '@/i18n/server';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
 
-const sections = [
-  {
-    title: 'O que são cookies?',
-    body: 'Cookies são pequenos ficheiros de texto armazenados no teu dispositivo quando visitas um website. São amplamente utilizados para tornar o website mais eficiente e melhorar a tua experiência.'
-  },
-  {
-    title: 'Quais cookies utilizamos?',
-    body: (
-      <>
-        <p>Geralmente existem três categorias de cookies:</p>
-        <ul className="mt-3 space-y-2 list-disc list-inside">
-          <li>
-            <span className="font-semibold">Essenciais:</span> necessários para o funcionamento
-            adequado do website (ex: autenticação).
-          </li>
-          <li>
-            <span className="font-semibold">Desempenho e análise:</span> recolhem informação sobre
-            como os visitantes usam o website e ajudam a melhorar o desempenho.
-          </li>
-          <li>
-            <span className="font-semibold">Personalização:</span> lembram as tuas preferências e
-            fornecem conteúdo personalizado.
-          </li>
-        </ul>
-        <p className="mt-3">
-          O AntiRecurso utiliza apenas cookies essenciais para garantir o seu funcionamento
-          adequado.
-        </p>
-      </>
-    )
-  },
-  {
-    title: 'Como controlar os cookies?',
-    body: 'Podes controlar ou limpar os cookies a qualquer momento e configurar o teu browser para os bloquear. Desativá-los pode afetar a funcionalidade da plataforma.'
-  },
-  {
-    title: 'Alterações nesta política',
-    body: 'Podemos atualizar esta política periodicamente para refletir alterações na forma como utilizamos cookies. Recomendamos que a revises regularmente.'
-  },
-  {
-    title: 'Contacta-nos',
-    body: (
-      <>
-        Se tiveres alguma dúvida sobre esta política, fala connosco em{' '}
-        <a className="text-primary font-medium hover:underline" href="mailto:info@nei-isep.org">
-          info@nei-isep.org
-        </a>
-        .
-      </>
-    )
-  }
-];
+const CookiePolicy: React.FC = async () => {
+  const t = await getMessages();
 
-const CookiePolicy: React.FC = () => {
+  const sections = [
+    {
+      title: t('copy.what_are_cookies'),
+      body: t(
+        'copy.cookies_are_small_text_files_stored_on_your_device_when_you_visit_a_website_they_are_'
+      )
+    },
+    {
+      title: t('copy.which_cookies_do_we_use'),
+      body: (
+        <>
+          <p>{t('copy.there_are_generally_three_categories_of_cookies')}</p>
+          <ul className="mt-3 space-y-2 list-disc list-inside">
+            <li>
+              <span className="font-semibold">{t('copy.essential')}</span>{' '}
+              {t('copy.necessary_for_the_website_to_work_correctly_for_example_authentication')}
+            </li>
+            <li>
+              <span className="font-semibold">{t('copy.performance_and_analytics')}</span>{' '}
+              {t(
+                'copy.collect_information_about_how_visitors_use_the_website_and_help_improve_performance'
+              )}
+            </li>
+            <li>
+              <span className="font-semibold">{t('copy.personalization')}</span>{' '}
+              {t('copy.remember_your_preferences_and_provide_personalized_content')}
+            </li>
+          </ul>
+          <p className="mt-3">
+            {t('copy.antirecurso_only_uses_essential_cookies_to_ensure_it_works_correctly')}
+          </p>
+        </>
+      )
+    },
+    {
+      title: t('copy.how_can_you_control_cookies'),
+      body: t(
+        'copy.you_can_manage_or_clear_cookies_at_any_time_and_configure_your_browser_to_block_them_'
+      )
+    },
+    {
+      title: t('copy.changes_to_this_policy'),
+      body: t(
+        'copy.we_may_update_this_policy_periodically_to_reflect_changes_in_how_we_use_cookies_we_re'
+      )
+    },
+    {
+      title: t('common.contact'),
+      body: (
+        <>
+          {t('copy.if_you_have_any_questions_about_this_policy_contact_us_at')}{' '}
+          <a className="text-primary font-medium hover:underline" href="mailto:info@nei-isep.org">
+            info@nei-isep.org
+          </a>
+          .
+        </>
+      )
+    }
+  ];
+
   return (
     <section className="container py-10 md:py-14 w-full max-w-3xl">
       <div className="mb-10">
         <Badge variant="soft" className="mb-3">
-          Cookies
+          {t('copy.cookies')}
         </Badge>
         <h1 className="text-balance text-3xl md:text-4xl font-bold tracking-tight">
-          Política de <span className="gradient-text">Cookies</span>
+          <span className="gradient-text">{t('policy.cookiesTitle')}</span>
         </h1>
         <p className="mt-3 text-muted-foreground">
-          Como utilizamos cookies em <span className="text-primary">antirecurso.nei-isep.org</span>.
+          {t('copy.how_we_use_cookies_on')}{' '}
+          <span className="text-primary">antirecurso.nei-isep.org</span>.
         </p>
       </div>
 
       <Card>
         <CardContent className="p-6 md:p-8 space-y-6 text-sm md:text-base leading-relaxed">
           <p>
-            Esta política explica como o website antirecurso.nei-isep.org utiliza cookies e
-            tecnologias similares para recolher e armazenar informação quando o visitas. Ao
-            continuares a usá-lo, concordas com o uso de cookies de acordo com esta política.
+            {t(
+              'copy.this_policy_explains_how_antirecurso_nei_isep_org_uses_cookies_and_similar_technologi'
+            )}
           </p>
           {sections.map((section) => (
             <article key={section.title}>

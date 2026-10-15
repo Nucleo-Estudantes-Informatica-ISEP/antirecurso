@@ -1,5 +1,7 @@
 'use client';
 
+import { useLanguage, useMessages } from '@/i18n/client';
+
 import moment from 'moment';
 import 'moment/locale/pt';
 import { useTheme } from 'next-themes';
@@ -20,6 +22,9 @@ import Note from '@/types/Note';
 import Pagination from '@/types/Pagination';
 
 const NotesPage: React.FC = () => {
+  const t = useMessages();
+  const lang = useLanguage();
+
   const { theme } = useTheme();
 
   const [subjects, setSubjects] = useState<InputSelectOption[]>();
@@ -35,11 +40,11 @@ const NotesPage: React.FC = () => {
         .sort((a, b) => a.label.localeCompare(b.label));
       setSubjects(options);
     } catch {
-      swal('Oops!', 'Não foi possível obter as disciplinas.', 'error', {
+      swal('Oops!', t('copy.could_not_retrieve_the_subjects'), 'error', {
         className: theme === 'dark' ? 'swal-dark' : ''
       });
     }
-  }, [theme]);
+  }, [theme, t]);
 
   useEffect(() => {
     getSubjects();
@@ -67,12 +72,12 @@ const NotesPage: React.FC = () => {
 
   const handleOpenPreview = async (id: number) => {
     try {
-      const url = await requestNoteVisit(id);
+      const url = await requestNoteVisit(id, lang);
       window.open(url, '_blank', 'noopener,noreferrer');
     } catch (error) {
       await swal(
-        'Erro',
-        error instanceof Error ? error.message : 'Não foi possível abrir a pré-visualização',
+        t('copy.error_2'),
+        error instanceof Error ? error.message : t('copy.could_not_open_the_preview'),
         'error'
       );
     }
@@ -85,10 +90,10 @@ const NotesPage: React.FC = () => {
 
   const handleDelete = async (note: Note) => {
     const confirmed = await swal({
-      title: 'Tens a certeza?',
+      title: t('copy.are_you_sure'),
       text: `Vais remover o resumo "${note.title}".`,
       icon: 'warning',
-      buttons: ['Cancelar', 'Remover'],
+      buttons: [t('copy.cancel'), t('copy.remove')],
       dangerMode: true,
       className: theme === 'dark' ? 'swal-dark' : ''
     });
@@ -98,28 +103,26 @@ const NotesPage: React.FC = () => {
     try {
       await apiRequest(`notes/${note.id}`, { authenticated: true, method: 'DELETE' });
     } catch {
-      return swal('Erro', 'Não foi possível remover o resumo.', 'error', {
+      return swal(t('copy.error_2'), t('copy.could_not_remove_the_study_notes'), 'error', {
         className: theme === 'dark' ? 'swal-dark' : ''
       });
     }
 
     await mutate();
 
-    swal('Sucesso', 'Resumo removido com sucesso.', 'success', {
+    swal(t('copy.success'), t('copy.study_notes_removed_successfully'), 'success', {
       className: theme === 'dark' ? 'swal-dark' : ''
     });
   };
 
-  moment.locale('pt');
-
   return (
     <>
       <div className="">
-        <h1 className="text-4xl font-bold mb-4">Resumos</h1>
+        <h1 className="text-4xl font-bold mb-4">{t('nav.notes')}</h1>
 
         <div className="bg-gray-100 dark:bg-gray-700 rounded-md p-4 shadow-md">
           <div className="flex items-center mb-4">
-            <span className="mr-2">Filtrar: </span>
+            <span className="mr-2">{t('copy.filter')} </span>
             {!subjects ? (
               <div>
                 <LoadingSpinner className="text-xl" />
@@ -127,7 +130,7 @@ const NotesPage: React.FC = () => {
             ) : (
               <div className="w-72 mr-4">
                 <SelectInput
-                  placeholder="Disciplina"
+                  placeholder={t('copy.subject_2')}
                   options={subjects}
                   className="flex w-full"
                   onChange={handleSubjectChange}
@@ -147,9 +150,9 @@ const NotesPage: React.FC = () => {
               <LoadingSpinner className="text-xl" />
             </div>
           ) : !selectedSubject ? (
-            <p>Seleciona uma disciplina.</p>
+            <p>{t('copy.select_a_subject')}</p>
           ) : !notes || !notes.meta.total ? (
-            <p>Não existem resumos para a disciplina selecionada.</p>
+            <p>{t('copy.no_study_notes_for_the_selected_subject')}</p>
           ) : (
             <>
               <div className="overflow-x-scroll">
@@ -157,22 +160,22 @@ const NotesPage: React.FC = () => {
                   <thead className="font-bold">
                     <tr>
                       <th className="p-3">
-                        <span>Título</span>
+                        <span>{t('copy.title')}</span>
                       </th>
                       <th className="p-3">
-                        <span>Autor</span>
+                        <span>{t('copy.author')}</span>
                       </th>
                       <th className="p-3">
-                        <span>Páginas</span>
+                        <span>{t('copy.pages')}</span>
                       </th>
                       <th className="p-3">
-                        <span>Likes</span>
+                        <span>{t('copy.likes')}</span>
                       </th>
                       <th className="p-3">
-                        <span>Views</span>
+                        <span>{t('copy.views')}</span>
                       </th>
                       <th className="p-3">
-                        <span>Criado</span>
+                        <span>{t('copy.created')}</span>
                       </th>
                       <th className="p-3"></th>
                       <th className="p-3"></th>
@@ -212,8 +215,8 @@ const NotesPage: React.FC = () => {
                           <span>{n.views}</span>
                         </th>
                         <th className="p-3">
-                          <span title={moment(n.created_at).format('LLLL')}>
-                            {moment(n.created_at).fromNow()}
+                          <span title={moment(n.created_at).locale(lang).format('LLLL')}>
+                            {moment(n.created_at).locale(lang).fromNow()}
                           </span>
                         </th>
                         <th>

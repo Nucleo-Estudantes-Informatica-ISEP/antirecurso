@@ -1,5 +1,7 @@
 'use client';
 
+import { useLanguage, useMessages } from '@/i18n/client';
+
 import LineChart from '@/components/charts/LineChart';
 import PieChart from '@/components/charts/PieChart';
 import GradeCalculatorContainer from '@/components/profile/GradeCalculatorContainer';
@@ -10,10 +12,10 @@ import { Skeleton } from '@/components/ui/skeleton';
 import useSession from '@/hooks/useSession';
 import { sanitizeMode } from '@/utils/sanitizeMode';
 import { Info, LineChart as LineChartIcon, Sparkles, Trophy } from 'lucide-react';
-import Link from 'next/link';
+import Link from '@/i18n/navigation';
 import { use, useEffect, useState } from 'react';
 import type { SubjectStats } from 'src/types/SubjectStats';
-import getSubjectNameById from 'src/utils/getSubjectNameById';
+import getSubjectNameById from '@/utils/getSubjectNameById';
 import { fetchSubjectStats, getSubjectStatsViewModel } from '@/services/subjectStats';
 import useSWR from 'swr';
 
@@ -24,6 +26,9 @@ interface SubjectStatsProps {
 }
 
 const SubjectStatsPage: React.FC<SubjectStatsProps> = ({ params }) => {
+  const t = useMessages();
+  const lang = useLanguage();
+
   const resolvedParams = use(params);
   const [subjectName, setSubjectName] = useState('');
   const { token } = useSession();
@@ -32,10 +37,10 @@ const SubjectStatsPage: React.FC<SubjectStatsProps> = ({ params }) => {
 
   const { data: subjectStats } = useSWR<SubjectStats>(
     token ? statsPath : null,
-    () => fetchSubjectStats(subjectId),
+    () => fetchSubjectStats(subjectId, lang),
     { revalidateOnFocus: false, keepPreviousData: true }
   );
-  const statsView = subjectStats ? getSubjectStatsViewModel(subjectStats) : null;
+  const statsView = subjectStats ? getSubjectStatsViewModel(subjectStats, lang) : null;
 
   useEffect(() => {
     async function fetchSubjectName() {
@@ -49,10 +54,11 @@ const SubjectStatsPage: React.FC<SubjectStatsProps> = ({ params }) => {
     <section className="container py-8 md:py-12 w-full max-w-7xl">
       <div className="flex flex-col items-center text-center mb-8">
         <Badge variant="soft" className="mb-3">
-          Estatísticas
+          {t('copy.statistics')}
         </Badge>
         <h1 className="text-balance text-3xl md:text-4xl font-bold tracking-tight">
-          As tuas estatísticas de <span className="gradient-text">{subjectName || '...'}</span>
+          {t('copy.your_statistics_for')}{' '}
+          <span className="gradient-text">{subjectName || '...'}</span>
         </h1>
       </div>
 
@@ -65,18 +71,19 @@ const SubjectStatsPage: React.FC<SubjectStatsProps> = ({ params }) => {
             </div>
             {subjectStats ? (
               <p className="text-sm md:text-base leading-relaxed">
-                Já respondeste a{' '}
+                {t('copy.you_have_completed')}{' '}
                 <span className="font-bold text-primary">{subjectStats.n_of_exams_taken}</span>{' '}
-                exames. Das{' '}
+                {t('copy.exams_of_the')}{' '}
                 <span className="font-bold text-primary">{subjectStats.total_of_questions}</span>{' '}
-                questões disponíveis respondeste a{' '}
-                <span className="font-bold text-primary">{statsView?.questionsSeen}</span>, ou seja{' '}
+                {t('copy.available_questions_you_have_answered')}{' '}
+                <span className="font-bold text-primary">{statsView?.questionsSeen}</span>
+                {t('copy.or')}{' '}
                 <span className="font-bold text-primary">
                   {statsView?.questionsSeenPercentage}%
                 </span>
-                . Demoras, em média,{' '}
-                <span className="font-bold text-primary">{statsView?.meanTimeLabel}</span> a
-                responder a um exame.
+                {t('copy.on_average_you_take')}{' '}
+                <span className="font-bold text-primary">{statsView?.meanTimeLabel}</span>{' '}
+                {t('copy.to_complete_an_exam')}
               </p>
             ) : (
               <Skeleton className="h-16 w-full" />
@@ -88,7 +95,7 @@ const SubjectStatsPage: React.FC<SubjectStatsProps> = ({ params }) => {
         <Card className="lg:col-span-3">
           <CardContent className="p-5 md:p-6 flex flex-col items-center justify-center">
             <p className="text-xs uppercase tracking-wider text-muted-foreground font-semibold mb-2">
-              Média global
+              {t('copy.overall_average')}
             </p>
             {subjectStats ? (
               <ScoreIndicator score={statsView?.averageGrade ?? 0} />
@@ -105,11 +112,11 @@ const SubjectStatsPage: React.FC<SubjectStatsProps> = ({ params }) => {
               <Trophy className="size-5" />
             </div>
             <p className="text-xs uppercase tracking-wider text-muted-foreground font-semibold">
-              Ranking
+              {t('copy.ranking')}
             </p>
             {subjectStats ? (
               subjectStats.place_in_scoreboard === null ? (
-                <span className="text-sm text-muted-foreground">Sem posição</span>
+                <span className="text-sm text-muted-foreground">{t('copy.not_ranked')}</span>
               ) : (
                 <span className="text-3xl md:text-4xl font-black text-primary">
                   #{subjectStats.place_in_scoreboard}
@@ -129,14 +136,14 @@ const SubjectStatsPage: React.FC<SubjectStatsProps> = ({ params }) => {
             </div>
             {subjectStats ? (
               <p className="text-sm md:text-base leading-relaxed">
-                Com base nos exames que respondeste, sugerimos-te que resolvas um exame do{' '}
+                {t('copy.based_on_your_completed_exams_we_suggest_trying')}{' '}
                 <Link
                   href={`/exams/${resolvedParams.id}/answer/${subjectStats.suggested_mode}`}
                   className="font-bold text-primary hover:underline"
                 >
-                  modo {sanitizeMode(subjectStats.suggested_mode)}
+                  {t('copy.mode')} {sanitizeMode(subjectStats.suggested_mode, lang)}
                 </Link>{' '}
-                para continuares a melhorar.
+                {t('copy.to_keep_improving')}
               </p>
             ) : (
               <Skeleton className="h-6 w-full" />
@@ -152,11 +159,11 @@ const SubjectStatsPage: React.FC<SubjectStatsProps> = ({ params }) => {
             <Card>
               <CardContent className="p-5 flex flex-col items-center gap-3">
                 <Badge variant="soft" className="self-stretch justify-center py-1.5">
-                  Número de exames
+                  {t('copy.number_of_exams')}
                 </Badge>
                 <PieChart
-                  labels={['Aprovado', 'Reprovado']}
-                  text="Nº de exames"
+                  labels={[t('copy.passed'), t('copy.failed')]}
+                  text={t('stats.examCount')}
                   backgroundColor={['rgba(34, 197, 94, 0.75)', 'rgba(239, 68, 68, 0.75)']}
                   borderColor={['rgba(34, 197, 94, 1)', 'rgba(239, 68, 68, 1)']}
                   data={[
@@ -170,11 +177,11 @@ const SubjectStatsPage: React.FC<SubjectStatsProps> = ({ params }) => {
             <Card>
               <CardContent className="p-5 flex flex-col items-center gap-3">
                 <Badge variant="soft" className="self-stretch justify-center py-1.5">
-                  Número de questões
+                  {t('copy.number_of_questions')}
                 </Badge>
                 <PieChart
-                  labels={['Corretas', 'Incorretas', 'Não respondidas']}
-                  text="Nº de questões"
+                  labels={[t('copy.correct'), t('stats.incorrectQuestions'), t('copy.unanswered')]}
+                  text={t('exam.questionCount')}
                   backgroundColor={[
                     'rgba(34, 197, 94, 0.75)',
                     'rgba(239, 68, 68, 0.75)',
@@ -193,12 +200,13 @@ const SubjectStatsPage: React.FC<SubjectStatsProps> = ({ params }) => {
             <Card>
               <CardContent className="p-5 flex flex-col items-center gap-3">
                 <Badge variant="soft" className="self-stretch justify-center py-1.5">
-                  Tipo de exame
+                  {t('copy.exam_type')}
                 </Badge>
                 <PieChart
                   labels={Object.keys(subjectStats.mode_scores).map(
                     (mode) =>
-                      sanitizeMode(mode).charAt(0).toUpperCase() + sanitizeMode(mode).slice(1)
+                      sanitizeMode(mode, lang).charAt(0).toUpperCase() +
+                      sanitizeMode(mode, lang).slice(1)
                   )}
                   backgroundColor={[
                     'rgba(211, 93, 25, 0.75)',
@@ -216,7 +224,7 @@ const SubjectStatsPage: React.FC<SubjectStatsProps> = ({ params }) => {
                     'rgba(234, 179, 8, 1)',
                     'rgba(20, 184, 166, 1)'
                   ]}
-                  text="Nº de exames"
+                  text={t('stats.examCount')}
                   data={Object.values(subjectStats.mode_scores)}
                 />
               </CardContent>
@@ -232,15 +240,15 @@ const SubjectStatsPage: React.FC<SubjectStatsProps> = ({ params }) => {
         <CardContent className="p-5 md:p-6">
           <div className="flex items-center gap-2 mb-4">
             <LineChartIcon className="size-5 text-primary" />
-            <h3 className="font-semibold">Evolução das tuas notas</h3>
+            <h3 className="font-semibold">{t('copy.your_grade_progression')}</h3>
           </div>
           {subjectStats ? (
             <div className="relative min-h-[300px] md:min-h-[400px]">
               <LineChart
                 labels={subjectStats.user_scores.map((score) =>
-                  new Date(score.created_at).toLocaleDateString('pt-PT')
+                  new Date(score.created_at).toLocaleDateString(lang === 'pt' ? 'pt-PT' : 'en-GB')
                 )}
-                text="Nota do exame"
+                text={t('stats.examGrade')}
                 data={subjectStats.user_scores.map((score) => (score.score * 20) / 100)}
               />
             </div>

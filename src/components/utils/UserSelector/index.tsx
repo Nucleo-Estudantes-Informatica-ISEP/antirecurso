@@ -1,5 +1,7 @@
 'use client';
 
+import { useMessages } from '@/i18n/client';
+
 import { MD5 } from 'crypto-js';
 import React, { Dispatch, SetStateAction, useState } from 'react';
 
@@ -20,6 +22,8 @@ interface UsersResponse {
 }
 
 const UserSelector: React.FC<UserSelectorProps> = ({ selected, setSelected }) => {
+  const t = useMessages();
+
   const [query, setQuery] = useState<string>('');
   const avatarFromEmail = (email?: string | null) => {
     const normalizedEmail = email?.trim().toLowerCase();
@@ -72,7 +76,7 @@ const UserSelector: React.FC<UserSelectorProps> = ({ selected, setSelected }) =>
             type="text"
             className="w-full px-1.5 md:px-4 py-2 rounded bg-transparent border"
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="Search"
+            placeholder={t('common.search')}
           />
           <div className="relative">
             {isLoading ? (
@@ -83,7 +87,7 @@ const UserSelector: React.FC<UserSelectorProps> = ({ selected, setSelected }) =>
               <div className="absolute bg-gray-200 dark:bg-gray-700 rounded-md drop-shadow-lg font-bold">
                 {users &&
                   (!users.length ? (
-                    <div className="w-52 px-4 py-2 text-center">No results.</div>
+                    <div className="w-52 px-4 py-2 text-center">{t('copy.no_results')}</div>
                   ) : (
                     users?.slice(0, 3).map((r: User) => (
                       <button

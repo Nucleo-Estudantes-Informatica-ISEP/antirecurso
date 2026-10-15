@@ -1,5 +1,7 @@
 'use client';
 
+import { useMessages } from '@/i18n/client';
+
 import { useCallback, useEffect, useRef, useState, useContext } from 'react';
 
 import swal from 'sweetalert';
@@ -27,6 +29,8 @@ export default function useAnswerableExamNavigation({
   filter?: string | null;
   handleConfirm: () => Promise<void>;
 }) {
+  const t = useMessages();
+
   const [answers, setAnswers] = useState<Map<number, string>>(new Map<number, string>());
   const [isSubmitting, setIsSubmitting] = useState(false);
   const submitRef = useRef<() => Promise<void>>(async () => {});
@@ -102,7 +106,7 @@ export default function useAnswerableExamNavigation({
             signal: controller.signal
           });
           if (!response.ok && response.status !== 409) {
-            await throwApiResponseError(response, 'Não foi possível guardar o estado do exame.');
+            await throwApiResponseError(response, t('copy.could_not_save_exam_progress'));
           }
         } catch (err) {
           if (!controller.signal.aborted) {
@@ -126,7 +130,8 @@ export default function useAnswerableExamNavigation({
     nOfQuestions,
     penalizingFactor,
     filter,
-    isSubmitting
+    isSubmitting,
+    t
   ]);
 
   const hasAnsweredAllQuestions = useCallback((): boolean => {
@@ -245,10 +250,10 @@ export default function useAnswerableExamNavigation({
 
       if (!hasAnsweredAllQuestions()) {
         const confirmed = await swal({
-          title: 'Não respondeste a todas as questões do exame.',
-          text: 'Tens a certeza que queres terminar o exame?',
+          title: t('copy.you_have_not_answered_all_exam_questions'),
+          text: t('copy.are_you_sure_you_want_to_finish_the_exam'),
           icon: 'warning',
-          buttons: ['Cancelar', 'Continuar'],
+          buttons: [t('copy.cancel'), t('common.continue')],
           className: theme === 'dark' ? 'swal-dark' : ''
         });
 
@@ -256,9 +261,9 @@ export default function useAnswerableExamNavigation({
       }
 
       const confirmed = await swal({
-        title: 'Tens a certeza que queres terminar o exame?',
+        title: t('copy.are_you_sure_you_want_to_finish_the_exam'),
         icon: 'warning',
-        buttons: ['Não', 'Sim'],
+        buttons: [t('common.no'), t('common.yes')],
         className: theme === 'dark' ? 'swal-dark' : ''
       });
 
@@ -272,7 +277,7 @@ export default function useAnswerableExamNavigation({
         setIsSubmitting(false);
       }
     },
-    [handleConfirm, hasAnsweredAllQuestions, removeEventListener, theme]
+    [handleConfirm, hasAnsweredAllQuestions, removeEventListener, theme, t]
   );
 
   useEffect(() => {

@@ -1,5 +1,7 @@
 'use client';
 
+import { useMessages } from '@/i18n/client';
+
 import '@/styles/scoreIndicator.css';
 import toFixed from '@/utils/toFixed';
 import { useEffect, useState } from 'react';
@@ -11,6 +13,8 @@ interface ScoreIndicatorProps {
 }
 
 const ScoreIndicator: React.FC<ScoreIndicatorProps> = ({ score, maxScore = 100, className }) => {
+  const t = useMessages();
+
   const val = (score / maxScore) * 100;
   const deg = (180 / 100) * val;
 
@@ -31,10 +35,10 @@ const ScoreIndicator: React.FC<ScoreIndicatorProps> = ({ score, maxScore = 100, 
       <div className="indicator">
         <span className="bar" style={{ transform: `rotate(${deg}deg)` }} />
         <span className="result">
-          <span>{scoreValue}</span> em <span>{maxScore}</span>
+          <span>{scoreValue}</span> {t('score.outOf')} <span>{maxScore}</span>
         </span>
         <span className="valores">
-          <span>{toFixed(scoreValue / 5, 1)}</span> valores
+          <span>{toFixed(scoreValue / 5, 1)}</span> {t('copy.points')}
         </span>
       </div>
     </div>

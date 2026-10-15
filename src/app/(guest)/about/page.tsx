@@ -1,54 +1,58 @@
+import { getMessages } from '@/i18n/server';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
 import { History, Info, Mail, ShieldCheck } from 'lucide-react';
 import { FaGithub } from 'react-icons/fa';
-import Link from 'next/link';
+import Link from '@/i18n/navigation';
 
-const links = [
-  {
-    icon: FaGithub,
-    title: 'Repositório Git',
-    description: 'AntiRecurso é open-source no GitHub do NEI-ISEP',
-    href: 'https://github.com/Nucleo-Estudantes-Informatica-ISEP/antirecurso',
-    external: true,
-    label: 'Abrir no GitHub'
-  },
-  {
-    icon: History,
-    title: 'Versões',
-    description: 'Vê todas as novidades e melhorias mais recentes',
-    href: '/changelog',
-    label: 'Ver changelog'
-  },
-  {
-    icon: ShieldCheck,
-    title: 'Política de privacidade',
-    description: 'Como tratamos e protegemos os teus dados',
-    href: '/privacy-policy',
-    label: 'Ler política'
-  },
-  {
-    icon: Info,
-    title: 'Política de cookies',
-    description: 'Como usamos cookies para a plataforma funcionar',
-    href: '/cookie-policy',
-    label: 'Ler política'
-  }
-];
+const About: React.FC = async () => {
+  const t = await getMessages();
 
-const About: React.FC = () => {
+  const links = [
+    {
+      icon: FaGithub,
+      title: t('copy.git_repository'),
+      description: t('copy.antirecurso_is_open_source_on_nei_isep_s_github'),
+      href: 'https://github.com/Nucleo-Estudantes-Informatica-ISEP/antirecurso',
+      external: true,
+      label: t('copy.open_on_github')
+    },
+    {
+      icon: History,
+      title: t('copy.versions'),
+      description: t('copy.see_the_latest_updates_and_improvements'),
+      href: '/changelog',
+      label: t('copy.view_changelog')
+    },
+    {
+      icon: ShieldCheck,
+      title: t('copy.privacy_policy'),
+      description: t('copy.how_we_process_and_protect_your_data'),
+      href: '/privacy-policy',
+      label: t('copy.read_policy')
+    },
+    {
+      icon: Info,
+      title: t('copy.cookie_policy'),
+      description: t('copy.how_we_use_cookies_to_run_the_platform'),
+      href: '/cookie-policy',
+      label: t('copy.read_policy')
+    }
+  ];
+
   return (
     <section className="container py-10 md:py-14 w-full max-w-4xl">
       <div className="flex flex-col items-center text-center mb-10">
         <Badge variant="soft" className="mb-3">
-          Sobre
+          {t('nav.about')}
         </Badge>
         <h1 className="text-balance text-3xl md:text-4xl font-bold tracking-tight">
-          Sobre o <span className="gradient-text">AntiRecurso</span>
+          {t('copy.about')} <span className="gradient-text">AntiRecurso</span>
         </h1>
         <p className="mt-3 max-w-2xl text-muted-foreground">
-          Uma plataforma desenvolvida pelo Núcleo de Estudantes de Informática do ISEP, feita por
-          estudantes para estudantes.
+          {t(
+            'copy.a_platform_developed_by_the_isep_computer_science_students_association_built_by_stude'
+          )}
         </p>
       </div>
 
@@ -87,12 +91,11 @@ const About: React.FC = () => {
           </div>
           <div>
             <h3 className="text-xl md:text-2xl font-bold">
-              Encontraste algum <span className="text-primary">erro</span> ou queres enviar uma
-              resolução?
+              {t('copy.found_an')} <span className="text-primary">{t('copy.error')}</span>{' '}
+              {t('copy.or_want_to_share_a_solution')}
             </h3>
             <p className="mt-2 text-sm text-muted-foreground max-w-xl">
-              Estamos à distância de um email. Conta-nos como podes ajudar a melhorar a
-              plataforma.
+              {t('copy.we_are_an_email_away_tell_us_how_you_can_help_improve_the_platform')}
             </p>
           </div>
           <a
