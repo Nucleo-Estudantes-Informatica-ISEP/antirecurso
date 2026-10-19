@@ -65,21 +65,21 @@
     "@types/react": "19.3.0",
     "@types/react-dom": "19.3.0",
     "@types/regression": "^2.0.6",
-    "@typescript-eslint/eslint-plugin": "^8.71.1",
-    "@typescript-eslint/parser": "^8.71.1",
+    "@typescript-eslint/eslint-plugin": "^8.71.2",
+    "@typescript-eslint/parser": "^8.71.2",
     "color": "^5.0.3",
     "crypto-js": "^4.2.0",
     "eslint": "^9.39.4",
-    "eslint-config-next": "16.4.0",
+    "eslint-config-next": "16.4.2",
     "eslint-config-prettier": "^10.1.8",
-    "eslint-plugin-prettier": "^5.5.6",
+    "eslint-plugin-prettier": "^5.5.7",
     "happy-dom": "^20.14.6",
     "moment": "^2.31.0",
     "pdf-lib": "^1.17.1",
     "prettier": "^3.9.10",
     "sharp": "^0.35.5",
     "swr": "^2.5.1",
-    "vitest": "^5.0.3"
+    "vitest": "^5.0.5"
   },
   "packageManager": "pnpm@12.6.0+sha512.3ef68f951cb111ac204b4a5a16f0b2ddf0da56a96e0413e81d855d9f0b55ef926714709028e1cd00c405c2c5fb7b9e8ec4dc46777c805d0373c2f2ff00fd20ec"
 }
