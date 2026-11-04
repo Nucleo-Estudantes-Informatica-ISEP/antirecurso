@@ -1,16 +1,14 @@
 import type { MetadataRoute } from 'next';
-import { languages } from '@/i18n/translations';
-import { getSiteUrl, privatePathPatterns } from '@/lib/seo';
+import { crawlerBlockedPaths, getSiteUrl } from '@/lib/seo';
 
 export const dynamic = 'force-dynamic';
 
+// Private pages are not disallowed here: they carry X-Robots-Tag noindex, which
+// crawlers can only honour if they are allowed to fetch them.
 export default function robots(): MetadataRoute.Robots {
   const siteUrl = getSiteUrl();
-  const disallow = privatePathPatterns.flatMap((path) =>
-    path === '/api' ? [path] : [path, ...languages.map((lang) => `/${lang}${path}`)]
-  );
   return {
-    rules: { userAgent: '*', allow: '/', disallow },
+    rules: { userAgent: '*', allow: '/', disallow: [...crawlerBlockedPaths] },
     sitemap: `${siteUrl}/sitemap.xml`,
     host: siteUrl
   };

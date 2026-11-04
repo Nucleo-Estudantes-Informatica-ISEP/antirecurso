@@ -21,9 +21,15 @@ export const indexablePaths = [
   '/cookie-policy'
 ] as const;
 
-/** Bare path prefixes that must not be crawled or indexed (auth, account, admin, API, sessions). */
-export const privatePathPatterns = [
-  '/api',
+/** Non-page paths that crawlers should not request at all. */
+export const crawlerBlockedPaths = ['/api'] as const;
+
+/**
+ * Bare page prefixes served with `X-Robots-Tag: noindex` (see next.config.js).
+ * They must stay crawlable: a robots.txt Disallow would hide that header and
+ * keep already-discovered URLs in search results. Access control is separate.
+ */
+export const noindexPathPrefixes = [
   '/admin',
   '/login',
   '/register',

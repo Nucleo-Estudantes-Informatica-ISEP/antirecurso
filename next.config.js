@@ -5,7 +5,8 @@ const nextConfig = {
     NEXT_PUBLIC_BASE_URL: process.env.NEXT_PUBLIC_BASE_URL
   },
   async headers() {
-    // Account, admin and exam-session pages are never indexed (robots.txt alone does not de-index).
+    // Account, admin and exam-session pages are never indexed. Keep this list in sync with
+    // noindexPathPrefixes in src/lib/seo.ts; robots.txt must not disallow them.
     const sources = [
       'login',
       'register',

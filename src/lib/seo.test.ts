@@ -3,7 +3,7 @@ import {
   buildMetadata,
   getSiteUrl,
   indexablePaths,
-  privatePathPatterns,
+  noindexPathPrefixes,
   sitemapEntries
 } from './seo';
 
@@ -49,10 +49,10 @@ describe('seo', () => {
     expect(entries.some((e) => /admin|login|profile|api/.test(e.url))).toBe(false);
   });
 
-  it('keeps account, admin and exam-session pages out of the public surface', () => {
-    for (const p of ['/admin', '/login', '/profile', '/api']) {
-      expect(privatePathPatterns.some((x) => x.startsWith(p))).toBe(true);
+  it('keeps account and admin pages out of the sitemap and marks them noindex', () => {
+    for (const p of ['/admin', '/login', '/profile']) {
+      expect(noindexPathPrefixes).toContain(p);
+      expect(indexablePaths).not.toContain(p);
     }
-    expect(indexablePaths).not.toContain('/profile');
   });
 });
