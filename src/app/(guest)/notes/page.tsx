@@ -6,8 +6,11 @@ import { getAppAuthSession } from '@/lib/server-auth';
 import { fetchSubjects } from '@/services/fetchSubjects';
 import { ArrowRight, BookText, Lock, Mail } from 'lucide-react';
 import Link from '@/i18n/navigation';
+import { pageMetadata } from '@/lib/page-metadata';
 
 export const dynamic = 'force-dynamic';
+
+export const generateMetadata = () => pageMetadata('/notes', 'nav.notes', 'seo.notesDescription');
 
 const Notes: React.FC = async () => {
   const t = await getMessages();

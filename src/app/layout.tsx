@@ -7,11 +7,15 @@ import { AuthContextProvider } from '@/contexts/AuthContext';
 import '@/styles/globals.css';
 import { Suspense } from 'react';
 import { Inter } from 'next/font/google';
+import type { Metadata } from 'next';
+import { getSiteUrl } from '@/lib/seo';
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-sans' });
 
-export const metadata = {
-  title: 'AntiRecurso',
+export const metadata: Metadata = {
+  metadataBase: new URL(getSiteUrl()),
+  applicationName: 'AntiRecurso',
+  title: { default: 'AntiRecurso', template: '%s | AntiRecurso' },
   description: 'AntiRecurso | NEI-ISEP'
 };
 

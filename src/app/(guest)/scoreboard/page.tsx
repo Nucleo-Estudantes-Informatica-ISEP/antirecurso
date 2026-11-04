@@ -4,8 +4,12 @@ import { Card, CardContent } from '@/components/ui/card';
 import { fetchSubjectsWithQuestions } from '@/services/fetchSubjects';
 import { ArrowRight, Trophy } from 'lucide-react';
 import Link from '@/i18n/navigation';
+import { pageMetadata } from '@/lib/page-metadata';
 
 export const dynamic = 'force-dynamic';
+
+export const generateMetadata = () =>
+  pageMetadata('/scoreboard', 'nav.scoreboard', 'seo.scoreboardDescription');
 
 const Scoreboard: React.FC = async () => {
   const t = await getMessages();

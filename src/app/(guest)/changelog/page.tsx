@@ -2,6 +2,10 @@ import { getMessages } from '@/i18n/server';
 import ChangelogVersion from '@/components/changelog/ChangelogVersion';
 import { Badge } from '@/components/ui/badge';
 import Link from '@/i18n/navigation';
+import { pageMetadata } from '@/lib/page-metadata';
+
+export const generateMetadata = () =>
+  pageMetadata('/changelog', 'copy.versions', 'seo.changelogDescription');
 
 const Changelog: React.FC = async () => {
   const t = await getMessages();
