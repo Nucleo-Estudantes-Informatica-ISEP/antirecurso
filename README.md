@@ -64,7 +64,7 @@ These endpoints intentionally return `410 Gone` and direct users to the hosted A
 ```text
 .
 ├── assets/                 Legacy README screenshots and static media
-├── public/                 Favicons, logos, images, manifest, robots.txt
+├── public/                 Favicons, logos, images, manifest
 ├── scripts/                Utility scripts
 ├── src/
 │   ├── app/                App Router pages, layouts, route handlers
@@ -246,6 +246,30 @@ If you deploy behind a reverse proxy or managed platform, ensure:
 - `AUTH_POST_LOGOUT_REDIRECT_URI` matches the deployed frontend URL
 
 GitHub CI does not itself deploy. It requires a frozen install, lint, typecheck, tests, production and Docker builds, production dependency audit, and Gitleaks. After a reviewed merge, verify the deployed commit in the hosting control plane and smoke the root plus login/refresh/logout and the affected exam flow. When a web change depends on the Adonis API, deploy the API and its migrations first.
+
+### SEO release verification
+
+Before deploying the reviewed release, set the frontend's runtime `NEXTAUTH_URL`
+to `https://antirecurso.nei-isep.org` in Coolify. Use the corresponding public origin
+for staging. Keep locale prefixes (`/pt`, `/en`) and backend paths out of this value.
+Compose can derive it from `SERVICE_URL_WEB` when no explicit override is set;
+an explicit `NEXTAUTH_URL` takes precedence.
+
+After deployment, record the successful deployment's full commit SHA in Coolify
+and confirm it contains the reviewed SEO changes. Then check the public responses:
+
+- `/pt` and `/en/exams`: canonical URLs use the deployed frontend origin and the
+  matching locale; language alternates include `pt`, `en` and `x-default`.
+- `/sitemap.xml`: returns XML with both locales for the public pages and language
+  alternates; every URL uses the deployed frontend origin, with no localhost URLs.
+- `/robots.txt`: disallows `/api`, allows crawling public and noindex pages, and
+  advertises the deployed frontend's `/sitemap.xml`.
+- `/en/login`: returns `X-Robots-Tag: noindex, nofollow`. Public pages such as `/pt`
+  and `/en/exams` must not return that header.
+
+CI and local smoke checks do not establish that a release is deployed. A missing
+sitemap or locale route on an older deployed revision leaves these checks pending
+until the reviewed release reaches that environment.
 
 For regressions, prefer TDD: add a focused failing test, implement the smallest correction, then refactor with the suite green. See [`AGENTS.md`](AGENTS.md) for the required workflow.
 
