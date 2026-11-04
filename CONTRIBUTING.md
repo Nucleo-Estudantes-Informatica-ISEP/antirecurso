@@ -1,7 +1,7 @@
 # Contributing to AntiRecurso
 
-Follow the [NEI-ISEP contribution guide](https://github.com/Nucleo-Estudantes-Informatica-ISEP/.github/blob/main/CONTRIBUTING.md)
-and [Code of Conduct](https://github.com/Nucleo-Estudantes-Informatica-ISEP/.github/blob/main/CODE_OF_CONDUCT.md).
+Follow the [NEI-ISEP contribution guide](https://github.com/Nucleo-Estudantes-Informatica-ISEP/.github/blob/master/CONTRIBUTING.md)
+and [Code of Conduct](https://github.com/Nucleo-Estudantes-Informatica-ISEP/.github/blob/master/CODE_OF_CONDUCT.md).
 The project-specific workflow is defined in [AGENTS.md](AGENTS.md); local setup and
 deployment guidance are in [README.md](README.md).
 
