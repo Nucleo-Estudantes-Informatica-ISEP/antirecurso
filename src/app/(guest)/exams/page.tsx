@@ -4,8 +4,11 @@ import { Card, CardContent } from '@/components/ui/card';
 import { fetchSubjectsWithQuestions } from '@/services/fetchSubjects';
 import { ArrowRight, BookOpen } from 'lucide-react';
 import Link from '@/i18n/navigation';
+import { pageMetadata } from '@/lib/page-metadata';
 
 export const dynamic = 'force-dynamic';
+
+export const generateMetadata = () => pageMetadata('/exams', 'nav.exams', 'seo.examsDescription');
 
 const Exams: React.FC = async () => {
   const t = await getMessages();

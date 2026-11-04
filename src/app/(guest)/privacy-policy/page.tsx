@@ -1,6 +1,10 @@
 import { getMessages } from '@/i18n/server';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
+import { pageMetadata } from '@/lib/page-metadata';
+
+export const generateMetadata = () =>
+  pageMetadata('/privacy-policy', 'policy.privacyTitle', 'seo.privacyDescription');
 
 const PrivacyPolicy: React.FC = async () => {
   const t = await getMessages();

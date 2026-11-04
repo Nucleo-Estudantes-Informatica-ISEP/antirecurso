@@ -4,6 +4,9 @@ import { Card, CardContent } from '@/components/ui/card';
 import { History, Info, Mail, ShieldCheck } from 'lucide-react';
 import { FaGithub } from 'react-icons/fa';
 import Link from '@/i18n/navigation';
+import { pageMetadata } from '@/lib/page-metadata';
+
+export const generateMetadata = () => pageMetadata('/about', 'nav.about', 'seo.aboutDescription');
 
 const About: React.FC = async () => {
   const t = await getMessages();

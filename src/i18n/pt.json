@@ -511,5 +511,14 @@
   "home.questionCount": "+3.500",
   "image.isepBuilding": "Edifício do ISEP",
   "policy.privacyTitle": "Política de Privacidade",
-  "policy.cookiesTitle": "Política de Cookies"
+  "policy.cookiesTitle": "Política de Cookies",
+  "seo.siteTitle": "AntiRecurso — exames de treino do DEI-ISEP",
+  "seo.siteDescription": "Exames de treino, resumos partilhados e ranking para as unidades curriculares do DEI-ISEP, feitos pelo NEI-ISEP.",
+  "seo.examsDescription": "Pratica com exames aleatórios, realistas ou com perguntas novas das unidades curriculares do DEI-ISEP.",
+  "seo.scoreboardDescription": "Compete com os teus colegas e sobe no ranking de cada unidade curricular do DEI-ISEP.",
+  "seo.notesDescription": "Resumos de estudo preparados por colegas para as unidades curriculares do DEI-ISEP.",
+  "seo.aboutDescription": "Conhece o AntiRecurso, o projeto open source do NEI-ISEP para ajudar a passar às cadeiras à primeira.",
+  "seo.changelogDescription": "Histórico de versões e melhorias do AntiRecurso.",
+  "seo.privacyDescription": "Como o AntiRecurso trata e protege os teus dados pessoais.",
+  "seo.cookiesDescription": "Que cookies o AntiRecurso utiliza e como os podes gerir."
 }

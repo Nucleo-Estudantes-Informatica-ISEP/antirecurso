@@ -511,5 +511,14 @@
   "home.questionCount": "+3,500",
   "image.isepBuilding": "ISEP building",
   "policy.privacyTitle": "Privacy policy",
-  "policy.cookiesTitle": "Cookie policy"
+  "policy.cookiesTitle": "Cookie policy",
+  "seo.siteTitle": "AntiRecurso — practice exams for DEI-ISEP",
+  "seo.siteDescription": "Practice exams, shared study notes and a leaderboard for DEI-ISEP subjects, built by NEI-ISEP.",
+  "seo.examsDescription": "Practice with random, realistic or new-question exams for DEI-ISEP subjects.",
+  "seo.scoreboardDescription": "Compete with your classmates and climb the rankings for each DEI-ISEP subject.",
+  "seo.notesDescription": "Study notes prepared by classmates for DEI-ISEP subjects.",
+  "seo.aboutDescription": "Learn about AntiRecurso, the open-source NEI-ISEP project that helps you pass every subject the first time.",
+  "seo.changelogDescription": "Version history and improvements of AntiRecurso.",
+  "seo.privacyDescription": "How AntiRecurso processes and protects your personal data.",
+  "seo.cookiesDescription": "Which cookies AntiRecurso uses and how you can manage them."
 }
