@@ -113,7 +113,7 @@ const NoteCard: React.FC<NoteCardParams> = ({ note }) => {
               </Avatar>
               <span className="text-xs font-medium truncate">
                 {note.user.name}
-                {note.user.email === user?.email && (
+                {note.user.id === user?.id && (
                   <span className="text-muted-foreground"> {t('copy.you')}</span>
                 )}
               </span>
