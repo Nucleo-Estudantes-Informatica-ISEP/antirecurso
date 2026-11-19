@@ -29,7 +29,7 @@ This repository is a frontend application, not the full AntiRecurso platform.
 - The UI is rendered by Next.js in [`src/app`](src/app/).
 - Authentication is handled through NextAuth in [`src/lib/auth.ts`](src/lib/auth.ts) with a hosted Zitadel/AuthNEI login flow.
 - Business data such as users, subjects, exams, scores, notes, and admin stats comes from an external backend API defined by `NEXT_PUBLIC_BASE_URL`.
-- Authenticated requests can be proxied through `src/app/api/backend/[...path]/route.ts`, which forwards the logged-in user's access token to the upstream backend.
+- Authenticated browser requests use [`/api/protected`](src/app/api/protected/), which forwards the signed-in user's access token to Adonis. Coolify routes `/api/backend` to Adonis at the ingress.
 - Admin routes are guarded by [`src/proxy.ts`](src/proxy.ts), which checks the session token and validates backend admin access before allowing the request through.
 
 ### Main Route Groups
@@ -204,9 +204,9 @@ The app uses a JWT session strategy:
 - NextAuth stores the upstream access token and ID token in its JWT
 - server helpers in [`src/lib/server-auth.ts`](src/lib/server-auth.ts) read those tokens from cookies
 - authenticated server components fetch user data from the backend before rendering
-- the `/api/backend/*` proxy forwards the bearer token to the upstream API
-- expired access tokens are refreshed through a single in-flight request so concurrent server calls do not race
-- rotated session cookies are persisted, and an invalid refresh clears the session instead of looping
+- `/api/protected/*` attaches the provider access token on the server. `/api/public/*` forwards requests without credentials.
+- concurrent refreshes are deduplicated within each web process while the refresh is in flight
+- writable requests persist refreshed session cookies. A failed refresh marks the session expired and protected requests reject it.
 
 ### Theming and Global UX
 
@@ -226,7 +226,7 @@ The committed `Dockerfile` and `compose.yml` support Coolify deployment. Docker 
 For production you need:
 
 - a Node-compatible host capable of running `next build` and `next start`
-- all auth-related environment variables
+- all auth-related environment variables, including a unique `AUTH_SECRET` or the Coolify-generated `SERVICE_REALBASE64_64_AUTH`
 - a reachable backend API URL for `NEXT_PUBLIC_BASE_URL`
 - a correctly configured callback and logout setup in Zitadel/AuthNEI
 
