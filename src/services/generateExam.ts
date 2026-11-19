@@ -24,7 +24,7 @@ const generateExam = async (
 
   return apiRequest<Question[]>(path, {
     authenticated: Boolean(token),
-    method: 'GET',
+    method: token ? 'POST' : 'GET',
     errorMessage: translate(lang)('error.loadExam')
   });
 };

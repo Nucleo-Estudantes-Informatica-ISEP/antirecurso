@@ -2,8 +2,7 @@
 
 import { useMessages } from '@/i18n/client';
 
-import { MD5 } from 'crypto-js';
-import React, { Dispatch, SetStateAction, useState } from 'react';
+import React, { useState } from 'react';
 
 import { PROTECTED_API_BASE_URL } from '@/services/api';
 import { apiRequest } from '@/services/apiClient';
@@ -12,9 +11,11 @@ import Image from 'next/image';
 import useSWR from 'swr';
 import LoadingSpinner from '../LoadingSpinner';
 
+type SelectedUser = Pick<User, 'id' | 'name' | 'avatar'>;
+
 interface UserSelectorProps {
-  selected: User | null;
-  setSelected: Dispatch<SetStateAction<User | null>>;
+  selected: SelectedUser | null;
+  setSelected: (user: SelectedUser | null) => void;
 }
 
 interface UsersResponse {
@@ -25,11 +26,6 @@ const UserSelector: React.FC<UserSelectorProps> = ({ selected, setSelected }) =>
   const t = useMessages();
 
   const [query, setQuery] = useState<string>('');
-  const avatarFromEmail = (email?: string | null) => {
-    const normalizedEmail = email?.trim().toLowerCase();
-    return MD5(normalizedEmail || 'unknown-user').toString();
-  };
-
   const fetcher = (url: string) => {
     return apiRequest<UsersResponse>(url.toString(), { authenticated: true });
   };
@@ -59,7 +55,7 @@ const UserSelector: React.FC<UserSelectorProps> = ({ selected, setSelected }) =>
       {selected ? (
         <div className="flex items-center gap-2 px-4 w-full font-bold">
           <Image
-            src={`https://gravatar.com/avatar/${avatarFromEmail(selected.email)}?s=256&d=identicon`}
+            src={`https://gravatar.com/avatar/${selected.avatar}?s=256&d=identicon`}
             alt={selected.name}
             width={32}
             height={32}
@@ -96,7 +92,7 @@ const UserSelector: React.FC<UserSelectorProps> = ({ selected, setSelected }) =>
                         onClick={() => handleSelectUser(r)}
                       >
                         <Image
-                          src={`https://gravatar.com/avatar/${avatarFromEmail(r.email)}?s=256&d=identicon`}
+                          src={`https://gravatar.com/avatar/${r.avatar}?s=256&d=identicon`}
                           alt={r.name}
                           width={32}
                           height={32}

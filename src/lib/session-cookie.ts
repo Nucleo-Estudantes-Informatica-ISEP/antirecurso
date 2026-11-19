@@ -1,3 +1,38 @@
+import { getToken } from 'next-auth/jwt';
+
+type CookieSnapshot = { name: string; value: string }[];
+
+export function getSessionCookieConfig() {
+  const secureCookie =
+    process.env.NODE_ENV === 'production' ||
+    Boolean(process.env.NEXTAUTH_URL?.startsWith('https://'));
+  return {
+    secureCookie,
+    cookieName: secureCookie ? '__Secure-next-auth.session-token' : 'next-auth.session-token'
+  };
+}
+
+export function readSessionToken(cookies: CookieSnapshot) {
+  const { cookieName, secureCookie } = getSessionCookieConfig();
+  const secret = process.env.AUTH_SECRET;
+  const sessionCookies = cookies.filter(
+    ({ name }) =>
+      name === cookieName ||
+      /^\d+$/.test(name.startsWith(`${cookieName}.`) ? name.slice(cookieName.length + 1) : '')
+  );
+  if (!secret || !sessionCookies.length) return null;
+
+  return getToken({
+    req: {
+      cookies: Object.fromEntries(sessionCookies.map(({ name, value }) => [name, value])),
+      headers: {}
+    } as Parameters<typeof getToken>[0]['req'],
+    secret,
+    cookieName,
+    secureCookie
+  });
+}
+
 const SESSION_COOKIE_CHUNK_SIZE = 3933;
 
 export type SessionCookieUpdate = {

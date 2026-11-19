@@ -46,6 +46,16 @@ describe('API client', () => {
     expect(String(url)).toMatch(/\/user$/);
     expect(String(url)).not.toContain('/api/protected/');
     expect((init?.headers as Headers).get('authorization')).toBe('Bearer authnei-token');
+    expect(init?.redirect).toBe('error');
+  });
+
+  it('rejects a complete URL for a server bearer request', async () => {
+    const fetchMock = vi.fn<typeof fetch>();
+
+    await expect(
+      apiFetch('https://example.test/user', { accessToken: 'fixture' }, fetchMock)
+    ).rejects.toThrow('Invalid backend path');
+    expect(fetchMock).not.toHaveBeenCalled();
   });
 
   it.each([401, 403, 503])('preserves HTTP %s error details', async (status) => {

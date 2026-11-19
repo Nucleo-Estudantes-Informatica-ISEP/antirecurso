@@ -13,7 +13,7 @@ services:
       NEXTAUTH_URL: ${NEXTAUTH_URL:-${SERVICE_URL_WEB:-http://localhost:3000}}
       AUTH_POST_LOGOUT_REDIRECT_URI: ${AUTH_POST_LOGOUT_REDIRECT_URI:-${SERVICE_URL_WEB:-http://localhost:3000}}
 
-      AUTH_SECRET: ${AUTH_SECRET:-${SERVICE_REALBASE64_64_AUTH:-development-only-antirecurso-auth-secret-change-me}}
+      AUTH_SECRET: ${AUTH_SECRET:-${SERVICE_REALBASE64_64_AUTH:?Configure AUTH_SECRET or the Coolify-generated secret}}
       AUTH_ISSUER_URL: ${AUTH_ISSUER_URL:-https://auth.nei-isep.org}
       AUTH_CLIENT_ID: ${AUTH_CLIENT_ID:?Configure AUTH_CLIENT_ID in Coolify}
       AUTH_CLIENT_SECRET: ${AUTH_CLIENT_SECRET:?Configure AUTH_CLIENT_SECRET in Coolify}

@@ -6,7 +6,7 @@ export default interface Note {
   title: string;
   url: string | null;
   views: number;
-  user: User;
+  user: Pick<User, 'id' | 'name' | 'avatar'>;
   subject: Subject;
   description?: string;
   n_pages?: number;

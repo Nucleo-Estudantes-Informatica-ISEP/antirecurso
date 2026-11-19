@@ -18,6 +18,7 @@ describe('exam generation request path', () => {
       expect(String(url)).toMatch(new RegExp(`^/api/protected/exams/generate/17\\?mode=${mode}`));
       expect(new Headers(init?.headers).has('authorization')).toBe(false);
       expect(init?.credentials).toBe('same-origin');
+      expect(init?.method).toBe('POST');
     }
   );
 
@@ -32,6 +33,7 @@ describe('exam generation request path', () => {
       expect(fetchMock).toHaveBeenCalledOnce();
       const [url, init] = fetchMock.mock.calls[0];
       expect(String(url)).toBe(`${BASE_URL}/exams/generate/17?mode=${mode}`);
+      expect(init?.method).toBe('GET');
       expect(new Headers(init?.headers).has('authorization')).toBe(false);
     }
   );

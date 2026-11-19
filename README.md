@@ -29,7 +29,7 @@ This repository is a frontend application, not the full AntiRecurso platform.
 - The UI is rendered by Next.js in [`src/app`](src/app/).
 - Authentication is handled through NextAuth in [`src/lib/auth.ts`](src/lib/auth.ts) with a hosted Zitadel/AuthNEI login flow.
 - Business data such as users, subjects, exams, scores, notes, and admin stats comes from an external backend API defined by `NEXT_PUBLIC_BASE_URL`.
-- Authenticated requests can be proxied through `src/app/api/backend/[...path]/route.ts`, which forwards the logged-in user's access token to the upstream backend.
+- Authenticated browser requests use [`/api/protected`](src/app/api/protected/), which forwards the signed-in user's access token to Adonis. Coolify routes `/api/backend` to Adonis at the ingress.
 - Admin routes are guarded by [`src/proxy.ts`](src/proxy.ts), which checks the session token and validates backend admin access before allowing the request through.
 
 ### Main Route Groups
@@ -201,12 +201,14 @@ Without a reachable backend and valid auth configuration, the app will render in
 
 The app uses a JWT session strategy:
 
-- NextAuth stores the upstream access token and ID token in its JWT
+- NextAuth stores provider access and refresh tokens in its encrypted JWT. Deployments use Secure session cookies over HTTPS.
 - server helpers in [`src/lib/server-auth.ts`](src/lib/server-auth.ts) read those tokens from cookies
 - authenticated server components fetch user data from the backend before rendering
-- the `/api/backend/*` proxy forwards the bearer token to the upstream API
-- expired access tokens are refreshed through a single in-flight request so concurrent server calls do not race
-- rotated session cookies are persisted, and an invalid refresh clears the session instead of looping
+- `/api/protected/*` attaches the provider access token on the server and checks `Origin` against `NEXTAUTH_URL` for mutations. Signed-in exam generation uses POST. `/api/public/*` forwards requests without credentials.
+- The proxy streams request bodies with a 1 MiB limit for normal bodies and a 64 MiB limit for authenticated PDF uploads with a declared length.
+- Logout requests revocation in Adonis and AuthNEI before NextAuth clears its cookie. The browser receives a non-cacheable provider end-session URL with the registered client ID and redirect URI.
+- concurrent refreshes are deduplicated within each web process while the refresh is in flight
+- writable requests persist refreshed session cookies. A failed refresh marks the session expired and protected requests reject it.
 
 ### Theming and Global UX
 
@@ -226,7 +228,7 @@ The committed `Dockerfile` and `compose.yml` support Coolify deployment. Docker 
 For production you need:
 
 - a Node-compatible host capable of running `next build` and `next start`
-- all auth-related environment variables
+- all auth-related environment variables, including a unique `AUTH_SECRET` or the Coolify-generated `SERVICE_REALBASE64_64_AUTH`
 - a reachable backend API URL for `NEXT_PUBLIC_BASE_URL`
 - a correctly configured callback and logout setup in Zitadel/AuthNEI
 
@@ -245,7 +247,7 @@ If you deploy behind a reverse proxy or managed platform, ensure:
 - your auth issuer accepts the production callback URL
 - `AUTH_POST_LOGOUT_REDIRECT_URI` matches the deployed frontend URL
 
-GitHub CI does not itself deploy. It requires a frozen install, lint, typecheck, tests, production and Docker builds, production dependency audit, and Gitleaks. After a reviewed merge, verify the deployed commit in the hosting control plane and smoke the root plus login/refresh/logout and the affected exam flow. When a web change depends on the Adonis API, deploy the API and its migrations first.
+GitHub CI does not itself deploy. It requires a frozen install, lint, typecheck, tests, production and Docker builds, production dependency audit, and Gitleaks. After a reviewed merge, verify the deployed commit in the hosting control plane and smoke the root plus login/refresh/logout and the affected exam flow. When a web change depends on the Adonis API, deploy the API and its migrations first. With a disposable staging account, verify that logout invalidates the current bearer, clears the web session and ends the AuthNEI browser session. Check application logs for an incomplete revocation signal without collecting credentials.
 
 ### SEO release verification
 

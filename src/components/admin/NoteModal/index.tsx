@@ -19,7 +19,6 @@ import { Pdf } from '@/styles/Icons';
 import Note from '@/types/Note';
 import Pagination from '@/types/Pagination';
 import { UploadedFile } from '@/types/UploadedFile';
-import User from '@/types/User';
 import { readFile } from '@/utils/files';
 import LoadingSpinner from '../../utils/LoadingSpinner';
 
@@ -45,7 +44,7 @@ const NoteModal: React.FC<ModalProps> = ({ setIsVisible, subjects, mutate, edit,
   const [isFileLoading, setIsFileLoading] = useState(false);
   const [uploadedFile, setUploadedFile] = useState<UploadedFile>();
 
-  const [author, setAuthor] = useState<User | null>(null);
+  const [author, setAuthor] = useState<Note['user'] | null>(null);
 
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 

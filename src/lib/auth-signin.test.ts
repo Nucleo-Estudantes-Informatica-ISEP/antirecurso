@@ -51,6 +51,8 @@ describe('ZITADEL sign-in verification', () => {
     await expect(signIn(signInInput())).resolves.toBe(true);
     expect(fetchMock).toHaveBeenCalledWith(expect.stringMatching(/\/oidc\/v1\/userinfo$/), {
       method: 'GET',
+      redirect: 'error',
+      signal: expect.any(AbortSignal),
       headers: {
         Accept: 'application/json',
         Authorization: 'Bearer access-token'
