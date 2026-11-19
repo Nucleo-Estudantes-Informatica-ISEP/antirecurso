@@ -1,3 +1,4 @@
+import { resolveBackendUrl } from '@/lib/backend-url';
 import { BASE_URL, PROTECTED_API_BASE_URL, SERVER_API_BASE_URL } from './api';
 
 type ApiRequestOptions = Omit<RequestInit, 'body'> & {
@@ -60,11 +61,18 @@ export async function apiFetch(
       ? PROTECTED_API_BASE_URL
       : BASE_URL;
 
-  return fetchImpl(resolveApiUrl(path, baseUrl), {
+  const target = accessToken
+    ? resolveBackendUrl(baseUrl, path).toString()
+    : resolveApiUrl(path, baseUrl);
+  return fetchImpl(target, {
     ...init,
     headers,
     body: json === undefined ? body : JSON.stringify(json),
-    ...(authenticated && !accessToken ? { credentials: 'same-origin' as const } : {})
+    ...(accessToken
+      ? { redirect: 'error' as const }
+      : authenticated
+        ? { credentials: 'same-origin' as const }
+        : {})
   });
 }
 

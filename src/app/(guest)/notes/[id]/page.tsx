@@ -1,3 +1,4 @@
+import { notFound } from 'next/navigation';
 import { getMessages } from '@/i18n/server';
 import NoteCard from '@/components/notes/NoteCard';
 import Custom403 from '@/components/pages/Custom403';
@@ -16,6 +17,7 @@ const SubjectNotes: React.FC<SubjectNotesProps> = async ({ params }) => {
   const t = await getMessages();
 
   const { id } = await params;
+  if (!/^\d+$/.test(id)) notFound();
   const token = await getApiAccessToken();
 
   if (!token) {
