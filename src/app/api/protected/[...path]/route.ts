@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { SERVER_API_BASE_URL } from '@/services/api';
 import { getApiAccessToken } from '@/lib/server-auth';
-import { forwardAuthenticatedBackendRequest } from '@/lib/backend-proxy';
+import { forwardBackendRequest } from '@/lib/backend-proxy';
 
 export const dynamic = 'force-dynamic';
 
@@ -16,7 +16,7 @@ async function proxyRequest(
     return NextResponse.json({ message: 'Authentication required' }, { status: 401 });
   }
 
-  return forwardAuthenticatedBackendRequest({
+  return forwardBackendRequest({
     request,
     path,
     accessToken,

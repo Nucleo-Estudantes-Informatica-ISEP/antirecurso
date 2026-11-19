@@ -9,7 +9,7 @@ const FORWARDED_RESPONSE_HEADERS = [
 
 type Fetch = typeof fetch;
 
-export async function forwardAuthenticatedBackendRequest({
+export async function forwardBackendRequest({
   request,
   path,
   accessToken,
@@ -18,18 +18,23 @@ export async function forwardAuthenticatedBackendRequest({
 }: {
   request: Request;
   path: string[];
-  accessToken: string;
+  accessToken?: string;
   backendBaseUrl: string;
   fetchImpl?: Fetch;
 }) {
+  if (!path.length || path.some((segment) => !/^[a-z0-9_-]+$/i.test(segment))) {
+    return Response.json({ message: 'Invalid backend path' }, { status: 400 });
+  }
+
   let targetUrl: URL;
 
   try {
     const normalizedBaseUrl = backendBaseUrl.endsWith('/') ? backendBaseUrl : `${backendBaseUrl}/`;
-    targetUrl = new URL(path.map(encodeURIComponent).join('/'), normalizedBaseUrl);
+    targetUrl = new URL(path.join('/'), normalizedBaseUrl);
+    if (!['https:', 'http:'].includes(targetUrl.protocol)) throw new Error();
   } catch {
     return Response.json(
-      { message: 'Protected backend URL is not configured correctly' },
+      { message: 'Backend URL is not configured correctly' },
       { status: 500 }
     );
   }
@@ -38,7 +43,7 @@ export async function forwardAuthenticatedBackendRequest({
   sourceUrl.searchParams.forEach((value, key) => targetUrl.searchParams.append(key, value));
 
   const headers = new Headers();
-  headers.set('accept', request.headers.get('accept') ?? 'application/json');
+  headers.set('accept', 'application/json');
   const contentType = request.headers.get('content-type');
   if (contentType) headers.set('content-type', contentType);
 
@@ -49,16 +54,16 @@ export async function forwardAuthenticatedBackendRequest({
     const upstreamResponse = await apiFetch(
       targetUrl.toString(),
       {
-        authenticated: true,
         accessToken,
         method: request.method,
         headers,
         body,
-        cache: 'no-store'
+        cache: 'no-store',
+        redirect: 'error'
       },
       fetchImpl
     );
-    const responseHeaders = new Headers();
+    const responseHeaders = new Headers({ 'cache-control': 'private, no-store' });
 
     for (const header of FORWARDED_RESPONSE_HEADERS) {
       const value = upstreamResponse.headers.get(header);
@@ -69,8 +74,7 @@ export async function forwardAuthenticatedBackendRequest({
       status: upstreamResponse.status,
       headers: responseHeaders
     });
-  } catch (error) {
-    const detail = error instanceof Error ? error.message : 'Unknown network failure';
-    return Response.json({ message: 'Protected backend request failed', detail }, { status: 502 });
+  } catch {
+    return Response.json({ message: 'Backend request failed' }, { status: 502 });
   }
 }

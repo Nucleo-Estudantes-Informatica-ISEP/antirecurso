@@ -1,14 +1,46 @@
 import { describe, expect, it, vi } from 'vitest';
-import { forwardAuthenticatedBackendRequest } from './backend-proxy';
+import { forwardBackendRequest } from './backend-proxy';
 
-describe('authenticated backend proxy', () => {
+describe('backend proxy', () => {
+  it('rejects a path outside the API segment format before contacting Adonis', async () => {
+    const fetchMock = vi.fn<typeof fetch>();
+    const response = await forwardBackendRequest({
+      request: new Request('https://web.test/api/public/subjects'),
+      path: ['not an endpoint'],
+      backendBaseUrl: 'https://api.test/api/backend',
+      fetchImpl: fetchMock
+    });
+
+    expect(response.status).toBe(400);
+    expect(fetchMock).not.toHaveBeenCalled();
+  });
+
+  it('forwards public requests without browser credentials', async () => {
+    const fetchMock = vi.fn<typeof fetch>(async () => Response.json([]));
+    const response = await forwardBackendRequest({
+      request: new Request('https://web.test/api/public/subjects?page=2', {
+        headers: { authorization: 'Bearer client-token', cookie: 'session=client-cookie' }
+      }),
+      path: ['subjects'],
+      backendBaseUrl: 'https://api.test/api/backend',
+      fetchImpl: fetchMock
+    });
+
+    expect(response.status).toBe(200);
+    expect(fetchMock).toHaveBeenCalledOnce();
+    const [url, init] = fetchMock.mock.calls[0];
+    expect(String(url)).toBe('https://api.test/api/backend/subjects?page=2');
+    expect(new Headers(init?.headers).has('authorization')).toBe(false);
+    expect(new Headers(init?.headers).has('cookie')).toBe(false);
+  });
+
   it('forwards PDF bytes unchanged', async () => {
     const bytes = new Uint8Array([37, 80, 68, 70, 45, 0, 255]);
     const fetchMock = vi.fn<typeof fetch>(async (_url, init) => {
       expect(new Uint8Array(init?.body as ArrayBuffer)).toEqual(bytes);
       return new Response(null, { status: 204 });
     });
-    const response = await forwardAuthenticatedBackendRequest({
+    const response = await forwardBackendRequest({
       request: new Request('https://web.test/api/protected/uploads/file-id', {
         method: 'PUT',
         headers: { 'content-type': 'application/pdf' },
@@ -35,7 +67,7 @@ describe('authenticated backend proxy', () => {
       { headers: { authorization: 'Bearer server-session' } }
     );
 
-    const response = await forwardAuthenticatedBackendRequest({
+    const response = await forwardBackendRequest({
       request,
       path: ['exams', 'generate', '17'],
       accessToken: 'authnei-access-token',
@@ -49,13 +81,15 @@ describe('authenticated backend proxy', () => {
       'https://antirecurso.nei-isep.org/api/backend/exams/generate/17?mode=hard'
     );
     expect(new Headers(init?.headers).get('authorization')).toBe('Bearer authnei-access-token');
+    expect(init?.redirect).toBe('error');
     expect(response.status).toBe(202);
+    expect(response.headers.get('cache-control')).toBe('private, no-store');
     expect(response.headers.get('x-request-id')).toBe('request-136');
     await expect(response.json()).resolves.toEqual({ message: 'accepted' });
   });
 
   it('preserves backend status and error details', async () => {
-    const response = await forwardAuthenticatedBackendRequest({
+    const response = await forwardBackendRequest({
       request: new Request('https://web.test/api/protected/notes/9/view', { method: 'POST' }),
       path: ['notes', '9', 'view'],
       accessToken: 'valid-token',
@@ -75,8 +109,8 @@ describe('authenticated backend proxy', () => {
     });
   });
 
-  it('returns an actionable gateway response when Adonis is unreachable', async () => {
-    const response = await forwardAuthenticatedBackendRequest({
+  it('returns a generic gateway response when Adonis is unreachable', async () => {
+    const response = await forwardBackendRequest({
       request: new Request('https://web.test/api/protected/exams'),
       path: ['exams'],
       accessToken: 'valid-token',
@@ -88,8 +122,7 @@ describe('authenticated backend proxy', () => {
 
     expect(response.status).toBe(502);
     await expect(response.json()).resolves.toEqual({
-      message: 'Protected backend request failed',
-      detail: 'connection refused'
+      message: 'Backend request failed'
     });
   });
 });
