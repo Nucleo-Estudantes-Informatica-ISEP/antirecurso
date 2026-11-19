@@ -23,6 +23,11 @@ describe('Coolify deployment configuration', () => {
     expect(apiService).not.toContain('process.env.NEXT_PUBLIC_PROTECTED_API_BASE_URL');
   });
 
+  it('requires an explicit or Coolify-generated session secret', () => {
+    expect(compose).toContain('AUTH_SECRET: ${AUTH_SECRET:-${SERVICE_REALBASE64_64_AUTH:?');
+    expect(compose).not.toContain('development-only-antirecurso-auth-secret-change-me');
+  });
+
   it('derives AuthNEI scopes and the shared admin claim from project IDs', () => {
     expect(compose).toContain('AUTH_PROJECT_ID');
     expect(compose).toContain('AUTH_GLOBAL_PROJECT_ID');
