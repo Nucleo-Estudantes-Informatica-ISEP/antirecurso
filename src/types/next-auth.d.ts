@@ -18,7 +18,6 @@ declare module 'next-auth/jwt' {
     accessTokenExpiresAt?: number;
     authNeiRoles?: AuthNeiRole[];
     error?: 'AccessTokenExpired';
-    idToken?: string;
     refreshToken?: string;
     userEmail?: string;
     userName?: string;

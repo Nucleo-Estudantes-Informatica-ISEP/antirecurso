@@ -16,6 +16,8 @@ export async function fetchAuthNeiUserInfo({
   const normalizedIssuer = issuer.replace(/\/$/, '');
   const response = await fetchImpl(`${normalizedIssuer}/oidc/v1/userinfo`, {
     method: 'GET',
+    redirect: 'error',
+    signal: AbortSignal.timeout(5000),
     headers: {
       Accept: 'application/json',
       Authorization: `Bearer ${accessToken}`

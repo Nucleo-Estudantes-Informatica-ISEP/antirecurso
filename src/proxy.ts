@@ -1,6 +1,6 @@
 import { langFromPath, languageCookie, preferredLang, withoutLang } from '@/i18n/translations';
 import { apiFetch } from '@/services/apiClient';
-import { getToken } from 'next-auth/jwt';
+import { readSessionToken } from '@/lib/session-cookie';
 import { NextRequest, NextResponse } from 'next/server';
 import { hasAuthNeiRole } from '@/lib/auth-nei-roles';
 
@@ -32,7 +32,7 @@ export async function proxy(request: NextRequest) {
   }
 
   if (barePath === '/admin' || barePath.startsWith('/admin/')) {
-    const token = await getToken({ req: request, secret: process.env.AUTH_SECRET });
+    const token = await readSessionToken(request.cookies.getAll());
     const accessToken = typeof token?.accessToken === 'string' ? token.accessToken : null;
     const isExpired =
       token?.error === 'AccessTokenExpired' ||

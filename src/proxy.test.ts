@@ -1,9 +1,9 @@
 import { beforeEach, expect, it, vi } from 'vitest';
 import { NextRequest } from 'next/server';
-import { getToken } from 'next-auth/jwt';
+import { readSessionToken } from '@/lib/session-cookie';
 import { apiFetch } from '@/services/apiClient';
 import { proxy } from './proxy';
-vi.mock('next-auth/jwt', () => ({ getToken: vi.fn() }));
+vi.mock('@/lib/session-cookie', () => ({ readSessionToken: vi.fn() }));
 vi.mock('@/services/apiClient', () => ({ apiFetch: vi.fn() }));
 beforeEach(() => vi.clearAllMocks());
 
@@ -42,7 +42,7 @@ it('keeps anonymous, expired and non-admin users out of every admin prefix', asy
     { accessToken: 'token', authNeiRoles: [] },
     { accessToken: 'token', authNeiRoles: ['admin' as const], accessTokenExpiresAt: 1 }
   ]) {
-    vi.mocked(getToken).mockResolvedValue(token);
+    vi.mocked(readSessionToken).mockResolvedValue(token);
     for (const path of ['/admin/users', '/pt/admin/users', '/en/admin/users']) {
       const res = await proxy(new NextRequest(`http://localhost${path}`));
       expect(res.headers.get('x-middleware-rewrite')).toBe('http://localhost/');
@@ -51,7 +51,7 @@ it('keeps anonymous, expired and non-admin users out of every admin prefix', asy
   expect(apiFetch).not.toHaveBeenCalled();
 });
 it('still requires API permission for an administrator', async () => {
-  vi.mocked(getToken).mockResolvedValue({ accessToken: 'token', authNeiRoles: ['admin'] });
+  vi.mocked(readSessionToken).mockResolvedValue({ accessToken: 'token', authNeiRoles: ['admin'] });
   vi.mocked(apiFetch).mockResolvedValue(new Response(null, { status: 403 }));
   expect(
     (await proxy(new NextRequest('http://localhost/en/admin/users'))).headers.get(
