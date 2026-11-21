@@ -16,13 +16,13 @@ import {
 import useCallbackUrl from '@/hooks/useCallbackUrl';
 import useSession from '@/hooks/useSession';
 import { switchAuthNeiAccount } from '@/lib/client-auth-actions';
-import { LogIn, LogOut, RefreshCw, User, UserCog, UserPlus } from 'lucide-react';
+import { LogIn, LogOut, RefreshCw, Settings, User, UserCog, UserPlus } from 'lucide-react';
 import { signOut } from 'next-auth/react';
 import { useTheme } from 'next-themes';
 import Link from '@/i18n/navigation';
 import { useRouter } from '@/i18n/navigation';
 import swal from 'sweetalert';
-import { APP_PROFILE_LINK, AUTHNEI_ACCOUNT_LINK } from '../profileLinks';
+import { APP_PREFERENCES_LINK, APP_PROFILE_LINK, AUTHNEI_ACCOUNT_LINK } from '../profileLinks';
 
 const HamburgerProfileMenu: React.FC = () => {
   const lang = useLanguage();
@@ -144,6 +144,12 @@ const HamburgerProfileMenu: React.FC = () => {
             <UserCog className="size-4" />
             <span>{t('auth.manageAccount')}</span>
           </a>
+        </DropdownMenuItem>
+        <DropdownMenuItem asChild>
+          <Link href={localizedPath(APP_PREFERENCES_LINK, lang)} className="cursor-pointer">
+            <Settings className="size-4" />
+            <span>{t('auth.appPreferences')}</span>
+          </Link>
         </DropdownMenuItem>
         <DropdownMenuItem onClick={handleSwitchAccount} className="cursor-pointer">
           <RefreshCw className="size-4" />

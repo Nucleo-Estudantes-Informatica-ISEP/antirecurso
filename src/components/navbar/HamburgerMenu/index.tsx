@@ -11,7 +11,7 @@ import ThemeChanger from '@/components/utils/Theme/ThemeChanger';
 import useSession from '@/hooks/useSession';
 import { switchAuthNeiAccount } from '@/lib/client-auth-actions';
 import { cn } from '@/lib/utils';
-import { LogIn, LogOut, Menu, RefreshCw, User, UserCog, UserPlus } from 'lucide-react';
+import { LogIn, LogOut, Menu, RefreshCw, Settings, User, UserCog, UserPlus } from 'lucide-react';
 import { signOut } from 'next-auth/react';
 import { useTheme } from 'next-themes';
 import Link from '@/i18n/navigation';
@@ -21,7 +21,7 @@ import { useState } from 'react';
 import swal from 'sweetalert';
 import { navigationLinks } from '../navigationLinks';
 import LanguageSelect from '../LanguageSelect';
-import { APP_PROFILE_LINK, AUTHNEI_ACCOUNT_LINK } from '../profileLinks';
+import { APP_PREFERENCES_LINK, APP_PROFILE_LINK, AUTHNEI_ACCOUNT_LINK } from '../profileLinks';
 
 const HamburgerMenu: React.FC = () => {
   const lang = useLanguage();
@@ -168,6 +168,12 @@ const HamburgerMenu: React.FC = () => {
                     <UserCog className="size-4" />
                     {t('auth.manageAccount')}
                   </a>
+                </Button>
+                <Button asChild variant="outline" className="w-full" onClick={close}>
+                  <Link href={localizedPath(APP_PREFERENCES_LINK, lang)}>
+                    <Settings className="size-4" />
+                    {t('auth.appPreferences')}
+                  </Link>
                 </Button>
                 <Button variant="outline" className="w-full" onClick={handleSwitchAccount}>
                   <RefreshCw className="size-4" />

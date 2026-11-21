@@ -44,13 +44,17 @@ import HamburgerProfileMenu from '.';
 afterEach(cleanup);
 
 describe('authenticated profile menu', () => {
-  it('separates the app profile from AuthNEI account management', () => {
+  it('separates app preferences from AuthNEI account management and keeps the profile link', () => {
     render(<HamburgerProfileMenu />);
 
     expect(screen.getByRole('link', { name: 'Perfil' })).toHaveAttribute('data-next-link', 'true');
-    const accountLink = screen.getByRole('link', { name: 'Gerir Conta' });
+    const accountLink = screen.getByRole('link', { name: 'Conta AuthNEI' });
     expect(accountLink).toHaveAttribute('href', '/api/auth/profile');
     expect(accountLink).not.toHaveAttribute('data-next-link');
+    expect(screen.getByRole('link', { name: 'Preferências da aplicação' })).toHaveAttribute(
+      'href',
+      '/pt/preferences'
+    );
     expect(screen.getAllByRole('separator')).toHaveLength(2);
   });
 });
