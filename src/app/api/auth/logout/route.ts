@@ -18,7 +18,7 @@ export async function PATCH(request: NextRequest) {
   const clientId = process.env.AUTH_CLIENT_ID;
   const redirectUri = process.env.AUTH_POST_LOGOUT_REDIRECT_URI;
   if (!issuer || !clientId || !redirectUri) {
-    return NextResponse.json({ url: '/' }, { headers });
+    return NextResponse.json({ message: 'AuthNEI sign-out unavailable' }, { status: 503, headers });
   }
 
   const logoutUrl = new URL(`${issuer}/oidc/v1/end_session`);

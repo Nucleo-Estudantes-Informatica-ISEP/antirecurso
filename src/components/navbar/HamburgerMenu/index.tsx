@@ -9,16 +9,13 @@ import { Separator } from '@/components/ui/separator';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import ThemeChanger from '@/components/utils/Theme/ThemeChanger';
 import useSession from '@/hooks/useSession';
+import useAuthNeiSignOut from '@/hooks/useAuthNeiSignOut';
 import { switchAuthNeiAccount } from '@/lib/client-auth-actions';
 import { cn } from '@/lib/utils';
 import { LogIn, LogOut, Menu, RefreshCw, User, UserCog, UserPlus } from 'lucide-react';
-import { signOut } from 'next-auth/react';
-import { useTheme } from 'next-themes';
 import Link from '@/i18n/navigation';
 import { usePathname } from 'next/navigation';
-import { useRouter } from '@/i18n/navigation';
 import { useState } from 'react';
-import swal from 'sweetalert';
 import { navigationLinks } from '../navigationLinks';
 import LanguageSelect from '../LanguageSelect';
 import { APP_PROFILE_LINK, AUTHNEI_ACCOUNT_LINK } from '../profileLinks';
@@ -29,47 +26,13 @@ const HamburgerMenu: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
   const session = useSession();
   const pathname = usePathname();
-  const router = useRouter();
-  const { theme } = useTheme();
+  const signOut = useAuthNeiSignOut();
 
   const close = () => setIsOpen(false);
 
   const handleLogout = async () => {
     close();
-    const confirmed = await swal({
-      title: t('auth.confirmLogout'),
-      icon: 'warning',
-      buttons: [t('common.no'), t('common.yes')],
-      dangerMode: true,
-      className: theme === 'dark' ? 'swal-dark' : ''
-    });
-
-    if (!confirmed) return;
-
-    const res = await fetch('/api/auth/logout', { method: 'PATCH' });
-    if (res.status === 200) {
-      const { url } = (await res.json()) as { url?: string };
-      await signOut({ redirect: false });
-      session.clear();
-      swal({
-        title: t('auth.loggedOut'),
-        icon: 'success',
-        timer: 2000,
-        className: theme === 'dark' ? 'swal-dark' : ''
-      });
-      if (url) {
-        window.location.href = url;
-        return;
-      }
-      router.push(localizedPath('/', lang));
-      router.refresh();
-    } else {
-      swal({
-        title: t('auth.error'),
-        icon: 'error',
-        className: theme === 'dark' ? 'swal-dark' : ''
-      });
-    }
+    await signOut();
   };
 
   const handleSwitchAccount = async () => {
