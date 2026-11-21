@@ -1,10 +1,12 @@
 import { notFound } from 'next/navigation';
 import { getMessages } from '@/i18n/server';
 import NoteCard from '@/components/notes/NoteCard';
+import ProtectedResourceError from '@/components/ProtectedResourceError';
 import Custom403 from '@/components/pages/Custom403';
 import { Badge } from '@/components/ui/badge';
 import { getApiAccessToken } from '@/lib/server-auth';
 import fetchNotes from '@/services/fetchNotes';
+import { ApiResponseError } from '@/services/apiClient';
 import { BookOpen, Mail } from 'lucide-react';
 
 interface SubjectNotesProps {
@@ -24,7 +26,22 @@ const SubjectNotes: React.FC<SubjectNotesProps> = async ({ params }) => {
     return <Custom403 />;
   }
 
-  const notes = await fetchNotes(id, token);
+  let notes;
+  try {
+    notes = await fetchNotes(id, token);
+  } catch (error) {
+    if (
+      error instanceof ApiResponseError &&
+      (error.status === 401 || error.status === 0 || error.status >= 500)
+    ) {
+      return (
+        <section className="container py-10">
+          <ProtectedResourceError status={error.status} />
+        </section>
+      );
+    }
+    throw error;
+  }
   const subject = notes.data[0]?.subject.name;
 
   return (

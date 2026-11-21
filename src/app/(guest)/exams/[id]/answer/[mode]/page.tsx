@@ -28,6 +28,7 @@ import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import useAnswerableExamNavigation from '@/hooks/useAnswerableExamNavigation';
 import useSession from '@/hooks/useSession';
+import ProtectedResourceError from '@/components/ProtectedResourceError';
 import { ChevronLeft, ChevronRight, Clock, Loader2 } from 'lucide-react';
 import { getShuffleSeed, reorderByIds, setShuffleSeed, shuffleWithSeed } from '@/utils/examShuffle';
 
@@ -56,6 +57,8 @@ const Exam: React.FC<ExamPageProps> = ({ params }) => {
   const resume = searchParams.get('resume');
 
   const [subject, setSubject] = useState('');
+  const [loadError, setLoadError] = useState<number | null>(null);
+  const [retry, setRetry] = useState(0);
 
   const session = useSession();
   const { theme } = useTheme();
@@ -158,6 +161,7 @@ const Exam: React.FC<ExamPageProps> = ({ params }) => {
     }
 
     async function initExam() {
+      setLoadError(null);
       const subjectId = Number.parseInt(resolvedParams.id, 10);
       let savedState: SavedExamState | null = null;
       let resumeState: SavedExamState | null = null;
@@ -272,14 +276,7 @@ const Exam: React.FC<ExamPageProps> = ({ params }) => {
         setExamTime(0);
       } catch (error) {
         if (!active) return;
-        const detail =
-          error instanceof ApiResponseError
-            ? error.message
-            : loadMessage('copy.could_not_contact_the_exam_service');
-        await swal(loadMessage('copy.an_error_occurred_while_loading_the_exam'), detail, 'error', {
-          className: themeRef.current === 'dark' ? 'swal-dark' : ''
-        });
-        router.push('/exams');
+        setLoadError(error instanceof ApiResponseError ? error.status : 0);
       }
     }
 
@@ -306,7 +303,8 @@ const Exam: React.FC<ExamPageProps> = ({ params }) => {
     session.isLoading,
     nOfQuestions,
     filter,
-    resume
+    resume,
+    retry
   ]);
 
   useEffect(() => {
@@ -326,6 +324,14 @@ const Exam: React.FC<ExamPageProps> = ({ params }) => {
 
   return (
     <section className="w-full">
+      {loadError !== null && (
+        <div className="container">
+          <ProtectedResourceError
+            status={loadError}
+            onRetry={() => setRetry((value) => value + 1)}
+          />
+        </div>
+      )}
       {/* Sticky header */}
       <div className="sticky top-16 md:top-[4.5rem] z-20 bg-background/80 backdrop-blur-xl border-b">
         <div className="container py-3 md:py-4 flex flex-col gap-3">
