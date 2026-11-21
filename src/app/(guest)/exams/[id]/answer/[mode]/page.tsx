@@ -300,7 +300,21 @@ const Exam: React.FC<ExamPageProps> = ({ params }) => {
         setExamTime(0);
       } catch (error) {
         if (!active) return;
-        setLoadError(error instanceof ApiResponseError ? error.status : 0);
+        if (
+          !(error instanceof ApiResponseError) ||
+          [0, 401].includes(error.status) ||
+          error.status >= 500
+        ) {
+          setLoadError(error instanceof ApiResponseError ? error.status : 0);
+          return;
+        }
+        await swal(
+          loadMessage('copy.an_error_occurred_while_loading_the_exam'),
+          error.message,
+          'error',
+          { className: themeRef.current === 'dark' ? 'swal-dark' : '' }
+        );
+        if (active) router.push('/exams');
       }
     }
 

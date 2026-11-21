@@ -99,9 +99,11 @@ it.each([401, 503])('offers recovery when exam submission returns %s', async (st
   fireEvent.click(await screen.findByRole('button', { name: 'Select A' }));
   fireEvent.click(screen.getByRole('button', { name: 'Terminar exame' }));
   if (status === 401) {
-    expect(await screen.findByRole('link', { name: 'Iniciar sessão' })).toHaveAttribute(
-      'href',
-      expect.stringContaining('callbackUrl=')
+    const link = await screen.findByRole('link', { name: 'Iniciar sessão' });
+    expect(
+      new URL(link.getAttribute('href')!, 'https://example.test').searchParams.get('callbackUrl')
+    ).toBe(
+      '/pt/exams/17/answer/custom?n_of_questions=2&penalizing_factor=0.25&filter=new'
     );
   } else {
     expect(await screen.findByRole('button', { name: 'Tentar novamente' })).toBeInTheDocument();
@@ -191,4 +193,22 @@ it('restores saved answers after a temporary failure while resuming', async () =
   await screen.findByText('Original question 2');
   fireEvent.click(screen.getByRole('button', { name: 'Pergunta anterior' }));
   expect(screen.getByRole('button', { name: 'Select A' })).toHaveAttribute('aria-pressed', 'true');
+});
+
+it.each([403, 404])('returns to the exam list when loading returns %s', async (status) => {
+  vi.mocked(generateExam).mockRejectedValue(new ApiResponseError(status, 'Exam unavailable'));
+  await act(async () => {
+    render(
+      <LanguageProvider lang="pt">
+        <ExamContextProvider>
+          <Suspense>
+            <Exam params={Promise.resolve({ id: '17', mode: 'custom' })} />
+          </Suspense>
+        </ExamContextProvider>
+      </LanguageProvider>
+    );
+  });
+  await waitFor(() => expect(navigation.router.push).toHaveBeenCalledWith('/pt/exams', undefined));
+  expect(swal).toHaveBeenCalledOnce();
+  expect(screen.queryByRole('button', { name: 'Tentar novamente' })).toBeNull();
 });
