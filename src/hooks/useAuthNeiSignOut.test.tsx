@@ -54,3 +54,38 @@ it('resolves the AuthNEI end-session URL before clearing the app session', async
   expect(navigate).toHaveBeenCalledWith(url);
   expect(mocks.push).not.toHaveBeenCalled();
 });
+
+it('offers app-only sign-out when the shared URL is unavailable', async () => {
+  vi.stubGlobal('fetch', vi.fn().mockResolvedValue(new Response(null, { status: 503 })));
+  mocks.swal.mockResolvedValueOnce('shared');
+  const { result } = renderHook(useAuthNeiSignOut);
+
+  await result.current();
+
+  expect(mocks.swal).toHaveBeenLastCalledWith(
+    expect.objectContaining({ title: expect.stringContaining('só nesta aplicação') })
+  );
+  expect(mocks.signOut).not.toHaveBeenCalled();
+  expect(mocks.clear).not.toHaveBeenCalled();
+});
+
+it('keeps the user in the app when the local sign-out fails after preparing shared sign-out', async () => {
+  vi.stubGlobal(
+    'fetch',
+    vi.fn().mockResolvedValue(Response.json({ url: 'https://issuer.test/logout' }))
+  );
+  const navigate = vi.spyOn(window.location, 'assign').mockImplementation(() => {});
+  mocks.signOut.mockRejectedValueOnce(new Error('Session service unavailable'));
+  mocks.swal.mockResolvedValueOnce('shared');
+  const { result } = renderHook(useAuthNeiSignOut);
+
+  await result.current();
+
+  expect(navigate).not.toHaveBeenCalled();
+  expect(mocks.clear).not.toHaveBeenCalled();
+  expect(mocks.swal).toHaveBeenLastCalledWith(
+    expect.objectContaining({
+      title: 'Não foi possível terminar a sessão nesta aplicação. Tenta novamente.'
+    })
+  );
+});

@@ -15,6 +15,8 @@
   "auth.logout": "Terminar sessão",
   "auth.signOutApp": "Terminar sessão só nesta aplicação",
   "auth.signOutShared": "Terminar sessão nesta aplicação e no AuthNEI",
+  "auth.sharedSignOutUnavailable": "Não foi possível terminar a sessão no AuthNEI. Podes terminar sessão só nesta aplicação.",
+  "auth.appSignOutFailed": "Não foi possível terminar a sessão nesta aplicação. Tenta novamente.",
   "auth.signOutOtherApps": "Outras aplicações abertas podem manter a sessão iniciada.",
   "auth.error": "Algo correu mal. Por favor tenta novamente.",
   "common.no": "Não",

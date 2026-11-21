@@ -27,27 +27,33 @@ export default function useAuthNeiSignOut() {
     });
     if (scope !== 'app' && scope !== 'shared') return;
 
-    try {
-      let sharedUrl: string | undefined;
-      if (scope === 'shared') {
+    let sharedUrl: string | undefined;
+    if (scope === 'shared') {
+      try {
         const response = await fetch('/api/auth/logout', { method: 'PATCH' });
         if (!response.ok) throw new Error('AuthNEI sign-out unavailable');
         const { url } = (await response.json()) as { url?: string };
         if (!url) throw new Error('AuthNEI end-session URL unavailable');
         sharedUrl = url;
+      } catch {
+        await swal({ title: t('auth.sharedSignOutUnavailable'), icon: 'error', className });
+        return;
       }
+    }
 
+    try {
       await signOut({ redirect: false });
       clear();
-
-      if (sharedUrl) {
-        window.location.assign(sharedUrl);
-      } else {
-        router.push('/');
-        router.refresh();
-      }
     } catch {
-      await swal({ title: t('auth.error'), icon: 'error', className });
+      await swal({ title: t('auth.appSignOutFailed'), icon: 'error', className });
+      return;
+    }
+
+    if (sharedUrl) {
+      window.location.assign(sharedUrl);
+    } else {
+      router.push('/');
+      router.refresh();
     }
   };
 }
