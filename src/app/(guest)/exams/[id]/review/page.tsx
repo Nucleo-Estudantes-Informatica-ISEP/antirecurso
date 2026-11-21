@@ -14,6 +14,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import useSession from '@/hooks/useSession';
+import useCallbackUrl from '@/hooks/useCallbackUrl';
 import { apiRequest } from '@/services/apiClient';
 import { getOwnedExamReviewPath } from '@/services/examReview';
 import ExamReview from '@/types/ExamReview';
@@ -33,6 +34,7 @@ const ReviewPage: React.FC<ExamPageProps> = ({ params }) => {
 
   const resolvedParams = use(params);
   const session = useSession();
+  const callbackUrl = useCallbackUrl();
   const router = useRouter();
 
   const {
@@ -46,9 +48,10 @@ const ReviewPage: React.FC<ExamPageProps> = ({ params }) => {
   } = useExamReviewNavigation();
 
   const getExamResult = useCallback(async () => {
+    if (session.isLoading) return;
     const examPath = getOwnedExamReviewPath(resolvedParams.id, session.token);
     if (!examPath) {
-      router.replace('/login');
+      router.replace(`/login?callbackUrl=${callbackUrl}`);
       return;
     }
     const data = await apiRequest<ExamReview>(examPath, {
@@ -61,7 +64,7 @@ const ReviewPage: React.FC<ExamPageProps> = ({ params }) => {
       data.questions = shuffleWithSeed(data.questions, storedSeed);
     }
     setExamResult(data);
-  }, [resolvedParams.id, router, setExamResult, session.token]);
+  }, [callbackUrl, resolvedParams.id, router, setExamResult, session.isLoading, session.token]);
 
   async function submitComment(comment: string) {
     if (!session.user) return;

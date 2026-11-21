@@ -7,6 +7,8 @@
   "nav.openMenu": "Open menu",
   "languageSwitcher.label": "Language",
   "auth.login": "Sign in",
+  "auth.signInHelp": "Can’t sign in?",
+  "auth.signInHelpReturn": "Help opens in a new tab. Come back here to sign in and return to the page you wanted to open.",
   "auth.enter": "Sign in",
   "auth.register": "Create account",
   "auth.profile": "Profile",

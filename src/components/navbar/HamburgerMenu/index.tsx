@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import ThemeChanger from '@/components/utils/Theme/ThemeChanger';
+import useCallbackUrl from '@/hooks/useCallbackUrl';
 import useSession from '@/hooks/useSession';
 import { switchAuthNeiAccount } from '@/lib/client-auth-actions';
 import { cn } from '@/lib/utils';
@@ -29,6 +30,7 @@ const HamburgerMenu: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
   const session = useSession();
   const pathname = usePathname();
+  const callbackUrl = useCallbackUrl();
   const router = useRouter();
   const { theme } = useTheme();
 
@@ -185,13 +187,13 @@ const HamburgerMenu: React.FC = () => {
             ) : (
               <>
                 <Button asChild className="w-full" onClick={close}>
-                  <Link href={localizedPath('/login', lang)}>
+                  <Link href={localizedPath(`/login?callbackUrl=${callbackUrl}`, lang)}>
                     <LogIn className="size-4" />
                     {t('auth.login')}
                   </Link>
                 </Button>
                 <Button asChild variant="outline" className="w-full" onClick={close}>
-                  <Link href={localizedPath('/register', lang)}>
+                  <Link href={localizedPath(`/register?callbackUrl=${callbackUrl}`, lang)}>
                     <UserPlus className="size-4" />
                     {t('auth.register')}
                   </Link>

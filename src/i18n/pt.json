@@ -7,6 +7,8 @@
   "nav.openMenu": "Abrir menu",
   "languageSwitcher.label": "Idioma",
   "auth.login": "Iniciar sessão",
+  "auth.signInHelp": "Não consegues iniciar sessão?",
+  "auth.signInHelpReturn": "A ajuda abre noutro separador. Volta aqui para iniciar sessão e regressar à página que querias abrir.",
   "auth.enter": "Entrar",
   "auth.register": "Criar conta",
   "auth.profile": "Perfil",
