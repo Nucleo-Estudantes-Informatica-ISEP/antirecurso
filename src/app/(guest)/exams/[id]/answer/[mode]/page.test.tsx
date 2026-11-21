@@ -5,6 +5,8 @@ import { afterEach, expect, it, vi } from 'vitest';
 import { LanguageProvider } from '@/i18n/client';
 import ExamContextProvider from '@/contexts/ExamContext';
 import generateExam from '@/services/generateExam';
+import { ApiResponseError } from '@/services/apiClient';
+import swal from 'sweetalert';
 import type Question from '@/types/Question';
 import Exam from './page';
 
@@ -72,6 +74,38 @@ afterEach(() => {
   cleanup();
   localStorage.clear();
   vi.clearAllMocks();
+  vi.unstubAllGlobals();
+  navigation.pathname = '/pt/exams/17/answer/custom';
+});
+
+it.each([401, 503])('offers recovery when exam submission returns %s', async (status) => {
+  vi.mocked(generateExam).mockResolvedValue(questions);
+  vi.mocked(swal).mockResolvedValue(true);
+  vi.stubGlobal('fetch', vi.fn().mockResolvedValue(new Response(null, { status })));
+  await act(async () => {
+    render(
+      <LanguageProvider lang="pt">
+        <ExamContextProvider>
+          <Suspense>
+            <Exam params={Promise.resolve({ id: '17', mode: 'custom' })} />
+          </Suspense>
+        </ExamContextProvider>
+      </LanguageProvider>
+    );
+  });
+  await screen.findByText('Original question 1');
+  fireEvent.click(screen.getByRole('button', { name: 'Select A' }));
+  fireEvent.click(screen.getByRole('button', { name: 'Próxima pergunta' }));
+  fireEvent.click(await screen.findByRole('button', { name: 'Select A' }));
+  fireEvent.click(screen.getByRole('button', { name: 'Terminar exame' }));
+  if (status === 401) {
+    expect(await screen.findByRole('link', { name: 'Iniciar sessão' })).toHaveAttribute(
+      'href',
+      expect.stringContaining('callbackUrl=')
+    );
+  } else {
+    expect(await screen.findByRole('button', { name: 'Tentar novamente' })).toBeInTheDocument();
+  }
 });
 
 it('keeps exact questions, answers, position, custom settings and timer when the language changes', async () => {
@@ -116,4 +150,45 @@ it('keeps exact questions, answers, position, custom settings and timer when the
     })
     .find((value) => value?.subjectId === 17 || value?.subject_id === 17);
   expect(stored?.penalizing_factor).toBe(0.25);
+});
+
+it('restores saved answers after a temporary failure while resuming', async () => {
+  localStorage.setItem(
+    'exam-state-17-custom',
+    JSON.stringify({
+      version: 2,
+      subjectId: 17,
+      mode: 'custom',
+      questionIds: [1, 2],
+      answers: [[1, 'A']],
+      time: 45,
+      currentQuestionIndex: 1,
+      savedAt: Date.now(),
+      n_of_questions: 5,
+      penalizing_factor: 0.25,
+      filter: 'new'
+    })
+  );
+  vi.mocked(swal).mockResolvedValueOnce(true);
+  vi.mocked(generateExam)
+    .mockRejectedValueOnce(new ApiResponseError(503, 'Unavailable'))
+    .mockResolvedValueOnce(questions);
+  await act(async () => {
+    render(
+      <LanguageProvider lang="pt">
+        <ExamContextProvider>
+          <Suspense>
+            <Exam params={Promise.resolve({ id: '17', mode: 'custom' })} />
+          </Suspense>
+        </ExamContextProvider>
+      </LanguageProvider>
+    );
+  });
+  const retry = await screen.findByRole('button', { name: 'Tentar novamente' });
+  expect(swal).toHaveBeenCalledOnce();
+  expect(generateExam).toHaveBeenNthCalledWith(1, 17, 'custom', null, 5, 'new', 'pt');
+  fireEvent.click(retry);
+  await screen.findByText('Original question 2');
+  fireEvent.click(screen.getByRole('button', { name: 'Pergunta anterior' }));
+  expect(screen.getByRole('button', { name: 'Select A' })).toHaveAttribute('aria-pressed', 'true');
 });

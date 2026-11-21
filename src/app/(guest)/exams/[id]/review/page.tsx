@@ -2,20 +2,21 @@
 
 import { useMessages } from '@/i18n/client';
 
-import React, { use, useCallback, useEffect } from 'react';
+import React, { use, useCallback, useEffect, useState } from 'react';
 
 import Image from 'next/image';
 
 import CommentSection from '@/components/comments/CommentSection';
 import ExamNumeration from '@/components/exams/ExamNumeration';
 import ExamNumerationContainer from '@/components/exams/ExamNumerationContainer';
+import ProtectedResourceError from '@/components/ProtectedResourceError';
 import QuestionReview from '@/components/exams/QuestionReview';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import useSession from '@/hooks/useSession';
 import useCallbackUrl from '@/hooks/useCallbackUrl';
-import { apiRequest } from '@/services/apiClient';
+import { ApiResponseError, apiRequest } from '@/services/apiClient';
 import { getOwnedExamReviewPath } from '@/services/examReview';
 import ExamReview from '@/types/ExamReview';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
@@ -36,6 +37,7 @@ const ReviewPage: React.FC<ExamPageProps> = ({ params }) => {
   const session = useSession();
   const callbackUrl = useCallbackUrl();
   const router = useRouter();
+  const [loadError, setLoadError] = useState<number | null>(null);
 
   const {
     currentQuestionIndex,
@@ -54,16 +56,21 @@ const ReviewPage: React.FC<ExamPageProps> = ({ params }) => {
       router.replace(`/login?callbackUrl=${callbackUrl}`);
       return;
     }
-    const data = await apiRequest<ExamReview>(examPath, {
-      authenticated: true,
-      method: 'GET',
-      cache: 'no-cache'
-    });
-    const storedSeed = getShuffleSeed(resolvedParams.id);
-    if (storedSeed && data.questions) {
-      data.questions = shuffleWithSeed(data.questions, storedSeed);
+    setLoadError(null);
+    try {
+      const data = await apiRequest<ExamReview>(examPath, {
+        authenticated: true,
+        method: 'GET',
+        cache: 'no-cache'
+      });
+      const storedSeed = getShuffleSeed(resolvedParams.id);
+      if (storedSeed && data.questions) {
+        data.questions = shuffleWithSeed(data.questions, storedSeed);
+      }
+      setExamResult(data);
+    } catch (error) {
+      setLoadError(error instanceof ApiResponseError ? error.status : 0);
     }
-    setExamResult(data);
   }, [callbackUrl, resolvedParams.id, router, setExamResult, session.isLoading, session.token]);
 
   async function submitComment(comment: string) {
@@ -161,7 +168,9 @@ const ReviewPage: React.FC<ExamPageProps> = ({ params }) => {
       </div>
 
       <div className="container max-w-4xl py-6 md:py-10">
-        {currentQuestion?.question ? (
+        {loadError !== null ? (
+          <ProtectedResourceError status={loadError} onRetry={getExamResult} />
+        ) : currentQuestion?.question ? (
           <article className="space-y-6">
             <div
               className={`relative w-full overflow-hidden rounded-2xl border bg-muted ${

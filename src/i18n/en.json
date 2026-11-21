@@ -1,4 +1,7 @@
 {
+  "auth.sessionExpiredForResource": "Your session expired. Sign in to return here.",
+  "error.resourceUnavailable": "Could not open this right now. Try again to stay on this page.",
+  "error.retryResource": "Retry",
   "nav.home": "Home",
   "nav.exams": "Exams",
   "nav.scoreboard": "Leaderboard",
