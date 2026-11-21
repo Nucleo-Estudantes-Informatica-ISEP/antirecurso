@@ -58,6 +58,7 @@ const Exam: React.FC<ExamPageProps> = ({ params }) => {
 
   const [subject, setSubject] = useState('');
   const [loadError, setLoadError] = useState<number | null>(null);
+  const [submissionError, setSubmissionError] = useState<number | null>(null);
   const [retry, setRetry] = useState(0);
 
   const session = useSession();
@@ -66,6 +67,8 @@ const Exam: React.FC<ExamPageProps> = ({ params }) => {
   themeRef.current = theme;
   const examKeyRef = useRef<string | null>(null);
   const resumePromptShownRef = useRef(false);
+  const pendingResumeRef = useRef<SavedExamState | null>(null);
+  const restoredIndexRef = useRef<number | null>(null);
 
   const { setExamResult, examTime, setExamTime } = useContext(ExamContext);
   const {
@@ -89,6 +92,13 @@ const Exam: React.FC<ExamPageProps> = ({ params }) => {
     filter,
     handleConfirm
   });
+
+  useEffect(() => {
+    if (questions.length && restoredIndexRef.current !== null) {
+      changeQuestion(restoredIndexRef.current);
+      restoredIndexRef.current = null;
+    }
+  }, [questions, changeQuestion]);
 
   async function handleConfirm() {
     if (isSubmitting) return;
@@ -117,8 +127,15 @@ const Exam: React.FC<ExamPageProps> = ({ params }) => {
       'Content-Type': 'application/json'
     };
 
+    setSubmissionError(null);
     const request = { method: 'POST', headers, body: JSON.stringify(data) };
-    const res = await apiFetch(path, { ...request, authenticated: Boolean(session.token) });
+    let res: Response;
+    try {
+      res = await apiFetch(path, { ...request, authenticated: Boolean(session.token) });
+    } catch {
+      setSubmissionError(0);
+      return;
+    }
 
     if (res.status === 200) {
       setExamResult(await res.json());
@@ -139,11 +156,13 @@ const Exam: React.FC<ExamPageProps> = ({ params }) => {
       }
 
       router.push(`/exams/${resolvedParams.id}/points`);
+    } else if (res.status === 401 || res.status >= 500) {
+      setSubmissionError(res.status);
     } else {
       const detail = await throwApiResponseError(res, t('copy.could_not_submit_the_exam')).catch(
         (error: unknown) => (error instanceof Error ? error.message : String(error))
       );
-      swal(t('copy.an_error_occurred_while_submitting_the_exam'), detail, 'error', {
+      await swal(t('copy.an_error_occurred_while_submitting_the_exam'), detail, 'error', {
         className: themeRef.current === 'dark' ? 'swal-dark' : ''
       });
     }
@@ -158,13 +177,15 @@ const Exam: React.FC<ExamPageProps> = ({ params }) => {
     if (examKeyRef.current !== examKey) {
       examKeyRef.current = examKey;
       resumePromptShownRef.current = false;
+      pendingResumeRef.current = null;
+      restoredIndexRef.current = null;
     }
 
     async function initExam() {
       setLoadError(null);
       const subjectId = Number.parseInt(resolvedParams.id, 10);
       let savedState: SavedExamState | null = null;
-      let resumeState: SavedExamState | null = null;
+      let resumeState: SavedExamState | null = pendingResumeRef.current;
 
       try {
         if (session.token) {
@@ -216,10 +237,12 @@ const Exam: React.FC<ExamPageProps> = ({ params }) => {
 
           if (shouldResume) {
             resumeState = savedState;
+            pendingResumeRef.current = savedState;
           }
         } else if (resumeParam === 'true' && modeMatches) {
           resumePromptShownRef.current = true;
           resumeState = savedState;
+          pendingResumeRef.current = savedState;
         }
 
         if (modeMatches && !resumeState) {
@@ -251,10 +274,11 @@ const Exam: React.FC<ExamPageProps> = ({ params }) => {
         if (resumeState) {
           const restoredQuestions = reorderByIds(exam, resumeState.questionIds);
           if (restoredQuestions.length === resumeState.questionIds.length) {
+            restoredIndexRef.current = resumeState.currentQuestionIndex;
             setQuestions(restoredQuestions);
             setAnswers(new Map<number, string>(resumeState.answers));
             setExamTime(resumeState.time);
-            changeQuestion(resumeState.currentQuestionIndex);
+            pendingResumeRef.current = null;
             return;
           }
 
@@ -330,6 +354,11 @@ const Exam: React.FC<ExamPageProps> = ({ params }) => {
             status={loadError}
             onRetry={() => setRetry((value) => value + 1)}
           />
+        </div>
+      )}
+      {submissionError !== null && (
+        <div className="container">
+          <ProtectedResourceError status={submissionError} onRetry={() => void submit()} />
         </div>
       )}
       {/* Sticky header */}
