@@ -11,7 +11,8 @@
 
 .indicator {
   position: relative;
-  width: 320px;
+  width: 100%;
+  max-width: 320px;
   height: 160px;
   overflow: hidden;
 }
@@ -29,7 +30,6 @@
   border-bottom: none;
   border-top-left-radius: 160px;
   border-top-right-radius: 160px;
-  transform: translateX(-50%);
 }
 
 .indicator span.bar {
@@ -91,7 +91,7 @@ span.valores span:nth-child(1) {
 
 @media screen and (max-width: 768px) {
   .indicator {
-    width: 240px;
+    max-width: 240px;
     height: 120px;
   }
 
@@ -109,7 +109,6 @@ span.valores span:nth-child(1) {
     border-bottom: none;
     border-top-left-radius: 120px;
     border-top-right-radius: 120px;
-    transform: translateX(-50%);
   }
 
   .indicator span.result {
