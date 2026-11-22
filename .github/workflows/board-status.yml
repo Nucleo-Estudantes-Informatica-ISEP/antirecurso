@@ -42,7 +42,7 @@ jobs:
           EVENT_NAME: ${{ github.event_name }}
         run: |
           if [[ "$EVENT_NAME" == workflow_dispatch ]]; then
-            node scripts/sync-board-issues.mjs --dry-run
+            node .github/scripts/sync-board-issues.mjs --dry-run
           else
-            node scripts/sync-board-issues.mjs
+            node .github/scripts/sync-board-issues.mjs
           fi

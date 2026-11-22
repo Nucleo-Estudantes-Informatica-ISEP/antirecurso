@@ -41,7 +41,7 @@ jobs:
       - name: Test
         run: |
           pnpm test
-          node --test scripts/sync-board-issues.test.mjs
+          node --test .github/scripts/sync-board-issues.test.mjs
 
       - name: Production build
         run: pnpm build
