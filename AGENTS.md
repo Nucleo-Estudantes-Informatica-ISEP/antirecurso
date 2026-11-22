@@ -40,6 +40,20 @@ Dependabot routine groups are patch/minor only. Major Next.js, React, Tailwind, 
 
 Keep `README.md`, `CONTRIBUTING.md`, `.env.example`, and this file synchronized with scripts, environment names, auth/session behavior, CI checks, backend dependencies, and deployment order. Remove obsolete local-auth, Laravel, starter-template, or retired deployment instructions rather than leaving them as alternatives.
 
+## Issue and pull request writing
+
+- Use action-oriented issue titles and keep the template prefix (`[Type]` or
+  `[Bug]`). Follow the FallStack [task
+  template](https://github.com/Nucleo-Estudantes-Informatica-ISEP/fallstack-website/blob/9ba36c5ecf3095e21a0ea473b2691cd6cb8492db/.github/ISSUE_TEMPLATE/task.md) for scoped work and the [bug
+  template](https://github.com/Nucleo-Estudantes-Informatica-ISEP/fallstack-website/blob/9ba36c5ecf3095e21a0ea473b2691cd6cb8492db/.github/ISSUE_TEMPLATE/bug.md) for reproducible problem reports.
+  Keep task acceptance criteria and applicable dependencies as checklists.
+- Use Conventional Commit titles for PRs, such as `fix(auth): restore the return path`.
+  Use the headings from the FallStack [PR template](https://github.com/Nucleo-Estudantes-Informatica-ISEP/fallstack-website/blob/9ba36c5ecf3095e21a0ea473b2691cd6cb8492db/.github/PULL_REQUEST_TEMPLATE.md).
+  Include Issue when applicable, Summary, Tests, Manual testing steps,
+  Configuration / migration, and Observations. Follow this repository's Verification section. For application changes, report
+  `pnpm install --frozen-lockfile`, `pnpm lint`, `pnpm typecheck`, `pnpm test`,
+  `pnpm build`, and `pnpm audit --prod`, with any outstanding checks.
+
 ## Pull request metadata
 
 - Whenever opening a pull request, add the applicable existing repository
