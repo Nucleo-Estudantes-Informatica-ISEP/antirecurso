@@ -183,6 +183,22 @@ Defined in [`package.json`](package.json):
 - `pnpm lint` - run ESLint
 - `pnpm typecheck` - run TypeScript without emitting files
 - `pnpm test` - run the Vitest regression suite
+- `pnpm test:e2e` - run the Playwright Chromium workflows
+
+### Browser workflows
+
+Run `pnpm exec playwright install --only-shell chromium` once, then run
+`pnpm test:e2e`. The suite starts Next.js on localhost port 43188 and a
+loopback fixture API on port 43189. It checks guest, student and admin flows
+through the frontend using a fresh local-only session secret and in-memory
+cookies. PR CI runs the same suite. Keep real credentials and browser state
+out of the fixtures and repository.
+
+After deploying a reviewed build to staging, sign in through AuthNEI with a
+disposable staging account, verify the signed-in UI, run the affected exam and
+notes workflows, and sign out. Repeat with a staging administrator for admin
+access and a regular user for denial. Use the existing authenticated smoke
+command for direct API checks with that staging session.
 
 ## Development Notes
 
@@ -247,7 +263,7 @@ If you deploy behind a reverse proxy or managed platform, ensure:
 - your auth issuer accepts the production callback URL
 - `AUTH_POST_LOGOUT_REDIRECT_URI` matches the deployed frontend URL
 
-GitHub CI does not itself deploy. It requires a frozen install, lint, typecheck, tests, production and Docker builds, production dependency audit, and Gitleaks. After a reviewed merge, verify the deployed commit in the hosting control plane and smoke the root plus login/refresh/logout and the affected exam flow. When a web change depends on the Adonis API, deploy the API and its migrations first. With a disposable staging account, verify that logout invalidates the current bearer, clears the web session and ends the AuthNEI browser session. Check application logs for an incomplete revocation signal without collecting credentials.
+GitHub CI does not itself deploy. It requires a frozen install, lint, typecheck, Vitest, Playwright, production and Docker builds, production dependency audit, and Gitleaks. After a reviewed merge, verify the deployed commit in the hosting control plane and smoke the root plus login/refresh/logout and the affected exam flow. When a web change depends on the Adonis API, deploy the API and its migrations first. With a disposable staging account, verify that logout invalidates the current bearer, clears the web session and ends the AuthNEI browser session. Check application logs for an incomplete revocation signal without collecting credentials.
 
 ### SEO release verification
 

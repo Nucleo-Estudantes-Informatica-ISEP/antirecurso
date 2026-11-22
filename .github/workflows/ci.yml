@@ -44,6 +44,12 @@ jobs:
       - name: Production build
         run: pnpm build
 
+      - name: Install Playwright Chromium
+        run: pnpm exec playwright install --with-deps --only-shell chromium
+
+      - name: Browser workflows
+        run: pnpm test:e2e
+
       - name: Docker build with Coolify NODE_ENV
         run: docker build --target builder --build-arg NODE_ENV=development .
 
