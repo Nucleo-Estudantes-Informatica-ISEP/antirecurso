@@ -30,10 +30,10 @@ const HamburgerMenu: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
   const session = useSession();
   const pathname = usePathname();
-  const callbackUrl = useCallbackUrl();
   const router = useRouter();
   const { theme } = useTheme();
 
+  const callbackUrl = useCallbackUrl();
   const close = () => setIsOpen(false);
 
   const handleLogout = async () => {
