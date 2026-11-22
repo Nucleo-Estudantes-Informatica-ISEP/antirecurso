@@ -1,0 +1,48 @@
+name: Sync Antirecurso board status
+
+on:
+  schedule:
+    - cron: '3-58/5 * * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: antirecurso-board-status
+
+jobs:
+  sync:
+    if: >-
+      github.repository == 'Nucleo-Estudantes-Informatica-ISEP/antirecurso' &&
+      github.ref == 'refs/heads/main' &&
+      vars.BOARD_SYNC_START_AT != '' &&
+      (github.event_name == 'workflow_dispatch' || vars.BOARD_SYNC_ENABLED == 'true')
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+      - name: Create board installation token
+        id: board-token
+        uses: actions/create-github-app-token@f418cff399f7aef4c2f0ad47e25ca7a6abbdd6fc # v3
+        with:
+          client-id: ${{ vars.BOARD_SYNC_APP_CLIENT_ID }}
+          private-key: ${{ secrets.BOARD_SYNC_APP_PRIVATE_KEY }}
+          owner: ${{ github.repository_owner }}
+          repositories: antirecurso,antirecurso-api-adonis
+          permission-organization-projects: write
+          permission-issues: read
+          permission-pull-requests: read
+      - name: Move issues with merged development PRs to Done
+        env:
+          GH_TOKEN: ${{ steps.board-token.outputs.token }}
+          BOARD_SYNC_START_AT: ${{ vars.BOARD_SYNC_START_AT }}
+          EVENT_NAME: ${{ github.event_name }}
+        run: |
+          if [[ "$EVENT_NAME" == workflow_dispatch ]]; then
+            node scripts/sync-board-issues.mjs --dry-run
+          else
+            node scripts/sync-board-issues.mjs
+          fi
