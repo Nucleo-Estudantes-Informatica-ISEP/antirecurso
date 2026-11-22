@@ -7,7 +7,7 @@ import { use, useContext, useEffect, useEffectEvent, useRef, useState } from 're
 import { useTheme } from 'next-themes';
 import Image from 'next/image';
 import { useSearchParams } from 'next/navigation';
-import { useRouter } from '@/i18n/navigation';
+import Link, { useRouter } from '@/i18n/navigation';
 import swal from 'sweetalert';
 
 import { ExamContext } from '@/contexts/ExamContext';
@@ -101,7 +101,7 @@ const Exam: React.FC<ExamPageProps> = ({ params }) => {
   }, [questions, changeQuestion]);
 
   async function handleConfirm() {
-    if (isSubmitting) return;
+    if (isSubmitting || submissionError !== null) return;
 
     removeEventListener();
 
@@ -372,7 +372,18 @@ const Exam: React.FC<ExamPageProps> = ({ params }) => {
       )}
       {submissionError !== null && (
         <div className="container">
-          <ProtectedResourceError status={submissionError} onRetry={() => void submit()} />
+          {submissionError === 401 ? (
+            <ProtectedResourceError status={submissionError} />
+          ) : (
+            <div role="alert" className="my-4 space-y-3 rounded-lg border p-4">
+              <p>{t('error.examSubmissionUnconfirmed')}</p>
+              {session.token && (
+                <Button asChild>
+                  <Link href="/profile">{t('copy.history_of_your_completed_exams')}</Link>
+                </Button>
+              )}
+            </div>
+          )}
         </div>
       )}
       {/* Sticky header */}
@@ -513,7 +524,7 @@ const Exam: React.FC<ExamPageProps> = ({ params }) => {
 
               {currentQuestionIndex === questions.length - 1 ? (
                 <form onSubmit={(e) => submit(e)} className="w-full sm:w-auto">
-                  <Button type="submit" disabled={isSubmitting} className="w-full sm:w-auto">
+                  <Button type="submit" disabled={isSubmitting || submissionError !== null} className="w-full sm:w-auto">
                     {isSubmitting ? (
                       <>
                         <Loader2 className="size-4 animate-spin" />

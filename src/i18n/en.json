@@ -1,5 +1,6 @@
 {
   "auth.sessionExpiredForResource": "Your session expired. Sign in to return here.",
+  "error.examSubmissionUnconfirmed": "We could not confirm whether this exam was submitted. Your draft is still saved. If you are signed in, check your exam history before submitting again.",
   "error.resourceUnavailable": "Could not open this right now. Try again to stay on this page.",
   "error.retryResource": "Retry",
   "nav.home": "Home",

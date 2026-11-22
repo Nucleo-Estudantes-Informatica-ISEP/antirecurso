@@ -106,7 +106,10 @@ it.each([401, 503])('offers recovery when exam submission returns %s', async (st
       '/pt/exams/17/answer/custom?n_of_questions=2&penalizing_factor=0.25&filter=new'
     );
   } else {
-    expect(await screen.findByRole('button', { name: 'Tentar novamente' })).toBeInTheDocument();
+    expect(await screen.findByText(/não foi possível confirmar se o exame/i)).toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: 'Tentar novamente' })).toBeNull();
+    expect(screen.getByRole('button', { name: 'Terminar exame' })).toBeDisabled();
+    expect(fetch).toHaveBeenCalledTimes(1);
   }
 });
 
