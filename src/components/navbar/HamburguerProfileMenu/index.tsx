@@ -1,5 +1,8 @@
 'use client';
 
+import { Settings } from 'lucide-react';
+import { APP_PREFERENCES_LINK } from '../profileLinks';
+
 import { useLanguage } from '@/i18n/client';
 import { localizedPath, useTranslations } from '@/i18n/translations';
 
@@ -16,13 +19,13 @@ import {
 import useCallbackUrl from '@/hooks/useCallbackUrl';
 import useSession from '@/hooks/useSession';
 import { switchAuthNeiAccount } from '@/lib/client-auth-actions';
-import { LogIn, LogOut, RefreshCw, Settings, User, UserCog, UserPlus } from 'lucide-react';
+import { LogIn, LogOut, RefreshCw, User, UserCog, UserPlus } from 'lucide-react';
 import { signOut } from 'next-auth/react';
 import { useTheme } from 'next-themes';
 import Link from '@/i18n/navigation';
 import { useRouter } from '@/i18n/navigation';
 import swal from 'sweetalert';
-import { APP_PREFERENCES_LINK, APP_PROFILE_LINK, AUTHNEI_ACCOUNT_LINK } from '../profileLinks';
+import { APP_PROFILE_LINK, AUTHNEI_ACCOUNT_LINK } from '../profileLinks';
 
 const HamburgerProfileMenu: React.FC = () => {
   const lang = useLanguage();
