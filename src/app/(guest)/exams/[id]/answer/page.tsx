@@ -54,32 +54,21 @@ const Exams: React.FC<ExamAnswerPageProps> = ({ params }) => {
         'copy.take_an_exam_with_questions_you_previously_got_wrong_find_out_where_you_need_to_impro'
       ),
       slug: 'wrong',
-      icon: '❌',
-      comingSoon: false
+      icon: '❌'
     },
     {
       id: 5,
       name: t('copy.difficult_questions_mode'),
       description: t('copy.challenge_yourself_with_the_questions_students_get_wrong_most_often'),
       slug: 'hard',
-      icon: '🤯',
-      comingSoon: false
+      icon: '🤯'
     },
     {
       id: 6,
       name: t('copy.custom_mode'),
       description: t('copy.create_an_exam_with_your_own_settings'),
       slug: 'custom',
-      icon: '⚙️',
-      comingSoon: false
-    },
-    {
-      id: 7,
-      name: t('copy.duel_mode'),
-      description: t('copy.challenge_a_friend_to_see_who_answers_more_questions_correctly'),
-      slug: 'duel',
-      icon: '👥',
-      comingSoon: true
+      icon: '⚙️'
     }
   ];
 
@@ -105,7 +94,7 @@ const Exams: React.FC<ExamAnswerPageProps> = ({ params }) => {
       <div className="grid gap-4 md:gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
         {modes.map((mode) => {
           const needsAuth = config.mandatoryAuthModes.includes(mode.slug);
-          const locked = mode.comingSoon || (needsAuth && !session);
+          const locked = needsAuth && !session;
           const card = (
             <Card
               className={cn(
@@ -121,12 +110,7 @@ const Exams: React.FC<ExamAnswerPageProps> = ({ params }) => {
                   <p className="text-base md:text-lg font-semibold leading-tight">{mode.name}</p>
                   <p className="mt-2 text-sm text-muted-foreground leading-6">{mode.description}</p>
                 </div>
-                {mode.comingSoon && (
-                  <Badge variant="warning" className="absolute top-3 right-3">
-                    {t('copy.coming_soon')}
-                  </Badge>
-                )}
-                {!mode.comingSoon && needsAuth && !session && (
+                {locked && (
                   <Badge variant="destructive" className="absolute top-3 right-3 gap-1">
                     <Lock className="size-3" /> {t('copy.account_required')}
                   </Badge>
