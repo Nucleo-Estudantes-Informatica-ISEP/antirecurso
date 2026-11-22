@@ -39,7 +39,9 @@ jobs:
         run: pnpm typecheck
 
       - name: Test
-        run: pnpm test
+        run: |
+          pnpm test
+          node --test .github/scripts/sync-board-issues.test.mjs
 
       - name: Production build
         run: pnpm build
