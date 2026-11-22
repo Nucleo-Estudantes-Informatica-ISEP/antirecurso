@@ -263,11 +263,12 @@ and confirm it contains the reviewed SEO changes. Then check the public response
 - `/pt` and `/en/exams`: canonical URLs use the deployed frontend origin and the
   matching locale; language alternates include `pt`, `en` and `x-default`.
 - `/sitemap.xml`: returns XML with both locales for the public pages and language
-  alternates; every URL uses the deployed frontend origin, with no localhost URLs.
+  alternates, including the Portuguese `x-default`; every URL uses the deployed frontend origin.
 - `/robots.txt`: disallows `/api`, allows crawling public and noindex pages, and
   advertises the deployed frontend's `/sitemap.xml`.
-- `/en/login`: returns `X-Robots-Tag: noindex, nofollow`. Public pages such as `/pt`
-  and `/en/exams` must not return that header.
+- `/en/login` and a protected subject notes URL such as `/en/notes/1` return
+  `X-Robots-Tag: noindex, nofollow`. Public pages such as `/pt`, `/en/exams`,
+  and `/en/notes` must not return that header.
 
 CI and local smoke checks do not establish that a release is deployed. A missing
 sitemap or locale route on an older deployed revision leaves these checks pending

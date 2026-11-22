@@ -18,7 +18,7 @@ function disallowRules(): string[] {
 describe('robots.txt', () => {
   it('lets crawlers fetch noindex pages so they can see the X-Robots-Tag header', () => {
     const disallow = disallowRules();
-    for (const page of noindexPages) {
+    for (const page of [...noindexPages, '/pt/notes/1', '/en/notes/1']) {
       expect(disallow.filter((rule) => page.startsWith(rule))).toEqual([]);
     }
   });
@@ -36,6 +36,8 @@ describe('robots.txt', () => {
         entry.headers.some((h) => h.key === 'X-Robots-Tag' && h.value.includes('noindex'))
       )
       .map((entry) => entry.source);
+    expect(noindexSources).toContain('/:lang(pt|en)/notes/:id');
+    expect(noindexSources).not.toContain('/:lang(pt|en)/notes/:path*');
     for (const prefix of noindexPathPrefixes) {
       expect(noindexSources).toContain(`/:lang(pt|en)${prefix}/:path*`);
     }

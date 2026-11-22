@@ -44,7 +44,8 @@ describe('seo', () => {
     const exams = entries.find((e) => e.url === 'https://x.test/en/exams');
     expect(exams?.alternates?.languages).toEqual({
       pt: 'https://x.test/pt/exams',
-      en: 'https://x.test/en/exams'
+      en: 'https://x.test/en/exams',
+      'x-default': 'https://x.test/pt/exams'
     });
     expect(entries.some((e) => /admin|login|profile|api/.test(e.url))).toBe(false);
   });

@@ -5,7 +5,7 @@ const nextConfig = {
     NEXT_PUBLIC_BASE_URL: process.env.NEXT_PUBLIC_BASE_URL
   },
   async headers() {
-    // Account, admin and exam-session pages are never indexed. Keep this list in sync with
+    // Account, admin, protected note and exam-session pages are never indexed. Keep this list in sync with
     // noindexPathPrefixes in src/lib/seo.ts; robots.txt must not disallow them.
     const sources = [
       'login',
@@ -17,7 +17,10 @@ const nextConfig = {
       'stats',
       'admin'
     ].map((p) => `/:lang(pt|en)/${p}/:path*`);
-    sources.push('/:lang(pt|en)/exams/:id/(answer|points|review)/:path*');
+    sources.push(
+      '/:lang(pt|en)/exams/:id/(answer|points|review)/:path*',
+      '/:lang(pt|en)/notes/:id'
+    );
     return sources.map((source) => ({
       source,
       headers: [{ key: 'X-Robots-Tag', value: 'noindex, nofollow' }]
