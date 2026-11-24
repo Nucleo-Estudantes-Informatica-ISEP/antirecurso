@@ -7,7 +7,7 @@ import { use, useContext, useEffect, useEffectEvent, useRef, useState } from 're
 import { useTheme } from 'next-themes';
 import Image from 'next/image';
 import { useSearchParams } from 'next/navigation';
-import { useRouter } from '@/i18n/navigation';
+import Link, { useRouter } from '@/i18n/navigation';
 import swal from 'sweetalert';
 
 import { ExamContext } from '@/contexts/ExamContext';
@@ -28,6 +28,7 @@ import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import useAnswerableExamNavigation from '@/hooks/useAnswerableExamNavigation';
 import useSession from '@/hooks/useSession';
+import ProtectedResourceError from '@/components/ProtectedResourceError';
 import { ChevronLeft, ChevronRight, Clock, Loader2 } from 'lucide-react';
 import { getShuffleSeed, reorderByIds, setShuffleSeed, shuffleWithSeed } from '@/utils/examShuffle';
 
@@ -56,6 +57,9 @@ const Exam: React.FC<ExamPageProps> = ({ params }) => {
   const resume = searchParams.get('resume');
 
   const [subject, setSubject] = useState('');
+  const [loadError, setLoadError] = useState<number | null>(null);
+  const [submissionError, setSubmissionError] = useState<number | null>(null);
+  const [retry, setRetry] = useState(0);
 
   const session = useSession();
   const { theme } = useTheme();
@@ -63,6 +67,8 @@ const Exam: React.FC<ExamPageProps> = ({ params }) => {
   themeRef.current = theme;
   const examKeyRef = useRef<string | null>(null);
   const resumePromptShownRef = useRef(false);
+  const pendingResumeRef = useRef<SavedExamState | null>(null);
+  const restoredIndexRef = useRef<number | null>(null);
 
   const { setExamResult, examTime, setExamTime } = useContext(ExamContext);
   const {
@@ -87,8 +93,15 @@ const Exam: React.FC<ExamPageProps> = ({ params }) => {
     handleConfirm
   });
 
+  useEffect(() => {
+    if (questions.length && restoredIndexRef.current !== null) {
+      changeQuestion(restoredIndexRef.current);
+      restoredIndexRef.current = null;
+    }
+  }, [questions, changeQuestion]);
+
   async function handleConfirm() {
-    if (isSubmitting) return;
+    if (isSubmitting || submissionError !== null) return;
 
     removeEventListener();
 
@@ -114,8 +127,15 @@ const Exam: React.FC<ExamPageProps> = ({ params }) => {
       'Content-Type': 'application/json'
     };
 
+    setSubmissionError(null);
     const request = { method: 'POST', headers, body: JSON.stringify(data) };
-    const res = await apiFetch(path, { ...request, authenticated: Boolean(session.token) });
+    let res: Response;
+    try {
+      res = await apiFetch(path, { ...request, authenticated: Boolean(session.token) });
+    } catch {
+      setSubmissionError(0);
+      return;
+    }
 
     if (res.status === 200) {
       setExamResult(await res.json());
@@ -136,11 +156,13 @@ const Exam: React.FC<ExamPageProps> = ({ params }) => {
       }
 
       router.push(`/exams/${resolvedParams.id}/points`);
+    } else if (res.status === 401 || res.status >= 500) {
+      setSubmissionError(res.status);
     } else {
       const detail = await throwApiResponseError(res, t('copy.could_not_submit_the_exam')).catch(
         (error: unknown) => (error instanceof Error ? error.message : String(error))
       );
-      swal(t('copy.an_error_occurred_while_submitting_the_exam'), detail, 'error', {
+      await swal(t('copy.an_error_occurred_while_submitting_the_exam'), detail, 'error', {
         className: themeRef.current === 'dark' ? 'swal-dark' : ''
       });
     }
@@ -155,12 +177,15 @@ const Exam: React.FC<ExamPageProps> = ({ params }) => {
     if (examKeyRef.current !== examKey) {
       examKeyRef.current = examKey;
       resumePromptShownRef.current = false;
+      pendingResumeRef.current = null;
+      restoredIndexRef.current = null;
     }
 
     async function initExam() {
+      setLoadError(null);
       const subjectId = Number.parseInt(resolvedParams.id, 10);
       let savedState: SavedExamState | null = null;
-      let resumeState: SavedExamState | null = null;
+      let resumeState: SavedExamState | null = pendingResumeRef.current;
 
       try {
         if (session.token) {
@@ -212,10 +237,12 @@ const Exam: React.FC<ExamPageProps> = ({ params }) => {
 
           if (shouldResume) {
             resumeState = savedState;
+            pendingResumeRef.current = savedState;
           }
         } else if (resumeParam === 'true' && modeMatches) {
           resumePromptShownRef.current = true;
           resumeState = savedState;
+          pendingResumeRef.current = savedState;
         }
 
         if (modeMatches && !resumeState) {
@@ -247,10 +274,11 @@ const Exam: React.FC<ExamPageProps> = ({ params }) => {
         if (resumeState) {
           const restoredQuestions = reorderByIds(exam, resumeState.questionIds);
           if (restoredQuestions.length === resumeState.questionIds.length) {
+            restoredIndexRef.current = resumeState.currentQuestionIndex;
             setQuestions(restoredQuestions);
             setAnswers(new Map<number, string>(resumeState.answers));
             setExamTime(resumeState.time);
-            changeQuestion(resumeState.currentQuestionIndex);
+            pendingResumeRef.current = null;
             return;
           }
 
@@ -272,14 +300,21 @@ const Exam: React.FC<ExamPageProps> = ({ params }) => {
         setExamTime(0);
       } catch (error) {
         if (!active) return;
-        const detail =
-          error instanceof ApiResponseError
-            ? error.message
-            : loadMessage('copy.could_not_contact_the_exam_service');
-        await swal(loadMessage('copy.an_error_occurred_while_loading_the_exam'), detail, 'error', {
-          className: themeRef.current === 'dark' ? 'swal-dark' : ''
-        });
-        router.push('/exams');
+        if (
+          !(error instanceof ApiResponseError) ||
+          [0, 401].includes(error.status) ||
+          error.status >= 500
+        ) {
+          setLoadError(error instanceof ApiResponseError ? error.status : 0);
+          return;
+        }
+        await swal(
+          loadMessage('copy.an_error_occurred_while_loading_the_exam'),
+          error.message,
+          'error',
+          { className: themeRef.current === 'dark' ? 'swal-dark' : '' }
+        );
+        if (active) router.push('/exams');
       }
     }
 
@@ -306,7 +341,8 @@ const Exam: React.FC<ExamPageProps> = ({ params }) => {
     session.isLoading,
     nOfQuestions,
     filter,
-    resume
+    resume,
+    retry
   ]);
 
   useEffect(() => {
@@ -326,6 +362,31 @@ const Exam: React.FC<ExamPageProps> = ({ params }) => {
 
   return (
     <section className="w-full">
+      {loadError !== null && (
+        <div className="container">
+          <ProtectedResourceError
+            status={loadError}
+            signInRequired={!session.token}
+            onRetry={() => setRetry((value) => value + 1)}
+          />
+        </div>
+      )}
+      {submissionError !== null && (
+        <div className="container">
+          {submissionError === 401 ? (
+            <ProtectedResourceError status={submissionError} />
+          ) : (
+            <div role="alert" className="my-4 space-y-3 rounded-lg border p-4">
+              <p>{t('error.examSubmissionUnconfirmed')}</p>
+              {session.token && (
+                <Button asChild>
+                  <Link href="/profile">{t('copy.history_of_your_completed_exams')}</Link>
+                </Button>
+              )}
+            </div>
+          )}
+        </div>
+      )}
       {/* Sticky header */}
       <div className="sticky top-16 md:top-[4.5rem] z-20 bg-background/80 backdrop-blur-xl border-b">
         <div className="container py-3 md:py-4 flex flex-col gap-3">
@@ -464,7 +525,7 @@ const Exam: React.FC<ExamPageProps> = ({ params }) => {
 
               {currentQuestionIndex === questions.length - 1 ? (
                 <form onSubmit={(e) => submit(e)} className="w-full sm:w-auto">
-                  <Button type="submit" disabled={isSubmitting} className="w-full sm:w-auto">
+                  <Button type="submit" disabled={isSubmitting || submissionError !== null} className="w-full sm:w-auto">
                     {isSubmitting ? (
                       <>
                         <Loader2 className="size-4 animate-spin" />

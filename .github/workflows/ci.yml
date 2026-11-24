@@ -43,6 +43,12 @@ jobs:
           pnpm test
           node --test .github/scripts/sync-board-issues.test.mjs
 
+      - name: Install browser for authenticated recovery check
+        run: pnpm exec playwright install --with-deps chromium
+
+      - name: Authenticated recovery browser check
+        run: pnpm test:e2e:auth
+
       - name: Production build
         run: pnpm build
 
