@@ -10,11 +10,13 @@ import useCallbackUrl from '@/hooks/useCallbackUrl';
 export default function ProtectedResourceError({
   status,
   onRetry,
-  anchor
+  anchor,
+  signInRequired = false
 }: {
   status: number;
   onRetry?: () => void;
   anchor?: string;
+  signInRequired?: boolean;
 }) {
   const t = useMessages();
   const router = useRouter();
@@ -22,9 +24,13 @@ export default function ProtectedResourceError({
   const retry = useCallback(() => router.refresh(), [router]);
   const destination = status === 401 ? callback + encodeURIComponent(anchor ?? '') : null;
 
+  const signInMessage = signInRequired
+    ? 'auth.signInToOpenExam'
+    : 'auth.sessionExpiredForResource';
+
   return (
     <div role="alert" className="my-4 space-y-3 rounded-lg border p-4">
-      <p>{t(destination ? 'auth.sessionExpiredForResource' : 'error.resourceUnavailable')}</p>
+      <p>{t(destination ? signInMessage : 'error.resourceUnavailable')}</p>
       {destination ? (
         <Button asChild>
           <Link href={`/login?callbackUrl=${destination}`}>{t('auth.login')}</Link>

@@ -78,10 +78,13 @@ afterEach(() => {
   navigation.pathname = '/pt/exams/17/answer/custom';
 });
 
-it.each([401, 503])('offers recovery when exam submission returns %s', async (status) => {
+it.each([401, 503, 'network'])('offers recovery after a %s submission failure', async (status) => {
   vi.mocked(generateExam).mockResolvedValue(questions);
   vi.mocked(swal).mockResolvedValue(true);
-  vi.stubGlobal('fetch', vi.fn().mockResolvedValue(new Response(null, { status })));
+  const fetch = vi.fn();
+  if (typeof status === 'number') fetch.mockResolvedValue(new Response(null, { status }));
+  else fetch.mockRejectedValue(new Error('Connection lost'));
+  vi.stubGlobal('fetch', fetch);
   await act(async () => {
     render(
       <LanguageProvider lang="pt">
@@ -107,6 +110,7 @@ it.each([401, 503])('offers recovery when exam submission returns %s', async (st
     );
   } else {
     expect(await screen.findByText(/não foi possível confirmar se o exame/i)).toBeInTheDocument();
+    expect(screen.getByText(/recarrega esta página para retomar/i)).toBeInTheDocument();
     expect(screen.queryByRole('button', { name: 'Tentar novamente' })).toBeNull();
     expect(screen.getByRole('button', { name: 'Terminar exame' })).toBeDisabled();
     expect(fetch).toHaveBeenCalledTimes(1);
@@ -214,4 +218,26 @@ it.each([403, 404])('returns to the exam list when loading returns %s', async (s
   await waitFor(() => expect(navigation.router.push).toHaveBeenCalledWith('/pt/exams', undefined));
   expect(swal).toHaveBeenCalledOnce();
   expect(screen.queryByRole('button', { name: 'Tentar novamente' })).toBeNull();
+});
+
+it('asks guests to sign in to a protected exam without saying their session expired', async () => {
+  vi.mocked(generateExam).mockRejectedValue(new ApiResponseError(401, 'Authentication required'));
+
+  await act(async () => {
+    render(
+      <LanguageProvider lang="pt">
+        <ExamContextProvider>
+          <Suspense>
+            <Exam params={Promise.resolve({ id: '17', mode: 'custom' })} />
+          </Suspense>
+        </ExamContextProvider>
+      </LanguageProvider>
+    );
+  });
+
+  expect(await screen.findByRole('alert')).toHaveTextContent('Inicia sessão para abrir este exame.');
+  const link = screen.getByRole('link', { name: 'Iniciar sessão' });
+  expect(
+    new URL(link.getAttribute('href')!, 'https://example.test').searchParams.get('callbackUrl')
+  ).toBe('/pt/exams/17/answer/custom?n_of_questions=2&penalizing_factor=0.25&filter=new');
 });

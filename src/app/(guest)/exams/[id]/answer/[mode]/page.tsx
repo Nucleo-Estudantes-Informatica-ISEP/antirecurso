@@ -366,6 +366,7 @@ const Exam: React.FC<ExamPageProps> = ({ params }) => {
         <div className="container">
           <ProtectedResourceError
             status={loadError}
+            signInRequired={!session.token}
             onRetry={() => setRetry((value) => value + 1)}
           />
         </div>
