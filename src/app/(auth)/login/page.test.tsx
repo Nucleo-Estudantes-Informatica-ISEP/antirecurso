@@ -3,7 +3,7 @@ import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/re
 import { afterEach, expect, it, vi } from 'vitest';
 import { signIn } from 'next-auth/react';
 import { LanguageProvider } from '@/i18n/client';
-import Login from './page';
+import Login from './LoginForm';
 const current = vi.hoisted(() => ({ query: '' }));
 vi.mock('next/navigation', () => ({
   usePathname: () => '/en/login',
@@ -23,7 +23,7 @@ afterEach(() => {
 it('renders English login and returns to the English homepage by default', async () => {
   render(
     <LanguageProvider lang="pt">
-      <Login />
+      <Login helpUrl="https://auth.example.test/ui/v2/login/help" />
     </LanguageProvider>
   );
   expect(screen.getByRole('heading', { name: 'Welcome back' })).toBeTruthy();
@@ -34,7 +34,7 @@ it('preserves the intended localized destination through authentication', async 
   current.query = 'callbackUrl=%2Fen%2Fexams%2F17%2Fanswer%2Fcustom%3Ffilter%3Dnew';
   render(
     <LanguageProvider lang="en">
-      <Login />
+      <Login helpUrl="https://auth.example.test/ui/v2/login/help" />
     </LanguageProvider>
   );
   fireEvent.click(screen.getByRole('button', { name: 'Continue to sign in' }));
@@ -45,4 +45,18 @@ it('preserves the intended localized destination through authentication', async 
   );
   const register = screen.getByRole('link', { name: /Create one now/ });
   expect(register.getAttribute('href')).toContain('/en/register?callbackUrl=');
+  const help = screen.getByRole('link', { name: 'Can’t sign in?' });
+  expect(help.getAttribute('href')).toBe('https://auth.example.test/ui/v2/login/help');
+  expect(help.getAttribute('target')).toBe('_blank');
+});
+
+it('falls back to the localized homepage for a nonlocal callback', async () => {
+  current.query = new URLSearchParams({ callbackUrl: 'https://example.test/' }).toString();
+  render(
+    <LanguageProvider lang="en">
+      <Login />
+    </LanguageProvider>
+  );
+  fireEvent.click(screen.getByRole('button', { name: 'Continue to sign in' }));
+  await waitFor(() => expect(signIn).toHaveBeenCalledWith('zitadel', { callbackUrl: '/en' }));
 });

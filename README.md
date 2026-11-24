@@ -183,6 +183,9 @@ Defined in [`package.json`](package.json):
 - `pnpm lint` - run ESLint
 - `pnpm typecheck` - run TypeScript without emitting files
 - `pnpm test` - run the Vitest regression suite
+- `pnpm test:e2e:auth` - exercise sign-in and protected exam/note recovery against local fixtures
+
+The authenticated browser check starts its own local web server and mock OIDC/API service. Run `pnpm exec playwright install chromium` once before `pnpm test:e2e:auth`; set `CHROME` to a compatible Chromium executable to use an existing browser instead. It uses synthetic accounts and does not contact production.
 
 ## Development Notes
 

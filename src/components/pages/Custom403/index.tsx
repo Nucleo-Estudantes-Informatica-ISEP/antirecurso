@@ -5,9 +5,11 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { ArrowLeft, ShieldAlert } from 'lucide-react';
 import Link from '@/i18n/navigation';
+import useCallbackUrl from '@/hooks/useCallbackUrl';
 
 const Custom403: React.FC = () => {
   const t = useMessages();
+  const callbackUrl = useCallbackUrl();
 
   return (
     <section className="container py-16 md:py-24 w-full max-w-lg">
@@ -27,7 +29,7 @@ const Custom403: React.FC = () => {
           </p>
           <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
             <Button asChild>
-              <Link href="/login">{t('auth.login')}</Link>
+              <Link href={`/login?callbackUrl=${callbackUrl}`}>{t('auth.login')}</Link>
             </Button>
             <Button asChild variant="outline">
               <Link href="/">
