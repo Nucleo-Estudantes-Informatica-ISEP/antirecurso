@@ -55,8 +55,12 @@ it('resolves the AuthNEI end-session URL before clearing the app session', async
   expect(mocks.push).not.toHaveBeenCalled();
 });
 
-it('offers app-only sign-out when the shared URL is unavailable', async () => {
-  vi.stubGlobal('fetch', vi.fn().mockResolvedValue(new Response(null, { status: 503 })));
+it.each([
+  ['the issuer request fails', () => new Response(null, { status: 503 })],
+  ['the response has no logout URL', () => Response.json({})]
+])('offers app-only sign-out when %s', async (_reason, response) => {
+  vi.stubGlobal('fetch', vi.fn().mockResolvedValue(response()));
+  const navigate = vi.spyOn(window.location, 'assign').mockImplementation(() => {});
   mocks.swal.mockResolvedValueOnce('shared');
   const { result } = renderHook(useAuthNeiSignOut);
 
@@ -67,6 +71,8 @@ it('offers app-only sign-out when the shared URL is unavailable', async () => {
   );
   expect(mocks.signOut).not.toHaveBeenCalled();
   expect(mocks.clear).not.toHaveBeenCalled();
+  expect(navigate).not.toHaveBeenCalled();
+  expect(mocks.push).not.toHaveBeenCalled();
 });
 
 it('keeps the user in the app when the local sign-out fails after preparing shared sign-out', async () => {
