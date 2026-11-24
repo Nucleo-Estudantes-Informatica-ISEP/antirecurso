@@ -1,4 +1,9 @@
 {
+  "auth.sessionExpiredForResource": "A tua sessão expirou. Inicia sessão para voltares aqui.",
+  "auth.signInToOpenExam": "Inicia sessão para abrir este exame.",
+  "error.examSubmissionUnconfirmed": "Não foi possível confirmar se o exame foi submetido. O rascunho continua guardado. Se tens sessão iniciada, consulta o histórico antes de submeter novamente. Recarrega esta página para retomar o rascunho.",
+  "error.resourceUnavailable": "Não foi possível abrir este conteúdo. Tenta novamente para continuares nesta página.",
+  "error.retryResource": "Tentar novamente",
   "nav.home": "Home",
   "nav.exams": "Exames",
   "nav.scoreboard": "Scoreboard",

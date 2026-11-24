@@ -41,6 +41,12 @@ jobs:
       - name: Test
         run: pnpm test
 
+      - name: Install browser for authenticated recovery check
+        run: pnpm exec playwright install --with-deps chromium
+
+      - name: Authenticated recovery browser check
+        run: pnpm test:e2e:auth
+
       - name: Production build
         run: pnpm build
 
