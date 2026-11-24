@@ -15,13 +15,10 @@ import {
 } from '@/components/ui/dropdown-menu';
 import useCallbackUrl from '@/hooks/useCallbackUrl';
 import useSession from '@/hooks/useSession';
+import useAuthNeiSignOut from '@/hooks/useAuthNeiSignOut';
 import { switchAuthNeiAccount } from '@/lib/client-auth-actions';
 import { LogIn, LogOut, RefreshCw, User, UserCog, UserPlus } from 'lucide-react';
-import { signOut } from 'next-auth/react';
-import { useTheme } from 'next-themes';
 import Link from '@/i18n/navigation';
-import { useRouter } from '@/i18n/navigation';
-import swal from 'sweetalert';
 import { APP_PROFILE_LINK, AUTHNEI_ACCOUNT_LINK } from '../profileLinks';
 
 const HamburgerProfileMenu: React.FC = () => {
@@ -29,8 +26,7 @@ const HamburgerProfileMenu: React.FC = () => {
   const t = useTranslations(lang);
   const pathname = useCallbackUrl();
   const session = useSession();
-  const router = useRouter();
-  const { theme } = useTheme();
+  const signOut = useAuthNeiSignOut();
 
   const userInitials = session.user?.name
     ? session.user.name
@@ -40,45 +36,6 @@ const HamburgerProfileMenu: React.FC = () => {
         .join('')
         .toUpperCase()
     : '';
-
-  const handleLogout = async () => {
-    const confirmed = await swal({
-      title: t('auth.confirmLogout'),
-      icon: 'warning',
-      buttons: [t('common.no'), t('common.yes')],
-      dangerMode: true,
-      className: theme === 'dark' ? 'swal-dark' : ''
-    });
-
-    if (!confirmed) return;
-
-    const res = await fetch('/api/auth/logout', { method: 'PATCH' });
-
-    if (res.status === 200) {
-      const { url } = (await res.json()) as { url?: string };
-      await signOut({ redirect: false });
-      session.clear();
-      swal({
-        title: t('auth.loggedOut'),
-        icon: 'success',
-        timer: 2000,
-        className: theme === 'dark' ? 'swal-dark' : ''
-      });
-      if (url) {
-        window.location.href = url;
-        return;
-      }
-      router.push(localizedPath('/', lang));
-      router.refresh();
-    } else {
-      swal({
-        title: t('auth.error'),
-        icon: 'error',
-        className: theme === 'dark' ? 'swal-dark' : ''
-      });
-      router.refresh();
-    }
-  };
 
   const handleSwitchAccount = async () => {
     session.clear();
@@ -150,7 +107,7 @@ const HamburgerProfileMenu: React.FC = () => {
           <span>{t('auth.switchAccount')}</span>
         </DropdownMenuItem>
         <DropdownMenuItem
-          onClick={handleLogout}
+          onClick={signOut}
           className="cursor-pointer text-destructive focus:text-destructive"
         >
           <LogOut className="size-4" />
