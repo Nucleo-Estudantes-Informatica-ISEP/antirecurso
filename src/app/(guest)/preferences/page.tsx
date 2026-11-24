@@ -1,4 +1,5 @@
 import LanguageSelect from '@/components/navbar/LanguageSelect';
+import AccountDataSettings from '@/components/profile/AccountDataSettings';
 import { Card, CardContent } from '@/components/ui/card';
 import ThemeChanger from '@/components/utils/Theme/ThemeChanger';
 import { getMessages } from '@/i18n/server';
@@ -21,6 +22,7 @@ export default async function PreferencesPage() {
           </div>
         </CardContent>
       </Card>
+      <AccountDataSettings />
     </section>
   );
 }
