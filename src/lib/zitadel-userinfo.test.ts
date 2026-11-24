@@ -53,6 +53,8 @@ describe('AntiRecurso AuthNEI role handling', () => {
     expect(roles).toEqual(['admin']);
     expect(fetchImpl).toHaveBeenCalledWith('https://auth.example.com/oidc/v1/userinfo', {
       method: 'GET',
+      redirect: 'error',
+      signal: expect.any(AbortSignal),
       headers: {
         Accept: 'application/json',
         Authorization: 'Bearer fresh-token'

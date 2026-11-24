@@ -1,8 +1,10 @@
 'use client';
 
+import { useLanguage, useMessages } from '@/i18n/client';
+
 import { useEffect, useState } from 'react';
 import { useTheme } from 'next-themes';
-import { useRouter } from 'next/navigation';
+import { useRouter } from '@/i18n/navigation';
 import swal from 'sweetalert';
 import { Trash2 } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
@@ -25,6 +27,9 @@ import {
 import PendingExam from '@/types/PendingExam';
 
 const PendingExamsTable: React.FC = () => {
+  const t = useMessages();
+  const lang = useLanguage();
+
   const router = useRouter();
   const fetchUrl = `${PROTECTED_API_BASE_URL}/exams/pending`;
   const [pendingExamResponse, setPendingExamResponse] = useState<PendingExam[] | null>(null);
@@ -37,8 +42,8 @@ const PendingExamsTable: React.FC = () => {
         setPendingExamResponse(data?.data ?? []);
       } catch {
         swal({
-          title: 'Erro',
-          text: 'Não foi possível obter os exames por terminar.',
+          title: t('copy.error_2'),
+          text: t('copy.could_not_retrieve_unfinished_exams'),
           icon: 'error',
           className: theme === 'dark' ? 'swal-dark' : ''
         });
@@ -47,7 +52,7 @@ const PendingExamsTable: React.FC = () => {
     }
 
     fetchData();
-  }, [fetchUrl, router, theme]);
+  }, [fetchUrl, router, theme, t]);
 
   if (pendingExamResponse === null) {
     return (
@@ -63,7 +68,7 @@ const PendingExamsTable: React.FC = () => {
   }
 
   if (!pendingExamResponse.length) {
-    return <p className="text-muted-foreground py-8">Não tens exames por terminar.</p>;
+    return <p className="text-muted-foreground py-8">{t('copy.you_have_no_unfinished_exams')}</p>;
   }
 
   return (
@@ -72,11 +77,15 @@ const PendingExamsTable: React.FC = () => {
         <Table>
           <TableHeader>
             <TableRow className="hover:bg-transparent">
-              <TableHead>Disciplina</TableHead>
-              <TableHead className="text-center">Modo</TableHead>
-              <TableHead className="text-center hidden sm:table-cell">Progresso</TableHead>
-              <TableHead className="text-center hidden md:table-cell">Última atualização</TableHead>
-              <TableHead className="text-center">Ações</TableHead>
+              <TableHead>{t('copy.subject_2')}</TableHead>
+              <TableHead className="text-center">{t('copy.mode_2')}</TableHead>
+              <TableHead className="text-center hidden sm:table-cell">
+                {t('copy.progress_2')}
+              </TableHead>
+              <TableHead className="text-center hidden md:table-cell">
+                {t('copy.last_updated')}
+              </TableHead>
+              <TableHead className="text-center">{t('copy.actions')}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -88,10 +97,10 @@ const PendingExamsTable: React.FC = () => {
 
               const handleDelete = async () => {
                 const confirmed = await swal({
-                  title: 'Eliminar exame pendente',
-                  text: 'Tens a certeza? Esta ação não pode ser desfeita.',
+                  title: t('copy.delete_unfinished_exam'),
+                  text: t('copy.are_you_sure_this_action_cannot_be_undone'),
                   icon: 'warning',
-                  buttons: ['Cancelar', 'Eliminar'],
+                  buttons: [t('copy.cancel'), 'Eliminar'],
                   className: theme === 'dark' ? 'swal-dark' : ''
                 });
 
@@ -107,8 +116,8 @@ const PendingExamsTable: React.FC = () => {
                   setPendingExamResponse(data?.data ?? []);
                 } catch {
                   swal({
-                    title: 'Erro',
-                    text: 'Não foi possível eliminar o exame pendente.',
+                    title: t('copy.error_2'),
+                    text: t('copy.could_not_delete_the_unfinished_exam'),
                     icon: 'error',
                     className: theme === 'dark' ? 'swal-dark' : ''
                   });
@@ -139,14 +148,16 @@ const PendingExamsTable: React.FC = () => {
                     {total > 0 ? `${progress}%` : '—'}
                   </TableCell>
                   <TableCell className="text-center text-muted-foreground tabular-nums hidden md:table-cell">
-                    {new Date(exam.updated_at).toLocaleDateString('pt-PT')}
+                    {new Date(exam.updated_at).toLocaleDateString(
+                      lang === 'pt' ? 'pt-PT' : 'en-GB'
+                    )}
                   </TableCell>
                   <TableCell className="text-center">
                     <button
                       type="button"
                       onClick={handleDelete}
                       className="inline-flex items-center justify-center rounded-md p-2 text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors"
-                      aria-label="Eliminar exame pendente"
+                      aria-label={t('copy.delete_unfinished_exam')}
                     >
                       <Trash2 className="size-4" />
                     </button>

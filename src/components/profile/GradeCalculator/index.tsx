@@ -1,5 +1,7 @@
 'use client';
 
+import { useMessages } from '@/i18n/client';
+
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
@@ -15,6 +17,8 @@ interface GradeCalculatorProps {
 }
 
 const GradeCalculator: React.FC<GradeCalculatorProps> = ({ examGrade, weight, minGrade }) => {
+  const t = useMessages();
+
   const MAX_GRADE = 20;
 
   const [exam, setExam] = useState<number | null>((examGrade * MAX_GRADE) / 100);
@@ -27,13 +31,13 @@ const GradeCalculator: React.FC<GradeCalculatorProps> = ({ examGrade, weight, mi
     <div className="space-y-6">
       <div className="text-center">
         <h2 className="text-xl md:text-2xl font-bold">
-          Calcula a tua nota <span className="gradient-text">final</span>
+          {t('copy.calculate_your')} <span className="gradient-text">{t('copy.final_grade')}</span>
         </h2>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
         <div className="space-y-2">
-          <Label htmlFor="frequency">Frequência</Label>
+          <Label htmlFor="frequency">{t('copy.coursework')}</Label>
           <Input
             id="frequency"
             value={frequency === null ? '' : frequency}
@@ -51,7 +55,7 @@ const GradeCalculator: React.FC<GradeCalculatorProps> = ({ examGrade, weight, mi
           />
         </div>
         <div className="space-y-2">
-          <Label htmlFor="exam">Exame</Label>
+          <Label htmlFor="exam">{t('copy.exam_2')}</Label>
           <div className="flex items-center gap-2">
             <Input
               id="exam"
@@ -81,7 +85,7 @@ const GradeCalculator: React.FC<GradeCalculatorProps> = ({ examGrade, weight, mi
                     </button>
                   </TooltipTrigger>
                   <TooltipContent className="max-w-xs">
-                    A tua nota no exame é inferior à nota mínima para aprovação.
+                    {t('copy.your_exam_grade_is_below_the_minimum_passing_grade')}
                   </TooltipContent>
                 </Tooltip>
               </TooltipProvider>
@@ -92,7 +96,7 @@ const GradeCalculator: React.FC<GradeCalculatorProps> = ({ examGrade, weight, mi
 
       <div className="text-center py-4 rounded-xl bg-muted/40 border">
         <p className="text-xs uppercase tracking-wider text-muted-foreground font-semibold mb-1">
-          A tua nota final atual
+          {t('copy.your_current_final_grade')}
         </p>
         {finalGrade !== null ? (
           <p
@@ -104,7 +108,7 @@ const GradeCalculator: React.FC<GradeCalculatorProps> = ({ examGrade, weight, mi
           </p>
         ) : (
           <p className="text-sm text-muted-foreground">
-            Preenche os campos acima para veres a tua nota final
+            {t('copy.fill_in_the_fields_above_to_see_your_final_grade')}
           </p>
         )}
       </div>

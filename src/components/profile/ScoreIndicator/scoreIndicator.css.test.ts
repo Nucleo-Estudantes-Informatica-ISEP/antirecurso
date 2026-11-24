@@ -15,7 +15,7 @@ const indicatorDeclarations = () =>
 
 describe('ScoreIndicator gauge layout', () => {
   it('does not translate the muted background arc horizontally', () => {
-    // The arc spans the full indicator width and is positioned at left: auto (static position = 0).
+    // The arc spans the full indicator width and is positioned starts at the indicator’s left edge.
     // A horizontal translate pushes its centre off the indicator centre, so one half of the
     // wheel is clipped by overflow: hidden and the arcs no longer line up.
     const horizontal = mutedArcDeclarations()
@@ -35,4 +35,13 @@ describe('ScoreIndicator gauge layout', () => {
     expect(mobile).toBeDefined();
     expect(desktop).toMatch(/width:\s*100%/);
   });
+});
+
+it('scales the gauge height and both arc radii with its width', () => {
+  expect(indicatorDeclarations().join('\n')).toMatch(/aspect-ratio:\s*2\b/);
+  expect(mutedArcDeclarations().join('\n')).toMatch(
+    /border-radius:\s*50% 50% 0 0\s*\/\s*100% 100% 0 0/
+  );
+  expect(css).toMatch(/border-radius:\s*0 0 50% 50%\s*\/\s*0 0 100% 100%/);
+  expect(css).not.toMatch(/border-(?:top|bottom)-(?:left|right)-radius:\s*\d+px/);
 });

@@ -1,8 +1,9 @@
+import { getMessages, redirect } from '@/i18n/server';
 import UserAvatar from '@/components/scoreboard/UserAvatar';
 import { getApiAccessToken } from '@/lib/server-auth';
 import { apiRequest, ApiResponseError } from '@/services/apiClient';
 import User from '@/types/User';
-import { redirect } from 'next/navigation';
+
 import React from 'react';
 
 interface UsersResponse {
@@ -10,10 +11,12 @@ interface UsersResponse {
 }
 
 const UsersPage: React.FC = async () => {
+  const t = await getMessages();
+
   const token = await getApiAccessToken();
 
   if (!token) {
-    redirect('/');
+    return redirect('/');
   }
 
   let payload: UsersResponse;
@@ -22,10 +25,11 @@ const UsersPage: React.FC = async () => {
       authenticated: true,
       accessToken: token,
       cache: 'no-store',
-      errorMessage: 'Failed to load users'
+      errorMessage: t('copy.failed_to_load_users')
     });
   } catch (error) {
-    if (error instanceof ApiResponseError && [401, 403].includes(error.status)) redirect('/');
+    if (error instanceof ApiResponseError && [401, 403].includes(error.status))
+      return redirect('/');
     throw error;
   }
 
@@ -33,16 +37,16 @@ const UsersPage: React.FC = async () => {
 
   return (
     <div className="w-full h-full mt-4 flex flex-col items-center justify-center">
-      <h2 className="text-4xl font-black">Users</h2>
+      <h2 className="text-4xl font-black">{t('copy.users')}</h2>
       <div className="flex flex-col w-3/4">
         <table className="table-auto">
           <thead>
             <tr>
-              <th className="px-4 py-2">Avatar</th>
-              <th className="px-4 py-2">ID</th>
-              <th className="px-4 py-2">Nome</th>
-              <th className="px-4 py-2">Email</th>
-              <th className="px-4 py-2">Tipo</th>
+              <th className="px-4 py-2">{t('copy.avatar')}</th>
+              <th className="px-4 py-2">{t('copy.id')}</th>
+              <th className="px-4 py-2">{t('copy.name')}</th>
+              <th className="px-4 py-2">{t('copy.email')}</th>
+              <th className="px-4 py-2">{t('copy.type')}</th>
             </tr>
           </thead>
           <tbody>

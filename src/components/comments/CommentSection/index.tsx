@@ -1,5 +1,7 @@
 'use client';
 
+import { useMessages } from '@/i18n/client';
+
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -11,7 +13,7 @@ import { Comment } from '@/types/Comment';
 import { Flag, MessageSquare } from 'lucide-react';
 import { useTheme } from 'next-themes';
 import Image from 'next/image';
-import Link from 'next/link';
+import Link from '@/i18n/navigation';
 import { useRef } from 'react';
 import swal from 'sweetalert';
 
@@ -30,6 +32,8 @@ const CommentSection: React.FC<CommentSectionProps> = ({
   addListener,
   questionId
 }) => {
+  const t = useMessages();
+
   const session = useSession();
   const { theme } = useTheme();
 
@@ -49,9 +53,9 @@ const CommentSection: React.FC<CommentSectionProps> = ({
     if (!questionId || !session.user) return;
 
     const result = await swal({
-      text: 'O que está errado com esta pergunta? Tenta ser o mais explicito possível.',
+      text: t('copy.what_is_wrong_with_this_question_please_be_as_specific_as_possible'),
       content: { element: 'input' },
-      buttons: ['Cancelar', 'Reportar'],
+      buttons: [t('copy.cancel'), 'Reportar'],
       className: theme === 'dark' ? 'swal-dark' : ''
     });
 
@@ -64,16 +68,16 @@ const CommentSection: React.FC<CommentSectionProps> = ({
         json: { question_id: questionId, reason: result }
       });
       swal({
-        title: 'Reportado!',
-        text: 'A tua denúncia foi enviada com sucesso!',
+        title: t('feedback.reported'),
+        text: t('copy.your_report_was_sent_successfully'),
         icon: 'success',
         className: theme === 'dark' ? 'swal-dark' : '',
         timer: 2000
       });
     } catch {
       swal({
-        title: 'Erro!',
-        text: 'Algo correu mal ao enviar a tua denúncia. Por favor, tenta novamente.',
+        title: t('feedback.error'),
+        text: t('copy.something_went_wrong_while_sending_your_report_please_try_again'),
         icon: 'error',
         className: theme === 'dark' ? 'swal-dark' : ''
       });
@@ -84,20 +88,20 @@ const CommentSection: React.FC<CommentSectionProps> = ({
     <section>
       <div className="flex items-center gap-2 mb-4">
         <MessageSquare className="size-5 text-primary" />
-        <h2 className="text-lg font-semibold">Discussão</h2>
+        <h2 className="text-lg font-semibold">{t('copy.discussion')}</h2>
       </div>
 
       {!session.user ? (
         <Card>
           <CardContent className="p-5 text-sm text-muted-foreground">
             <Link href="/register" className="font-semibold text-primary hover:underline">
-              Cria
+              {t('copy.create_an_account')}
             </Link>{' '}
-            ou{' '}
+            {t('copy.or_2')}{' '}
             <Link href="/login" className="font-semibold text-primary hover:underline">
-              entra na tua conta
+              {t('copy.sign_in_2')}
             </Link>{' '}
-            para poderes comentar e reportar possíveis erros.
+            {t('copy.to_comment_and_report_possible_errors')}
           </CardContent>
         </Card>
       ) : (
@@ -107,7 +111,7 @@ const CommentSection: React.FC<CommentSectionProps> = ({
             rows={3}
             id="comment"
             name="comment"
-            placeholder="Escreve aqui o teu comentário..."
+            placeholder={t('copy.write_your_comment_here')}
             onFocus={() => {
               document.addEventListener('keydown', (e) => {
                 if (e.key === 'Enter' && e.ctrlKey) handleSubmit();
@@ -124,9 +128,9 @@ const CommentSection: React.FC<CommentSectionProps> = ({
               className="text-muted-foreground hover:text-destructive"
             >
               <Flag className="size-4" />
-              Reportar pergunta
+              {t('copy.report_question')}
             </Button>
-            <Button onClick={handleSubmit}>Comentar</Button>
+            <Button onClick={handleSubmit}>{t('copy.comment_2')}</Button>
           </div>
         </div>
       )}
@@ -135,7 +139,7 @@ const CommentSection: React.FC<CommentSectionProps> = ({
         {comments !== undefined ? (
           comments.length === 0 ? (
             <p className="text-sm text-muted-foreground text-center py-4">
-              Ainda não há comentários para esta pergunta.
+              {t('copy.no_comments_for_this_question_yet')}
             </p>
           ) : (
             comments.map((comment) => (

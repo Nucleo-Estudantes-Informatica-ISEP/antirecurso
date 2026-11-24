@@ -1,5 +1,7 @@
 'use client';
 
+import { useMessages } from '@/i18n/client';
+
 import { ChartData, Chart as ChartJS, ChartOptions, registerables } from 'chart.js';
 import { useTheme } from 'next-themes';
 import { useId } from 'react';
@@ -15,6 +17,8 @@ interface LineChartProps {
 }
 
 const LineChart: React.FC<LineChartProps> = ({ labels, data, text }) => {
+  const t = useMessages();
+
   const dataPoints = data.map((value, index) => [index, value] as DataPoint);
   const regressionLine = regression.linear(dataPoints).points.map((point) => point[1]);
 
@@ -52,7 +56,7 @@ const LineChart: React.FC<LineChartProps> = ({ labels, data, text }) => {
         backgroundColor: 'rgb(200, 100, 22, 0.5)'
       },
       {
-        label: 'Evolução',
+        label: t('copy.progress'),
         data: regressionLine,
         borderColor: theme === 'dark' ? '#ddd' : 'rgb(100, 100, 100)',
         backgroundColor: theme === 'dark' ? 'rgb(200,200,200,.05)' : 'rgb(100, 100, 100, 0.5)'

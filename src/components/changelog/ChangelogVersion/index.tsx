@@ -1,3 +1,6 @@
+'use client';
+
+import { useLanguage, useMessages } from '@/i18n/client';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
 
@@ -9,6 +12,9 @@ interface ChangelogVersionProps {
 }
 
 const ChangelogVersion: React.FC<ChangelogVersionProps> = ({ title, date, updates, children }) => {
+  const t = useMessages();
+  const lang = useLanguage();
+
   return (
     <article className="relative">
       {/* timeline dot */}
@@ -21,7 +27,7 @@ const ChangelogVersion: React.FC<ChangelogVersionProps> = ({ title, date, update
           <div className="flex flex-wrap items-baseline gap-3 mb-3">
             <h3 className="font-bold text-primary text-xl md:text-2xl">{title}</h3>
             <Badge variant="outline" className="font-medium">
-              {date.toLocaleDateString('pt-PT', {
+              {date.toLocaleDateString(lang === 'pt' ? 'pt-PT' : 'en-GB', {
                 day: 'numeric',
                 month: 'long',
                 year: 'numeric'
@@ -34,7 +40,7 @@ const ChangelogVersion: React.FC<ChangelogVersionProps> = ({ title, date, update
             </div>
           )}
           <p className="text-xs uppercase tracking-wider text-muted-foreground font-semibold mb-3">
-            Novidades
+            {t('copy.updates')}
           </p>
           <ul className="space-y-2 text-sm md:text-base">
             {updates.map((update, i) => (

@@ -1,5 +1,7 @@
 'use client';
 
+import { useMessages } from '@/i18n/client';
+
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { TableCell } from '@/components/ui/table';
@@ -14,6 +16,8 @@ interface ScoreboardRowProps {
 }
 
 const ScoreboardRow: React.FC<ScoreboardRowProps> = ({ line, position, highlight }) => {
+  const t = useMessages();
+
   const userInitials = line.user_name
     ? line.user_name
         .split(' ')
@@ -52,12 +56,12 @@ const ScoreboardRow: React.FC<ScoreboardRowProps> = ({ line, position, highlight
             {line.user_name}
             {highlight && (
               <Badge variant="soft" className="ml-2 align-middle">
-                Tu
+                {t('copy.you_2')}
               </Badge>
             )}
           </span>
           <span className="text-xs text-muted-foreground">
-            {line.exams} {line.exams === 1 ? 'exame' : 'exames'}
+            {line.exams} {line.exams === 1 ? t('copy.exam') : 'exames'}
           </span>
         </div>
       </TableCell>

@@ -1,7 +1,8 @@
 'use client';
 
-import { MD5 } from 'crypto-js';
-import React, { Dispatch, SetStateAction, useState } from 'react';
+import { useMessages } from '@/i18n/client';
+
+import React, { useState } from 'react';
 
 import { PROTECTED_API_BASE_URL } from '@/services/api';
 import { apiRequest } from '@/services/apiClient';
@@ -10,9 +11,11 @@ import Image from 'next/image';
 import useSWR from 'swr';
 import LoadingSpinner from '../LoadingSpinner';
 
+type SelectedUser = Pick<User, 'id' | 'name' | 'avatar'>;
+
 interface UserSelectorProps {
-  selected: User | null;
-  setSelected: Dispatch<SetStateAction<User | null>>;
+  selected: SelectedUser | null;
+  setSelected: (user: SelectedUser | null) => void;
 }
 
 interface UsersResponse {
@@ -20,12 +23,9 @@ interface UsersResponse {
 }
 
 const UserSelector: React.FC<UserSelectorProps> = ({ selected, setSelected }) => {
-  const [query, setQuery] = useState<string>('');
-  const avatarFromEmail = (email?: string | null) => {
-    const normalizedEmail = email?.trim().toLowerCase();
-    return MD5(normalizedEmail || 'unknown-user').toString();
-  };
+  const t = useMessages();
 
+  const [query, setQuery] = useState<string>('');
   const fetcher = (url: string) => {
     return apiRequest<UsersResponse>(url.toString(), { authenticated: true });
   };
@@ -55,7 +55,7 @@ const UserSelector: React.FC<UserSelectorProps> = ({ selected, setSelected }) =>
       {selected ? (
         <div className="flex items-center gap-2 px-4 w-full font-bold">
           <Image
-            src={`https://gravatar.com/avatar/${avatarFromEmail(selected.email)}?s=256&d=identicon`}
+            src={`https://gravatar.com/avatar/${selected.avatar}?s=256&d=identicon`}
             alt={selected.name}
             width={32}
             height={32}
@@ -72,7 +72,7 @@ const UserSelector: React.FC<UserSelectorProps> = ({ selected, setSelected }) =>
             type="text"
             className="w-full px-1.5 md:px-4 py-2 rounded bg-transparent border"
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="Search"
+            placeholder={t('common.search')}
           />
           <div className="relative">
             {isLoading ? (
@@ -83,7 +83,7 @@ const UserSelector: React.FC<UserSelectorProps> = ({ selected, setSelected }) =>
               <div className="absolute bg-gray-200 dark:bg-gray-700 rounded-md drop-shadow-lg font-bold">
                 {users &&
                   (!users.length ? (
-                    <div className="w-52 px-4 py-2 text-center">No results.</div>
+                    <div className="w-52 px-4 py-2 text-center">{t('copy.no_results')}</div>
                   ) : (
                     users?.slice(0, 3).map((r: User) => (
                       <button
@@ -92,7 +92,7 @@ const UserSelector: React.FC<UserSelectorProps> = ({ selected, setSelected }) =>
                         onClick={() => handleSelectUser(r)}
                       >
                         <Image
-                          src={`https://gravatar.com/avatar/${avatarFromEmail(r.email)}?s=256&d=identicon`}
+                          src={`https://gravatar.com/avatar/${r.avatar}?s=256&d=identicon`}
                           alt={r.name}
                           width={32}
                           height={32}

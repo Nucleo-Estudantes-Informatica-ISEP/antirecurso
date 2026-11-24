@@ -1,21 +1,24 @@
-// create a function that maps a mode to a translation
-export const sanitizeMode = (mode: string): string => {
+import { useTranslations as translate, type Lang } from '@/i18n/translations';
+
+// Mode identifiers in API requests remain unchanged; only their labels vary.
+export const sanitizeMode = (mode: string, lang: Lang = 'pt'): string => {
+  const t = translate(lang);
   switch (mode) {
     case 'all':
-      return 'todos';
+      return t('exam.mode.all');
     case 'default':
-      return 'aleatório';
+      return t('exam.mode.default');
     case 'new':
-      return 'novas';
+      return t('exam.mode.new');
     case 'realistic':
-      return 'realista';
+      return t('exam.mode.realistic');
     case 'wrong':
-      return 'erradas';
+      return t('exam.mode.wrong');
     case 'hard':
-      return 'difícil';
+      return t('exam.mode.hard');
     case 'custom':
-      return 'personalizado';
+      return t('exam.mode.custom');
     default:
-      return 'aleatório';
+      return t('exam.mode.default');
   }
 };

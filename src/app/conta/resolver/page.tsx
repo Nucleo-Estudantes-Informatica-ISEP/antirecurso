@@ -1,5 +1,7 @@
 'use client';
 
+import { useLanguage, useMessages } from '@/i18n/client';
+
 import { useState } from 'react';
 import { AlertTriangle, ShieldCheck, Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -9,6 +11,9 @@ import useSession from '@/hooks/useSession';
 import { apiRequest } from '@/services/apiClient';
 
 const Resolver: React.FC = () => {
+  const t = useMessages();
+  const lang = useLanguage();
+
   const { user } = useSession();
   const [loading, setLoading] = useState(false);
 
@@ -17,13 +22,17 @@ const Resolver: React.FC = () => {
     setLoading(true);
 
     const confirmed = await swal({
-      title: action === 'discard' ? 'Tens a certeza?' : 'Associar conta?',
+      title: action === 'discard' ? t('copy.are_you_sure') : t('copy.link_account'),
       text:
         action === 'discard'
-          ? 'Esta ação NÃO pode ser revertida. Todos os teus dados (exames, pontuações e relatórios) serão eliminados permanentemente.'
-          : 'Vamos associar esta conta ao email existente. Os teus dados serão mantidos.',
+          ? t(
+              'copy.this_action_cannot_be_undone_all_your_data_exams_scores_and_reports_will_be_permanent'
+            )
+          : t(
+              'copy.we_will_link_this_account_to_the_existing_email_address_your_data_will_be_kept'
+            ),
       icon: action === 'discard' ? 'warning' : 'info',
-      buttons: ['Cancelar', 'Confirmar'],
+      buttons: [t('copy.cancel'), t('copy.confirm')],
       className: document.documentElement.classList.contains('dark') ? 'swal-dark' : ''
     });
 
@@ -39,22 +48,22 @@ const Resolver: React.FC = () => {
         json: { action }
       });
       await swal({
-        title: 'Sucesso',
+        title: t('copy.success'),
         text:
           action === 'discard'
-            ? 'Os teus dados antigos foram eliminados. A tua conta foi recriada do zero.'
-            : 'A tua conta foi associada com sucesso.',
+            ? t('copy.your_old_data_was_deleted_your_account_has_been_recreated_from_scratch')
+            : t('copy.your_account_was_linked_successfully'),
         icon: 'success',
-        buttons: ['Fechar'],
+        buttons: [t('copy.close')],
         className: document.documentElement.classList.contains('dark') ? 'swal-dark' : ''
       });
-      window.location.href = '/';
+      window.location.href = `/${lang}`;
     } catch {
       await swal({
-        title: 'Erro',
-        text: 'Não foi possível resolver a conta. Tenta novamente.',
+        title: t('copy.error_2'),
+        text: t('copy.could_not_resolve_the_account_please_try_again'),
         icon: 'error',
-        buttons: ['Fechar'],
+        buttons: [t('copy.close')],
         className: document.documentElement.classList.contains('dark') ? 'swal-dark' : ''
       });
     }
@@ -68,9 +77,9 @@ const Resolver: React.FC = () => {
         <Card>
           <CardContent className="p-10 text-center">
             <ShieldCheck className="mx-auto size-12 text-primary mb-4" />
-            <h2 className="text-xl font-bold">Conta sem pendentes</h2>
+            <h2 className="text-xl font-bold">{t('copy.no_pending_account_issues')}</h2>
             <p className="text-muted-foreground mt-2">
-              Não é necessário resolver a associação da conta.
+              {t('copy.your_account_does_not_need_to_be_linked')}
             </p>
           </CardContent>
         </Card>
@@ -84,29 +93,35 @@ const Resolver: React.FC = () => {
     <section className="container py-10 md:py-14 w-full max-w-2xl">
       <Card>
         <CardHeader>
-          <CardTitle className="text-2xl">Resolver associação da conta</CardTitle>
+          <CardTitle className="text-2xl">{t('copy.resolve_account_linking')}</CardTitle>
           <CardDescription>
-            O email <span className="font-mono font-bold text-foreground">{summary?.email}</span> já
-            existe na nossa base de dados com dados e exames associados.
+            {t('copy.the_email_address')}{' '}
+            <span className="font-mono font-bold text-foreground">{summary?.email}</span>{' '}
+            {t('copy.already_exists_in_our_database_with_associated_data_and_exams')}
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
           <div className="rounded-xl border border-destructive/50 bg-destructive/10 p-4 text-destructive">
             <div className="flex items-center gap-2 font-bold mb-1">
               <AlertTriangle className="size-4" />
-              <span>Atenção: esta ação não pode ser revertida</span>
+              <span>{t('copy.warning_this_action_cannot_be_undone')}</span>
             </div>
             <p className="text-sm text-destructive/90">
-              Se escolheres descartar os dados antigos, todos os teus exames, pontuações e
-              relatórios anteriores serão eliminados permanentemente.
+              {t(
+                'copy.if_you_discard_your_old_data_all_previous_exams_scores_and_reports_will_be_permanentl'
+              )}
             </p>
           </div>
 
           <div className="rounded-xl border bg-muted/50 p-4">
-            <p className="text-sm font-semibold mb-2">Resumo da conta existente:</p>
+            <p className="text-sm font-semibold mb-2">{t('copy.existing_account_summary')}</p>
             <ul className="text-sm text-muted-foreground space-y-1">
-              <li>• Exames realizados: {summary?.answers ?? 0}</li>
-              <li>• Pontuações registadas: {summary?.scores ?? 0}</li>
+              <li>
+                {t('copy.completed_exams')} {summary?.answers ?? 0}
+              </li>
+              <li>
+                {t('copy.recorded_scores')} {summary?.scores ?? 0}
+              </li>
             </ul>
           </div>
 
@@ -118,7 +133,7 @@ const Resolver: React.FC = () => {
               variant="default"
             >
               <ShieldCheck className="mr-2 size-4" />
-              Manter dados antigos
+              {t('copy.keep_old_data')}
             </Button>
             <Button
               onClick={() => handleResolve('discard')}
@@ -127,7 +142,7 @@ const Resolver: React.FC = () => {
               variant="destructive"
             >
               <Trash2 className="mr-2 size-4" />
-              Descartar dados antigos
+              {t('copy.discard_old_data')}
             </Button>
           </div>
         </CardContent>

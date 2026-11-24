@@ -1,5 +1,8 @@
 'use client';
 
+import { useLanguage } from '@/i18n/client';
+import { localizedPath, withoutLang, useTranslations } from '@/i18n/translations';
+
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
@@ -11,14 +14,18 @@ import { cn } from '@/lib/utils';
 import { LogIn, LogOut, Menu, RefreshCw, User, UserCog, UserPlus } from 'lucide-react';
 import { signOut } from 'next-auth/react';
 import { useTheme } from 'next-themes';
-import Link from 'next/link';
-import { usePathname, useRouter } from 'next/navigation';
+import Link from '@/i18n/navigation';
+import { usePathname } from 'next/navigation';
+import { useRouter } from '@/i18n/navigation';
 import { useState } from 'react';
 import swal from 'sweetalert';
-import { topBarLinks } from '../Topbar';
+import { navigationLinks } from '../navigationLinks';
+import LanguageSelect from '../LanguageSelect';
 import { APP_PROFILE_LINK, AUTHNEI_ACCOUNT_LINK } from '../profileLinks';
 
 const HamburgerMenu: React.FC = () => {
+  const lang = useLanguage();
+  const t = useTranslations(lang);
   const [isOpen, setIsOpen] = useState(false);
   const session = useSession();
   const pathname = usePathname();
@@ -30,9 +37,9 @@ const HamburgerMenu: React.FC = () => {
   const handleLogout = async () => {
     close();
     const confirmed = await swal({
-      title: 'Tens a certeza que queres terminar sessão?',
+      title: t('auth.confirmLogout'),
       icon: 'warning',
-      buttons: ['Não', 'Sim'],
+      buttons: [t('common.no'), t('common.yes')],
       dangerMode: true,
       className: theme === 'dark' ? 'swal-dark' : ''
     });
@@ -45,7 +52,7 @@ const HamburgerMenu: React.FC = () => {
       await signOut({ redirect: false });
       session.clear();
       swal({
-        title: 'Terminaste sessão com sucesso!',
+        title: t('auth.loggedOut'),
         icon: 'success',
         timer: 2000,
         className: theme === 'dark' ? 'swal-dark' : ''
@@ -54,11 +61,11 @@ const HamburgerMenu: React.FC = () => {
         window.location.href = url;
         return;
       }
-      router.push('/');
+      router.push(localizedPath('/', lang));
       router.refresh();
     } else {
       swal({
-        title: 'Algo correu mal. Por favor tenta novamente.',
+        title: t('auth.error'),
         icon: 'error',
         className: theme === 'dark' ? 'swal-dark' : ''
       });
@@ -85,7 +92,12 @@ const HamburgerMenu: React.FC = () => {
       <ThemeChanger />
       <Sheet open={isOpen} onOpenChange={setIsOpen}>
         <SheetTrigger asChild>
-          <Button variant="ghost" size="icon" aria-label="Abrir menu" className="text-foreground">
+          <Button
+            variant="ghost"
+            size="icon"
+            aria-label={t('nav.openMenu')}
+            className="text-foreground"
+          >
             <Menu className="size-5" />
           </Button>
         </SheetTrigger>
@@ -116,12 +128,15 @@ const HamburgerMenu: React.FC = () => {
 
           <nav className="flex-1 overflow-y-auto py-4">
             <ul className="space-y-1 px-3">
-              {Object.entries(topBarLinks).map(([label, href]) => {
-                const isActive = href === '/' ? pathname === '/' : pathname?.startsWith(href);
+              {navigationLinks.map(({ key, href }) => {
+                const isActive =
+                  href === '/'
+                    ? withoutLang(pathname) === '/'
+                    : withoutLang(pathname).startsWith(href);
                 return (
                   <li key={href}>
                     <Link
-                      href={href}
+                      href={localizedPath(href, lang)}
                       onClick={close}
                       className={cn(
                         'flex items-center rounded-md px-3 py-2.5 text-sm font-medium transition-colors',
@@ -129,7 +144,7 @@ const HamburgerMenu: React.FC = () => {
                         isActive && 'bg-primary/10 text-primary'
                       )}
                     >
-                      {label}
+                      {t(key)}
                     </Link>
                   </li>
                 );
@@ -138,24 +153,25 @@ const HamburgerMenu: React.FC = () => {
           </nav>
 
           <div className="border-t p-4 space-y-2">
+            <LanguageSelect />
             {session.user ? (
               <>
                 <Button asChild variant="default" className="w-full" onClick={close}>
-                  <Link href={APP_PROFILE_LINK.href}>
+                  <Link href={localizedPath(APP_PROFILE_LINK.href, lang)}>
                     <User className="size-4" />
-                    {APP_PROFILE_LINK.label}
+                    {t('auth.profile')}
                   </Link>
                 </Button>
                 <Separator />
                 <Button asChild variant="outline" className="w-full" onClick={close}>
                   <a href={AUTHNEI_ACCOUNT_LINK.href}>
                     <UserCog className="size-4" />
-                    {AUTHNEI_ACCOUNT_LINK.label}
+                    {t('auth.manageAccount')}
                   </a>
                 </Button>
                 <Button variant="outline" className="w-full" onClick={handleSwitchAccount}>
                   <RefreshCw className="size-4" />
-                  Trocar de conta
+                  {t('auth.switchAccount')}
                 </Button>
                 <Button
                   variant="outline"
@@ -163,21 +179,21 @@ const HamburgerMenu: React.FC = () => {
                   onClick={handleLogout}
                 >
                   <LogOut className="size-4" />
-                  Terminar sessão
+                  {t('auth.logout')}
                 </Button>
               </>
             ) : (
               <>
                 <Button asChild className="w-full" onClick={close}>
-                  <Link href="/login">
+                  <Link href={localizedPath('/login', lang)}>
                     <LogIn className="size-4" />
-                    Iniciar sessão
+                    {t('auth.login')}
                   </Link>
                 </Button>
                 <Button asChild variant="outline" className="w-full" onClick={close}>
-                  <Link href="/register">
+                  <Link href={localizedPath('/register', lang)}>
                     <UserPlus className="size-4" />
-                    Criar conta
+                    {t('auth.register')}
                   </Link>
                 </Button>
               </>

@@ -1,4 +1,5 @@
 'use client';
+import { useMessages } from '@/i18n/client';
 
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
@@ -6,7 +7,7 @@ import useSession from '@/hooks/useSession';
 import { LogOut } from 'lucide-react';
 import { signOut } from 'next-auth/react';
 import { useTheme } from 'next-themes';
-import { useRouter } from 'next/navigation';
+import { useRouter } from '@/i18n/navigation';
 import swal from 'sweetalert';
 
 interface LogoutButtonProps {
@@ -15,6 +16,7 @@ interface LogoutButtonProps {
 }
 
 const LogoutButton: React.FC<LogoutButtonProps> = ({ className, onClick }) => {
+  const t = useMessages();
   const session = useSession();
   const router = useRouter();
   const { theme } = useTheme();
@@ -23,9 +25,9 @@ const LogoutButton: React.FC<LogoutButtonProps> = ({ className, onClick }) => {
     if (onClick) onClick();
 
     const confirmed = await swal({
-      title: 'Tens a certeza que queres terminar sessão?',
+      title: t('auth.confirmLogout'),
       icon: 'warning',
-      buttons: ['Não', 'Sim'],
+      buttons: [t('common.no'), t('common.yes')],
       dangerMode: true,
       className: theme === 'dark' ? 'swal-dark' : ''
     });
@@ -40,7 +42,7 @@ const LogoutButton: React.FC<LogoutButtonProps> = ({ className, onClick }) => {
       await signOut({ redirect: false });
       session.clear();
       swal({
-        title: 'Terminaste sessão com sucesso!',
+        title: t('auth.loggedOut'),
         icon: 'success',
         timer: 2000,
         className: theme === 'dark' ? 'swal-dark' : ''
@@ -54,7 +56,7 @@ const LogoutButton: React.FC<LogoutButtonProps> = ({ className, onClick }) => {
       router.refresh();
     } else {
       swal({
-        title: 'Algo correu mal. Por favor tenta novamente.',
+        title: t('auth.error'),
         icon: 'error',
         className: theme === 'dark' ? 'swal-dark' : ''
       });
@@ -69,7 +71,7 @@ const LogoutButton: React.FC<LogoutButtonProps> = ({ className, onClick }) => {
       onClick={logoutButtonHandler}
     >
       <LogOut className="size-4" />
-      Terminar sessão
+      {t('auth.logout')}
     </Button>
   );
 };

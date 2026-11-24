@@ -1,16 +1,23 @@
 'use client';
 
+import { useMessages, useLanguage } from '@/i18n/client';
+
+import { localizedPath } from '@/i18n/translations';
+
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { ArrowRight, ShieldCheck } from 'lucide-react';
 import { signIn } from 'next-auth/react';
-import Link from 'next/link';
+import Link from '@/i18n/navigation';
 import { useSearchParams } from 'next/navigation';
 import swal from 'sweetalert';
 
 const Login: React.FC = () => {
+  const t = useMessages();
+
+  const lang = useLanguage();
   const searchParams = useSearchParams();
-  const callbackUrl = searchParams.get('callbackUrl') ?? '/';
+  const callbackUrl = searchParams.get('callbackUrl') ?? localizedPath('/', lang);
 
   async function handleLogin() {
     try {
@@ -18,7 +25,7 @@ const Login: React.FC = () => {
     } catch {
       await swal(
         'Oops!',
-        'Não foi possível abrir o portal de autenticação. Por favor tenta novamente.',
+        t('copy.could_not_open_the_authentication_portal_please_try_again'),
         'error'
       );
     }
@@ -31,16 +38,17 @@ const Login: React.FC = () => {
           <div className="inline-flex items-center justify-center size-12 rounded-2xl bg-primary/10 text-primary">
             <ShieldCheck className="size-6" />
           </div>
-          <h1 className="text-3xl font-bold tracking-tight">Bem-vindo de volta</h1>
+          <h1 className="text-3xl font-bold tracking-tight">{t('copy.welcome_back')}</h1>
           <p className="text-sm leading-6 text-muted-foreground">
-            O AntiRecurso usa o portal de autenticação do NEI. O login, registo e recuperação de
-            palavra-passe acontecem todos na página oficial.
+            {t(
+              'copy.antirecurso_uses_the_nei_authentication_portal_sign_in_registration_and_password_reco'
+            )}
           </p>
         </div>
 
         <div className="space-y-3">
           <Button onClick={handleLogin} size="lg" className="w-full shadow-md shadow-primary/20">
-            Continuar para o login
+            {t('copy.continue_to_sign_in')}
             <ArrowRight className="size-4" />
           </Button>
         </div>
@@ -50,15 +58,15 @@ const Login: React.FC = () => {
         <div className="space-y-3 text-center text-sm">
           <Link
             className="block text-primary font-medium hover:underline"
-            href={`/register?callbackUrl=${encodeURIComponent(callbackUrl)}`}
+            href={localizedPath(`/register?callbackUrl=${encodeURIComponent(callbackUrl)}`, lang)}
           >
-            Ainda não tens conta? Cria uma agora
+            {t('copy.no_account_yet_create_one_now')}
           </Link>
           <Link
             className="block text-muted-foreground hover:text-foreground hover:underline"
-            href="/reset-password"
+            href={localizedPath('/reset-password', lang)}
           >
-            Precisas de recuperar o acesso?
+            {t('copy.need_to_recover_access')}
           </Link>
         </div>
       </div>

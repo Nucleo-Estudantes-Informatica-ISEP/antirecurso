@@ -4,6 +4,13 @@ import { createContext, useCallback, useEffect, useState } from 'react';
 
 import User from '@/types/User';
 import swal from 'sweetalert';
+import {
+  defaultLang,
+  langFromPath,
+  localizedPath,
+  withoutLang,
+  useTranslations as translate
+} from '@/i18n/translations';
 
 interface SessionData {
   user: User | null;
@@ -71,15 +78,22 @@ async function fetchSession(): Promise<SessionData | null> {
 
   if (res.status === 200) {
     const data = (await res.json()) as SessionData & { user: User };
-    if (data.user.requires_account_resolution && window.location.pathname !== '/account/resolve') {
-      window.location.href = '/account/resolve';
+    if (
+      data.user.requires_account_resolution &&
+      withoutLang(window.location.pathname) !== '/account/resolve'
+    ) {
+      window.location.href = localizedPath(
+        '/account/resolve',
+        langFromPath(window.location.pathname) ?? defaultLang
+      );
     }
     return data;
   }
   if (res.status === 401) return null;
 
   if (res.status === 404) {
-    await swal('Sessão expirada', 'Por favor, inicia sessão novamente.', 'error');
+    const t = translate(langFromPath(window.location.pathname) ?? defaultLang);
+    await swal(t('auth.expired'), t('auth.signInAgain'), 'error');
   }
   return null;
 }

@@ -1,11 +1,15 @@
 'use client';
 
+import { useMessages } from '@/i18n/client';
+
 import { Button } from '@/components/ui/button';
 import { Moon, Sun } from 'lucide-react';
 import { useTheme } from 'next-themes';
 import { useEffect, useState } from 'react';
 
 export default function ThemeChanger() {
+  const t = useMessages();
+
   const [mounted, setMounted] = useState(false);
   const { theme, setTheme, resolvedTheme } = useTheme();
 
@@ -15,7 +19,12 @@ export default function ThemeChanger() {
 
   if (!mounted) {
     return (
-      <Button variant="ghost" size="icon" aria-label="Mudar tema" className="text-muted-foreground">
+      <Button
+        variant="ghost"
+        size="icon"
+        aria-label={t('copy.change_theme')}
+        className="text-muted-foreground"
+      >
         <Sun className="h-[1.1rem] w-[1.1rem]" />
       </Button>
     );
@@ -29,7 +38,7 @@ export default function ThemeChanger() {
       variant="ghost"
       size="icon"
       onClick={() => setTheme(next)}
-      aria-label={`Mudar para tema ${next === 'dark' ? 'escuro' : 'claro'}`}
+      aria-label={t(next === 'dark' ? 'theme.dark' : 'theme.light')}
       className="text-muted-foreground hover:text-foreground"
     >
       <Sun className="h-[1.1rem] w-[1.1rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />

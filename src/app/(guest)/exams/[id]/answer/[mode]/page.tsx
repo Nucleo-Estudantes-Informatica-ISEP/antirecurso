@@ -1,10 +1,13 @@
 'use client';
 
-import { use, useContext, useEffect, useRef, useState } from 'react';
+import { useLanguage, useMessages } from '@/i18n/client';
+
+import { use, useContext, useEffect, useEffectEvent, useRef, useState } from 'react';
 
 import { useTheme } from 'next-themes';
 import Image from 'next/image';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
+import { useRouter } from '@/i18n/navigation';
 import swal from 'sweetalert';
 
 import { ExamContext } from '@/contexts/ExamContext';
@@ -38,6 +41,11 @@ interface ExamPageProps {
 const N_SKELETON_QUESTIONS = 10;
 
 const Exam: React.FC<ExamPageProps> = ({ params }) => {
+  const t = useMessages();
+  const lang = useLanguage();
+  const currentLanguage = useEffectEvent(() => lang);
+  const loadMessage = useEffectEvent((key: Parameters<typeof t>[0]) => t(key));
+
   const resolvedParams = use(params);
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -45,6 +53,7 @@ const Exam: React.FC<ExamPageProps> = ({ params }) => {
   const nOfQuestions = searchParams.get('n_of_questions');
   const penalizingFactor = searchParams.get('penalizing_factor');
   const filter = searchParams.get('filter');
+  const resume = searchParams.get('resume');
 
   const [subject, setSubject] = useState('');
 
@@ -128,10 +137,10 @@ const Exam: React.FC<ExamPageProps> = ({ params }) => {
 
       router.push(`/exams/${resolvedParams.id}/points`);
     } else {
-      const detail = await throwApiResponseError(res, 'Não foi possível submeter o exame.').catch(
+      const detail = await throwApiResponseError(res, t('copy.could_not_submit_the_exam')).catch(
         (error: unknown) => (error instanceof Error ? error.message : String(error))
       );
-      swal('Ocorreu um erro ao submeter o exame.', detail, 'error', {
+      swal(t('copy.an_error_occurred_while_submitting_the_exam'), detail, 'error', {
         className: themeRef.current === 'dark' ? 'swal-dark' : ''
       });
     }
@@ -184,16 +193,18 @@ const Exam: React.FC<ExamPageProps> = ({ params }) => {
       if (!active) return;
 
       if (savedState && !resumePromptShownRef.current) {
-        const resumeParam = searchParams.get('resume');
+        const resumeParam = resume;
         const modeMatches = savedState.mode === resolvedParams.mode;
 
         if (!resumeParam && modeMatches) {
           resumePromptShownRef.current = true;
           const shouldResume = await swal({
-            title: 'Exame inacabado',
-            text: 'Tens um exame por terminar nesta disciplina. Desejas retomá-lo?',
+            title: loadMessage('copy.unfinished_exam'),
+            text: loadMessage(
+              'copy.you_have_an_unfinished_exam_for_this_subject_would_you_like_to_resume_it'
+            ),
             icon: 'info',
-            buttons: ['Não, começar de novo', 'Sim, continuar'],
+            buttons: [loadMessage('copy.no_start_again'), loadMessage('copy.yes_continue')],
             className: themeRef.current === 'dark' ? 'swal-dark' : ''
           });
 
@@ -227,7 +238,8 @@ const Exam: React.FC<ExamPageProps> = ({ params }) => {
           session.token,
           resumeState?.n_of_questions ??
             (nOfQuestions ? Number.parseInt(nOfQuestions, 10) : undefined),
-          resumeState?.filter ?? filter ?? undefined
+          resumeState?.filter ?? filter ?? undefined,
+          currentLanguage()
         );
 
         if (!active) return;
@@ -263,8 +275,8 @@ const Exam: React.FC<ExamPageProps> = ({ params }) => {
         const detail =
           error instanceof ApiResponseError
             ? error.message
-            : 'Não foi possível contactar o serviço de exames.';
-        await swal('Ocorreu um erro ao carregar o exame.', detail, 'error', {
+            : loadMessage('copy.could_not_contact_the_exam_service');
+        await swal(loadMessage('copy.an_error_occurred_while_loading_the_exam'), detail, 'error', {
           className: themeRef.current === 'dark' ? 'swal-dark' : ''
         });
         router.push('/exams');
@@ -294,7 +306,7 @@ const Exam: React.FC<ExamPageProps> = ({ params }) => {
     session.isLoading,
     nOfQuestions,
     filter,
-    searchParams
+    resume
   ]);
 
   useEffect(() => {
@@ -323,7 +335,7 @@ const Exam: React.FC<ExamPageProps> = ({ params }) => {
                 {resolvedParams.mode}
               </Badge>
               <h1 className="text-sm md:text-lg font-semibold truncate">
-                Exame de{' '}
+                {t('copy.exam_for')}{' '}
                 <span className="text-primary">
                   {subject || <Skeleton className="inline-block h-5 w-32 align-middle" />}
                 </span>
@@ -340,7 +352,7 @@ const Exam: React.FC<ExamPageProps> = ({ params }) => {
           {questions[0] && (
             <div className="flex items-center justify-between text-xs text-muted-foreground gap-3">
               <span>
-                {totalAnswered} / {questions.length} respondidas
+                {totalAnswered} / {questions.length} {t('copy.answered')}
               </span>
               <div className="flex-1 h-1.5 max-w-md rounded-full bg-muted overflow-hidden">
                 <div
@@ -349,7 +361,7 @@ const Exam: React.FC<ExamPageProps> = ({ params }) => {
                 />
               </div>
               <span className="whitespace-nowrap">
-                Pergunta {currentQuestionIndex + 1}/{questions.length}
+                {t('copy.question')} {currentQuestionIndex + 1}/{questions.length}
               </span>
             </div>
           )}
@@ -365,7 +377,7 @@ const Exam: React.FC<ExamPageProps> = ({ params }) => {
                 className="size-9 rounded-full shrink-0"
                 onClick={() => changeQuestion(currentQuestionIndex - 1)}
                 disabled={currentQuestionIndex === 0}
-                aria-label="Pergunta anterior"
+                aria-label={t('copy.previous_question')}
               >
                 <ChevronLeft className="size-4" />
               </Button>
@@ -388,7 +400,7 @@ const Exam: React.FC<ExamPageProps> = ({ params }) => {
                 className="size-9 rounded-full shrink-0"
                 onClick={() => changeQuestion(currentQuestionIndex + 1)}
                 disabled={currentQuestionIndex === questions.length - 1}
-                aria-label="Próxima pergunta"
+                aria-label={t('copy.next_question')}
               >
                 <ChevronRight className="size-4" />
               </Button>
@@ -414,11 +426,16 @@ const Exam: React.FC<ExamPageProps> = ({ params }) => {
               }`}
             >
               {currentQuestion.image === '' ? (
-                <Image fill alt="Sample" className="object-cover" src="/images/sample.webp" />
+                <Image
+                  fill
+                  alt={t('copy.illustration')}
+                  className="object-cover"
+                  src="/images/sample.webp"
+                />
               ) : (
                 <Image
                   fill
-                  alt="Question Image"
+                  alt={t('copy.question_image')}
                   className="object-contain"
                   src={currentQuestion.image}
                 />
@@ -442,7 +459,7 @@ const Exam: React.FC<ExamPageProps> = ({ params }) => {
                 className="w-full sm:w-auto"
               >
                 <ChevronLeft className="size-4" />
-                Anterior
+                {t('copy.previous')}
               </Button>
 
               {currentQuestionIndex === questions.length - 1 ? (
@@ -450,10 +467,11 @@ const Exam: React.FC<ExamPageProps> = ({ params }) => {
                   <Button type="submit" disabled={isSubmitting} className="w-full sm:w-auto">
                     {isSubmitting ? (
                       <>
-                        <Loader2 className="size-4 animate-spin" />A submeter...
+                        <Loader2 className="size-4 animate-spin" />
+                        {t('copy.submitting')}
                       </>
                     ) : (
-                      'Terminar exame'
+                      t('copy.finish_exam')
                     )}
                   </Button>
                 </form>
@@ -462,7 +480,7 @@ const Exam: React.FC<ExamPageProps> = ({ params }) => {
                   onClick={() => changeQuestion(currentQuestionIndex + 1)}
                   className="w-full sm:w-auto"
                 >
-                  Próxima
+                  {t('copy.next')}
                   <ChevronRight className="size-4" />
                 </Button>
               )}

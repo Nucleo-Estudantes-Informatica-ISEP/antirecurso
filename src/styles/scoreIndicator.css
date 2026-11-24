@@ -13,7 +13,8 @@
   position: relative;
   width: 100%;
   max-width: 320px;
-  height: 160px;
+  aspect-ratio: 2;
+  container-type: inline-size;
   overflow: hidden;
 }
 
@@ -24,24 +25,23 @@
 
 .indicator::before {
   content: '';
-  width: inherit;
-  height: inherit;
-  border: 40px solid hsl(var(--muted));
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 12.5cqw solid hsl(var(--muted));
   border-bottom: none;
-  border-top-left-radius: 160px;
-  border-top-right-radius: 160px;
+  border-radius: 50% 50% 0 0 / 100% 100% 0 0;
 }
 
 .indicator span.bar {
   position: absolute;
   top: 100%;
   left: 0;
-  width: inherit;
-  height: inherit;
-  border: 40px solid;
+  width: 100%;
+  height: 100%;
+  border: 12.5cqw solid;
   border-top: none;
-  border-bottom-left-radius: 160px;
-  border-bottom-right-radius: 160px;
+  border-radius: 0 0 50% 50% / 0 0 100% 100%;
   transform-origin: 50% 0;
   transform-style: preserve-3d;
   backface-visibility: hidden;
@@ -58,8 +58,8 @@
   left: 50%;
   bottom: 0;
   transform: translateX(-50%);
-  padding-bottom: 28px;
-  font-size: 1rem;
+  padding-bottom: min(28px, 9cqw);
+  font-size: min(1rem, 5cqw);
   font-weight: 500;
   color: hsl(var(--muted-foreground));
 }
@@ -69,13 +69,13 @@
   left: 50%;
   bottom: 0;
   transform: translateX(-50%);
-  font-size: 1.2rem;
+  font-size: min(1.2rem, 6cqw);
   color: hsl(var(--primary));
 }
 
 span.result span:nth-child(1) {
   font-weight: bold;
-  font-size: 2.2rem;
+  font-size: min(2.2rem, 11cqw);
   color: hsl(var(--foreground));
 }
 
@@ -92,35 +92,29 @@ span.valores span:nth-child(1) {
 @media screen and (max-width: 768px) {
   .indicator {
     max-width: 240px;
-    height: 120px;
   }
 
   .indicator span.bar {
-    border: 28px solid;
+    border: 11.67cqw solid;
     border-top: none;
-    border-bottom-left-radius: 120px;
-    border-bottom-right-radius: 120px;
-    transform-origin: 50% 0;
     border-color: hsl(var(--primary));
   }
 
   .indicator::before {
-    border: 28px solid hsl(var(--muted));
+    border: 11.67cqw solid hsl(var(--muted));
     border-bottom: none;
-    border-top-left-radius: 120px;
-    border-top-right-radius: 120px;
   }
 
   .indicator span.result {
-    padding-bottom: 16px;
-    font-size: 0.75rem;
+    padding-bottom: min(16px, 7cqw);
+    font-size: min(0.75rem, 5cqw);
   }
 
   .indicator span.valores {
-    font-size: 0.9rem;
+    font-size: min(0.9rem, 6cqw);
   }
 
   span.result span:nth-child(1) {
-    font-size: 1.4rem;
+    font-size: min(1.4rem, 9.34cqw);
   }
 }

@@ -1,8 +1,8 @@
 'use client';
 
-import { usePathname, useSearchParams } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
+import { usePathname, useRouter } from '@/i18n/navigation';
 import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
 
 export const useQueryParamsManager = () => {
   const { replace } = useRouter();

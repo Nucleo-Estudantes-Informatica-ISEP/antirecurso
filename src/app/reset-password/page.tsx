@@ -1,20 +1,25 @@
 'use client';
 
+import { useLanguage, useMessages } from '@/i18n/client';
+
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { ArrowRight, KeyRound } from 'lucide-react';
 import { signIn } from 'next-auth/react';
-import Link from 'next/link';
+import Link from '@/i18n/navigation';
 import swal from 'sweetalert';
 
 const ResetPassword: React.FC = () => {
+  const t = useMessages();
+  const lang = useLanguage();
+
   async function handleOpenAuthPortal() {
     try {
-      await signIn('zitadel', { callbackUrl: '/' });
+      await signIn('zitadel', { callbackUrl: `/${lang}` });
     } catch {
       await swal(
         'Oops!',
-        'Não foi possível abrir o portal de autenticação. Por favor tenta novamente.',
+        t('copy.could_not_open_the_authentication_portal_please_try_again'),
         'error'
       );
     }
@@ -27,10 +32,11 @@ const ResetPassword: React.FC = () => {
           <div className="inline-flex items-center justify-center size-12 rounded-2xl bg-primary/10 text-primary">
             <KeyRound className="size-6" />
           </div>
-          <h1 className="text-3xl font-bold tracking-tight">Recuperar acesso</h1>
+          <h1 className="text-3xl font-bold tracking-tight">{t('copy.recover_access')}</h1>
           <p className="text-sm leading-6 text-muted-foreground">
-            A recuperação da palavra-passe é feita no portal de autenticação do NEI. Abre o portal
-            e usa a opção de recuperação de password nessa página.
+            {t(
+              'copy.password_recovery_takes_place_on_the_nei_authentication_portal_open_the_portal_and_us'
+            )}
           </p>
         </div>
 
@@ -39,7 +45,7 @@ const ResetPassword: React.FC = () => {
           size="lg"
           className="w-full shadow-md shadow-primary/20"
         >
-          Abrir portal de autenticação
+          {t('copy.open_authentication_portal')}
           <ArrowRight className="size-4" />
         </Button>
 
@@ -47,7 +53,7 @@ const ResetPassword: React.FC = () => {
 
         <div className="text-center text-sm">
           <Link className="text-primary font-medium hover:underline" href="/login">
-            Voltar ao login
+            {t('copy.back_to_sign_in')}
           </Link>
         </div>
       </div>

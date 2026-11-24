@@ -1,3 +1,4 @@
+import { useTranslations as translate, type Lang } from '@/i18n/translations';
 import config from '../config';
 import Question from '../types/Question';
 import { apiRequest, ApiResponseError } from './apiClient';
@@ -7,10 +8,11 @@ const generateExam = async (
   mode: string,
   token: string | null,
   n_of_questions?: number,
-  filter?: string
+  filter?: string,
+  lang: Lang = 'pt'
 ): Promise<Question[]> => {
   if (config.mandatoryAuthModes.includes(mode) && !token) {
-    throw new ApiResponseError(401, 'Inicia sessão para usar este modo de exame.');
+    throw new ApiResponseError(401, translate(lang)('error.signInForMode'));
   }
 
   const urlParams = new URLSearchParams();
@@ -22,8 +24,8 @@ const generateExam = async (
 
   return apiRequest<Question[]>(path, {
     authenticated: Boolean(token),
-    method: 'GET',
-    errorMessage: 'Não foi possível carregar o exame.'
+    method: token ? 'POST' : 'GET',
+    errorMessage: translate(lang)('error.loadExam')
   });
 };
 

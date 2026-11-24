@@ -1,5 +1,7 @@
 'use client';
 
+import { useMessages } from '@/i18n/client';
+
 import { Button } from '@/components/ui/button';
 import { PaginationMetadata } from '@/types/Pagination';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
@@ -15,6 +17,8 @@ const MAX_LINKS = 7;
 const MAX_MOBILE_LINKS = 5;
 
 const Pagination: React.FC<PaginationProps> = ({ metadata, fetchUrl, setFetchUrl }) => {
+  const t = useMessages();
+
   const { width } =
     typeof document !== 'undefined'
       ? document.documentElement.getBoundingClientRect()
@@ -68,7 +72,7 @@ const Pagination: React.FC<PaginationProps> = ({ metadata, fetchUrl, setFetchUrl
             disabled={metadata.currentPage === metadata.firstPage}
             onClick={() => setFetchUrl(buildPageUrl(metadata.currentPage - 1))}
             className="size-9 rounded-full"
-            aria-label="Página anterior"
+            aria-label={t('copy.previous_page')}
           >
             <ChevronLeft className="size-4" />
           </Button>
@@ -94,7 +98,7 @@ const Pagination: React.FC<PaginationProps> = ({ metadata, fetchUrl, setFetchUrl
             disabled={!metadata.nextPageUrl}
             onClick={() => setFetchUrl(buildPageUrl(metadata.currentPage + 1))}
             className="size-9 rounded-full"
-            aria-label="Próxima página"
+            aria-label={t('copy.next_page')}
           >
             <ChevronRight className="size-4" />
           </Button>
