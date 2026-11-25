@@ -184,8 +184,25 @@ Defined in [`package.json`](package.json):
 - `pnpm typecheck` - run TypeScript without emitting files
 - `pnpm test` - run the Vitest regression suite
 - `pnpm test:e2e:auth` - exercise sign-in and protected exam/note recovery against local fixtures
+- `pnpm test:e2e` - run the Playwright Chromium workflows
 
 The authenticated browser check starts its own local web server and mock OIDC/API service. Run `pnpm exec playwright install chromium` once before `pnpm test:e2e:auth`; set `CHROME` to a compatible Chromium executable to use an existing browser instead. It uses synthetic accounts and does not contact production.
+
+### Browser workflows
+
+Install Chromium with `pnpm exec playwright install chromium`. Build with
+`NEXT_PUBLIC_BASE_URL=/api/public pnpm build`, then run `pnpm test:e2e`.
+The suite starts the production build on localhost port 43188 and a
+loopback fixture API on port 43189. It checks guest, student and admin flows
+through the frontend using a fresh local-only session secret and in-memory
+cookies. PR CI runs the same suite. Keep real credentials and browser state
+out of the fixtures and repository.
+
+After deploying a reviewed build to staging, sign in through AuthNEI with a
+disposable staging account, verify the signed-in UI, run the affected exam and
+notes workflows, and sign out. Repeat with a staging administrator for admin
+access and a regular user for denial. Use the existing authenticated smoke
+command for direct API checks with that staging session.
 
 ## Development Notes
 
@@ -250,7 +267,7 @@ If you deploy behind a reverse proxy or managed platform, ensure:
 - your auth issuer accepts the production callback URL
 - `AUTH_POST_LOGOUT_REDIRECT_URI` matches the deployed frontend URL
 
-GitHub CI does not itself deploy. It requires a frozen install, lint, typecheck, tests, production and Docker builds, production dependency audit, and Gitleaks. After a reviewed merge, verify the deployed commit in the hosting control plane and smoke the root plus login/refresh/logout and the affected exam flow. When a web change depends on the Adonis API, deploy the API and its migrations first. For legacy account recovery, deploy the compatible web release first. It handles both the previous pending-account response and the new `ACCOUNT_RECOVERY_REQUIRED` response. Then deploy the API that automatically links approved accounts and returns the new response for unresolved matches. With a disposable staging account, verify that logout invalidates the current bearer, clears the web session and ends the AuthNEI browser session. Check application logs for an incomplete revocation signal without collecting credentials.
+GitHub CI does not itself deploy. It requires a frozen install, lint, typecheck, Vitest, Playwright, production and Docker builds, production dependency audit, and Gitleaks. After a reviewed merge, verify the deployed commit in the hosting control plane and smoke the root plus login/refresh/logout and the affected exam flow. When a web change depends on the Adonis API, deploy the API and its migrations first. For legacy account recovery, deploy the compatible web release first. It handles both the previous pending-account response and the new `ACCOUNT_RECOVERY_REQUIRED` response. Then deploy the API that automatically links approved accounts and returns the new response for unresolved matches. With a disposable staging account, verify that logout invalidates the current bearer, clears the web session and ends the AuthNEI browser session. Check application logs for an incomplete revocation signal without collecting credentials.
 
 ### Antirecurso project board automation
 
