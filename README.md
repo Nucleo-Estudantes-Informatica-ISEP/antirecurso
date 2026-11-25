@@ -318,6 +318,29 @@ CI and local smoke checks do not establish that a release is deployed. A missing
 sitemap or locale route on an older deployed revision leaves these checks pending
 until the reviewed release reaches that environment.
 
+### Antirecurso project board automation
+
+Link the issue through the pull request's **Development** sidebar. The board moves
+linked issue cards to **In Review**. The board sync workflow scans every five
+minutes for linked PRs merged into `dev` in the web or Adonis API repository and
+moves matching issue cards already on Project 10 to **Done**. GitHub may delay
+scheduled runs. The board's existing Auto-close issue workflow handles closure
+when a card moves to **Done**.
+
+To activate the sync after it reaches `main`:
+
+1. Install a private organization GitHub App on `antirecurso` and
+   `antirecurso-api-adonis`. Give it organization **Projects** read/write and
+   repository **Issues** and **Pull requests** read access.
+2. In the web repository's Actions settings, set the `BOARD_SYNC_APP_CLIENT_ID`
+   variable and the `BOARD_SYNC_APP_PRIVATE_KEY` secret. Set
+   `BOARD_SYNC_START_AT` to the UTC timestamp from which merges should count,
+   for example `2026-11-22T14:00:00Z`.
+3. Run **Sync Antirecurso board status** manually from `main` to check API
+   access and see the eligible issue count. Set `BOARD_SYNC_ENABLED` to
+   `true` to enable scheduled writes. Run the first smoke check after an
+   eligible PR merge and verify its issue card reaches **Done**.
+
 For regressions, prefer TDD: add a focused failing test, implement the smallest correction, then refactor with the suite green. See [`AGENTS.md`](AGENTS.md) for the required workflow.
 
 ## Troubleshooting
