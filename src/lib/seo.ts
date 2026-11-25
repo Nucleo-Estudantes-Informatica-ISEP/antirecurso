@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import type { MetadataRoute } from 'next';
-import { languages, localizedPath, type Lang } from '@/i18n/translations';
+import { defaultLang, languages, localizedPath, type Lang } from '@/i18n/translations';
 
 const ogLocales: Record<Lang, string> = { pt: 'pt_PT', en: 'en_GB' };
 
@@ -40,6 +40,13 @@ export const noindexPathPrefixes = [
   '/stats'
 ] as const;
 
+function languageAlternates(path: string, origin = '') {
+  return {
+    ...Object.fromEntries(languages.map((lang) => [lang, origin + localizedPath(path, lang)])),
+    'x-default': origin + localizedPath(path, defaultLang)
+  };
+}
+
 interface MetadataInput {
   lang: Lang;
   path: string;
@@ -54,10 +61,7 @@ export function buildMetadata({ lang, path, title, description }: MetadataInput)
     description,
     alternates: {
       canonical: url,
-      languages: {
-        ...Object.fromEntries(languages.map((l) => [l, localizedPath(path, l)])),
-        'x-default': localizedPath(path, 'pt')
-      }
+      languages: languageAlternates(path)
     },
     openGraph: {
       type: 'website',
@@ -75,9 +79,7 @@ export function buildMetadata({ lang, path, title, description }: MetadataInput)
 
 export function sitemapEntries(siteUrl: string): MetadataRoute.Sitemap {
   return indexablePaths.flatMap((path) => {
-    const languagesMap = Object.fromEntries(
-      languages.map((l) => [l, siteUrl + localizedPath(path, l)])
-    );
+    const languagesMap = languageAlternates(path, siteUrl);
     return languages.map((l) => ({
       url: siteUrl + localizedPath(path, l),
       changeFrequency: 'weekly' as const,

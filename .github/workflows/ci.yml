@@ -44,14 +44,19 @@ jobs:
           pnpm test
           node --test .github/scripts/sync-board-issues.test.mjs
 
-      - name: Install browser for authenticated recovery check
+      - name: Install Playwright Chromium
         run: pnpm exec playwright install --with-deps chromium
 
       - name: Authenticated recovery browser check
         run: pnpm test:e2e:auth
 
       - name: Production build
+        env:
+          NEXT_PUBLIC_BASE_URL: /api/public
         run: pnpm build
+
+      - name: Browser workflows
+        run: pnpm test:e2e
 
       - name: Docker build with Coolify NODE_ENV
         run: docker build --target builder --build-arg NODE_ENV=development .

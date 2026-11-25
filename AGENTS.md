@@ -24,9 +24,12 @@ pnpm build
 pnpm audit --prod
 ```
 
+For browser workflow changes, install Chromium using the README command and run
+`pnpm test:e2e` locally.
+
 Every behavior change needs a regression test. Test visible behavior and contracts, not component implementation details.
 
-GitHub CI requires the frozen install, lint, typecheck, Vitest suite, production build, Docker build with Coolify's `NODE_ENV=development` argument, production dependency audit, and Gitleaks for every PR to `dev` or `main`. `main` requires both named checks, resolved conversations, and one CODEOWNER approval. Never weaken a gate to obtain green status.
+GitHub CI requires the frozen install, lint, typecheck, Vitest suite, Playwright Chromium suite, production build, Docker build with Coolify's `NODE_ENV=development` argument, production dependency audit, and Gitleaks for every PR to `dev` or `main`. `main` requires both named checks, resolved conversations, and one CODEOWNER approval. Never weaken a gate to obtain green status.
 
 ## Deployment and API coupling
 

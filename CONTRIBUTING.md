@@ -12,6 +12,8 @@ deployment guidance are in [README.md](README.md).
   [AGENTS.md](AGENTS.md) and describe their results and any unverified scope in the PR.
   Documentation-only changes require content, link and filename checks plus
   `git diff --check`; local application checks are unnecessary.
+- Run the [browser workflows](README.md#browser-workflows) for E2E changes.
+  Exercise real AuthNEI sign-in separately in staging.
 - Link the existing issue through the PR's Development relationship, use applicable
   repository labels, and assign the PR to its author.
 - Keep credentials and private data out of commits. Report vulnerabilities through
