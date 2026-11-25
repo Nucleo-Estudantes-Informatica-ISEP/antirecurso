@@ -13,14 +13,14 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/co
 import ThemeChanger from '@/components/utils/Theme/ThemeChanger';
 import useCallbackUrl from '@/hooks/useCallbackUrl';
 import useSession from '@/hooks/useSession';
-import useAuthNeiSignOut from '@/hooks/useAuthNeiSignOut';
+import SignOutDialog from '../SignOutDialog';
 import { switchAuthNeiAccount } from '@/lib/client-auth-actions';
 import { cn } from '@/lib/utils';
 import { LogIn, LogOut, Menu, RefreshCw, User, UserCog, UserPlus } from 'lucide-react';
 import Link from '@/i18n/navigation';
 import AuthLink from '@/components/AuthLink';
 import { usePathname } from 'next/navigation';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { navigationLinks } from '../navigationLinks';
 import LanguageSelect from '../LanguageSelect';
 import { APP_PROFILE_LINK, AUTHNEI_ACCOUNT_LINK } from '../profileLinks';
@@ -31,14 +31,15 @@ const HamburgerMenu: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
   const session = useSession();
   const pathname = usePathname();
-  const signOut = useAuthNeiSignOut();
+  const [signOutOpen, setSignOutOpen] = useState(false);
+  const signOutTrigger = useRef<HTMLButtonElement>(null);
 
   const callbackUrl = useCallbackUrl();
   const close = () => setIsOpen(false);
 
-  const handleLogout = async () => {
+  const handleLogout = () => {
     close();
-    await signOut();
+    setSignOutOpen(true);
   };
 
   const handleSwitchAccount = async () => {
@@ -64,13 +65,20 @@ const HamburgerMenu: React.FC = () => {
           <Button
             variant="ghost"
             size="icon"
+            ref={signOutTrigger}
             aria-label={t('nav.openMenu')}
             className="text-foreground"
           >
             <Menu className="size-5" />
           </Button>
         </SheetTrigger>
-        <SheetContent side="right" className="w-[88vw] max-w-sm flex flex-col gap-0 p-0">
+        <SheetContent
+          onCloseAutoFocus={(event) => {
+            if (signOutOpen) event.preventDefault();
+          }}
+          side="right"
+          className="w-[88vw] max-w-sm flex flex-col gap-0 p-0"
+        >
           <SheetHeader className="p-6 pb-4 border-b">
             <SheetTitle className="text-left">
               <span className="text-primary">Anti</span>Recurso
@@ -176,6 +184,7 @@ const HamburgerMenu: React.FC = () => {
           </div>
         </SheetContent>
       </Sheet>
+      <SignOutDialog open={signOutOpen} onOpenChange={setSignOutOpen} triggerRef={signOutTrigger} />
     </div>
   );
 };

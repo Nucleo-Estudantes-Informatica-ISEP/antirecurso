@@ -27,3 +27,22 @@ it('returns a non-cacheable provider logout URL without session credentials', as
     post_logout_redirect_uri: 'https://web.test/'
   });
 });
+
+it('uses the canonical URL for a mixed-case deployment hostname', async () => {
+  vi.stubEnv('NEXTAUTH_URL', 'https://preview.web.test');
+  vi.stubEnv('AUTH_ISSUER_URL', 'https://issuer.test');
+  vi.stubEnv('AUTH_CLIENT_ID', 'fixture-client');
+  vi.stubEnv('AUTH_POST_LOGOUT_REDIRECT_URI', 'https://PreView.web.test');
+  const response = await PATCH(
+    new NextRequest('https://preview.web.test/api/auth/logout', {
+      method: 'PATCH',
+      headers: { origin: 'https://preview.web.test' }
+    })
+  );
+
+  expect(response.status).toBe(200);
+  const { url } = (await response.json()) as { url: string };
+  expect(new URL(url).searchParams.get('post_logout_redirect_uri')).toBe(
+    'https://preview.web.test/'
+  );
+});

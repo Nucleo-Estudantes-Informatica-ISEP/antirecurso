@@ -1,9 +1,11 @@
 'use client';
+
+import { useRef, useState } from 'react';
 import { useMessages } from '@/i18n/client';
 
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
-import useAuthNeiSignOut from '@/hooks/useAuthNeiSignOut';
+import SignOutDialog from '../SignOutDialog';
 import { LogOut } from 'lucide-react';
 
 interface LogoutButtonProps {
@@ -13,22 +15,27 @@ interface LogoutButtonProps {
 
 const LogoutButton: React.FC<LogoutButtonProps> = ({ className, onClick }) => {
   const t = useMessages();
-  const signOut = useAuthNeiSignOut();
+  const [signOutOpen, setSignOutOpen] = useState(false);
+  const signOutTrigger = useRef<HTMLButtonElement>(null);
 
-  const logoutButtonHandler = async () => {
+  const logoutButtonHandler = () => {
     onClick?.();
-    await signOut();
+    setSignOutOpen(true);
   };
 
   return (
-    <Button
-      variant="outline"
-      className={cn('text-destructive hover:text-destructive', className)}
-      onClick={logoutButtonHandler}
-    >
-      <LogOut className="size-4" />
-      {t('auth.logout')}
-    </Button>
+    <>
+      <Button
+        ref={signOutTrigger}
+        variant="outline"
+        className={cn('text-destructive hover:text-destructive', className)}
+        onClick={logoutButtonHandler}
+      >
+        <LogOut className="size-4" />
+        {t('auth.logout')}
+      </Button>
+      <SignOutDialog open={signOutOpen} onOpenChange={setSignOutOpen} triggerRef={signOutTrigger} />
+    </>
   );
 };
 
