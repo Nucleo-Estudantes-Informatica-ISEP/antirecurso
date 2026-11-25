@@ -56,6 +56,15 @@ const server = createServer((req, res) => {
       id_token_signing_alg_values_supported: ['RS256'],
       code_challenge_methods_supported: ['S256']
     };
+  if (url.pathname === '/oidc/v1/end_session') {
+    const target = url.searchParams.get('post_logout_redirect_uri');
+    if (url.searchParams.get('client_id') !== 'fixture-client' || target !== app + '/') {
+      res.writeHead(400);
+      return res.end('Unexpected logout return URL');
+    }
+    res.writeHead(303, { location: target });
+    return res.end();
+  }
   if (url.pathname === '/keys') body = { keys: [jwk] };
   if (url.pathname === '/oidc/v1/userinfo') body = claims;
   if (url.pathname === '/authorize') {
@@ -182,7 +191,7 @@ const server = createServer((req, res) => {
     browser = await chromium.launch(
       process.env.CHROME ? { executablePath: process.env.CHROME } : {}
     );
-    const page = await browser.newPage();
+    const page = await browser.newPage({ reducedMotion: 'reduce' });
     await page.goto(app + '/en');
     await page.getByRole('navigation').getByRole('link', { name: 'Create account' }).click();
     await page.waitForURL(api + '/authorize?*');
@@ -245,6 +254,48 @@ const server = createServer((req, res) => {
     await accountTab.waitForURL(api + '/ui/console/users/me');
     await accountTab.close();
     assert.equal(page.url(), app + '/en/profile');
+
+    await page.goto(app + '/pt');
+    const profile = page.getByRole('button', { name: 'Perfil', exact: true });
+    await profile.click();
+    await page.getByRole('menuitem', { name: 'Terminar sessão' }).click();
+    const signOutDialog = page.getByRole('dialog', { name: 'Terminar sessão' });
+    await signOutDialog.getByRole('button', { name: 'Cancelar' }).waitFor();
+    await page.keyboard.press('Escape');
+    await signOutDialog.waitFor({ state: 'hidden' });
+    await page.waitForFunction(
+      () => document.activeElement?.getAttribute('aria-label') === 'Perfil'
+    );
+
+    await page.setViewportSize({ width: 360, height: 640 });
+    await page.evaluate(() => document.documentElement.classList.add('dark'));
+    await page.getByRole('button', { name: 'Abrir menu' }).click();
+    await page.getByRole('button', { name: 'Terminar sessão', exact: true }).click();
+    const confirmation = signOutDialog.getByRole('button', { name: /Terminar também no AuthNEI/ });
+    if (process.env.SIGN_OUT_SCREENSHOT) {
+      await signOutDialog.screenshot({
+        path: process.env.SIGN_OUT_SCREENSHOT,
+        animations: 'disabled'
+      });
+    }
+    await page.waitForFunction(
+      () => {
+        const dialog = document.querySelector('[role="dialog"]');
+        if (!dialog) return false;
+        const bounds = dialog.getBoundingClientRect();
+        return bounds.left >= 0 && bounds.right <= window.innerWidth;
+      },
+      null,
+      { timeout: 5000 }
+    );
+    const logout = page.waitForResponse((response) =>
+      response.url().startsWith(api + '/oidc/v1/end_session?')
+    );
+    await confirmation.click();
+    assert.equal((await logout).status(), 303);
+    await signOutDialog.waitFor({ state: 'hidden' });
+    assert.equal((await page.request.get(app + '/api/auth/session')).status(), 401);
+    process.stdout.write('Desktop dismissal, mobile sign-out, and the AuthNEI return passed.\n');
 
     process.stdout.write(
       'Hosted registration, sign-in, account tab, and protected exam/note recovery passed.\n'

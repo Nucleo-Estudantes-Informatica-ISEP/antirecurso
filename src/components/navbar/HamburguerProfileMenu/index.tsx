@@ -1,5 +1,7 @@
 'use client';
 
+import { useRef, useState } from 'react';
+
 import { Settings } from 'lucide-react';
 import { APP_PREFERENCES_LINK } from '../profileLinks';
 
@@ -18,7 +20,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import useCallbackUrl from '@/hooks/useCallbackUrl';
 import useSession from '@/hooks/useSession';
-import useAuthNeiSignOut from '@/hooks/useAuthNeiSignOut';
+import SignOutDialog from '../SignOutDialog';
 import { switchAuthNeiAccount } from '@/lib/client-auth-actions';
 import { LogIn, LogOut, RefreshCw, User, UserCog, UserPlus } from 'lucide-react';
 import Link from '@/i18n/navigation';
@@ -30,7 +32,8 @@ const HamburgerProfileMenu: React.FC = () => {
   const t = useTranslations(lang);
   const pathname = useCallbackUrl();
   const session = useSession();
-  const signOut = useAuthNeiSignOut();
+  const [signOutOpen, setSignOutOpen] = useState(false);
+  const signOutTrigger = useRef<HTMLButtonElement>(null);
 
   const userInitials = session.user?.name
     ? session.user.name
@@ -66,70 +69,80 @@ const HamburgerProfileMenu: React.FC = () => {
   }
 
   return (
-    <DropdownMenu modal={false}>
-      <DropdownMenuTrigger asChild>
-        <Button
-          variant="ghost"
-          size="icon"
-          className="rounded-full ring-2 ring-transparent hover:ring-primary/40"
-          aria-label={t('auth.profile')}
-        >
-          <Avatar className="size-9">
-            <AvatarImage
-              src={`https://gravatar.com/avatar/${session.user.avatar}?s=80&d=identicon`}
-              alt={session.user.name}
-            />
-            <AvatarFallback className="bg-primary/15 text-primary">{userInitials}</AvatarFallback>
-          </Avatar>
-        </Button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-56">
-        <DropdownMenuLabel className="font-normal">
-          <div className="flex flex-col space-y-1">
-            <p className="text-sm font-medium leading-none">{session.user.name}</p>
-            <p className="text-xs leading-none text-muted-foreground truncate">
-              {session.user.email}
-            </p>
-          </div>
-        </DropdownMenuLabel>
-        <DropdownMenuSeparator />
-        <DropdownMenuItem asChild>
-          <Link href={localizedPath(APP_PROFILE_LINK.href, lang)} className="cursor-pointer">
-            <User className="size-4" />
-            <span>{t('auth.profile')}</span>
-          </Link>
-        </DropdownMenuItem>
-        <DropdownMenuSeparator />
-        <DropdownMenuItem asChild>
-          <a
-            href={AUTHNEI_ACCOUNT_LINK.href}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="cursor-pointer"
+    <>
+      <DropdownMenu modal={false}>
+        <DropdownMenuTrigger asChild>
+          <Button
+            variant="ghost"
+            size="icon"
+            className="rounded-full ring-2 ring-transparent hover:ring-primary/40"
+            ref={signOutTrigger}
+            aria-label={t('auth.profile')}
           >
-            <UserCog className="size-4" />
-            <span>{t('auth.manageAccount')}</span>
-          </a>
-        </DropdownMenuItem>
-        <DropdownMenuItem asChild>
-          <Link href={localizedPath(APP_PREFERENCES_LINK, lang)} className="cursor-pointer">
-            <Settings className="size-4" />
-            <span>{t('auth.appPreferences')}</span>
-          </Link>
-        </DropdownMenuItem>
-        <DropdownMenuItem onClick={handleSwitchAccount} className="cursor-pointer">
-          <RefreshCw className="size-4" />
-          <span>{t('auth.switchAccount')}</span>
-        </DropdownMenuItem>
-        <DropdownMenuItem
-          onClick={signOut}
-          className="cursor-pointer text-destructive focus:text-destructive"
+            <Avatar className="size-9">
+              <AvatarImage
+                src={`https://gravatar.com/avatar/${session.user.avatar}?s=80&d=identicon`}
+                alt={session.user.name}
+              />
+              <AvatarFallback className="bg-primary/15 text-primary">{userInitials}</AvatarFallback>
+            </Avatar>
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent
+          onCloseAutoFocus={(event) => {
+            if (signOutOpen) event.preventDefault();
+          }}
+          align="end"
+          className="w-56"
         >
-          <LogOut className="size-4" />
-          <span>{t('auth.logout')}</span>
-        </DropdownMenuItem>
-      </DropdownMenuContent>
-    </DropdownMenu>
+          <DropdownMenuLabel className="font-normal">
+            <div className="flex flex-col space-y-1">
+              <p className="text-sm font-medium leading-none">{session.user.name}</p>
+              <p className="text-xs leading-none text-muted-foreground truncate">
+                {session.user.email}
+              </p>
+            </div>
+          </DropdownMenuLabel>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem asChild>
+            <Link href={localizedPath(APP_PROFILE_LINK.href, lang)} className="cursor-pointer">
+              <User className="size-4" />
+              <span>{t('auth.profile')}</span>
+            </Link>
+          </DropdownMenuItem>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem asChild>
+            <a
+              href={AUTHNEI_ACCOUNT_LINK.href}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="cursor-pointer"
+            >
+              <UserCog className="size-4" />
+              <span>{t('auth.manageAccount')}</span>
+            </a>
+          </DropdownMenuItem>
+          <DropdownMenuItem asChild>
+            <Link href={localizedPath(APP_PREFERENCES_LINK, lang)} className="cursor-pointer">
+              <Settings className="size-4" />
+              <span>{t('auth.appPreferences')}</span>
+            </Link>
+          </DropdownMenuItem>
+          <DropdownMenuItem onClick={handleSwitchAccount} className="cursor-pointer">
+            <RefreshCw className="size-4" />
+            <span>{t('auth.switchAccount')}</span>
+          </DropdownMenuItem>
+          <DropdownMenuItem
+            onSelect={() => setSignOutOpen(true)}
+            className="cursor-pointer text-destructive focus:text-destructive"
+          >
+            <LogOut className="size-4" />
+            <span>{t('auth.logout')}</span>
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+      <SignOutDialog open={signOutOpen} onOpenChange={setSignOutOpen} triggerRef={signOutTrigger} />
+    </>
   );
 };
 

@@ -21,8 +21,16 @@ export async function PATCH(request: NextRequest) {
     return NextResponse.json({ message: 'AuthNEI sign-out unavailable' }, { status: 503, headers });
   }
 
-  const logoutUrl = new URL(`${issuer}/oidc/v1/end_session`);
-  logoutUrl.searchParams.set('client_id', clientId);
-  logoutUrl.searchParams.set('post_logout_redirect_uri', redirectUri);
-  return NextResponse.json({ url: logoutUrl.toString() }, { headers });
+  try {
+    const logoutUrl = new URL(`${issuer}/oidc/v1/end_session`);
+    const returnUrl = new URL(redirectUri);
+    if (['http:', 'https:'].includes(returnUrl.protocol)) {
+      logoutUrl.searchParams.set('client_id', clientId);
+      logoutUrl.searchParams.set('post_logout_redirect_uri', returnUrl.href);
+      return NextResponse.json({ url: logoutUrl.toString() }, { headers });
+    }
+  } catch {
+    // Leave app-only sign-out available if the provider configuration is invalid.
+  }
+  return NextResponse.json({ message: 'AuthNEI sign-out unavailable' }, { status: 503, headers });
 }

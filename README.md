@@ -145,7 +145,7 @@ At minimum, define the variables below before starting the app.
 | `AUTH_CLIENT_SECRET` | Usually | OAuth client secret for the Zitadel provider. |
 | `AUTH_SCOPES` | Production | OIDC scopes. Keep `offline_access` for refresh tokens and include `urn:zitadel:iam:org:project:id:<ANTIRECURSO_PROJECT_ID>:aud` so the access token carries the AntiRecurso Project audience expected by the API. |
 | `AUTH_ROLE_CLAIM` | No | Override for the AntiRecurso Project's ZITADEL role claim. Defaults to `urn:zitadel:iam:org:project:roles`. |
-| `AUTH_POST_LOGOUT_REDIRECT_URI` | Recommended | Redirect target after logout. Defaults to `/` if omitted. |
+| `AUTH_POST_LOGOUT_REDIRECT_URI` | Recommended | Absolute return URL for shared AuthNEI sign-out. Register the same URL on the AuthNEI client. |
 | `AUTH_DEBUG` | No | Set to `true` to enable verbose auth logging. |
 
 `APP_BASE_URL` and `AUTH_REDIRECT_URI` are not runtime configuration for this frontend and are intentionally omitted from `.env.example`. The effective NextAuth callback URL is derived from `NEXTAUTH_URL`; register `<NEXTAUTH_URL>/api/auth/callback/zitadel` on the ZITADEL application.
@@ -266,7 +266,7 @@ If you deploy behind a reverse proxy or managed platform, ensure:
 - HTTPS is enabled
 - `NEXTAUTH_URL` matches the canonical public frontend URL
 - your auth issuer accepts the production callback URL
-- `AUTH_POST_LOGOUT_REDIRECT_URI` matches the deployed frontend URL
+- `AUTH_POST_LOGOUT_REDIRECT_URI` uses the canonical deployed frontend URL and is registered as a post-logout redirect on the AuthNEI client.
 
 GitHub CI does not itself deploy. It requires a frozen install, lint, typecheck, Vitest, Playwright, production and Docker builds, production dependency audit, and Gitleaks. After a reviewed merge, verify the deployed commit in the hosting control plane and smoke the root plus login/refresh/logout and the affected exam flow. On the profile page, open the AuthNEI account link, then close its tab and confirm the original profile is still open. When a web change depends on the Adonis API, deploy the API and its migrations first. For legacy account recovery, deploy the compatible web release first. It handles both the previous pending-account response and the new `ACCOUNT_RECOVERY_REQUIRED` response. Then deploy the API that automatically links approved accounts and returns the new response for unresolved matches. With a disposable staging account, verify that logout invalidates the current bearer, clears the web session and ends the AuthNEI browser session. Check application logs for an incomplete revocation signal without collecting credentials.
 
