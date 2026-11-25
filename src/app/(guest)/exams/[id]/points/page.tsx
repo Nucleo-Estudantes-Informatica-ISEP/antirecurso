@@ -5,6 +5,7 @@ import { useMessages } from '@/i18n/client';
 import { useContext, useEffect, useRef, useState } from 'react';
 
 import Link from '@/i18n/navigation';
+import AuthLink from '@/components/AuthLink';
 
 import ScoreIndicator from '@/components/profile/ScoreIndicator';
 import { Button } from '@/components/ui/button';
@@ -205,9 +206,9 @@ const Points: React.FC = () => {
           {!session.user && (
             <p className="mt-4 text-xs text-muted-foreground">
               {t('copy.create_an_account_to_save_your_progress')}{' '}
-              <Link className="underline text-primary" href="/register">
+              <AuthLink className="underline text-primary" href="/register">
                 {t('copy.here')}
-              </Link>
+              </AuthLink>
               .
             </p>
           )}

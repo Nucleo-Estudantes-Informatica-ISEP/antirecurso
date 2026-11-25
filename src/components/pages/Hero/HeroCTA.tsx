@@ -4,6 +4,7 @@ import { useMessages } from '@/i18n/client';
 
 import { ArrowRight } from 'lucide-react';
 import Link from '@/i18n/navigation';
+import AuthLink from '@/components/AuthLink';
 
 import { Button } from '@/components/ui/button';
 import useSession from '@/hooks/useSession';
@@ -68,10 +69,10 @@ const HeroCTA: React.FC = () => {
                   variant="secondary"
                   className="bg-white text-primary hover:bg-white/90 shadow-md"
                 >
-                  <Link href="/register">
+                  <AuthLink href="/register">
                     {t('copy.get_started')}
                     <ArrowRight className="size-4" />
-                  </Link>
+                  </AuthLink>
                 </Button>
                 <Button
                   asChild

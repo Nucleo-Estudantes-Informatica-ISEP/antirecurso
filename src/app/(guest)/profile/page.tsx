@@ -75,8 +75,7 @@ const Profile: React.FC = async () => {
                 className="text-muted-foreground hover:text-foreground"
               >
                 {/* Full navigation required: endpoint redirects outside the Next.js app. */}
-                {/* eslint-disable-next-line @next/next/no-html-link-for-pages */}
-                <a href="/api/auth/profile">
+                <a href="/api/auth/profile" target="_blank" rel="noopener noreferrer">
                   <Settings className="size-4" />
                   {t('copy.manage_account_on_authnei')}
                 </a>

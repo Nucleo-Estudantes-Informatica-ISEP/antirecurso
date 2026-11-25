@@ -42,7 +42,8 @@ This repository is a frontend application, not the full AntiRecurso platform.
 - `/notes` - subject picker for study notes
 - `/profile` - authenticated user profile and previous results
 - `/admin` - protected admin dashboard
-- `/login`, `/register`, `/reset-password` - hosted auth entry points
+- `/login` and `/register` start hosted AuthNEI directly, including when opened from a bookmark.
+- `/reset-password` - hosted recovery entry point
 
 ### Authentication Notes
 
@@ -267,7 +268,7 @@ If you deploy behind a reverse proxy or managed platform, ensure:
 - your auth issuer accepts the production callback URL
 - `AUTH_POST_LOGOUT_REDIRECT_URI` matches the deployed frontend URL
 
-GitHub CI does not itself deploy. It requires a frozen install, lint, typecheck, Vitest, Playwright, production and Docker builds, production dependency audit, and Gitleaks. After a reviewed merge, verify the deployed commit in the hosting control plane and smoke the root plus login/refresh/logout and the affected exam flow. When a web change depends on the Adonis API, deploy the API and its migrations first. For legacy account recovery, deploy the compatible web release first. It handles both the previous pending-account response and the new `ACCOUNT_RECOVERY_REQUIRED` response. Then deploy the API that automatically links approved accounts and returns the new response for unresolved matches. With a disposable staging account, verify that logout invalidates the current bearer, clears the web session and ends the AuthNEI browser session. Check application logs for an incomplete revocation signal without collecting credentials.
+GitHub CI does not itself deploy. It requires a frozen install, lint, typecheck, Vitest, Playwright, production and Docker builds, production dependency audit, and Gitleaks. After a reviewed merge, verify the deployed commit in the hosting control plane and smoke the root plus login/refresh/logout and the affected exam flow. On the profile page, open the AuthNEI account link, then close its tab and confirm the original profile is still open. When a web change depends on the Adonis API, deploy the API and its migrations first. For legacy account recovery, deploy the compatible web release first. It handles both the previous pending-account response and the new `ACCOUNT_RECOVERY_REQUIRED` response. Then deploy the API that automatically links approved accounts and returns the new response for unresolved matches. With a disposable staging account, verify that logout invalidates the current bearer, clears the web session and ends the AuthNEI browser session. Check application logs for an incomplete revocation signal without collecting credentials.
 
 ### Antirecurso project board automation
 

@@ -84,6 +84,8 @@ const server = createServer((req, res) => {
       expires_in: 900
     };
   if (url.pathname === '/user') body = student;
+  if (url.pathname === '/user/scores') body = [];
+  if (url.pathname === '/exams/pending') body = { data: [] };
   if (url.pathname === '/subjects') body = [subject];
   if (url.pathname === '/exams/state') body = { state: null };
   if (url.pathname === '/exams/generate/12') {
@@ -181,8 +183,12 @@ const server = createServer((req, res) => {
       process.env.CHROME ? { executablePath: process.env.CHROME } : {}
     );
     const page = await browser.newPage();
+    await page.goto(app + '/en');
+    await page.getByRole('navigation').getByRole('link', { name: 'Create account' }).click();
+    await page.waitForURL(api + '/authorize?*');
+    assert.equal(new URL(page.url()).searchParams.get('prompt'), 'create');
+
     await page.goto(app + '/en/login?callbackUrl=' + encodeURIComponent('/en/exams'));
-    await page.getByRole('button', { name: 'Continue to sign in', exact: true }).click();
     await page.getByRole('button', { name: 'Sign in as Fixture Student' }).click();
     await page.waitForURL(app + '/en/exams');
     await page.getByRole('link', { name: /Fixture Subject/i }).click();
@@ -201,7 +207,6 @@ const server = createServer((req, res) => {
     assert.equal(new URL(href, app).searchParams.get('callbackUrl'), exam);
     examStatus = 503;
     await alert.getByRole('link', { name: 'Sign in' }).click();
-    await page.getByRole('button', { name: 'Continue to sign in', exact: true }).click();
     await page.getByRole('button', { name: 'Sign in as Fixture Student' }).click();
     await page.waitForURL(app + exam);
     await page.reload();
@@ -221,7 +226,6 @@ const server = createServer((req, res) => {
     assert.equal(new URL(noteHref, app).searchParams.get('callbackUrl'), notes + '#note-34');
     noteStatus = 503;
     await alert.getByRole('link', { name: 'Sign in' }).click();
-    await page.getByRole('button', { name: 'Continue to sign in', exact: true }).click();
     await page.getByRole('button', { name: 'Sign in as Fixture Student' }).click();
     await page.waitForURL(app + notes + '#note-34');
     await noteButton.click();
@@ -233,6 +237,18 @@ const server = createServer((req, res) => {
     ]);
     await opened.waitForURL(api + '/document');
     assert.deepEqual(noteRequests, Array(3).fill('/notes/34/view'));
+    await page.goto(app + '/en/profile');
+    const [accountTab] = await Promise.all([
+      page.waitForEvent('popup'),
+      page.getByRole('link', { name: 'Manage account on AuthNEI' }).click()
+    ]);
+    await accountTab.waitForURL(api + '/ui/console/users/me');
+    await accountTab.close();
+    assert.equal(page.url(), app + '/en/profile');
+
+    process.stdout.write(
+      'Hosted registration, sign-in, account tab, and protected exam/note recovery passed.\n'
+    );
     process.stdout.write(
       'Signed-in browser fixture opened the same exam and note after 401 and 503 recovery checks.\n'
     );
