@@ -61,7 +61,7 @@ describe('exam mode access', () => {
     expect(screen.getByRole('button', { name: /Modo Personalizado/ })).toBeDisabled();
   });
 
-  it('keeps all available modes accessible after login and duel unavailable', async () => {
+  it('keeps all available modes accessible after login and hides the Duel placeholder', async () => {
     await renderPicker('server-session');
 
     for (const mode of ['default', 'realistic', 'new', 'wrong', 'hard']) {
@@ -69,8 +69,8 @@ describe('exam mode access', () => {
     }
     expect(screen.queryByText('Conta necessária')).not.toBeInTheDocument();
     expect(screen.getByRole('button', { name: /Modo Personalizado/ })).toBeEnabled();
-    expect(screen.queryByRole('link', { name: /Modo Duelo/ })).not.toBeInTheDocument();
-    expect(screen.getByText('Em breve')).toBeInTheDocument();
+    expect(screen.queryByText('Modo Duelo')).not.toBeInTheDocument();
+    expect(screen.queryByText('Em breve')).not.toBeInTheDocument();
   });
 });
 
