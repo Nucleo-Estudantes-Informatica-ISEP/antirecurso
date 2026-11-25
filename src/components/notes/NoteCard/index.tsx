@@ -7,6 +7,8 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import useSession from '@/hooks/useSession';
+import ProtectedResourceError from '@/components/ProtectedResourceError';
+import { ApiResponseError } from '@/services/apiClient';
 import { requestNoteVisit, toggleNoteLike } from '@/services/noteActions';
 import Note from '@/types/Note';
 import { motion } from 'framer-motion';
@@ -22,6 +24,8 @@ const NoteCard: React.FC<NoteCardParams> = ({ note }) => {
   const t = useMessages();
   const lang = useLanguage();
 
+  const [visitError, setVisitError] = useState<number | null>(null);
+  const [visiting, setVisiting] = useState(false);
   const [likes, setLikes] = useState(note.likes);
   const [isLiked, setIsLiked] = useState(note.is_liked);
 
@@ -42,17 +46,15 @@ const NoteCard: React.FC<NoteCardParams> = ({ note }) => {
   }
 
   async function handleVisitNote(note: Note) {
+    setVisiting(true);
+    setVisitError(null);
     try {
       const url = await requestNoteVisit(note.id, lang);
       window.open(url, '_blank', 'noopener,noreferrer');
     } catch (error) {
-      await swal(
-        t('copy.error_2'),
-        error instanceof Error
-          ? error.message
-          : t('copy.could_not_record_the_visit_to_the_study_notes'),
-        'error'
-      );
+      setVisitError(error instanceof ApiResponseError ? error.status : 0);
+    } finally {
+      setVisiting(false);
     }
   }
 
@@ -67,6 +69,7 @@ const NoteCard: React.FC<NoteCardParams> = ({ note }) => {
 
   return (
     <motion.div
+      id={`note-${note.id}`}
       initial={{ opacity: 0, y: 20, scale: 0.97 }}
       whileInView={{ opacity: 1, y: 0, scale: 1 }}
       viewport={{ once: true }}
@@ -135,7 +138,14 @@ const NoteCard: React.FC<NoteCardParams> = ({ note }) => {
             </div>
           </div>
 
-          <Button onClick={() => handleVisitNote(note)} className="w-full">
+          {visitError !== null && (
+            <ProtectedResourceError
+              status={visitError}
+              onRetry={() => handleVisitNote(note)}
+              anchor={`#note-${note.id}`}
+            />
+          )}
+          <Button disabled={visiting} onClick={() => handleVisitNote(note)} className="w-full">
             <ExternalLink className="size-4" />
             {t('copy.view_study_notes')}
           </Button>

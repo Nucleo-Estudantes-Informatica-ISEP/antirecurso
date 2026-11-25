@@ -15,6 +15,7 @@ import {
 interface SessionData {
   user: User | null;
   token: string | null;
+  recoveryRequired?: boolean;
 }
 
 export interface AuthContextData extends SessionData {
@@ -33,10 +34,12 @@ export function AuthContextProvider({ children, ...props }: AuthContextProviderP
   const [isLoading, setIsLoading] = useState(true);
   const [token, setToken] = useState<string | null>(null);
   const [user, setUser] = useState<User | null>(null);
+  const [recoveryRequired, setRecoveryRequired] = useState(false);
 
   const clear = useCallback(() => {
     setUser(null);
     setToken(null);
+    setRecoveryRequired(false);
   }, []);
 
   const revalidate = useCallback(async () => {
@@ -54,6 +57,7 @@ export function AuthContextProvider({ children, ...props }: AuthContextProviderP
       const { token, user } = session;
       setToken(token);
       setUser(user);
+      setRecoveryRequired(session.recoveryRequired === true);
     } finally {
       setIsLoading(false);
     }
@@ -64,7 +68,10 @@ export function AuthContextProvider({ children, ...props }: AuthContextProviderP
   }, [revalidate]);
 
   return (
-    <AuthContext.Provider value={{ user, token, isLoading, clear, revalidate }} {...props}>
+    <AuthContext.Provider
+      value={{ user, token, isLoading, recoveryRequired, clear, revalidate }}
+      {...props}
+    >
       {children}
     </AuthContext.Provider>
   );
@@ -76,23 +83,36 @@ async function fetchSession(): Promise<SessionData | null> {
     headers: { 'Content-Type': 'application/json' }
   });
 
+  const pathname = window.location.pathname;
+  const local = withoutLang(pathname);
+  const lang = langFromPath(pathname) ?? defaultLang;
+  const recover = () => {
+    if (local === '/account/resolve' || local === '/conta/resolver') return;
+    const callbackUrl = encodeURIComponent(pathname + window.location.search);
+    window.location.href = localizedPath(`/account/resolve?callbackUrl=${callbackUrl}`, lang);
+  };
+
   if (res.status === 200) {
     const data = (await res.json()) as SessionData & { user: User };
-    if (
-      data.user.requires_account_resolution &&
-      withoutLang(window.location.pathname) !== '/account/resolve'
-    ) {
-      window.location.href = localizedPath(
-        '/account/resolve',
-        langFromPath(window.location.pathname) ?? defaultLang
-      );
-    }
+    if (data.user.requires_account_resolution) recover();
     return data;
+  }
+  if (res.status === 403) {
+    const payload: unknown = await res.json().catch(() => null);
+    if (
+      payload &&
+      typeof payload === 'object' &&
+      'code' in payload &&
+      payload.code === 'ACCOUNT_RECOVERY_REQUIRED'
+    ) {
+      recover();
+      return { user: null, token: null, recoveryRequired: true };
+    }
   }
   if (res.status === 401) return null;
 
   if (res.status === 404) {
-    const t = translate(langFromPath(window.location.pathname) ?? defaultLang);
+    const t = translate(lang);
     await swal(t('auth.expired'), t('auth.signInAgain'), 'error');
   }
   return null;

@@ -2,6 +2,7 @@ import { randomBytes } from 'node:crypto';
 import { defineConfig } from '@playwright/test';
 
 const baseURL = 'http://localhost:43188';
+const apiURL = 'http://127.0.0.1:43189';
 process.env.E2E_SESSION_SECRET ||= randomBytes(32).toString('hex');
 
 export default defineConfig({
@@ -12,19 +13,20 @@ export default defineConfig({
   webServer: [
     {
       command: 'node e2e/backend.mjs',
-      url: 'http://127.0.0.1:43189/health'
+      url: apiURL + '/health',
+      reuseExistingServer: false
     },
     {
-      command: 'node node_modules/next/dist/bin/next dev --hostname localhost --port 43188',
+      command: 'node node_modules/next/dist/bin/next start --hostname localhost --port 43188',
       gracefulShutdown: { signal: 'SIGTERM', timeout: 3000 },
       url: `${baseURL}/en`,
+      reuseExistingServer: false,
       timeout: 90_000,
       env: {
-        API_BASE_URL: 'http://127.0.0.1:43189',
-        NEXT_PUBLIC_BASE_URL: '/api/public',
+        API_BASE_URL: apiURL,
         NEXTAUTH_URL: baseURL,
         AUTH_SECRET: process.env.E2E_SESSION_SECRET,
-        AUTH_ISSUER_URL: 'http://127.0.0.1:43189',
+        AUTH_ISSUER_URL: apiURL,
         AUTH_CLIENT_ID: 'e2e'
       }
     }

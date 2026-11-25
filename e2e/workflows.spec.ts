@@ -20,11 +20,16 @@ async function signIn(page: Page, role: 'student' | 'admin') {
       authNeiRoles: role === 'admin' ? ['admin'] : []
     }
   });
-  await page
-    .context()
-    .addCookies([
-      { name: 'next-auth.session-token', value, url: 'http://localhost:43188', httpOnly: true }
-    ]);
+  await page.context().addCookies([
+    {
+      name: '__Secure-next-auth.session-token',
+      value,
+      // Chromium requires a secure URL to seed this cookie and sends it on loopback HTTP.
+      url: 'https://localhost:43188',
+      secure: true,
+      httpOnly: true
+    }
+  ]);
 }
 
 test.beforeEach(async ({ page }) => {

@@ -15,7 +15,8 @@ concurrency:
 jobs:
   quality:
     name: Lint, typecheck, test & build
-    runs-on: ubuntu-latest
+    # Playwright 1.59.1 needs a runner with supported Chromium system packages.
+    runs-on: ubuntu-24.04
     steps:
       - name: Checkout
         uses: actions/checkout@v7
@@ -39,13 +40,20 @@ jobs:
         run: pnpm typecheck
 
       - name: Test
-        run: pnpm test
-
-      - name: Production build
-        run: pnpm build
+        run: |
+          pnpm test
+          node --test .github/scripts/sync-board-issues.test.mjs
 
       - name: Install Playwright Chromium
-        run: pnpm exec playwright install --with-deps --only-shell chromium
+        run: pnpm exec playwright install --with-deps chromium
+
+      - name: Authenticated recovery browser check
+        run: pnpm test:e2e:auth
+
+      - name: Production build
+        env:
+          NEXT_PUBLIC_BASE_URL: /api/public
+        run: pnpm build
 
       - name: Browser workflows
         run: pnpm test:e2e
