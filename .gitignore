@@ -51,3 +51,8 @@ next-env.d.ts
 # Playwright output
 /playwright-report/
 /test-results/
+
+# Local environment files (NEI)
+.env*
+!.env.example
+!**/.env.example
