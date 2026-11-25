@@ -22,6 +22,7 @@ import useAuthNeiSignOut from '@/hooks/useAuthNeiSignOut';
 import { switchAuthNeiAccount } from '@/lib/client-auth-actions';
 import { LogIn, LogOut, RefreshCw, User, UserCog, UserPlus } from 'lucide-react';
 import Link from '@/i18n/navigation';
+import AuthLink from '@/components/AuthLink';
 import { APP_PROFILE_LINK, AUTHNEI_ACCOUNT_LINK } from '../profileLinks';
 
 const HamburgerProfileMenu: React.FC = () => {
@@ -49,16 +50,16 @@ const HamburgerProfileMenu: React.FC = () => {
     return (
       <div className="flex items-center gap-2">
         <Button asChild variant="ghost" size="sm">
-          <Link href={localizedPath(`/login?callbackUrl=${pathname}`, lang)}>
+          <AuthLink href={localizedPath(`/login?callbackUrl=${pathname}`, lang)}>
             <LogIn className="size-4" />
             {t('auth.enter')}
-          </Link>
+          </AuthLink>
         </Button>
         <Button asChild size="sm">
-          <Link href={localizedPath(`/register?callbackUrl=${pathname}`, lang)}>
+          <AuthLink href={localizedPath(`/register?callbackUrl=${pathname}`, lang)}>
             <UserPlus className="size-4" />
             {t('auth.register')}
-          </Link>
+          </AuthLink>
         </Button>
       </div>
     );
@@ -100,7 +101,12 @@ const HamburgerProfileMenu: React.FC = () => {
         </DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem asChild>
-          <a href={AUTHNEI_ACCOUNT_LINK.href} className="cursor-pointer">
+          <a
+            href={AUTHNEI_ACCOUNT_LINK.href}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="cursor-pointer"
+          >
             <UserCog className="size-4" />
             <span>{t('auth.manageAccount')}</span>
           </a>

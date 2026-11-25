@@ -50,6 +50,7 @@ describe('authenticated profile menu', () => {
     expect(screen.getByRole('link', { name: 'Perfil' })).toHaveAttribute('data-next-link', 'true');
     const accountLink = screen.getByRole('link', { name: 'Conta AuthNEI' });
     expect(accountLink).toHaveAttribute('href', '/api/auth/profile');
+    expect(accountLink).toHaveAttribute('target', '_blank');
     expect(accountLink).not.toHaveAttribute('data-next-link');
     expect(screen.getByRole('link', { name: 'Preferências da aplicação' })).toHaveAttribute(
       'href',

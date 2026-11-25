@@ -13,7 +13,7 @@ import { Comment } from '@/types/Comment';
 import { Flag, MessageSquare } from 'lucide-react';
 import { useTheme } from 'next-themes';
 import Image from 'next/image';
-import Link from '@/i18n/navigation';
+import AuthLink from '@/components/AuthLink';
 import { useRef } from 'react';
 import swal from 'sweetalert';
 
@@ -94,13 +94,13 @@ const CommentSection: React.FC<CommentSectionProps> = ({
       {!session.user ? (
         <Card>
           <CardContent className="p-5 text-sm text-muted-foreground">
-            <Link href="/register" className="font-semibold text-primary hover:underline">
+            <AuthLink href="/register" className="font-semibold text-primary hover:underline">
               {t('copy.create_an_account')}
-            </Link>{' '}
+            </AuthLink>{' '}
             {t('copy.or_2')}{' '}
-            <Link href="/login" className="font-semibold text-primary hover:underline">
+            <AuthLink href="/login" className="font-semibold text-primary hover:underline">
               {t('copy.sign_in_2')}
-            </Link>{' '}
+            </AuthLink>{' '}
             {t('copy.to_comment_and_report_possible_errors')}
           </CardContent>
         </Card>

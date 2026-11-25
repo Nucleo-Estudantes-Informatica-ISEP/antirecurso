@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { ArrowRight, ShieldCheck } from 'lucide-react';
 import { signIn } from 'next-auth/react';
-import Link from '@/i18n/navigation';
+import AuthLink from '@/components/AuthLink';
 import swal from 'sweetalert';
 
 const ResetPasswordVerify: React.FC = () => {
@@ -52,9 +52,9 @@ const ResetPasswordVerify: React.FC = () => {
         <Separator />
 
         <div className="text-center text-sm">
-          <Link className="text-primary font-medium hover:underline" href="/login">
+          <AuthLink className="text-primary font-medium hover:underline" href="/login">
             {t('copy.back_to_sign_in')}
-          </Link>
+          </AuthLink>
         </div>
       </div>
     </div>

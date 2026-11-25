@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { useMessages } from '@/i18n/client';
 import Link, { useRouter } from '@/i18n/navigation';
+import AuthLink from '@/components/AuthLink';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import useSession from '@/hooks/useSession';
@@ -87,7 +88,7 @@ export default function ResolveAccount() {
             </>
           ) : (
             <Button asChild>
-              <Link href="/login">{t('auth.login')}</Link>
+              <AuthLink href="/login">{t('auth.login')}</AuthLink>
             </Button>
           )}
         </CardContent>

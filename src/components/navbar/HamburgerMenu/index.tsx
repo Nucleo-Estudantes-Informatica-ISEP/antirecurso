@@ -18,6 +18,7 @@ import { switchAuthNeiAccount } from '@/lib/client-auth-actions';
 import { cn } from '@/lib/utils';
 import { LogIn, LogOut, Menu, RefreshCw, User, UserCog, UserPlus } from 'lucide-react';
 import Link from '@/i18n/navigation';
+import AuthLink from '@/components/AuthLink';
 import { usePathname } from 'next/navigation';
 import { useState } from 'react';
 import { navigationLinks } from '../navigationLinks';
@@ -132,7 +133,7 @@ const HamburgerMenu: React.FC = () => {
                 </Button>
                 <Separator />
                 <Button asChild variant="outline" className="w-full" onClick={close}>
-                  <a href={AUTHNEI_ACCOUNT_LINK.href}>
+                  <a href={AUTHNEI_ACCOUNT_LINK.href} target="_blank" rel="noopener noreferrer">
                     <UserCog className="size-4" />
                     {t('auth.manageAccount')}
                   </a>
@@ -159,16 +160,16 @@ const HamburgerMenu: React.FC = () => {
             ) : (
               <>
                 <Button asChild className="w-full" onClick={close}>
-                  <Link href={localizedPath(`/login?callbackUrl=${callbackUrl}`, lang)}>
+                  <AuthLink href={localizedPath(`/login?callbackUrl=${callbackUrl}`, lang)}>
                     <LogIn className="size-4" />
                     {t('auth.login')}
-                  </Link>
+                  </AuthLink>
                 </Button>
                 <Button asChild variant="outline" className="w-full" onClick={close}>
-                  <Link href={localizedPath(`/register?callbackUrl=${callbackUrl}`, lang)}>
+                  <AuthLink href={localizedPath(`/register?callbackUrl=${callbackUrl}`, lang)}>
                     <UserPlus className="size-4" />
                     {t('auth.register')}
-                  </Link>
+                  </AuthLink>
                 </Button>
               </>
             )}
