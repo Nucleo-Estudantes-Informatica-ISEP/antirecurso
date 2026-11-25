@@ -1,5 +1,8 @@
 'use client';
 
+import { Settings } from 'lucide-react';
+import { APP_PREFERENCES_LINK } from '../profileLinks';
+
 import { useLanguage } from '@/i18n/client';
 import { localizedPath, useTranslations } from '@/i18n/translations';
 
@@ -101,6 +104,12 @@ const HamburgerProfileMenu: React.FC = () => {
             <UserCog className="size-4" />
             <span>{t('auth.manageAccount')}</span>
           </a>
+        </DropdownMenuItem>
+        <DropdownMenuItem asChild>
+          <Link href={localizedPath(APP_PREFERENCES_LINK, lang)} className="cursor-pointer">
+            <Settings className="size-4" />
+            <span>{t('auth.appPreferences')}</span>
+          </Link>
         </DropdownMenuItem>
         <DropdownMenuItem onClick={handleSwitchAccount} className="cursor-pointer">
           <RefreshCw className="size-4" />
