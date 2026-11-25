@@ -2,6 +2,8 @@ import type { NextAuthOptions } from 'next-auth';
 import type { JWT } from 'next-auth/jwt';
 import ZitadelProvider from 'next-auth/providers/zitadel';
 import { getAuthNeiRoles, getAuthNeiRolesFromJwt } from './auth-nei-roles';
+import { apiFetch } from '@/services/apiClient';
+import { getSessionCookieConfig } from './session-cookie';
 import { shouldRefreshAccessToken } from './token-lifetime';
 import { fetchAuthNeiRolesFromUserInfo, fetchAuthNeiUserInfo } from './zitadel-userinfo';
 
@@ -32,6 +34,8 @@ async function requestRefreshedAccessToken(token: JWT): Promise<JWT> {
 
     const response = await fetch(`${requiredEnv.authIssuerUrl}/oauth/v2/token`, {
       method: 'POST',
+      redirect: 'error',
+      signal: AbortSignal.timeout(5000),
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded'
       },
@@ -82,8 +86,6 @@ async function requestRefreshedAccessToken(token: JWT): Promise<JWT> {
         typeof refreshedTokens.refresh_token === 'string'
           ? refreshedTokens.refresh_token
           : token.refreshToken,
-      idToken:
-        typeof refreshedTokens.id_token === 'string' ? refreshedTokens.id_token : token.idToken,
       authNeiRoles: refreshedRoles,
       error: undefined
     };
@@ -124,8 +126,48 @@ export async function refreshAccessToken(token: JWT): Promise<JWT> {
   }
 }
 
+async function revokeSession(token: JWT) {
+  const refreshed = token.refreshToken ? await refreshRequests.get(token.refreshToken) : undefined;
+  const accessTokens = new Set([token.accessToken, refreshed?.accessToken].filter(Boolean));
+  const refreshToken = refreshed?.refreshToken ?? token.refreshToken;
+  const providerTokens = new Set([refreshToken, ...accessTokens].filter(Boolean));
+
+  const responses = await Promise.allSettled([
+    ...Array.from(accessTokens, (accessToken) =>
+      apiFetch('user/session/revoke', {
+        accessToken,
+        method: 'POST',
+        cache: 'no-store',
+        signal: AbortSignal.timeout(5000)
+      })
+    ),
+    ...Array.from(providerTokens, (providerToken) =>
+      fetch(`${requiredEnv.authIssuerUrl.replace(/\/+$/, '')}/oauth/v2/revoke`, {
+        method: 'POST',
+        redirect: 'error',
+        signal: AbortSignal.timeout(5000),
+        body: new URLSearchParams({
+          client_id: requiredEnv.authClientId,
+          client_secret: process.env.AUTH_CLIENT_SECRET ?? '',
+          token: providerToken!
+        })
+      })
+    )
+  ]);
+
+  if (responses.some((result) => result.status === 'rejected' || !result.value.ok)) {
+    console.warn('[auth] Session token revocation was incomplete.');
+  }
+}
+
 export const authOptions: NextAuthOptions = {
   secret: process.env.AUTH_SECRET,
+  useSecureCookies: getSessionCookieConfig().secureCookie,
+  events: {
+    async signOut(message) {
+      if ('token' in message && message.token) await revokeSession(message.token);
+    }
+  },
   session: {
     strategy: 'jwt'
   },
@@ -165,7 +207,6 @@ export const authOptions: NextAuthOptions = {
       if (account) {
         token.accessToken = account.access_token;
         token.accessTokenExpiresAt = account.expires_at ? account.expires_at * 1000 : undefined;
-        token.idToken = account.id_token;
         token.refreshToken = account.refresh_token;
         const profileRoles = getAuthNeiRoles(profile as Record<string, unknown> | undefined);
         const accessTokenRoles = getAuthNeiRolesFromJwt(account.access_token);
@@ -204,7 +245,6 @@ export const authOptions: NextAuthOptions = {
         console.info('[auth][jwt]', {
           phase: 'token-returned',
           hasAccessToken: typeof token.accessToken === 'string',
-          hasIdToken: typeof token.idToken === 'string',
           hasRefreshToken: typeof token.refreshToken === 'string',
           hasUserEmail: typeof token.userEmail === 'string',
           hasUserName: typeof token.userName === 'string',

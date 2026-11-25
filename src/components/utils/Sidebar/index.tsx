@@ -1,7 +1,9 @@
 'use client';
 
+import { useMessages } from '@/i18n/client';
+
 import { AnimatePresence, motion } from 'framer-motion';
-import Link from 'next/link';
+import Link from '@/i18n/navigation';
 import { useEffect, useState } from 'react';
 
 import useIsMobile from '@/hooks/useIsMobile';
@@ -12,6 +14,8 @@ interface SidebarProps {
 }
 
 const Sidebar: React.FC<SidebarProps> = () => {
+  const t = useMessages();
+
   const [isLoaded, setIsLoaded] = useState<boolean>(false);
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const isMobile = useIsMobile();
@@ -21,14 +25,18 @@ const Sidebar: React.FC<SidebarProps> = () => {
   }, []);
 
   const items = [
-    { label: 'Dashboard', icon: <Home className="text-lg" />, link: '/admin' },
-    { label: 'Geral', icon: null, link: null },
-    { label: 'Utilizadores', icon: <User className="text-lg" />, link: '/admin/users' },
-    { label: 'Resumos', icon: <Note className="text-lg" />, link: '/admin/notes' },
-    { label: 'Eventos', icon: <Calendar className="text-lg" />, link: '/admin/events' },
-    { label: 'Comunidade', icon: null, link: null },
-    { label: 'Reports', icon: <Flag className="text-lg" />, link: '/admin/question-reports' },
-    { label: 'Comentários', icon: <Message className="text-lg" />, link: '/admin/comments' }
+    { label: t('copy.dashboard'), icon: <Home className="text-lg" />, link: '/admin' },
+    { label: t('admin.general'), icon: null, link: null },
+    { label: t('copy.users_2'), icon: <User className="text-lg" />, link: '/admin/users' },
+    { label: t('nav.notes'), icon: <Note className="text-lg" />, link: '/admin/notes' },
+    { label: t('copy.events'), icon: <Calendar className="text-lg" />, link: '/admin/events' },
+    { label: t('admin.community'), icon: null, link: null },
+    {
+      label: t('copy.reports'),
+      icon: <Flag className="text-lg" />,
+      link: '/admin/question-reports'
+    },
+    { label: t('copy.comments'), icon: <Message className="text-lg" />, link: '/admin/comments' }
   ];
 
   const navMotion = {
@@ -54,7 +62,7 @@ const Sidebar: React.FC<SidebarProps> = () => {
         <ul className="mb-12">
           <li className="mt-4 mb-2 font-bold dark:text-gray-300">
             <div className="px-4 flex flex-1 items-center justify-between">
-              <span>Menu</span>
+              <span>{t('copy.menu')}</span>
             </div>
           </li>
 

@@ -1,0 +1,54 @@
+// @vitest-environment happy-dom
+
+import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { afterEach, expect, it, vi } from 'vitest';
+import { signIn } from 'next-auth/react';
+import { LanguageProvider } from '@/i18n/client';
+import Custom403 from '@/components/pages/Custom403';
+import HamburgerMenu from '.';
+
+const path = '/en/exams/17/answer/custom';
+const query = 'filter=new&return=%2Fnotes%3Fselected%3D34%26sort%3Dasc';
+const destination = path + '?' + query;
+
+vi.mock('next/navigation', () => ({
+  usePathname: () => path,
+  useSearchParams: () => new URLSearchParams(query),
+  useRouter: () => ({})
+}));
+vi.mock('@/hooks/useSession', () => ({ default: () => ({ user: null }) }));
+vi.mock('next-auth/react', () => ({ signIn: vi.fn() }));
+vi.mock('next-themes', () => ({ useTheme: () => ({ theme: 'light' }) }));
+
+afterEach(cleanup);
+
+it('preserves the full destination in mobile sign-in and registration links', async () => {
+  render(
+    <LanguageProvider lang="en">
+      <HamburgerMenu />
+    </LanguageProvider>
+  );
+
+  for (const name of ['Sign in', 'Create account']) {
+    fireEvent.click(screen.getByRole('button', { name: 'Open menu' }));
+    const link = await screen.findByRole('link', { name });
+    const href = new URL(link.getAttribute('href')!, 'https://example.test');
+    expect(href.searchParams.get('callbackUrl')).toBe(destination);
+    fireEvent.click(link);
+    const options = { callbackUrl: destination };
+    const args = name === 'Create account' ? [options, { prompt: 'create' }] : [options];
+    await waitFor(() => expect(signIn).toHaveBeenLastCalledWith('zitadel', ...args));
+  }
+});
+
+it('preserves the full destination in the access-denied sign-in link', () => {
+  render(
+    <LanguageProvider lang="en">
+      <Custom403 />
+    </LanguageProvider>
+  );
+
+  const link = screen.getByRole('link', { name: 'Sign in' });
+  const href = new URL(link.getAttribute('href')!, 'https://example.test');
+  expect(href.searchParams.get('callbackUrl')).toBe(destination);
+});

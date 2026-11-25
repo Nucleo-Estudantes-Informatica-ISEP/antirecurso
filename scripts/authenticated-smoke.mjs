@@ -21,6 +21,7 @@ async function request(path, init = {}) {
     headers: {
       accept: 'application/json',
       cookie,
+      origin: new URL(baseUrl).origin,
       ...init.headers
     },
     redirect: 'manual'
@@ -46,7 +47,9 @@ if (!session?.user?.id) throw new Error('Authenticated session did not return a 
 for (const mode of ['default', 'realistic', 'new', 'wrong', 'hard', 'custom']) {
   const params = new URLSearchParams({ mode });
   if (mode === 'custom') params.set('n_of_questions', '10');
-  const exam = await request(`/api/protected/exams/generate/${subjectId}?${params.toString()}`);
+  const exam = await request(`/api/protected/exams/generate/${subjectId}?${params.toString()}`, {
+    method: 'POST'
+  });
   if (!Array.isArray(exam)) throw new Error(`${mode} exam response is not an array.`);
   console.info(`PASS authenticated ${mode} exam (${exam.length} questions)`);
 }

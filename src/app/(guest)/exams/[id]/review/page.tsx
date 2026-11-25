@@ -1,24 +1,28 @@
 'use client';
 
-import React, { use, useCallback, useEffect } from 'react';
+import { useMessages } from '@/i18n/client';
+
+import React, { use, useCallback, useEffect, useState } from 'react';
 
 import Image from 'next/image';
 
 import CommentSection from '@/components/comments/CommentSection';
 import ExamNumeration from '@/components/exams/ExamNumeration';
 import ExamNumerationContainer from '@/components/exams/ExamNumerationContainer';
+import ProtectedResourceError from '@/components/ProtectedResourceError';
 import QuestionReview from '@/components/exams/QuestionReview';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import useSession from '@/hooks/useSession';
-import { apiRequest } from '@/services/apiClient';
+import useCallbackUrl from '@/hooks/useCallbackUrl';
+import { ApiResponseError, apiRequest } from '@/services/apiClient';
 import { getOwnedExamReviewPath } from '@/services/examReview';
 import ExamReview from '@/types/ExamReview';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import useExamReviewNavigation from 'src/hooks/useExamReviewNavigation';
 import { getShuffleSeed, shuffleWithSeed } from '@/utils/examShuffle';
-import { useRouter } from 'next/navigation';
+import { useRouter } from '@/i18n/navigation';
 
 interface ExamPageProps {
   params: Promise<{
@@ -27,9 +31,13 @@ interface ExamPageProps {
 }
 
 const ReviewPage: React.FC<ExamPageProps> = ({ params }) => {
+  const t = useMessages();
+
   const resolvedParams = use(params);
   const session = useSession();
+  const callbackUrl = useCallbackUrl();
   const router = useRouter();
+  const [loadError, setLoadError] = useState<number | null>(null);
 
   const {
     currentQuestionIndex,
@@ -42,22 +50,28 @@ const ReviewPage: React.FC<ExamPageProps> = ({ params }) => {
   } = useExamReviewNavigation();
 
   const getExamResult = useCallback(async () => {
+    if (session.isLoading) return;
     const examPath = getOwnedExamReviewPath(resolvedParams.id, session.token);
     if (!examPath) {
-      router.replace('/login');
+      router.replace(`/login?callbackUrl=${callbackUrl}`);
       return;
     }
-    const data = await apiRequest<ExamReview>(examPath, {
-      authenticated: true,
-      method: 'GET',
-      cache: 'no-cache'
-    });
-    const storedSeed = getShuffleSeed(resolvedParams.id);
-    if (storedSeed && data.questions) {
-      data.questions = shuffleWithSeed(data.questions, storedSeed);
+    setLoadError(null);
+    try {
+      const data = await apiRequest<ExamReview>(examPath, {
+        authenticated: true,
+        method: 'GET',
+        cache: 'no-cache'
+      });
+      const storedSeed = getShuffleSeed(resolvedParams.id);
+      if (storedSeed && data.questions) {
+        data.questions = shuffleWithSeed(data.questions, storedSeed);
+      }
+      setExamResult(data);
+    } catch (error) {
+      setLoadError(error instanceof ApiResponseError ? error.status : 0);
     }
-    setExamResult(data);
-  }, [resolvedParams.id, router, setExamResult, session.token]);
+  }, [callbackUrl, resolvedParams.id, router, setExamResult, session.isLoading, session.token]);
 
   async function submitComment(comment: string) {
     if (!session.user) return;
@@ -86,9 +100,9 @@ const ReviewPage: React.FC<ExamPageProps> = ({ params }) => {
         <div className="container py-3 md:py-4 flex flex-col gap-3">
           <div className="flex items-center justify-between gap-4 flex-wrap">
             <div className="flex items-center gap-3 min-w-0">
-              <Badge variant="soft">Revisão</Badge>
+              <Badge variant="soft">{t('copy.review')}</Badge>
               <h1 className="text-sm md:text-lg font-semibold truncate">
-                Exame de{' '}
+                {t('copy.exam_for')}{' '}
                 <span className="text-primary">
                   {examResult?.subject || (
                     <Skeleton className="inline-block h-5 w-32 align-middle" />
@@ -113,7 +127,7 @@ const ReviewPage: React.FC<ExamPageProps> = ({ params }) => {
                 className="size-9 rounded-full shrink-0"
                 onClick={() => changeQuestion(currentQuestionIndex - 1)}
                 disabled={currentQuestionIndex === 0}
-                aria-label="Pergunta anterior"
+                aria-label={t('copy.previous_question')}
               >
                 <ChevronLeft className="size-4" />
               </Button>
@@ -136,7 +150,7 @@ const ReviewPage: React.FC<ExamPageProps> = ({ params }) => {
                 className="size-9 rounded-full shrink-0"
                 onClick={() => changeQuestion(currentQuestionIndex + 1)}
                 disabled={currentQuestionIndex === examResult.questions.length - 1}
-                aria-label="Próxima pergunta"
+                aria-label={t('copy.next_question')}
               >
                 <ChevronRight className="size-4" />
               </Button>
@@ -154,7 +168,9 @@ const ReviewPage: React.FC<ExamPageProps> = ({ params }) => {
       </div>
 
       <div className="container max-w-4xl py-6 md:py-10">
-        {currentQuestion?.question ? (
+        {loadError !== null ? (
+          <ProtectedResourceError status={loadError} onRetry={getExamResult} />
+        ) : currentQuestion?.question ? (
           <article className="space-y-6">
             <div
               className={`relative w-full overflow-hidden rounded-2xl border bg-muted ${
@@ -162,11 +178,16 @@ const ReviewPage: React.FC<ExamPageProps> = ({ params }) => {
               }`}
             >
               {currentQuestion.question.image === '' ? (
-                <Image fill alt="Sample" className="object-cover" src="/images/sample.webp" />
+                <Image
+                  fill
+                  alt={t('copy.illustration')}
+                  className="object-cover"
+                  src="/images/sample.webp"
+                />
               ) : (
                 <Image
                   fill
-                  alt="Question Image"
+                  alt={t('copy.question_image')}
                   className="object-contain"
                   src={currentQuestion.question.image}
                 />
@@ -183,7 +204,7 @@ const ReviewPage: React.FC<ExamPageProps> = ({ params }) => {
                 className="w-full sm:w-auto"
               >
                 <ChevronLeft className="size-4" />
-                Anterior
+                {t('copy.previous')}
               </Button>
               <Button
                 onClick={() => changeQuestion(currentQuestionIndex + 1)}
@@ -192,7 +213,7 @@ const ReviewPage: React.FC<ExamPageProps> = ({ params }) => {
                 }
                 className="w-full sm:w-auto"
               >
-                Próxima
+                {t('copy.next')}
                 <ChevronRight className="size-4" />
               </Button>
             </div>

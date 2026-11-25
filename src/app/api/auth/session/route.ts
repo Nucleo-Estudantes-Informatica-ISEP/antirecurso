@@ -2,6 +2,8 @@ import { NextResponse } from 'next/server';
 import { CLIENT_SESSION_TOKEN, getApiAccessToken } from '@/lib/server-auth';
 import { apiFetch } from '@/services/apiClient';
 
+const cacheHeaders = { 'cache-control': 'private, no-store' };
+
 const authDebugEnabled = process.env.AUTH_DEBUG === 'true';
 
 export async function GET() {
@@ -20,7 +22,7 @@ export async function GET() {
       });
     }
 
-    return new NextResponse(null, { status: 401 });
+    return new NextResponse(null, { status: 401, headers: cacheHeaders });
   }
 
   const res = await apiFetch('user', {
@@ -37,7 +39,7 @@ export async function GET() {
       });
     }
 
-    const headers = new Headers();
+    const headers = new Headers(cacheHeaders);
     const contentType = res.headers.get('content-type');
     const requestId = res.headers.get('x-request-id');
     if (contentType) headers.set('content-type', contentType);
@@ -48,6 +50,6 @@ export async function GET() {
 
   return NextResponse.json(
     { token: CLIENT_SESSION_TOKEN, user: await res.json() },
-    { status: 200 }
+    { status: 200, headers: cacheHeaders }
   );
 }

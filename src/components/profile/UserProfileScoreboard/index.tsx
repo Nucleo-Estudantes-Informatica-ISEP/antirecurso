@@ -1,5 +1,7 @@
 'use client';
 
+import { useMessages } from '@/i18n/client';
+
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
@@ -14,7 +16,7 @@ import {
 import { apiRequest } from '@/services/apiClient';
 import Score from '@/types/Score';
 import { Eye, EyeOff } from 'lucide-react';
-import Link from 'next/link';
+import Link from '@/i18n/navigation';
 import React from 'react';
 import swal from 'sweetalert';
 
@@ -23,14 +25,16 @@ interface UsePreviousExamsTableProps {
 }
 
 const UserProfileScoreboard: React.FC<UsePreviousExamsTableProps> = ({ userScores }) => {
+  const t = useMessages();
+
   const [scores, setScores] = React.useState(userScores);
 
   async function handleVisibilityChange(subjectId: number, show_scoreboard: boolean) {
     swal({
-      title: 'Tens a certeza que queres alterar a visibilidade?',
-      text: 'Isto irá alterar a visibilidade do teu score para os outros utilizadores.',
+      title: t('copy.are_you_sure_you_want_to_change_visibility'),
+      text: t('copy.this_will_change_whether_other_users_can_see_your_score'),
       icon: 'warning',
-      buttons: ['Cancelar', 'Sim, alterar'],
+      buttons: [t('copy.cancel'), t('copy.yes_change_it')],
       dangerMode: true
     }).then(async (willChange) => {
       if (!willChange) return;
@@ -42,13 +46,13 @@ const UserProfileScoreboard: React.FC<UsePreviousExamsTableProps> = ({ userScore
           json: { visibility: !show_scoreboard }
         });
       } catch {
-        swal('Ocorreu um erro ao alterar a visibilidade!', {
+        swal(t('copy.an_error_occurred_while_changing_visibility'), {
           icon: 'error',
           timer: 1500
         });
         return;
       }
-      swal('A visibilidade foi alterada com sucesso!', {
+      swal(t('copy.visibility_changed_successfully'), {
         icon: 'success',
         timer: 1500
       });
@@ -67,9 +71,9 @@ const UserProfileScoreboard: React.FC<UsePreviousExamsTableProps> = ({ userScore
       <Table>
         <TableHeader>
           <TableRow className="hover:bg-transparent">
-            <TableHead>Disciplina</TableHead>
-            <TableHead className="text-center">Pontuação</TableHead>
-            <TableHead className="text-center">Visível</TableHead>
+            <TableHead>{t('copy.subject_2')}</TableHead>
+            <TableHead className="text-center">{t('copy.score')}</TableHead>
+            <TableHead className="text-center">{t('copy.visible')}</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>

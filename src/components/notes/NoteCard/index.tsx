@@ -1,10 +1,14 @@
 'use client';
 
+import { useLanguage, useMessages } from '@/i18n/client';
+
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import useSession from '@/hooks/useSession';
+import ProtectedResourceError from '@/components/ProtectedResourceError';
+import { ApiResponseError } from '@/services/apiClient';
 import { requestNoteVisit, toggleNoteLike } from '@/services/noteActions';
 import Note from '@/types/Note';
 import { motion } from 'framer-motion';
@@ -17,6 +21,11 @@ interface NoteCardParams {
 }
 
 const NoteCard: React.FC<NoteCardParams> = ({ note }) => {
+  const t = useMessages();
+  const lang = useLanguage();
+
+  const [visitError, setVisitError] = useState<number | null>(null);
+  const [visiting, setVisiting] = useState(false);
   const [likes, setLikes] = useState(note.likes);
   const [isLiked, setIsLiked] = useState(note.is_liked);
 
@@ -24,28 +33,28 @@ const NoteCard: React.FC<NoteCardParams> = ({ note }) => {
 
   async function handleLikeNote(id: number) {
     try {
-      await toggleNoteLike(id);
+      await toggleNoteLike(id, lang);
       setLikes((cur) => (isLiked ? cur - 1 : cur + 1));
       setIsLiked((cur) => !cur);
     } catch (error) {
       await swal(
-        'Erro',
-        error instanceof Error ? error.message : 'Não foi possível gostar do resumo',
+        t('copy.error_2'),
+        error instanceof Error ? error.message : t('copy.could_not_like_the_study_notes'),
         'error'
       );
     }
   }
 
   async function handleVisitNote(note: Note) {
+    setVisiting(true);
+    setVisitError(null);
     try {
-      const url = await requestNoteVisit(note.id);
+      const url = await requestNoteVisit(note.id, lang);
       window.open(url, '_blank', 'noopener,noreferrer');
     } catch (error) {
-      await swal(
-        'Erro',
-        error instanceof Error ? error.message : 'Não foi possível registar a visita ao resumo',
-        'error'
-      );
+      setVisitError(error instanceof ApiResponseError ? error.status : 0);
+    } finally {
+      setVisiting(false);
     }
   }
 
@@ -60,6 +69,7 @@ const NoteCard: React.FC<NoteCardParams> = ({ note }) => {
 
   return (
     <motion.div
+      id={`note-${note.id}`}
       initial={{ opacity: 0, y: 20, scale: 0.97 }}
       whileInView={{ opacity: 1, y: 0, scale: 1 }}
       viewport={{ once: true }}
@@ -77,7 +87,7 @@ const NoteCard: React.FC<NoteCardParams> = ({ note }) => {
                   {note.title}
                 </h3>
                 <p className="text-xs text-muted-foreground mt-0.5">
-                  {new Date(note.created_at).toLocaleDateString('pt-PT', {
+                  {new Date(note.created_at).toLocaleDateString(lang === 'pt' ? 'pt-PT' : 'en-GB', {
                     year: 'numeric',
                     month: 'long'
                   })}
@@ -86,7 +96,7 @@ const NoteCard: React.FC<NoteCardParams> = ({ note }) => {
             </div>
             {note.n_pages && (
               <Badge variant="outline" className="shrink-0 font-medium">
-                {note.n_pages} pág
+                {note.n_pages} {t('copy.pages_3')}
               </Badge>
             )}
           </div>
@@ -106,8 +116,8 @@ const NoteCard: React.FC<NoteCardParams> = ({ note }) => {
               </Avatar>
               <span className="text-xs font-medium truncate">
                 {note.user.name}
-                {note.user.email === user?.email && (
-                  <span className="text-muted-foreground"> (Tu)</span>
+                {note.user.id === user?.id && (
+                  <span className="text-muted-foreground"> {t('copy.you')}</span>
                 )}
               </span>
             </div>
@@ -128,9 +138,16 @@ const NoteCard: React.FC<NoteCardParams> = ({ note }) => {
             </div>
           </div>
 
-          <Button onClick={() => handleVisitNote(note)} className="w-full">
+          {visitError !== null && (
+            <ProtectedResourceError
+              status={visitError}
+              onRetry={() => handleVisitNote(note)}
+              anchor={`#note-${note.id}`}
+            />
+          )}
+          <Button disabled={visiting} onClick={() => handleVisitNote(note)} className="w-full">
             <ExternalLink className="size-4" />
-            Ver resumo
+            {t('copy.view_study_notes')}
           </Button>
         </CardContent>
       </Card>

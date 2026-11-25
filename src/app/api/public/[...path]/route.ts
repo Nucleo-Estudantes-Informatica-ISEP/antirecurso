@@ -1,6 +1,6 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { BASE_URL } from '@/services/api';
-import { apiFetch } from '@/services/apiClient';
+import { NextRequest } from 'next/server';
+import { SERVER_API_BASE_URL } from '@/services/api';
+import { forwardBackendRequest } from '@/lib/backend-proxy';
 
 export const dynamic = 'force-dynamic';
 
@@ -10,43 +10,7 @@ async function proxyRequest(
 ) {
   const { path } = await params;
 
-  if (!BASE_URL) {
-    return NextResponse.json({ message: 'API base URL is not configured' }, { status: 500 });
-  }
-
-  const targetUrl = new URL(`${BASE_URL}/${path.join('/')}`);
-  request.nextUrl.searchParams.forEach((value, key) => {
-    targetUrl.searchParams.append(key, value);
-  });
-
-  const headers = new Headers();
-  headers.set('accept', 'application/json');
-
-  const contentType = request.headers.get('content-type');
-  if (contentType) {
-    headers.set('content-type', contentType);
-  }
-
-  const body =
-    request.method === 'GET' || request.method === 'HEAD' ? undefined : await request.text();
-
-  const upstreamResponse = await apiFetch(targetUrl.toString(), {
-    method: request.method,
-    headers,
-    body,
-    cache: 'no-store'
-  });
-
-  const responseHeaders = new Headers();
-  const upstreamContentType = upstreamResponse.headers.get('content-type');
-  if (upstreamContentType) {
-    responseHeaders.set('content-type', upstreamContentType);
-  }
-
-  return new NextResponse(upstreamResponse.body, {
-    status: upstreamResponse.status,
-    headers: responseHeaders
-  });
+  return forwardBackendRequest({ request, path, backendBaseUrl: SERVER_API_BASE_URL });
 }
 
 export const GET = proxyRequest;

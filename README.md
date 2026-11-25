@@ -13,7 +13,7 @@ AntiRecurso is the web frontend for NEI ISEP's exam-preparation platform. It giv
 
 ## Tech Stack
 
-- **Runtime**: Node.js 20.9+ and pnpm 9
+- **Runtime**: Node.js 20.9+ and pnpm 12.6.0
 - **Framework**: Next.js 16 App Router
 - **UI**: React 19, Tailwind CSS, Framer Motion
 - **Auth**: NextAuth 4 with the Zitadel provider
@@ -29,7 +29,7 @@ This repository is a frontend application, not the full AntiRecurso platform.
 - The UI is rendered by Next.js in [`src/app`](src/app/).
 - Authentication is handled through NextAuth in [`src/lib/auth.ts`](src/lib/auth.ts) with a hosted Zitadel/AuthNEI login flow.
 - Business data such as users, subjects, exams, scores, notes, and admin stats comes from an external backend API defined by `NEXT_PUBLIC_BASE_URL`.
-- Authenticated requests can be proxied through `src/app/api/backend/[...path]/route.ts`, which forwards the logged-in user's access token to the upstream backend.
+- Authenticated browser requests use [`/api/protected`](src/app/api/protected/), which forwards the signed-in user's access token to Adonis. Coolify routes `/api/backend` to Adonis at the ingress.
 - Admin routes are guarded by [`src/proxy.ts`](src/proxy.ts), which checks the session token and validates backend admin access before allowing the request through.
 
 ### Main Route Groups
@@ -42,9 +42,14 @@ This repository is a frontend application, not the full AntiRecurso platform.
 - `/notes` - subject picker for study notes
 - `/profile` - authenticated user profile and previous results
 - `/admin` - protected admin dashboard
-- `/login`, `/register`, `/reset-password` - hosted auth entry points
+- `/login` and `/register` start hosted AuthNEI directly, including when opened from a bookmark.
+- `/reset-password` - hosted recovery entry point
 
 ### Authentication Notes
+
+Guests can generate and submit random (`default`) and realistic (`realistic`) exams, matching the
+Adonis API. New, wrong, hard, and custom exam modes require login. Saved exam history and detailed
+review remain authenticated features.
 
 This codebase no longer supports password-based local auth forms.
 
@@ -60,7 +65,7 @@ These endpoints intentionally return `410 Gone` and direct users to the hosted A
 ```text
 .
 ├── assets/                 Legacy README screenshots and static media
-├── public/                 Favicons, logos, images, manifest, robots.txt
+├── public/                 Favicons, logos, images, manifest
 ├── scripts/                Utility scripts
 ├── src/
 │   ├── app/                App Router pages, layouts, route handlers
@@ -85,7 +90,7 @@ These endpoints intentionally return `410 Gone` and direct users to the hosted A
 Install the following before running the project locally:
 
 - Node.js `>=20.9.0`
-- pnpm `>=9`
+- pnpm `12.6.0` (via Corepack)
 - Access to a running AntiRecurso backend API
 - Access to a Zitadel/AuthNEI client configuration for local login testing
 
@@ -133,7 +138,7 @@ At minimum, define the variables below before starting the app.
 | Variable | Required | Description |
 | --- | --- | --- |
 | `NEXT_PUBLIC_BASE_URL` | Yes | Base URL of the current AdonisJS AntiRecurso backend API. It is documented in `.env.example`. |
-| `NEXTAUTH_URL` | Production | Canonical public URL of the deployed AntiRecurso frontend used by NextAuth. |
+| `NEXTAUTH_URL` | Production | Canonical public URL of the deployed AntiRecurso frontend used by NextAuth and as the origin for canonical URLs, `sitemap.xml` and `robots.txt`. |
 | `AUTH_SECRET` | Yes | NextAuth secret used to sign and decrypt session tokens. |
 | `AUTH_ISSUER_URL` | Yes | Zitadel/AuthNEI issuer URL. |
 | `AUTH_CLIENT_ID` | Yes | OAuth client ID for the hosted login flow. |
@@ -179,6 +184,26 @@ Defined in [`package.json`](package.json):
 - `pnpm lint` - run ESLint
 - `pnpm typecheck` - run TypeScript without emitting files
 - `pnpm test` - run the Vitest regression suite
+- `pnpm test:e2e:auth` - exercise sign-in and protected exam/note recovery against local fixtures
+- `pnpm test:e2e` - run the Playwright Chromium workflows
+
+The authenticated browser check starts its own local web server and mock OIDC/API service. Run `pnpm exec playwright install chromium` once before `pnpm test:e2e:auth`; set `CHROME` to a compatible Chromium executable to use an existing browser instead. It uses synthetic accounts and does not contact production.
+
+### Browser workflows
+
+Install Chromium with `pnpm exec playwright install chromium`. Build with
+`NEXT_PUBLIC_BASE_URL=/api/public pnpm build`, then run `pnpm test:e2e`.
+The suite starts the production build on localhost port 43188 and a
+loopback fixture API on port 43189. It checks guest, student and admin flows
+through the frontend using a fresh local-only session secret and in-memory
+cookies. PR CI runs the same suite. Keep real credentials and browser state
+out of the fixtures and repository.
+
+After deploying a reviewed build to staging, sign in through AuthNEI with a
+disposable staging account, verify the signed-in UI, run the affected exam and
+notes workflows, and sign out. Repeat with a staging administrator for admin
+access and a regular user for denial. Use the existing authenticated smoke
+command for direct API checks with that staging session.
 
 ## Development Notes
 
@@ -197,12 +222,14 @@ Without a reachable backend and valid auth configuration, the app will render in
 
 The app uses a JWT session strategy:
 
-- NextAuth stores the upstream access token and ID token in its JWT
+- NextAuth stores provider access and refresh tokens in its encrypted JWT. Deployments use Secure session cookies over HTTPS.
 - server helpers in [`src/lib/server-auth.ts`](src/lib/server-auth.ts) read those tokens from cookies
 - authenticated server components fetch user data from the backend before rendering
-- the `/api/backend/*` proxy forwards the bearer token to the upstream API
-- expired access tokens are refreshed through a single in-flight request so concurrent server calls do not race
-- rotated session cookies are persisted, and an invalid refresh clears the session instead of looping
+- `/api/protected/*` attaches the provider access token on the server and checks `Origin` against `NEXTAUTH_URL` for mutations. Signed-in exam generation uses POST. `/api/public/*` forwards requests without credentials.
+- The proxy streams request bodies with a 1 MiB limit for normal bodies and a 64 MiB limit for authenticated PDF uploads with a declared length.
+- Logout requests revocation in Adonis and AuthNEI before NextAuth clears its cookie. The browser receives a non-cacheable provider end-session URL with the registered client ID and redirect URI.
+- concurrent refreshes are deduplicated within each web process while the refresh is in flight
+- writable requests persist refreshed session cookies. A failed refresh marks the session expired and protected requests reject it.
 
 ### Theming and Global UX
 
@@ -217,12 +244,12 @@ The root layout in [`src/app/layout.tsx`](src/app/layout.tsx) wires up:
 
 ## Deployment Guidance
 
-No deployment manifests such as `Dockerfile`, `vercel.json`, `render.yaml`, or `fly.toml` are currently committed in this repository. That means deployment is flexible, but you need to provide the surrounding infrastructure yourself.
+The committed `Dockerfile` and `compose.yml` support Coolify deployment. Docker installs dependencies with `NODE_ENV=development`, builds with `NODE_ENV=production`, and runs with `NODE_ENV=production`. Do not configure `NODE_ENV` in Coolify; the deployment files set it for each stage.
 
 For production you need:
 
 - a Node-compatible host capable of running `next build` and `next start`
-- all auth-related environment variables
+- all auth-related environment variables, including a unique `AUTH_SECRET` or the Coolify-generated `SERVICE_REALBASE64_64_AUTH`
 - a reachable backend API URL for `NEXT_PUBLIC_BASE_URL`
 - a correctly configured callback and logout setup in Zitadel/AuthNEI
 
@@ -241,7 +268,55 @@ If you deploy behind a reverse proxy or managed platform, ensure:
 - your auth issuer accepts the production callback URL
 - `AUTH_POST_LOGOUT_REDIRECT_URI` matches the deployed frontend URL
 
-GitHub CI does not itself deploy. It requires a frozen install, lint, typecheck, tests, production build, production dependency audit, and Gitleaks. After a reviewed merge, verify the deployed commit in the hosting control plane and smoke the root plus login/refresh/logout and the affected exam flow. When a web change depends on the Adonis API, deploy the API and its migrations first.
+GitHub CI does not itself deploy. It requires a frozen install, lint, typecheck, Vitest, Playwright, production and Docker builds, production dependency audit, and Gitleaks. After a reviewed merge, verify the deployed commit in the hosting control plane and smoke the root plus login/refresh/logout and the affected exam flow. On the profile page, open the AuthNEI account link, then close its tab and confirm the original profile is still open. When a web change depends on the Adonis API, deploy the API and its migrations first. For legacy account recovery, deploy the compatible web release first. It handles both the previous pending-account response and the new `ACCOUNT_RECOVERY_REQUIRED` response. Then deploy the API that automatically links approved accounts and returns the new response for unresolved matches. With a disposable staging account, verify that logout invalidates the current bearer, clears the web session and ends the AuthNEI browser session. Check application logs for an incomplete revocation signal without collecting credentials.
+
+### Antirecurso project board automation
+
+Link the issue through the pull request's **Development** sidebar. The board moves
+linked issue cards to **In Review**. The board sync workflow scans every five
+minutes for linked PRs merged into `dev` in the web or Adonis API repository and
+moves matching issue cards already on Project 10 to **Done**. GitHub may delay
+scheduled runs. The board's existing Auto-close issue workflow handles closure
+when a card moves to **Done**.
+
+To activate the sync after it reaches `main`:
+
+1. Install a private organization GitHub App on `antirecurso` and
+   `antirecurso-api-adonis`. Give it organization **Projects** read/write and
+   repository **Issues** and **Pull requests** read access.
+2. In the web repository's Actions settings, set the `BOARD_SYNC_APP_CLIENT_ID`
+   variable and the `BOARD_SYNC_APP_PRIVATE_KEY` secret. Set
+   `BOARD_SYNC_START_AT` to the UTC timestamp from which merges should count,
+   for example `2026-11-22T14:00:00Z`.
+3. Run **Sync Antirecurso board status** manually from `main` to check API
+   access and see the eligible issue count. Set `BOARD_SYNC_ENABLED` to
+   `true` to enable scheduled writes. Run the first smoke check after an
+   eligible PR merge and verify its issue card reaches **Done**.
+
+### SEO release verification
+
+Before deploying the reviewed release, set the frontend's runtime `NEXTAUTH_URL`
+to `https://antirecurso.nei-isep.org` in Coolify. Use the corresponding public origin
+for staging. Keep locale prefixes (`/pt`, `/en`) and backend paths out of this value.
+Compose can derive it from `SERVICE_URL_WEB` when no explicit override is set;
+an explicit `NEXTAUTH_URL` takes precedence.
+
+After deployment, record the successful deployment's full commit SHA in Coolify
+and confirm it contains the reviewed SEO changes. Then check the public responses:
+
+- `/pt` and `/en/exams`: canonical URLs use the deployed frontend origin and the
+  matching locale; language alternates include `pt`, `en` and `x-default`.
+- `/sitemap.xml`: returns XML with both locales for the public pages and language
+  alternates, including the Portuguese `x-default`; every URL uses the deployed frontend origin.
+- `/robots.txt`: disallows `/api`, allows crawling public and noindex pages, and
+  advertises the deployed frontend's `/sitemap.xml`.
+- `/en/login` and a protected subject notes URL such as `/en/notes/1` return
+  `X-Robots-Tag: noindex, nofollow`. Public pages such as `/pt`, `/en/exams`,
+  and `/en/notes` must not return that header.
+
+CI and local smoke checks do not establish that a release is deployed. A missing
+sitemap or locale route on an older deployed revision leaves these checks pending
+until the reviewed release reaches that environment.
 
 ### Antirecurso project board automation
 
@@ -335,3 +410,10 @@ for app-only logout, account switching (`prompt=select_account`), and central Au
 `AUTH_ROLE_CLAIM` may override the default `urn:zitadel:iam:org:project:roles` claim name. Configure
 the AntiRecurso OIDC applications to include their own Project Role Assertions and the API audience
 expected by the backend.
+
+## Internationalization
+
+The PT/EN interface and language routing follow the simple JSON dictionary pattern
+used by SEI 2026. Language priority is URL, saved choice, browser, then Portuguese.
+Translations live in `src/i18n/pt.json` and `en.json`. Language changes automatically
+refresh server content while retaining client state.

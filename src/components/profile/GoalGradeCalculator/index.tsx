@@ -1,5 +1,7 @@
 'use client';
 
+import { useMessages } from '@/i18n/client';
+
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useContext, useState } from 'react';
@@ -12,6 +14,8 @@ interface GradeCalculatorProps {
 }
 
 const GoalGradeCalculator: React.FC<GradeCalculatorProps> = ({ weight, min_grade }) => {
+  const t = useMessages();
+
   const MAX_GRADE = 20;
 
   const [pretended, setPretendGrade] = useState<number | null>(null);
@@ -33,15 +37,15 @@ const GoalGradeCalculator: React.FC<GradeCalculatorProps> = ({ weight, min_grade
     <div className="space-y-6">
       <div className="text-center">
         <h2 className="text-xl md:text-2xl font-bold">
-          Nota necessária no <span className="gradient-text">exame</span>
+          {t('copy.required_grade_in_the')} <span className="gradient-text">{t('copy.exam')}</span>
         </h2>
         <p className="mt-1 text-sm text-muted-foreground">
-          Para atingires o teu objetivo na UC
+          {t('copy.to_reach_your_target_for_the_subject')}
         </p>
       </div>
 
       <div className="space-y-2 max-w-md mx-auto">
-        <Label htmlFor="pretended">Nota objetivo (0–20)</Label>
+        <Label htmlFor="pretended">{t('copy.target_grade_0_20')}</Label>
         <Input
           id="pretended"
           value={pretended === null ? '' : pretended}
@@ -61,14 +65,16 @@ const GoalGradeCalculator: React.FC<GradeCalculatorProps> = ({ weight, min_grade
 
       <div className="text-center py-4 rounded-xl bg-muted/40 border">
         <p className="text-xs uppercase tracking-wider text-muted-foreground font-semibold mb-1">
-          Nota necessária
+          {t('copy.required_grade')}
         </p>
         {frequency === null ? (
-          <p className="text-sm text-muted-foreground">Preenche a frequência acima</p>
+          <p className="text-sm text-muted-foreground">
+            {t('copy.enter_your_coursework_grade_above')}
+          </p>
         ) : finalGradeNeeded === null ? (
-          <p className="text-sm text-muted-foreground">Preenche a nota pretendida</p>
+          <p className="text-sm text-muted-foreground">{t('copy.enter_your_target_grade')}</p>
         ) : isImpossible ? (
-          <p className="text-base text-destructive">Não é possível atingir essa nota 😕</p>
+          <p className="text-base text-destructive">{t('copy.that_grade_cannot_be_reached')}</p>
         ) : (
           <p
             className={`text-3xl md:text-4xl font-bold ${

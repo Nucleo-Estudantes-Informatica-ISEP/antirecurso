@@ -1,5 +1,7 @@
 'use client';
 
+import { useLanguage, useMessages } from '@/i18n/client';
+
 import ScoreboardPodium from '@/components/scoreboard/ScoreboardPodium';
 import ScoreboardRow from '@/components/scoreboard/ScoreboardRow';
 import { Badge } from '@/components/ui/badge';
@@ -27,6 +29,9 @@ interface ScoreboardPageProps {
 const examModes = ['custom', 'default', 'realistic', 'all', 'new', 'wrong', 'hard'];
 
 const ScoreboardPage: React.FC<ScoreboardPageProps> = ({ params }) => {
+  const t = useMessages();
+  const lang = useLanguage();
+
   const resolvedParams = use(params);
   const [mode, setMode] = useState<string>('all');
   const [subjectName, setSubjectName] = useState<string | null>(null);
@@ -51,10 +56,10 @@ const ScoreboardPage: React.FC<ScoreboardPageProps> = ({ params }) => {
       <div className="flex flex-col items-center text-center mb-8">
         <Badge variant="soft" className="mb-3 gap-1.5">
           <Trophy className="size-3.5" />
-          Scoreboard
+          {t('nav.scoreboard')}
         </Badge>
         <h1 className="text-balance text-3xl md:text-4xl font-bold tracking-tight">
-          Scoreboard de{' '}
+          {t('copy.leaderboard_for')}{' '}
           {subjectName ? (
             <span className="gradient-text capitalize">{subjectName}</span>
           ) : (
@@ -68,7 +73,7 @@ const ScoreboardPage: React.FC<ScoreboardPageProps> = ({ params }) => {
           <TabsList className="h-auto p-1 flex-wrap">
             {examModes.map((m) => (
               <TabsTrigger key={m} value={m} className="capitalize">
-                {sanitizeMode(m)}
+                {sanitizeMode(m, lang)}
               </TabsTrigger>
             ))}
           </TabsList>
@@ -85,7 +90,7 @@ const ScoreboardPage: React.FC<ScoreboardPageProps> = ({ params }) => {
           {scoreboard.scores.length === 0 ? (
             <Card className="max-w-xl mx-auto">
               <CardContent className="p-10 text-center text-muted-foreground">
-                Sem nenhum utilizador registado neste modo.
+                {t('copy.no_users_ranked_in_this_mode_yet')}
               </CardContent>
             </Card>
           ) : (
@@ -125,17 +130,17 @@ const ScoreboardPage: React.FC<ScoreboardPageProps> = ({ params }) => {
             <Trophy className="size-4 text-primary" />
             {scoreboard?.total ?? 0}
           </Badge>
-          <span className="text-sm text-muted-foreground">exames realizados</span>
+          <span className="text-sm text-muted-foreground">{t('copy.completed_exams_2')}</span>
         </div>
         <Card className="bg-muted/40 border-dashed">
           <CardContent className="p-4 flex items-start gap-3 text-sm">
             <Info className="size-4 mt-0.5 text-primary shrink-0" />
             <p className="text-muted-foreground">
-              Para apareceres no scoreboard precisas de ter respondido a, no mínimo,{' '}
+              {t('copy.to_appear_on_the_leaderboard_you_need_to_have_completed_at_least')}{' '}
               <span className="font-semibold text-foreground">{scoreboard?.min_answers}</span>{' '}
-              exames e estar entre as{' '}
-              <span className="font-semibold text-foreground">{scoreboard?.limit}</span> melhores
-              médias.
+              {t('copy.exams_and_be_among_the')}{' '}
+              <span className="font-semibold text-foreground">{scoreboard?.limit}</span>{' '}
+              {t('copy.highest_averages')}
             </p>
           </CardContent>
         </Card>

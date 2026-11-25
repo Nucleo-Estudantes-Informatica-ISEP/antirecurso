@@ -1,5 +1,11 @@
 'use client';
 
+import { Settings } from 'lucide-react';
+import { APP_PREFERENCES_LINK } from '../profileLinks';
+
+import { useLanguage } from '@/i18n/client';
+import { localizedPath, useTranslations } from '@/i18n/translations';
+
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import {
@@ -12,20 +18,19 @@ import {
 } from '@/components/ui/dropdown-menu';
 import useCallbackUrl from '@/hooks/useCallbackUrl';
 import useSession from '@/hooks/useSession';
+import useAuthNeiSignOut from '@/hooks/useAuthNeiSignOut';
 import { switchAuthNeiAccount } from '@/lib/client-auth-actions';
 import { LogIn, LogOut, RefreshCw, User, UserCog, UserPlus } from 'lucide-react';
-import { signOut } from 'next-auth/react';
-import { useTheme } from 'next-themes';
-import Link from 'next/link';
-import { useRouter } from 'next/navigation';
-import swal from 'sweetalert';
+import Link from '@/i18n/navigation';
+import AuthLink from '@/components/AuthLink';
 import { APP_PROFILE_LINK, AUTHNEI_ACCOUNT_LINK } from '../profileLinks';
 
 const HamburgerProfileMenu: React.FC = () => {
+  const lang = useLanguage();
+  const t = useTranslations(lang);
   const pathname = useCallbackUrl();
   const session = useSession();
-  const router = useRouter();
-  const { theme } = useTheme();
+  const signOut = useAuthNeiSignOut();
 
   const userInitials = session.user?.name
     ? session.user.name
@@ -36,64 +41,25 @@ const HamburgerProfileMenu: React.FC = () => {
         .toUpperCase()
     : '';
 
-  const handleLogout = async () => {
-    const confirmed = await swal({
-      title: 'Tens a certeza que queres terminar sessão?',
-      icon: 'warning',
-      buttons: ['Não', 'Sim'],
-      dangerMode: true,
-      className: theme === 'dark' ? 'swal-dark' : ''
-    });
-
-    if (!confirmed) return;
-
-    const res = await fetch('/api/auth/logout', { method: 'PATCH' });
-
-    if (res.status === 200) {
-      const { url } = (await res.json()) as { url?: string };
-      await signOut({ redirect: false });
-      session.clear();
-      swal({
-        title: 'Terminaste sessão com sucesso!',
-        icon: 'success',
-        timer: 2000,
-        className: theme === 'dark' ? 'swal-dark' : ''
-      });
-      if (url) {
-        window.location.href = url;
-        return;
-      }
-      router.push('/');
-      router.refresh();
-    } else {
-      swal({
-        title: 'Algo correu mal. Por favor tenta novamente.',
-        icon: 'error',
-        className: theme === 'dark' ? 'swal-dark' : ''
-      });
-      router.refresh();
-    }
-  };
-
   const handleSwitchAccount = async () => {
     session.clear();
-    await switchAuthNeiAccount(pathname || '/');
+    await switchAuthNeiAccount(decodeURIComponent(pathname) || localizedPath('/', lang));
   };
 
   if (!session.user) {
     return (
       <div className="flex items-center gap-2">
         <Button asChild variant="ghost" size="sm">
-          <Link href={`/login?callbackUrl=${pathname}`}>
+          <AuthLink href={localizedPath(`/login?callbackUrl=${pathname}`, lang)}>
             <LogIn className="size-4" />
-            Entrar
-          </Link>
+            {t('auth.enter')}
+          </AuthLink>
         </Button>
         <Button asChild size="sm">
-          <Link href={`/register?callbackUrl=${pathname}`}>
+          <AuthLink href={localizedPath(`/register?callbackUrl=${pathname}`, lang)}>
             <UserPlus className="size-4" />
-            Criar conta
-          </Link>
+            {t('auth.register')}
+          </AuthLink>
         </Button>
       </div>
     );
@@ -106,7 +72,7 @@ const HamburgerProfileMenu: React.FC = () => {
           variant="ghost"
           size="icon"
           className="rounded-full ring-2 ring-transparent hover:ring-primary/40"
-          aria-label="Menu do perfil"
+          aria-label={t('auth.profile')}
         >
           <Avatar className="size-9">
             <AvatarImage
@@ -128,28 +94,39 @@ const HamburgerProfileMenu: React.FC = () => {
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuItem asChild>
-          <Link href={APP_PROFILE_LINK.href} className="cursor-pointer">
+          <Link href={localizedPath(APP_PROFILE_LINK.href, lang)} className="cursor-pointer">
             <User className="size-4" />
-            <span>{APP_PROFILE_LINK.label}</span>
+            <span>{t('auth.profile')}</span>
           </Link>
         </DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem asChild>
-          <a href={AUTHNEI_ACCOUNT_LINK.href} className="cursor-pointer">
+          <a
+            href={AUTHNEI_ACCOUNT_LINK.href}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="cursor-pointer"
+          >
             <UserCog className="size-4" />
-            <span>{AUTHNEI_ACCOUNT_LINK.label}</span>
+            <span>{t('auth.manageAccount')}</span>
           </a>
+        </DropdownMenuItem>
+        <DropdownMenuItem asChild>
+          <Link href={localizedPath(APP_PREFERENCES_LINK, lang)} className="cursor-pointer">
+            <Settings className="size-4" />
+            <span>{t('auth.appPreferences')}</span>
+          </Link>
         </DropdownMenuItem>
         <DropdownMenuItem onClick={handleSwitchAccount} className="cursor-pointer">
           <RefreshCw className="size-4" />
-          <span>Trocar de conta</span>
+          <span>{t('auth.switchAccount')}</span>
         </DropdownMenuItem>
         <DropdownMenuItem
-          onClick={handleLogout}
+          onClick={signOut}
           className="cursor-pointer text-destructive focus:text-destructive"
         >
           <LogOut className="size-4" />
-          <span>Terminar sessão</span>
+          <span>{t('auth.logout')}</span>
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

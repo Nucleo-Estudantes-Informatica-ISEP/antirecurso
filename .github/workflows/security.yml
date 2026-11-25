@@ -2,6 +2,7 @@ name: Security
 
 on:
   pull_request:
+    branches: [dev, main]
   workflow_dispatch:
     inputs:
       full_history:
@@ -11,7 +12,24 @@ on:
         default: true
 
 jobs:
+  # Branch rules require different check names on dev and main.
+  dependency-review:
+    if: github.event_name == 'pull_request' && github.base_ref == 'dev'
+    uses: Nucleo-Estudantes-Informatica-ISEP/.github/.github/workflows/dependency-review.yml@master
+    permissions:
+      contents: read
+
+  secret-scan:
+    name: Secret scan
+    if: github.event_name == 'pull_request' && github.base_ref == 'dev'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: Nucleo-Estudantes-Informatica-ISEP/.github/.github/actions/secret-scan@master
+
   security:
+    if: github.event_name == 'workflow_dispatch' || github.base_ref == 'main'
     name: Security
     permissions:
       contents: read

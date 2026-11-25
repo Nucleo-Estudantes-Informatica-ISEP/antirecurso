@@ -1,9 +1,17 @@
+'use client';
+
+import { useMessages } from '@/i18n/client';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { ArrowLeft, ShieldAlert } from 'lucide-react';
-import Link from 'next/link';
+import Link from '@/i18n/navigation';
+import AuthLink from '@/components/AuthLink';
+import useCallbackUrl from '@/hooks/useCallbackUrl';
 
 const Custom403: React.FC = () => {
+  const t = useMessages();
+  const callbackUrl = useCallbackUrl();
+
   return (
     <section className="container py-16 md:py-24 w-full max-w-lg">
       <Card className="relative overflow-hidden">
@@ -13,19 +21,21 @@ const Custom403: React.FC = () => {
             <ShieldAlert className="size-7" />
           </div>
           <h1 className="text-3xl md:text-4xl font-bold">
-            <span className="text-primary">Oops...</span> Acesso negado
+            <span className="text-primary">{t('copy.oops')}</span> {t('copy.access_denied')}
           </h1>
           <p className="text-muted-foreground max-w-sm">
-            Não tens permissão para aceder a esta página. Inicia sessão ou volta à página inicial.
+            {t(
+              'copy.you_do_not_have_permission_to_access_this_page_sign_in_or_return_to_the_home_page'
+            )}
           </p>
           <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
             <Button asChild>
-              <Link href="/login">Iniciar sessão</Link>
+              <AuthLink href={`/login?callbackUrl=${callbackUrl}`}>{t('auth.login')}</AuthLink>
             </Button>
             <Button asChild variant="outline">
               <Link href="/">
                 <ArrowLeft className="size-4" />
-                Página inicial
+                {t('copy.home_page')}
               </Link>
             </Button>
           </div>

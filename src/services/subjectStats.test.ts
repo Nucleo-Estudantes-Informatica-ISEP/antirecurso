@@ -64,3 +64,13 @@ describe('authenticated subject stats request', () => {
     expect(headers.has('authorization')).toBe(false);
   });
 });
+
+it('formats durations in the selected language without changing statistics', () => {
+  expect(getSubjectStatsViewModel(stats(), 'en').meanTimeLabel).toBe('2 minutes and 5 seconds');
+  expect(getSubjectStatsViewModel(stats({ mean_time: 61 }), 'pt').meanTimeLabel).toBe(
+    '1 minuto e 1 segundo'
+  );
+  expect(getSubjectStatsViewModel(stats({ mean_time: null }), 'en').meanTimeLabel).toBe(
+    'not enough data'
+  );
+});

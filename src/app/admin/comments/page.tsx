@@ -1,5 +1,7 @@
 'use client';
 
+import { useMessages } from '@/i18n/client';
+
 import CommentTable from '@/components/admin/CommentTable';
 import { useQueryParamsManager } from '@/hooks/useQueryParamsManager';
 import useSession from '@/hooks/useSession';
@@ -15,6 +17,8 @@ interface CommentsResponse {
 }
 
 const Comments: React.FC = () => {
+  const t = useMessages();
+
   const session = useSession();
 
   // search params
@@ -73,13 +77,13 @@ const Comments: React.FC = () => {
 
   return (
     <div className="w-full h-full mt-4 flex flex-col items-center justify-center">
-      <h2 className="text-4xl font-black">Comentários</h2>
+      <h2 className="text-4xl font-black">{t('copy.comments')}</h2>
       <div className="w-3/4 py-2 flex gap-6 my-4 bg-gray-100 dark:bg-gray-700 items-center justify-center">
         <button
           className="bg-gray-400 hover:bg-gray-500 text-white px-4 py-2 shadow-md"
           onClick={() => handleResetFilters()}
         >
-          Repor Filtros
+          {t('copy.reset_filters')}
         </button>
       </div>
       <div className="flex flex-col w-3/4">
@@ -89,8 +93,8 @@ const Comments: React.FC = () => {
           <Skeleton count={5} />
         ) : error ? (
           <div className="w-full h-full mt-4 flex flex-col items-center justify-center">
-            <h1 className="text-2xl font-bold">Erro ao carregar comentários</h1>
-            <p className="text-lg">Por favor, tente novamente mais tarde.</p>
+            <h1 className="text-2xl font-bold">{t('copy.error_loading_comments')}</h1>
+            <p className="text-lg">{t('copy.please_try_again_later')}</p>
           </div>
         ) : (
           <CommentTable

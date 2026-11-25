@@ -1,3 +1,4 @@
+import { useTranslations as translate, type Lang } from '@/i18n/translations';
 import type { SubjectStats } from '@/types/SubjectStats';
 import { apiRequest } from './apiClient';
 
@@ -9,14 +10,20 @@ export type SubjectStatsViewModel = {
   meanTimeLabel: string;
 };
 
-export async function fetchSubjectStats(subjectId: number): Promise<SubjectStats> {
+export async function fetchSubjectStats(
+  subjectId: number,
+  lang: Lang = 'pt'
+): Promise<SubjectStats> {
   return apiRequest<SubjectStats>(`subjects/${subjectId}/stats`, {
     authenticated: true,
-    errorMessage: 'Não foi possível carregar as estatísticas.'
+    errorMessage: translate(lang)('error.loadStats')
   });
 }
 
-export function getSubjectStatsViewModel(stats: SubjectStats): SubjectStatsViewModel {
+export function getSubjectStatsViewModel(
+  stats: SubjectStats,
+  lang: Lang = 'pt'
+): SubjectStatsViewModel {
   const totalQuestions = nonNegative(stats.total_of_questions);
   const questionsSeen = clamp(nonNegative(stats.n_of_answered), 0, totalQuestions);
   const wrong = clamp(nonNegative(stats.n_of_wrong_answers), 0, questionsSeen);
@@ -31,17 +38,18 @@ export function getSubjectStatsViewModel(stats: SubjectStats): SubjectStatsViewM
     questionsSeen,
     questionsSeenPercentage,
     questionBreakdown: [correct, wrong, unseen],
-    meanTimeLabel: formatDuration(stats.mean_time)
+    meanTimeLabel: formatDuration(stats.mean_time, lang)
   };
 }
 
-function formatDuration(seconds: number | null): string {
-  if (seconds === null || !Number.isFinite(seconds) || seconds < 0) return 'sem dados suficientes';
+function formatDuration(seconds: number | null, lang: Lang): string {
+  const t = translate(lang);
+  if (seconds === null || !Number.isFinite(seconds) || seconds < 0) return t('stats.noTime');
 
   const wholeSeconds = Math.floor(seconds);
   const minutes = Math.floor(wholeSeconds / 60);
   const remainder = wholeSeconds % 60;
-  return `${minutes > 0 ? `${minutes} minutos e ` : ''}${remainder} segundos`;
+  return `${minutes > 0 ? `${minutes} ${t(minutes === 1 ? 'stats.minute' : 'stats.minutes')} ${t('common.and')} ` : ''}${remainder} ${t(remainder === 1 ? 'stats.second' : 'stats.seconds')}`;
 }
 
 function finiteOrZero(value: number): number {

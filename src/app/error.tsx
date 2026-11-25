@@ -1,11 +1,15 @@
 'use client';
 
+import { useMessages } from '@/i18n/client';
+
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { AlertOctagon, RotateCcw } from 'lucide-react';
 import { useEffect } from 'react';
 
 export default function Error({ error, reset }: { error: Error; reset: () => void }) {
+  const t = useMessages();
+
   useEffect(() => {
     console.error(error);
   }, [error]);
@@ -19,14 +23,14 @@ export default function Error({ error, reset }: { error: Error; reset: () => voi
             <AlertOctagon className="size-7" />
           </div>
           <h1 className="text-3xl md:text-4xl font-bold">
-            <span className="text-primary">Oops...</span> Algo correu mal
+            <span className="text-primary">{t('copy.oops')}</span> {t('copy.something_went_wrong')}
           </h1>
           <p className="text-muted-foreground max-w-sm">
-            Aconteceu um erro inesperado. Tenta novamente — se o problema persistir, contacta-nos.
+            {t('copy.an_unexpected_error_occurred_try_again_if_the_problem_persists_contact_us')}
           </p>
           <Button onClick={() => reset()} size="lg">
             <RotateCcw className="size-4" />
-            Tentar novamente
+            {t('copy.try_again')}
           </Button>
         </CardContent>
       </Card>
